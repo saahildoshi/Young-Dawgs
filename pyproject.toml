@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "metamaterial-eval"
+version = "0.1.0"
+description = "Morphological evaluation of 2-D binary procedural metamaterials"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "scipy>=1.10",
+  "scikit-image>=0.21",
+  "matplotlib>=3.7",
+  "Pillow>=10.0",
+]
+
+[project.scripts]
+metamaterial-eval = "metamaterial_eval.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["metamaterial_eval*"]

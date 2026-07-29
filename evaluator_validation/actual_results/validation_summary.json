@@ -1,0 +1,68 @@
+{
+  "validation_date": "2026-07-29",
+  "environment": {
+    "python": "3.10.0",
+    "numpy": "2.2.6",
+    "scipy": "1.15.3",
+    "scikit_image": "0.25.2",
+    "matplotlib": "3.10.9",
+    "git_commit": null,
+    "git_note": "The OneDrive repository has no commits."
+  },
+  "versions": {
+    "v1.0": {
+      "sha256": "de2bcf4a76d24c267bbcb9f7af7027ee364fd6015266cf0b0259ad8d69694b09",
+      "tests_passed": 36,
+      "tests_failed": 20,
+      "accepted": false
+    },
+    "v1.1": {
+      "sha256": "aef73a8d120feb2cf6da8ed67e088fa91bc920e1e9e0824933b039a61ddfa47b",
+      "tests_passed": 56,
+      "tests_failed": 0,
+      "accepted": true
+    }
+  },
+  "v1.0_failure_groups": {
+    "registered_validity_rule": 5,
+    "strut_and_pore_calibration": 10,
+    "directional_lineal_path_output": 2,
+    "seed_audit": 1,
+    "population_standard_deviation": 1,
+    "transformation_aware_copy_detection": 1
+  },
+  "bar_calibration_v1.1": {
+    "nominal_width_px": [2, 4, 8, 16],
+    "median_measured_px": [2.0, 4.0, 8.0, 16.0],
+    "p10_measured_px": [2.0, 4.0, 8.0, 16.0]
+  },
+  "circular_pore_calibration_v1.1": {
+    "nominal_diameter_px": [10, 20, 40],
+    "measured_maximal_inscribed_diameter_px": [
+      10.198039027185569,
+      20.09975124224178,
+      40.049968789001575
+    ]
+  },
+  "pilot_v1.1": {
+    "samples": 20,
+    "valid_samples": 20,
+    "seed_audit_clean": true,
+    "sanity_checks_passed": true,
+    "copy_flags": 0,
+    "pairwise_diversity": 0.4774213288959704,
+    "mean_periodic_s2_nrmse": 0.05362172335978839,
+    "mean_periodic_lineal_nrmse": 0.04016145072074277,
+    "target_mean_strut_thickness_px": 6.539856814391503,
+    "generated_mean_strut_thickness_px": 6.711709551750834,
+    "target_p10_strut_thickness_px": 4.0,
+    "generated_p10_strut_thickness_px": 4.472135954999578,
+    "target_median_enclosed_pore_diameter_px": 16.492422502470642,
+    "generated_median_enclosed_pore_diameter_px": 18.493795981931108
+  },
+  "reproducibility": {
+    "normalized_json_identical": true,
+    "all_five_figure_files_byte_identical": true,
+    "note": "Raw JSON differs when output directories differ because figure paths are recorded."
+  }
+}
