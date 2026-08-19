@@ -1,0 +1,345 @@
+#!/usr/bin/env python3
+"""
+Procedural generator for binary 256x256 microstructures.
+
+Algorithm
+---------
+1. Generate hard-core random nuclei in an expanded domain.  The minimum
+   nucleus separation prevents excessive clustering while retaining stochastic
+   variation.
+2. Generate two smooth Gaussian random fields and use them to warp the spatial
+   coordinates.
+3. Construct a Voronoi-like tessellation in the warped coordinates using the
+   nearest random nucleus.
+4. Detect the interfaces between neighboring cells and compute the Euclidean
+   distance from every pixel to an interface.
+5. Perturb that distance by:
+      - spatially correlated boundary roughness, and
+      - a small independent erosion offset for each cell.
+6. Threshold the resulting field to obtain the requested solid fraction.
+   Cell interiors become solid (1), while the connected inter-cell network
+   becomes void (0).
+7. Save each realization as both .npy and indexed-color .png.
+
+The PNG files preserve pixel indices 0 and 1:
+    0 = void  = displayed white
+    1 = solid = displayed black
+
+No reference image, external data, pretrained model, API, or internet access
+is used by this script.
+
+Dependencies
+------------
+numpy
+scipy
+Pillow
+"""
+
+from pathlib import Path
+
+import numpy as np
+from PIL import Image
+from scipy import ndimage
+from scipy.spatial import cKDTree
+
+
+# ---------------------------------------------------------------------------
+# Adjustable parameters
+# ---------------------------------------------------------------------------
+
+HEIGHT = 256
+WIDTH = 256
+
+# Approximate number of nuclei whose density corresponds to the 256x256
+# target domain. Larger values -> smaller solid features.
+MEAN_SEEDS = 82
+
+# Minimum nucleus-to-nucleus distance in pixels.
+# Larger values make the grains more uniformly sized and compact.
+MIN_SEED_SPACING = 20.0
+
+# Additional border around the image in which nuclei are generated.
+# This prevents artificial oversized cells at the image boundary.
+DOMAIN_MARGIN = 40.0
+
+# Target fraction of pixels belonging to the solid phase.
+TARGET_SOLID_FRACTION = 0.605
+
+# Smooth coordinate deformation.  Increasing WARP_AMPLITUDE makes grain
+# interfaces more curved/tortuous.  WARP_SIGMA sets the correlation length.
+WARP_AMPLITUDE = 5.0
+WARP_SIGMA = 18.0
+
+# Small-scale correlated irregularity of the solid/void interfaces.
+EDGE_ROUGHNESS = 0.90
+ROUGHNESS_SIGMA = 3.0
+
+# Random cell-to-cell variation in how strongly each cell is eroded.
+CELL_EROSION_JITTER = 0.60
+
+# Exactly the requested independent random seeds.
+RANDOM_SEEDS = range(20)
+
+OUTPUT_DIR = Path("generated_microstructures")
+
+
+# ---------------------------------------------------------------------------
+# Procedural generation functions
+# ---------------------------------------------------------------------------
+
+def standardized_smooth_noise(rng, shape, sigma):
+    """
+    Return a zero-mean, unit-standard-deviation correlated Gaussian field.
+    """
+    field = rng.standard_normal(shape)
+    field = ndimage.gaussian_filter(field, sigma=sigma, mode="reflect")
+
+    field -= field.mean()
+    std = field.std()
+
+    if std > 0.0:
+        field /= std
+
+    return field
+
+
+def generate_hardcore_points(
+    rng,
+    height,
+    width,
+    margin,
+    target_density,
+    min_spacing,
+):
+    """
+    Generate random nuclei with a hard minimum spacing.
+
+    Points are generated in an expanded rectangle so that Voronoi cells
+    intersecting the image edges are statistically similar to interior cells.
+    """
+    y_min = -margin
+    y_max = height + margin
+    x_min = -margin
+    x_max = width + margin
+
+    expanded_area = (height + 2.0 * margin) * (width + 2.0 * margin)
+    n_target = int(round(target_density * expanded_area))
+
+    points = []
+    min_spacing_sq = min_spacing ** 2
+
+    # This parameter set has a moderate packing fraction, so random sequential
+    # inhibition converges rapidly. The generous limit also makes the function
+    # safer if the user changes parameters slightly.
+    max_attempts = 500_000
+
+    for _ in range(max_attempts):
+        if len(points) >= n_target:
+            break
+
+        candidate = np.array(
+            [
+                rng.uniform(y_min, y_max),
+                rng.uniform(x_min, x_max),
+            ],
+            dtype=np.float64,
+        )
+
+        if not points:
+            points.append(candidate)
+            continue
+
+        existing = np.asarray(points)
+        squared_distances = np.sum((existing - candidate) ** 2, axis=1)
+
+        if np.all(squared_distances >= min_spacing_sq):
+            points.append(candidate)
+
+    if len(points) != n_target:
+        raise RuntimeError(
+            "Could not place all nuclei. Reduce MIN_SEED_SPACING or "
+            "MEAN_SEEDS."
+        )
+
+    return np.asarray(points, dtype=np.float64)
+
+
+def cell_boundary_mask(labels):
+    """
+    Return a Boolean image marking interfaces between neighboring labels.
+    """
+    boundary = np.zeros(labels.shape, dtype=bool)
+
+    # Vertical label changes.
+    changed = labels[1:, :] != labels[:-1, :]
+    boundary[1:, :] |= changed
+    boundary[:-1, :] |= changed
+
+    # Horizontal label changes.
+    changed = labels[:, 1:] != labels[:, :-1]
+    boundary[:, 1:] |= changed
+    boundary[:, :-1] |= changed
+
+    return boundary
+
+
+def generate_microstructure(seed):
+    """
+    Generate one 256x256 binary realization.
+
+    Returns
+    -------
+    solid : ndarray, uint8
+        Binary array with solid=1 and void=0.
+    """
+    rng = np.random.default_rng(seed)
+
+    shape = (HEIGHT, WIDTH)
+
+    # Nucleus density is expressed with respect to the target image area.
+    target_density = MEAN_SEEDS / float(HEIGHT * WIDTH)
+
+    nuclei = generate_hardcore_points(
+        rng=rng,
+        height=HEIGHT,
+        width=WIDTH,
+        margin=DOMAIN_MARGIN,
+        target_density=target_density,
+        min_spacing=MIN_SEED_SPACING,
+    )
+
+    # -----------------------------------------------------------------------
+    # Smoothly warp space before constructing the nearest-nucleus cells.
+    # This converts straight ideal Voronoi boundaries into irregular curves.
+    # -----------------------------------------------------------------------
+    warp_y = standardized_smooth_noise(rng, shape, WARP_SIGMA)
+    warp_x = standardized_smooth_noise(rng, shape, WARP_SIGMA)
+
+    warp_y *= WARP_AMPLITUDE
+    warp_x *= WARP_AMPLITUDE
+
+    yy, xx = np.mgrid[0:HEIGHT, 0:WIDTH]
+
+    query_points = np.column_stack(
+        [
+            (yy + warp_y).ravel(),
+            (xx + warp_x).ravel(),
+        ]
+    )
+
+    tree = cKDTree(nuclei)
+
+    # labels[y, x] is the index of the closest stochastic nucleus.
+    _, nearest = tree.query(query_points, k=1)
+    labels = nearest.reshape(shape)
+
+    # -----------------------------------------------------------------------
+    # Convert the cell boundaries into a finite-width void network.
+    # -----------------------------------------------------------------------
+    interfaces = cell_boundary_mask(labels)
+
+    # Distance from each non-interface pixel to the closest cell boundary.
+    distance_to_interface = ndimage.distance_transform_edt(~interfaces)
+
+    # Correlated small-scale roughness changes the local channel width.
+    roughness = standardized_smooth_noise(rng, shape, ROUGHNESS_SIGMA)
+    roughness *= EDGE_ROUGHNESS
+
+    # Each cell also receives an independent erosion offset.
+    cell_offsets = rng.normal(
+        loc=0.0,
+        scale=CELL_EROSION_JITTER,
+        size=len(nuclei),
+    )
+
+    erosion_offset = cell_offsets[labels]
+
+    # Large positive score = safely inside a cell and therefore likely solid.
+    solid_score = (
+        distance_to_interface
+        - roughness
+        - erosion_offset
+    )
+
+    # Select the upper fraction of the score distribution. This keeps the
+    # characteristic connected channel topology while controlling phase
+    # fraction without using any target/reference pixels.
+    threshold = np.quantile(
+        solid_score,
+        1.0 - TARGET_SOLID_FRACTION,
+    )
+
+    solid = (solid_score > threshold).astype(np.uint8)
+
+    # Strict semantic guarantee.
+    assert solid.shape == (256, 256)
+    assert np.all((solid == 0) | (solid == 1))
+
+    return solid
+
+
+# ---------------------------------------------------------------------------
+# File output
+# ---------------------------------------------------------------------------
+
+def save_binary_png(binary_array, filename):
+    """
+    Save an indexed PNG whose actual pixel indices are 0 and 1.
+
+    Palette:
+        index 0 -> white (void)
+        index 1 -> black (solid)
+
+    Thus the PNG both preserves the requested 0/1 encoding and visually
+    resembles a black-solid / white-void binary microstructure.
+    """
+    binary_array = np.asarray(binary_array, dtype=np.uint8)
+
+    if not np.all((binary_array == 0) | (binary_array == 1)):
+        raise ValueError("PNG input must contain only 0 and 1.")
+
+    image = Image.fromarray(binary_array, mode="P")
+
+    # Full 256-entry RGB palette required by indexed PNG.
+    palette = [
+        255, 255, 255,   # index 0: void -> white
+        0, 0, 0,         # index 1: solid -> black
+    ]
+    palette += [0, 0, 0] * 254
+
+    image.putpalette(palette)
+    image.save(filename, format="PNG", optimize=False)
+
+
+def main():
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    for seed in RANDOM_SEEDS:
+        microstructure = generate_microstructure(seed)
+
+        stem = f"microstructure_seed_{seed:02d}"
+
+        npy_path = OUTPUT_DIR / f"{stem}.npy"
+        png_path = OUTPUT_DIR / f"{stem}.png"
+
+        # .npy contains uint8 values exactly {0, 1}.
+        np.save(npy_path, microstructure)
+
+        # Indexed PNG also contains pixel indices exactly {0, 1}.
+        save_binary_png(microstructure, png_path)
+
+        print(
+            f"seed {seed:2d}: "
+            f"solid_fraction={microstructure.mean():.4f}  "
+            f"saved {png_path.name} and {npy_path.name}"
+        )
+
+    print(
+        f"\nGenerated {len(list(RANDOM_SEEDS))} independent "
+        f"{WIDTH}x{HEIGHT} realizations in:\n"
+        f"  {OUTPUT_DIR.resolve()}"
+    )
+
+
+if __name__ == "__main__":
+    main()

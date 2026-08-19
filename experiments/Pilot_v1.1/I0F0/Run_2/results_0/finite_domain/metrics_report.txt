@@ -1,0 +1,28 @@
+METAMATERIAL GENERATOR EVALUATION
+====================================
+Samples discovered: 20
+Samples evaluated: 20
+Valid samples: 0
+Failed samples: 0
+Validity rule: largest-component fraction >= 0.98 and percolation in both x and y.
+
+TARGET
+  solid_volume_fraction: 0.394699
+  largest_component_fraction: 0.992384
+  mean_strut_thickness_px: 6.53986
+  p10_strut_thickness_px: 4
+  median_pore_diameter_px: 16.4924
+
+ENSEMBLE METRICS (mean +/- population std)
+  solid_volume_fraction: all=0.604996 +/- 0 (n=20); valid=N/A +/- N/A (n=0)
+  largest_component_fraction: all=0.035243 +/- 0.0077499 (n=20); valid=N/A +/- N/A (n=0)
+  mean_strut_thickness: all=11.4859 +/- 0.275798 (n=20); valid=N/A +/- N/A (n=0)
+  p10_strut_thickness: all=4 +/- 0 (n=20); valid=N/A +/- N/A (n=0)
+  median_pore_diameter: all=2 +/- 0 (n=17); valid=N/A +/- N/A (n=0)
+  nrmse_s2: all=1.1909 +/- 0.0184292 (n=20); valid=N/A +/- N/A (n=0)
+  nrmse_lineal_path: all=0.83104 +/- 0.0225204 (n=20); valid=N/A +/- N/A (n=0)
+
+LLM REFINEMENT SIGNAL
+  Reduce mean nrmse_s2 to improve two-point spatial statistics; reduce mean nrmse_lineal_path to improve continuous solid-path statistics.
+  Increase valid_sample_count by enforcing one dominant 4-connected solid network spanning both image axes.
+  Thickness and pore dimensions are reported in pixels and should be compared against the target values above.

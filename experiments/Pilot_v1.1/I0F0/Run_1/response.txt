@@ -1,0 +1,425 @@
+Worked for 4m 43s
+
+#!/usr/bin/env python3
+"""
+Procedural generator for binary cellular microstructures.
+
+Algorithm
+---------
+The reference morphology is approximated as an irregular connected solid
+ligament network surrounding many compact void regions.
+
+Each realization is generated procedurally by:
+
+1. Placing a stochastic set of sites in and around the image domain.
+2. Constructing a Voronoi-like cellular tessellation.
+3. Elastically warping the coordinate system with smooth random fields so
+   cell boundaries are curved and irregular rather than straight polygons.
+4. Detecting the interfaces between neighboring cells.
+5. Computing distance from those interfaces.
+6. Giving the interfaces spatially varying thickness using additional
+   multiscale correlated random fields.
+7. Thresholding that continuous wall-distance field to obtain a binary
+   connected ligament network with a solid fraction near 0.395.
+
+No reference image, target pixels, external data, pretrained models,
+internet access, or APIs are used at runtime.
+
+Binary convention
+-----------------
+solid = 1
+void  = 0
+
+The .npy files are uint8 arrays containing exactly 0 and 1.
+The PNG files are saved as true 1-bit images with the same convention:
+solid pixels are logical 1 (displayed white), and void pixels are logical 0
+(displayed black).
+
+Adjustable morphology parameters are collected in MorphologyParameters
+below. The required image size, sample count, and seeds remain fixed at
+256x256, 20 samples, and seeds 0 through 19.
+"""
+
+from __future__ import annotations
+
+import argparse
+from dataclasses import dataclass
+from pathlib import Path
+
+import numpy as np
+from PIL import Image
+from scipy import ndimage
+from scipy.spatial import cKDTree
+
+
+# ---------------------------------------------------------------------------
+# Fixed requirements
+# ---------------------------------------------------------------------------
+
+IMAGE_SIZE = 256
+SEEDS = tuple(range(20))
+
+
+@dataclass(frozen=True)
+class MorphologyParameters:
+    """
+    Parameters controlling morphology.
+
+    mean_cells:
+        Approximate number of cellular void regions associated with a
+        256x256 interior domain. Larger values make finer structures.
+
+    padding:
+        Extra distance outside the image in which generator sites are also
+        placed. This avoids artificial behavior at the image borders.
+
+    minimum_site_separation:
+        Mild hard-core distance between random sites. Increasing this makes
+        void sizes more uniform; decreasing it increases size variability.
+
+    warp_sigma_range:
+        Correlation length, in pixels, of the smooth elastic coordinate warp.
+
+    warp_amplitude_range:
+        Approximate amplitude, in pixels, of the elastic warp. Larger values
+        produce more curved and irregular cell boundaries.
+
+    thickness_sigma_large / thickness_sigma_small:
+        Correlation scales controlling broad and local changes in wall
+        thickness.
+
+    thickness_variation_large / thickness_variation_small:
+        Strength of the corresponding wall-thickness variations.
+
+    target_solid_fraction:
+        Average desired fraction of pixels occupied by solid ligaments.
+
+    solid_fraction_std:
+        Sample-to-sample variation in solid fraction.
+
+    solid_fraction_bounds:
+        Hard bounds on stochastic solid-fraction variation.
+    """
+
+    mean_cells: float = 70.0
+    padding: int = 45
+    minimum_site_separation: float = 14.0
+
+    warp_sigma_range: tuple[float, float] = (13.5, 17.5)
+    warp_amplitude_range: tuple[float, float] = (4.8, 6.8)
+
+    thickness_sigma_large: tuple[float, float] = (10.0, 15.0)
+    thickness_sigma_small: tuple[float, float] = (2.5, 4.0)
+
+    thickness_variation_large: tuple[float, float] = (0.20, 0.28)
+    thickness_variation_small: tuple[float, float] = (0.04, 0.08)
+
+    score_smoothing_sigma: float = 0.50
+
+    target_solid_fraction: float = 0.395
+    solid_fraction_std: float = 0.010
+    solid_fraction_bounds: tuple[float, float] = (0.375, 0.415)
+
+
+PARAMS = MorphologyParameters()
+
+
+def smooth_standard_normal(
+    rng: np.random.Generator,
+    shape: tuple[int, int],
+    sigma: float,
+) -> np.ndarray:
+    """Create a zero-mean, unit-standard-deviation correlated random field."""
+    field = rng.standard_normal(shape)
+    field = ndimage.gaussian_filter(field, sigma=sigma, mode="reflect")
+
+    field -= field.mean()
+    std = field.std()
+
+    if std > 1.0e-12:
+        field /= std
+
+    return field
+
+
+def sample_generator_sites(
+    rng: np.random.Generator,
+    size: int,
+    params: MorphologyParameters,
+) -> np.ndarray:
+    """
+    Generate stochastic sites over a padded square domain.
+
+    A mild minimum-distance constraint suppresses pathological pairs of
+    nearly coincident sites without making the point pattern overly regular.
+    """
+    margin = params.padding
+    low = -float(margin)
+    high = float(size + margin)
+
+    interior_area = float(size * size)
+    padded_area = float((size + 2 * margin) ** 2)
+
+    site_density = params.mean_cells / interior_area
+    expected_sites = site_density * padded_area
+
+    # Poisson variation makes the number of cells itself stochastic.
+    n_sites = max(8, int(rng.poisson(expected_sites)))
+
+    min_dist_sq = params.minimum_site_separation ** 2
+    sites: list[np.ndarray] = []
+
+    # Rejection sampling is inexpensive here because the hard-core distance
+    # is substantially smaller than the typical inter-site spacing.
+    max_attempts = 200 * n_sites
+    attempts = 0
+
+    while len(sites) < n_sites and attempts < max_attempts:
+        candidate = rng.uniform(low, high, size=2)
+
+        if not sites:
+            sites.append(candidate)
+        else:
+            existing = np.asarray(sites)
+            sq_dist = np.sum((existing - candidate) ** 2, axis=1)
+
+            if np.all(sq_dist >= min_dist_sq):
+                sites.append(candidate)
+
+        attempts += 1
+
+    # This fallback is very unlikely to be needed with the default settings,
+    # but guarantees that the requested stochastic site count is achieved.
+    if len(sites) < n_sites:
+        n_missing = n_sites - len(sites)
+        extra = rng.uniform(low, high, size=(n_missing, 2))
+        sites.extend(extra)
+
+    return np.asarray(sites, dtype=np.float64)
+
+
+def make_cell_labels(
+    rng: np.random.Generator,
+    sites: np.ndarray,
+    size: int,
+    params: MorphologyParameters,
+) -> np.ndarray:
+    """
+    Construct a smoothly warped nearest-site tessellation.
+
+    The deformation field converts ordinary straight Voronoi interfaces into
+    curved, locally irregular interfaces while preserving a cellular topology.
+    """
+    yy, xx = np.mgrid[0:size, 0:size]
+
+    warp_sigma = rng.uniform(*params.warp_sigma_range)
+    warp_amplitude = rng.uniform(*params.warp_amplitude_range)
+
+    displacement_x = (
+        smooth_standard_normal(rng, (size, size), warp_sigma) * warp_amplitude
+    )
+    displacement_y = (
+        smooth_standard_normal(rng, (size, size), warp_sigma) * warp_amplitude
+    )
+
+    warped_x = xx + displacement_x
+    warped_y = yy + displacement_y
+
+    query_points = np.column_stack(
+        (
+            warped_x.ravel(),
+            warped_y.ravel(),
+        )
+    )
+
+    tree = cKDTree(sites)
+    _, nearest_site = tree.query(query_points, k=1)
+
+    return nearest_site.reshape(size, size)
+
+
+def cell_interfaces(labels: np.ndarray) -> np.ndarray:
+    """Return a one-pixel network marking interfaces between cell labels."""
+    boundary = np.zeros(labels.shape, dtype=bool)
+
+    vertical_change = labels[1:, :] != labels[:-1, :]
+    boundary[1:, :] |= vertical_change
+    boundary[:-1, :] |= vertical_change
+
+    horizontal_change = labels[:, 1:] != labels[:, :-1]
+    boundary[:, 1:] |= horizontal_change
+    boundary[:, :-1] |= horizontal_change
+
+    return boundary
+
+
+def generate_microstructure(
+    seed: int,
+    params: MorphologyParameters = PARAMS,
+) -> np.ndarray:
+    """
+    Generate one independent 256x256 uint8 binary microstructure.
+
+    Returns
+    -------
+    ndarray, shape (256, 256), dtype uint8
+        1 = solid ligament
+        0 = void
+    """
+    rng = np.random.default_rng(seed)
+    size = IMAGE_SIZE
+
+    # 1. Independent stochastic cellular seed pattern.
+    sites = sample_generator_sites(rng, size, params)
+
+    # 2. Irregular warped cellular tessellation.
+    labels = make_cell_labels(rng, sites, size, params)
+
+    # 3. Skeleton of interfaces separating neighboring void cells.
+    interface = cell_interfaces(labels)
+
+    # Distance in physical image coordinates from the interface network.
+    distance_from_interface = ndimage.distance_transform_edt(~interface)
+
+    # 4. Spatially varying ligament thickness.
+    sigma_large = rng.uniform(*params.thickness_sigma_large)
+    sigma_small = rng.uniform(*params.thickness_sigma_small)
+
+    noise_large = smooth_standard_normal(
+        rng, (size, size), sigma=sigma_large
+    )
+    noise_small = smooth_standard_normal(
+        rng, (size, size), sigma=sigma_small
+    )
+
+    variation_large = rng.uniform(*params.thickness_variation_large)
+    variation_small = rng.uniform(*params.thickness_variation_small)
+
+    # Lognormal form guarantees a positive local thickness multiplier.
+    variance_correction = 0.5 * (
+        variation_large**2 + variation_small**2
+    )
+
+    thickness_multiplier = np.exp(
+        variation_large * noise_large
+        + variation_small * noise_small
+        - variance_correction
+    )
+
+    # Small score = close to a cellular interface relative to local desired
+    # wall thickness. Thresholding this field creates finite-width ligaments.
+    wall_score = distance_from_interface / thickness_multiplier
+
+    wall_score = ndimage.gaussian_filter(
+        wall_score,
+        sigma=params.score_smoothing_sigma,
+        mode="reflect",
+    )
+
+    # 5. Give each realization a slightly different overall solid fraction.
+    target_fraction = rng.normal(
+        params.target_solid_fraction,
+        params.solid_fraction_std,
+    )
+
+    target_fraction = float(
+        np.clip(
+            target_fraction,
+            params.solid_fraction_bounds[0],
+            params.solid_fraction_bounds[1],
+        )
+    )
+
+    threshold = np.quantile(wall_score, target_fraction)
+
+    solid = wall_score <= threshold
+
+    result = solid.astype(np.uint8)
+
+    # Required invariants.
+    assert result.shape == (IMAGE_SIZE, IMAGE_SIZE)
+    assert result.dtype == np.uint8
+    assert np.all((result == 0) | (result == 1))
+
+    return result
+
+
+def save_microstructure(
+    microstructure: np.ndarray,
+    seed: int,
+    output_dir: Path,
+) -> None:
+    """Save one realization as both NPY and lossless 1-bit PNG."""
+    stem = f"microstructure_seed_{seed:02d}"
+
+    npy_path = output_dir / f"{stem}.npy"
+    png_path = output_dir / f"{stem}.png"
+
+    # Exact uint8 labels: solid=1, void=0.
+    np.save(npy_path, microstructure.astype(np.uint8))
+
+    # A true 1-bit PNG. PIL represents these pixels as booleans:
+    # False/0 = void (black), True/1 = solid (white).
+    png_image = Image.fromarray(microstructure.astype(bool))
+    png_image.save(png_path, format="PNG", optimize=False)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Generate 20 independent 256x256 procedural binary "
+            "microstructures using seeds 0 through 19."
+        )
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=Path("generated_microstructures"),
+        help="Output directory (default: generated_microstructures)",
+    )
+    args = parser.parse_args()
+
+    output_dir = args.output
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Keep byte strings to explicitly verify that all twenty realizations
+    # are genuinely different.
+    unique_realizations: set[bytes] = set()
+
+    print("Generating procedural binary microstructures")
+    print("Convention: solid=1, void=0")
+    print(f"Output directory: {output_dir.resolve()}")
+
+    for seed in SEEDS:
+        microstructure = generate_microstructure(seed, PARAMS)
+
+        key = microstructure.tobytes()
+
+        if key in unique_realizations:
+            raise RuntimeError(
+                f"Unexpected duplicate realization generated for seed {seed}"
+            )
+
+        unique_realizations.add(key)
+
+        save_microstructure(
+            microstructure=microstructure,
+            seed=seed,
+            output_dir=output_dir,
+        )
+
+        print(
+            f"seed {seed:2d}: "
+            f"solid fraction = {microstructure.mean():.4f}"
+        )
+
+    if len(unique_realizations) != 20:
+        raise RuntimeError("Twenty unique realizations were not produced.")
+
+    print()
+    print("Finished.")
+    print("Created 20 unique NPY files and 20 matching PNG files.")
+
+
+if __name__ == "__main__":
+    main()
