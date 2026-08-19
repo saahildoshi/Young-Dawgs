@@ -1,43 +1,35 @@
-# Pilot Voronoi Generator
+# Pilot Voronoi Experiment
 
-This experiment uses jittered staggered generator points, smooth coordinate
-warping, Voronoi cell boundaries, and spatially varying interface thickness to
-produce irregular cellular solid networks.
+This is the first stored procedural-generation trial. It creates 20
+deterministic, seed-controlled cellular networks using jittered generator
+points, smooth coordinate warping, Voronoi interfaces, and spatially varying
+strut thickness.
 
-The principal parameters are defined near the top of `iteration_0.py`:
-
-- `CELL_SPACING`: typical pore-cell spacing;
-- `POINT_JITTER` and `POINT_DROPOUT`: cell-size disorder;
-- `WARP_AMPLITUDE` and `WARP_SIGMA`: interface curvature scale;
-- `SOLID_HALF_WIDTH`: baseline half-strut thickness;
-- `WIDTH_VARIATION`: coarse thickness variability;
-- `ROUGHNESS_AMPLITUDE`: fine boundary roughness.
+| Path | Meaning |
+|---|---|
+| `generator_prompt.txt` | Original LLM prompt used to request the generator |
+| `generate_microstructures.py` | Reproducible generator for seeds 0 through 19 |
+| `provenance/` | Original LLM transcript retained as research provenance |
+| `samples/` | Numerical NPY samples and matching visualization PNGs |
+| `results/finite_domain/` | Current compact package report |
+| `results/periodic/` | Current v1.1 diagnostics, JSON, and five figures |
+| `archive/v1_0/` | Superseded v1.0 outputs; do not use as the baseline |
 
 Run from the repository root:
 
 ```bash
-python tests/pilot_voronoi/iteration_0.py \
-  --output-dir tests/pilot_voronoi/generated_microstructures
-```
+python experiments/pilot_voronoi/generate_microstructures.py \
+  --output-dir experiments/pilot_voronoi/samples
 
-Then evaluate:
-
-```bash
 python -m metamaterial_eval evaluate \
   data/reference/reference_binary.npy \
-  tests/pilot_voronoi/generated_microstructures
-```
+  experiments/pilot_voronoi/samples \
+  --output-dir experiments/pilot_voronoi/results/finite_domain
 
-Generate the periodic ensemble diagnostics and figures:
-
-```bash
 python scripts/evaluate_and_plot.py
 ```
 
-The generator is deterministic for a specified seed. Re-running seeds 0-19
-with unchanged code reproduces the existing arrays exactly.
-
-`generated_microstructures/metrics_report.json` and `.txt` use the validated
-v1.1 dimension definitions. The files containing `v1_0_legacy` preserve the
-pre-validation pixel-weighted EDT report for provenance only and must not be
-used as the research baseline.
+The main generator parameters are defined near the top of
+`generate_microstructures.py`: `CELL_SPACING`, `POINT_JITTER`,
+`POINT_DROPOUT`, `WARP_AMPLITUDE`, `WARP_SIGMA`, `SOLID_HALF_WIDTH`,
+`WIDTH_VARIATION`, and `ROUGHNESS_AMPLITUDE`.

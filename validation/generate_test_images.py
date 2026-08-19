@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 
 
-OUTPUT = Path(__file__).resolve().parent / "test_images"
+OUTPUT = Path(__file__).resolve().parent / "fixtures"
 
 
 def save(name: str, image: np.ndarray) -> None:

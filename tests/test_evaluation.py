@@ -142,15 +142,20 @@ class IoAndEvaluationTests(unittest.TestCase):
             np.save(folder / "seed_1.npy", invalid, allow_pickle=False)
             (folder / "broken.npy").write_bytes(b"not a numpy file")
 
-            report = evaluate_generator_output(target_dict, folder)
+            reports = folder / "reports"
+            report = evaluate_generator_output(
+                target_dict,
+                folder,
+                output_dir=reports,
+            )
             self.assertEqual(report["sample_count"], 3)
             self.assertEqual(report["evaluated_sample_count"], 2)
             self.assertEqual(report["valid_sample_count"], 1)
             self.assertEqual(report["failed_sample_count"], 1)
             self.assertAlmostEqual(report["samples"][0]["nrmse_s2"], 0.0)
-            self.assertTrue((folder / "metrics_report.json").is_file())
-            self.assertTrue((folder / "metrics_report.txt").is_file())
-            with (folder / "metrics_report.json").open(encoding="utf-8") as stream:
+            self.assertTrue((reports / "metrics_report.json").is_file())
+            self.assertTrue((reports / "metrics_report.txt").is_file())
+            with (reports / "metrics_report.json").open(encoding="utf-8") as stream:
                 persisted = json.load(stream)
             self.assertEqual(persisted["schema_version"], "1.0")
 

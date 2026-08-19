@@ -297,7 +297,9 @@ def _text_report(report: dict[str, Any]) -> str:
 
 
 def evaluate_generator_output(
-    target_dict: dict[str, Any], samples_folder: str | Path
+    target_dict: dict[str, Any],
+    samples_folder: str | Path,
+    output_dir: str | Path | None = None,
 ) -> dict[str, Any]:
     """Evaluate all unique ``.npy``/``.png`` samples and write two reports.
 
@@ -314,7 +316,12 @@ def evaluate_generator_output(
             f"Samples path is not a file or directory: {samples_path}"
         )
 
-    output_dir = samples_path.parent if samples_path.is_file() else samples_path
+    report_dir = (
+        Path(output_dir)
+        if output_dir is not None
+        else (samples_path.parent if samples_path.is_file() else samples_path)
+    )
+    report_dir.mkdir(parents=True, exist_ok=True)
 
     target = _canonicalize_target(target_dict)
     max_r = target["_max_r"]
@@ -371,8 +378,8 @@ def evaluate_generator_output(
     }
     safe_report = _json_safe(report)
 
-    json_path = output_dir / "metrics_report.json"
-    text_path = output_dir / "metrics_report.txt"
+    json_path = report_dir / "metrics_report.json"
+    text_path = report_dir / "metrics_report.txt"
     with json_path.open("w", encoding="utf-8") as stream:
         json.dump(safe_report, stream, indent=2, allow_nan=False)
         stream.write("\n")

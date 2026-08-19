@@ -266,10 +266,10 @@ def main() -> None:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("generated_microstructures"),
+        default=Path("experiments/pilot_voronoi/samples"),
         help=(
             "Directory for PNG and NPY outputs "
-            "(default: generated_microstructures)."
+            "(default: experiments/pilot_voronoi/samples)."
         ),
     )
 

@@ -9,9 +9,9 @@ Euclidean distance-transform measurements use the ordinary finite image.
 Example
 -------
 python scripts/evaluate_and_plot.py \
-    tests/pilot_voronoi/generated_microstructures \
+    experiments/pilot_voronoi/samples \
     --target data/reference/reference_binary.npy \
-    --output-dir tests/pilot_voronoi/evaluation_results
+    --output-dir experiments/pilot_voronoi/results/periodic
 """
 
 from __future__ import annotations
@@ -813,10 +813,10 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         "samples_dir",
         nargs="?",
         type=Path,
-        default=Path("tests/pilot_voronoi/generated_microstructures"),
+        default=Path("experiments/pilot_voronoi/samples"),
         help=(
             "directory containing generated .npy arrays "
-            "(default: tests/pilot_voronoi/generated_microstructures)"
+            "(default: experiments/pilot_voronoi/samples)"
         ),
     )
     parser.add_argument(
@@ -831,10 +831,10 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("tests/pilot_voronoi/evaluation_results"),
+        default=Path("experiments/pilot_voronoi/results/periodic"),
         help=(
             "directory for JSON and figures "
-            "(default: tests/pilot_voronoi/evaluation_results)"
+            "(default: experiments/pilot_voronoi/results/periodic)"
         ),
     )
     parser.add_argument(

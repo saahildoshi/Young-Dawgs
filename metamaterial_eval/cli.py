@@ -39,6 +39,14 @@ def build_parser() -> argparse.ArgumentParser:
     evaluate.add_argument("--threshold", type=float, default=0.5)
     evaluate.add_argument("--shape", type=_shape, default=(256, 256))
     evaluate.add_argument("--max-r", type=int, default=64)
+    evaluate.add_argument(
+        "--output-dir",
+        type=Path,
+        help=(
+            "directory for metrics_report.json and metrics_report.txt; "
+            "defaults to the sample directory"
+        ),
+    )
     return parser
 
 
@@ -56,8 +64,12 @@ def main() -> None:
         args.target, threshold=args.threshold, expected_shape=args.shape
     )
     target_dict = make_target_dict(target, max_r=args.max_r)
-    report = evaluate_generator_output(target_dict, args.samples_folder)
-    output_dir = (
+    report = evaluate_generator_output(
+        target_dict,
+        args.samples_folder,
+        output_dir=args.output_dir,
+    )
+    output_dir = args.output_dir or (
         args.samples_folder.parent
         if args.samples_folder.is_file()
         else args.samples_folder

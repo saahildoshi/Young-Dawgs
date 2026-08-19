@@ -103,7 +103,7 @@ The stored pre-validation report records:
 
 Those dimension values used rejected pixel-weighted EDT sampling and must not
 be treated as the physical-dimension baseline. The validated v1.1 baseline is
-recorded in `evaluator_validation/validation_notes.md`.
+recorded in `validation/validation_notes.md`.
 
 ## Improved periodic evaluator
 

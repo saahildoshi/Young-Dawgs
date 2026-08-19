@@ -19,7 +19,7 @@ VALIDATION_ROOT = Path(__file__).resolve().parent
 EVALUATOR_PATH = Path(
     os.environ.get(
         "EVALUATOR_PATH",
-        VALIDATION_ROOT / "evaluator" / "evaluator_v1_0.py",
+        VALIDATION_ROOT / "evaluators" / "evaluator_v1_0.py",
     )
 )
 SPEC = importlib.util.spec_from_file_location("evaluator_under_test", EVALUATOR_PATH)
