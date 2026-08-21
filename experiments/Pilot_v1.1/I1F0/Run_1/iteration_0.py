@@ -1,0 +1,781 @@
+from __future__ import annotations
+
+from pathlib import Path
+
+import imageio.v3 as iio
+import numpy as np
+from scipy import ndimage as ndi
+
+
+# ------------------------------ adjustable parameters ------------------------------
+
+SIZE = 256
+SEEDS = range(20)
+OUTPUT_DIR = Path("generated_microstructures")
+
+# Number of irregular pore cells. The reference-like scale is roughly 90 cells
+# in a 256 x 256 image. A small per-realization variation increases stochasticity.
+N_CELLS_RANGE = (86, 97)  # inclusive lower, exclusive upper
+
+# Overall solid fraction is calibrated per realization before connectivity repair.
+TARGET_SOLID_FRACTION = (0.385, 0.405)
+
+# Smooth coordinate warps bend otherwise polygonal cell boundaries into vein-like
+# paths. Each tuple is (Gaussian correlation length in pixels, RMS displacement).
+WARP_COMPONENTS = ((30.0, 3.5), (10.0, 2.8), (4.0, 1.0))
+
+# Mild directional organization: the distance metric is stretched along one
+# randomly selected principal direction.
+ANISOTROPY_RANGE = (1.06, 1.18)
+
+# Low-frequency modulation of local strut half-thickness.
+THICKNESS_FIELD_SIGMA = 10.0
+THICKNESS_FIELD_AMPLITUDE = 0.65
+
+# The raw phase boundaries are always dilated by this 4-connected diamond,
+# preventing one-pixel branches. Connectivity/spanning repair uses a thicker one.
+MIN_STRUT_DILATION_RADIUS = 1
+CONNECTOR_RADIUS = 2
+
+# Poisson-like seed placement parameters.
+SATELLITE_FRACTION_START = 0.70
+SATELLITE_PROBABILITY = 0.50
+SATELLITE_RADIUS_RANGE = (9.0, 18.0)
+MIN_SATELLITE_SEPARATION = 7.5
+
+
+# ------------------------------ basic morphology ------------------------------
+
+CROSS4 = np.array(
+    [[0, 1, 0],
+     [1, 1, 1],
+     [0, 1, 0]],
+    dtype=bool,
+)
+
+
+def diamond(radius: int) -> np.ndarray:
+    """4-connected diamond structuring element."""
+    y, x = np.ogrid[-radius:radius + 1, -radius:radius + 1]
+    return (np.abs(x) + np.abs(y)) <= radius
+
+
+def normalized_smooth_noise(
+    rng: np.random.Generator,
+    shape: tuple[int, int],
+    sigma: float,
+) -> np.ndarray:
+    """Zero-mean, unit-RMS smooth Gaussian random field."""
+    z = ndi.gaussian_filter(rng.normal(size=shape), sigma=sigma, mode="reflect")
+    z -= z.mean()
+    z /= z.std() + 1.0e-12
+    return z
+
+
+# ------------------------------ stochastic pore centers ------------------------------
+
+def sample_pore_centers(
+    rng: np.random.Generator,
+    n: int,
+    height: int,
+    width: int,
+) -> np.ndarray:
+    """
+    Generate disordered pore centers.
+
+    Most points use best-candidate blue-noise placement so the feature scale stays
+    controlled. The late-stage "satellite" points deliberately broaden the pore-size
+    distribution and avoid an overly regular Voronoi foam.
+    """
+    margin = 2.0
+    points = [
+        np.array(
+            [
+                rng.uniform(margin, width - 1 - margin),   # x
+                rng.uniform(margin, height - 1 - margin), # y
+            ],
+            dtype=float,
+        )
+    ]
+
+    for i in range(1, n):
+        # Add some closer late-stage neighbors to create smaller secondary pores.
+        if (
+            i > int(SATELLITE_FRACTION_START * n)
+            and rng.random() < SATELLITE_PROBABILITY
+        ):
+            accepted = False
+
+            for _ in range(30):
+                parent = points[rng.integers(len(points))]
+                radius = rng.uniform(*SATELLITE_RADIUS_RANGE)
+                angle = rng.uniform(0.0, 2.0 * np.pi)
+
+                candidate = parent + radius * np.array(
+                    [np.cos(angle), np.sin(angle)]
+                )
+
+                candidate[0] = np.clip(
+                    candidate[0],
+                    margin,
+                    width - 1 - margin,
+                )
+                candidate[1] = np.clip(
+                    candidate[1],
+                    margin,
+                    height - 1 - margin,
+                )
+
+                current = np.asarray(points)
+                distances = np.sqrt(
+                    np.sum((current - candidate) ** 2, axis=1)
+                )
+
+                if distances.min() >= MIN_SATELLITE_SEPARATION:
+                    points.append(candidate)
+                    accepted = True
+                    break
+
+            if accepted:
+                continue
+
+        # Best-candidate sampling: pick the candidate farthest from existing points.
+        # Using fewer candidates late in the process keeps the pattern disordered.
+        n_candidates = 24 if i < int(0.60 * n) else 10
+
+        candidates = np.column_stack(
+            [
+                rng.uniform(
+                    margin,
+                    width - 1 - margin,
+                    n_candidates,
+                ),
+                rng.uniform(
+                    margin,
+                    height - 1 - margin,
+                    n_candidates,
+                ),
+            ]
+        )
+
+        current = np.asarray(points)
+
+        d2 = np.sum(
+            (candidates[:, None, :] - current[None, :, :]) ** 2,
+            axis=2,
+        )
+
+        score = d2.min(axis=1)
+        points.append(candidates[np.argmax(score)])
+
+    return np.asarray(points)
+
+
+# ------------------------------ warped cellular partition ------------------------------
+
+def make_partition(
+    rng: np.random.Generator,
+    height: int,
+    width: int,
+    n_cells: int,
+) -> np.ndarray:
+    """
+    Create a warped, mildly anisotropic nearest-seed partition.
+
+    The partition boundaries are later converted into the solid vein network.
+    """
+    centers = sample_pore_centers(
+        rng,
+        n_cells,
+        height,
+        width,
+    )
+
+    yy, xx = np.mgrid[0:height, 0:width].astype(float)
+
+    # Multiscale displacement fields give both long-scale curvature and
+    # smaller-scale irregularity without smoothing the final binary result.
+    dx = np.zeros((height, width), dtype=float)
+    dy = np.zeros((height, width), dtype=float)
+
+    for sigma, amplitude in WARP_COMPONENTS:
+        dx += amplitude * normalized_smooth_noise(
+            rng,
+            (height, width),
+            sigma,
+        )
+        dy += amplitude * normalized_smooth_noise(
+            rng,
+            (height, width),
+            sigma,
+        )
+
+    xw = xx + dx
+    yw = yy + dy
+
+    # Mild anisotropy produces a preferred organization direction without
+    # creating a periodic lattice.
+    theta = rng.uniform(0.0, np.pi)
+
+    c = np.cos(theta)
+    s = np.sin(theta)
+
+    ratio = rng.uniform(*ANISOTROPY_RANGE)
+
+    cx = 0.5 * (width - 1)
+    cy = 0.5 * (height - 1)
+
+    x0 = xw - cx
+    y0 = yw - cy
+
+    # Rotate to the local principal frame and stretch the distance metric.
+    u = (c * x0 + s * y0) / ratio
+    v = (-s * x0 + c * y0) * ratio
+
+    px = centers[:, 0] - cx
+    py = centers[:, 1] - cy
+
+    pu = (c * px + s * py) / ratio
+    pv = (-s * px + c * py) * ratio
+
+    labels = np.empty(
+        (height, width),
+        dtype=np.int16,
+    )
+
+    best_distance = np.full(
+        (height, width),
+        np.inf,
+        dtype=float,
+    )
+
+    # Loop over pore seeds instead of allocating an H x W x N distance cube.
+    for k in range(n_cells):
+        d2 = (
+            (u - pu[k]) ** 2
+            + (v - pv[k]) ** 2
+        )
+
+        take = d2 < best_distance
+
+        labels[take] = k
+        best_distance[take] = d2[take]
+
+    return labels
+
+
+def partition_boundaries(
+    labels: np.ndarray,
+) -> np.ndarray:
+    """
+    Mark both pixels adjacent to every 4-neighbor label transition.
+
+    Marking both sides creates a robust raster skeleton before thickness
+    is added.
+    """
+    boundary = np.zeros_like(
+        labels,
+        dtype=bool,
+    )
+
+    # Left/right label transitions.
+    change = labels[:, 1:] != labels[:, :-1]
+
+    boundary[:, 1:] |= change
+    boundary[:, :-1] |= change
+
+    # Up/down label transitions.
+    change = labels[1:, :] != labels[:-1, :]
+
+    boundary[1:, :] |= change
+    boundary[:-1, :] |= change
+
+    return boundary
+
+
+# ------------------------------ connectivity and spanning ------------------------------
+
+def draw_thick_4connected_segment(
+    mask: np.ndarray,
+    p0: tuple[int, int],
+    p1: tuple[int, int],
+    radius: int,
+) -> np.ndarray:
+    """
+    Add a raster segment from p0=(y,x) to p1=(y,x).
+
+    Any diagonal raster move receives an explicit orthogonal bridge before
+    the line is thickened with a 4-connected diamond. Therefore the result
+    cannot depend on corner-only contacts.
+    """
+    out = mask.copy()
+
+    y0, x0 = map(int, p0)
+    y1, x1 = map(int, p1)
+
+    steps = max(
+        abs(y1 - y0),
+        abs(x1 - x0),
+        1,
+    )
+
+    ys = np.rint(
+        np.linspace(
+            y0,
+            y1,
+            steps + 1,
+        )
+    ).astype(int)
+
+    xs = np.rint(
+        np.linspace(
+            x0,
+            x1,
+            steps + 1,
+        )
+    ).astype(int)
+
+    path = np.zeros_like(
+        out,
+        dtype=bool,
+    )
+
+    prev_y = ys[0]
+    prev_x = xs[0]
+
+    path[prev_y, prev_x] = True
+
+    for y, x in zip(
+        ys[1:],
+        xs[1:],
+    ):
+        # If rounding causes a diagonal move, insert an orthogonal pixel.
+        if y != prev_y and x != prev_x:
+            path[prev_y, x] = True
+
+        path[y, x] = True
+
+        prev_y = y
+        prev_x = x
+
+    path = ndi.binary_dilation(
+        path,
+        structure=diamond(radius),
+    )
+
+    out |= path
+
+    return out
+
+
+def connect_all_solid_components(
+    mask: np.ndarray,
+) -> np.ndarray:
+    """
+    Guarantee exactly one 4-connected solid component.
+
+    In normal realizations the thickened cellular boundaries already form
+    one component. This routine is a safeguard against unusual raster
+    configurations.
+    """
+    out = mask.copy()
+
+    for _ in range(512):
+        labels, n_components = ndi.label(
+            out,
+            structure=CROSS4,
+        )
+
+        if n_components <= 1:
+            return out
+
+        sizes = np.bincount(
+            labels.ravel()
+        )
+
+        main_label = (
+            1
+            + np.argmax(
+                sizes[1:]
+            )
+        )
+
+        main = (
+            labels
+            == main_label
+        )
+
+        # For every pixel, obtain the distance and nearest coordinates
+        # to the dominant connected component.
+        distance, nearest = ndi.distance_transform_edt(
+            ~main,
+            return_indices=True,
+        )
+
+        other_labels = [
+            k
+            for k in range(
+                1,
+                n_components + 1,
+            )
+            if k != main_label
+        ]
+
+        # Connect the largest remaining fragment first.
+        other_label = max(
+            other_labels,
+            key=lambda k: sizes[k],
+        )
+
+        ys, xs = np.where(
+            labels == other_label
+        )
+
+        k = np.argmin(
+            distance[ys, xs]
+        )
+
+        y = int(ys[k])
+        x = int(xs[k])
+
+        near_y = int(
+            nearest[0, y, x]
+        )
+
+        near_x = int(
+            nearest[1, y, x]
+        )
+
+        out = draw_thick_4connected_segment(
+            out,
+            (y, x),
+            (near_y, near_x),
+            CONNECTOR_RADIUS,
+        )
+
+    raise RuntimeError(
+        "Could not merge all solid components."
+    )
+
+
+def enforce_four_side_spanning(
+    mask: np.ndarray,
+) -> np.ndarray:
+    """
+    Ensure that the connected solid network touches all four domain sides.
+
+    A single component touching left and right contains a horizontal
+    spanning path; touching top and bottom similarly gives a vertical
+    spanning path.
+    """
+    out = mask.copy()
+
+    height, width = out.shape
+
+    # Left side.
+    if not out[:, 0].any():
+        ys, xs = np.where(out)
+
+        k = np.argmin(xs)
+
+        out = draw_thick_4connected_segment(
+            out,
+            (
+                int(ys[k]),
+                int(xs[k]),
+            ),
+            (
+                int(ys[k]),
+                0,
+            ),
+            CONNECTOR_RADIUS,
+        )
+
+    # Right side.
+    if not out[:, -1].any():
+        ys, xs = np.where(out)
+
+        k = np.argmax(xs)
+
+        out = draw_thick_4connected_segment(
+            out,
+            (
+                int(ys[k]),
+                int(xs[k]),
+            ),
+            (
+                int(ys[k]),
+                width - 1,
+            ),
+            CONNECTOR_RADIUS,
+        )
+
+    # Top side.
+    if not out[0, :].any():
+        ys, xs = np.where(out)
+
+        k = np.argmin(ys)
+
+        out = draw_thick_4connected_segment(
+            out,
+            (
+                int(ys[k]),
+                int(xs[k]),
+            ),
+            (
+                0,
+                int(xs[k]),
+            ),
+            CONNECTOR_RADIUS,
+        )
+
+    # Bottom side.
+    if not out[-1, :].any():
+        ys, xs = np.where(out)
+
+        k = np.argmax(ys)
+
+        out = draw_thick_4connected_segment(
+            out,
+            (
+                int(ys[k]),
+                int(xs[k]),
+            ),
+            (
+                height - 1,
+                int(xs[k]),
+            ),
+            CONNECTOR_RADIUS,
+        )
+
+    return out
+
+
+# ------------------------------ one realization ------------------------------
+
+def generate_microstructure(
+    seed: int,
+) -> np.ndarray:
+    """
+    Return a 256 x 256 uint8 array with solid=1 and void=0.
+    """
+    rng = np.random.default_rng(
+        seed
+    )
+
+    # The number of pores varies modestly from one realization to another.
+    n_cells = int(
+        rng.integers(
+            *N_CELLS_RANGE
+        )
+    )
+
+    labels = make_partition(
+        rng,
+        SIZE,
+        SIZE,
+        n_cells,
+    )
+
+    boundary = partition_boundaries(
+        labels
+    )
+
+    # Euclidean distance to the cellular interface.
+    distance_to_boundary = (
+        ndi.distance_transform_edt(
+            ~boundary
+        )
+    )
+
+    # A slowly varying random thickness field creates strong and weak vein
+    # segments without ever blurring the final binary structure.
+    thickness_noise = (
+        normalized_smooth_noise(
+            rng,
+            (SIZE, SIZE),
+            THICKNESS_FIELD_SIGMA,
+        )
+    )
+
+    thickness_variation = (
+        THICKNESS_FIELD_AMPLITUDE
+        * thickness_noise
+    )
+
+    target_fraction = rng.uniform(
+        *TARGET_SOLID_FRACTION
+    )
+
+    # Calibrate the global half-thickness by bisection so that stochastic
+    # changes in the pore geometry do not produce a wildly varying phase
+    # fraction.
+    lo = 0.2
+    hi = 5.0
+
+    for _ in range(22):
+        mid = 0.5 * (
+            lo + hi
+        )
+
+        trial = (
+            distance_to_boundary
+            <= (
+                mid
+                + thickness_variation
+            )
+        )
+
+        if trial.mean() < target_fraction:
+            lo = mid
+        else:
+            hi = mid
+
+    half_thickness = (
+        0.5 * (lo + hi)
+    )
+
+    solid = (
+        distance_to_boundary
+        <= (
+            half_thickness
+            + thickness_variation
+        )
+    )
+
+    # Enforce a minimum width around every cellular interface. This is the
+    # main protection against one-pixel branches and fragile diagonal contacts.
+    solid |= ndi.binary_dilation(
+        boundary,
+        structure=diamond(
+            MIN_STRUT_DILATION_RADIUS
+        ),
+    )
+
+    # Guarantee a single 4-connected load path.
+    solid = connect_all_solid_components(
+        solid
+    )
+
+    # Guarantee horizontal and vertical spanning.
+    solid = enforce_four_side_spanning(
+        solid
+    )
+
+    # Final safeguard after spanning operations.
+    solid = connect_all_solid_components(
+        solid
+    )
+
+    result = solid.astype(
+        np.uint8
+    )
+
+    # ----------------------- hard output validation -----------------------
+
+    if result.shape != (
+        SIZE,
+        SIZE,
+    ):
+        raise AssertionError(
+            "Unexpected output shape."
+        )
+
+    if not np.all(
+        (result == 0)
+        | (result == 1)
+    ):
+        raise AssertionError(
+            "Output is not binary 0/1."
+        )
+
+    _, n_components = ndi.label(
+        result.astype(bool),
+        structure=CROSS4,
+    )
+
+    if n_components != 1:
+        raise AssertionError(
+            "Solid phase is not a single 4-connected component."
+        )
+
+    # Since the solid is one connected component, touching opposite sides
+    # proves both horizontal and vertical spanning paths.
+    touches_left = result[:, 0].any()
+    touches_right = result[:, -1].any()
+    touches_top = result[0, :].any()
+    touches_bottom = result[-1, :].any()
+
+    if not (
+        touches_left
+        and touches_right
+        and touches_top
+        and touches_bottom
+    ):
+        raise AssertionError(
+            "Solid network does not span all four domain sides."
+        )
+
+    return result
+
+
+# ------------------------------ batch generation ------------------------------
+
+def main() -> None:
+    OUTPUT_DIR.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    seen = set()
+
+    for seed in SEEDS:
+        sample = (
+            generate_microstructure(
+                seed
+            )
+        )
+
+        # Verify that all twenty seeded realizations are genuinely different.
+        signature = np.packbits(
+            sample,
+            axis=None,
+        ).tobytes()
+
+        if signature in seen:
+            raise RuntimeError(
+                f"Duplicate realization produced for seed {seed}."
+            )
+
+        seen.add(
+            signature
+        )
+
+        stem = (
+            OUTPUT_DIR
+            / f"microstructure_seed_{seed:02d}"
+        )
+
+        # NPY contains exactly the required phase representation:
+        # 1 = solid, 0 = void.
+        np.save(
+            stem.with_suffix(".npy"),
+            sample,
+        )
+
+        # PNG uses conventional display intensities:
+        # white = solid, black = void.
+        iio.imwrite(
+            stem.with_suffix(".png"),
+            sample * np.uint8(255),
+        )
+
+        print(
+            f"seed={seed:02d}  "
+            f"solid_fraction={sample.mean():.4f}  "
+            f"saved={stem.name}.png/.npy"
+        )
+
+
+if __name__ == "__main__":
+    main()

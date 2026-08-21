@@ -1,0 +1,522 @@
+I will revise the generator by keeping the successful interface-network approach and making targeted changes rather than changing the morphology class:
+
+- Keep the achieved volume fraction (~0.396), percolation, thickness, and pore-size behavior.
+- Reduce two-point correlation error by adding a controlled multi-scale correlation correction:
+  - introduce a weak low-frequency modulation of interface density,
+  - slightly reduce the overly uniform Voronoi spacing,
+  - increase medium-range structural variability without changing the global solid fraction.
+- Reduce lineal-path error by making the solid skeleton less perfectly uniform:
+  - add node thickening at interface junctions,
+  - preserve narrow struts while increasing realistic connectivity variation.
+- Preserve deterministic seeds 0–19, filenames, dimensions, dependencies, and phase convention.
+
+Because the previous response is already a full script and the revised script is long, I will provide the complete replacement script in the next message.
+
+**Resent the initial prompt 2 and received this response: 
+
+```python
+#!/usr/bin/env python3
+"""
+Revision 2 procedural binary microstructure generator.
+
+This generator creates stochastic 256x256 binary microstructures with:
+
+    solid = 1
+    void  = 0
+
+The morphology is based on a warped stochastic cellular skeleton:
+
+1. Random nuclei create a periodic Voronoi-like cellular network.
+2. Two-scale Gaussian displacement fields warp the cellular geometry.
+3. Cell interfaces become the initial solid skeleton.
+4. Interface distance is thresholded to create finite-width struts.
+5. A correlated multi-scale field modifies interface density and junction
+   thickness, improving two-point correlation and lineal-path statistics.
+6. The threshold is automatically adjusted to maintain the target solid
+   volume fraction.
+7. A 4-connected spanning solid component is enforced.
+
+No reference image, traced pixels, datasets, pretrained models, APIs, or
+internet access are used.
+
+Outputs:
+    generated_microstructures/
+        microstructure_seed_00.png
+        microstructure_seed_00.npy
+        ...
+        microstructure_seed_19.png
+        microstructure_seed_19.npy
+
+
+Dependencies:
+    numpy
+    scipy
+    Pillow
+"""
+
+from pathlib import Path
+
+import numpy as np
+from PIL import Image
+
+from scipy.ndimage import (
+    gaussian_filter,
+    distance_transform_edt,
+    label,
+    generate_binary_structure,
+)
+from scipy.spatial import cKDTree
+
+
+# ============================================================================
+# Parameters
+# ============================================================================
+
+SIZE = 256
+N_SAMPLES = 20
+
+OUTPUT_DIR = Path("generated_microstructures")
+
+
+# Cellular scale
+BASE_NUCLEI = 72
+NUCLEI_JITTER = 4
+
+
+# Geometry warping
+COARSE_WARP_SIGMA = 16.0
+COARSE_WARP_AMPLITUDE = 3.0
+
+FINE_WARP_SIGMA = 4.5
+FINE_WARP_AMPLITUDE = 1.25
+
+
+# Strut dimensions
+TARGET_SOLID_FRACTION = 0.3947
+
+WIDTH_MEAN_MIN = 1.5
+WIDTH_MEAN_MAX = 4.0
+WIDTH_SEARCH_STEPS = 26
+
+MIN_HALF_WIDTH = 0.5
+MAX_HALF_WIDTH = 4.5
+
+
+# Width fluctuations
+WIDTH_NOISE_SIGMA = 20.0
+WIDTH_JITTER = 0.85
+
+
+# New revision parameters:
+# Medium-scale modulation improves S2 and lineal-path statistics without
+# changing the global solid fraction.
+
+INTERFACE_DENSITY_SIGMA = 32.0
+INTERFACE_DENSITY_STRENGTH = 0.12
+
+NODE_THICKENING_SIGMA = 5.0
+NODE_THICKENING_STRENGTH = 0.35
+
+
+# Connectivity
+FOUR_CONNECTED = generate_binary_structure(2, 1)
+
+
+# ============================================================================
+# Random fields
+# ============================================================================
+
+def smooth_noise(rng, shape, sigma):
+    field = rng.standard_normal(shape)
+    field = gaussian_filter(field, sigma=sigma, mode="wrap")
+
+    field -= field.mean()
+
+    std = field.std()
+
+    if std < 1e-12:
+        return np.zeros(shape)
+
+    return field / std
+
+
+def make_warp(rng):
+    shape = (SIZE, SIZE)
+
+    coarse_y = smooth_noise(
+        rng, shape, COARSE_WARP_SIGMA
+    )
+    coarse_x = smooth_noise(
+        rng, shape, COARSE_WARP_SIGMA
+    )
+
+    fine_y = smooth_noise(
+        rng, shape, FINE_WARP_SIGMA
+    )
+    fine_x = smooth_noise(
+        rng, shape, FINE_WARP_SIGMA
+    )
+
+    dy = (
+        COARSE_WARP_AMPLITUDE * coarse_y
+        + FINE_WARP_AMPLITUDE * fine_y
+    )
+
+    dx = (
+        COARSE_WARP_AMPLITUDE * coarse_x
+        + FINE_WARP_AMPLITUDE * fine_x
+    )
+
+    return dy, dx
+
+
+# ============================================================================
+# Cellular interface construction
+# ============================================================================
+
+def build_interface(rng):
+
+    n = BASE_NUCLEI + rng.integers(
+        -NUCLEI_JITTER,
+        NUCLEI_JITTER + 1
+    )
+
+    nuclei = rng.uniform(
+        0,
+        SIZE,
+        size=(n, 2)
+    )
+
+    yy, xx = np.indices(
+        (SIZE, SIZE),
+        dtype=float
+    )
+
+    dy, dx = make_warp(rng)
+
+    yy = np.mod(
+        yy + dy,
+        SIZE
+    )
+
+    xx = np.mod(
+        xx + dx,
+        SIZE
+    )
+
+    points = np.column_stack(
+        (
+            yy.ravel(),
+            xx.ravel()
+        )
+    )
+
+    tree = cKDTree(
+        nuclei,
+        boxsize=(SIZE, SIZE)
+    )
+
+    _, labels = tree.query(points)
+
+    labels = labels.reshape(
+        SIZE,
+        SIZE
+    )
+
+    interface = np.zeros(
+        (SIZE, SIZE),
+        dtype=bool
+    )
+
+    interface |= labels != np.roll(labels, 1, axis=0)
+    interface |= labels != np.roll(labels, -1, axis=0)
+    interface |= labels != np.roll(labels, 1, axis=1)
+    interface |= labels != np.roll(labels, -1, axis=1)
+
+    return interface
+
+
+def periodic_distance(mask):
+
+    tiled = np.tile(
+        mask,
+        (3, 3)
+    )
+
+    dist = distance_transform_edt(
+        ~tiled
+    )
+
+    return dist[
+        SIZE:2*SIZE,
+        SIZE:2*SIZE
+    ]
+
+
+# ============================================================================
+# Connectivity
+# ============================================================================
+
+def largest_component(binary):
+
+    lab, count = label(
+        binary,
+        structure=FOUR_CONNECTED
+    )
+
+    if count == 0:
+        return lab, 0
+
+    sizes = np.bincount(
+        lab.ravel()
+    )
+
+    sizes[0] = 0
+
+    return lab, np.argmax(sizes)
+
+
+def enforce_connectivity(binary):
+
+    binary = binary.copy()
+
+    lab, idx = largest_component(binary)
+
+    if idx == 0:
+        binary[SIZE//2, SIZE//2] = True
+        return binary
+
+    component = lab == idx
+
+    ys, xs = np.where(component)
+
+    # Add minimal deterministic bridges.
+    if not component[:, 0].any():
+        y = ys[np.argmin(xs)]
+        binary[y, :] = True
+
+    if not component[:, -1].any():
+        y = ys[np.argmax(xs)]
+        binary[y, :] = True
+
+    lab, idx = largest_component(binary)
+    component = lab == idx
+
+    ys, xs = np.where(component)
+
+    if not component[0, :].any():
+        x = xs[np.argmin(ys)]
+        binary[:, x] = True
+
+    if not component[-1, :].any():
+        x = xs[np.argmax(ys)]
+        binary[:, x] = True
+
+    return binary
+
+
+# ============================================================================
+# Generator
+# ============================================================================
+
+def generate_microstructure(seed):
+
+    rng = np.random.default_rng(seed)
+
+    interface = build_interface(rng)
+
+    distance = periodic_distance(
+        interface
+    )
+
+
+    # Medium-scale density modulation:
+    # encourages realistic clustering while keeping the final volume fraction
+    # fixed through threshold adjustment.
+
+    density_field = smooth_noise(
+        rng,
+        (SIZE, SIZE),
+        INTERFACE_DENSITY_SIGMA
+    )
+
+
+    width_noise = smooth_noise(
+        rng,
+        (SIZE, SIZE),
+        WIDTH_NOISE_SIGMA
+    )
+
+
+    # Junction detector.
+    neighbor_count = (
+        np.roll(interface, 1, 0).astype(float)
+        + np.roll(interface, -1, 0).astype(float)
+        + np.roll(interface, 1, 1).astype(float)
+        + np.roll(interface, -1, 1).astype(float)
+    )
+
+    node_field = gaussian_filter(
+        neighbor_count,
+        NODE_THICKENING_SIGMA,
+        mode="wrap"
+    )
+
+    node_field -= node_field.mean()
+
+    if node_field.std() > 0:
+        node_field /= node_field.std()
+
+
+    # Spatially varying target thickness modifier.
+
+    local_modifier = (
+        1.0
+        + WIDTH_JITTER * width_noise * 0.35
+        + INTERFACE_DENSITY_STRENGTH * density_field
+        + NODE_THICKENING_STRENGTH * np.maximum(node_field, 0)
+    )
+
+
+    low = WIDTH_MEAN_MIN
+    high = WIDTH_MEAN_MAX
+
+
+    for _ in range(WIDTH_SEARCH_STEPS):
+
+        width = 0.5 * (low + high)
+
+        local_width = np.clip(
+            width * local_modifier,
+            MIN_HALF_WIDTH,
+            MAX_HALF_WIDTH
+        )
+
+        candidate = (
+            distance <= local_width
+        )
+
+        if candidate.mean() < TARGET_SOLID_FRACTION:
+            low = width
+        else:
+            high = width
+
+
+    width = 0.5 * (low + high)
+
+    local_width = np.clip(
+        width * local_modifier,
+        MIN_HALF_WIDTH,
+        MAX_HALF_WIDTH
+    )
+
+    solid = (
+        distance <= local_width
+    )
+
+
+    solid = enforce_connectivity(
+        solid
+    )
+
+
+    return solid.astype(
+        np.uint8
+    )
+
+
+# ============================================================================
+# Saving
+# ============================================================================
+
+def save_png(array, filename):
+
+    image = Image.fromarray(
+        array,
+        mode="P"
+    )
+
+    palette = [
+        255,255,255,
+        0,0,0
+    ]
+
+    palette.extend(
+        [0,0,0] * 254
+    )
+
+    image.putpalette(
+        palette
+    )
+
+    image.save(
+        filename
+    )
+
+
+# ============================================================================
+# Main
+# ============================================================================
+
+def main():
+
+    OUTPUT_DIR.mkdir(
+        exist_ok=True,
+        parents=True
+    )
+
+
+    for seed in range(N_SAMPLES):
+
+        sample = generate_microstructure(
+            seed
+        )
+
+        assert sample.shape == (
+            256,
+            256
+        )
+
+        assert np.all(
+            (sample == 0)
+            |
+            (sample == 1)
+        )
+
+
+        name = (
+            f"microstructure_seed_{seed:02d}"
+        )
+
+
+        np.save(
+            OUTPUT_DIR / f"{name}.npy",
+            sample
+        )
+
+        save_png(
+            sample,
+            OUTPUT_DIR / f"{name}.png"
+        )
+
+
+        lab, idx = largest_component(
+            sample.astype(bool)
+        )
+
+        largest_fraction = (
+            np.sum(lab == idx)
+            /
+            np.sum(sample)
+        )
+
+        print(
+            f"{name}: "
+            f"solid_fraction={sample.mean():.6f}, "
+            f"largest_component_fraction={largest_fraction:.6f}"
+        )
+
+
+if __name__ == "__main__":
+    main()
+```
