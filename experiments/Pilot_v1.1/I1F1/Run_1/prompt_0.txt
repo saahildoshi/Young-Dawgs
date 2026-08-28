@@ -1,0 +1,35 @@
+Study the attached reference image.
+
+It represents a two-phase disordered mechanical metamaterial. White is
+solid material and black is void.
+
+The solid phase should form a coherent, load-bearing, leaf-vein-like
+network. New samples should have similar pore organization, branching
+character, strut thickness, feature scale, connectivity, and directional
+organization while remaining stochastic.
+
+Avoid isolated solid islands, corner-only connections, one-pixel
+branches, disconnected fragments, and excessive smoothing.
+
+The network should span the domain horizontally and vertically.
+
+Develop a procedural Python generator for new realizations.
+
+Produce one complete, self-contained Python script.
+
+The script must:
+
+1. Generate twenty independent 256×256 binary microstructures.
+2. Use random seeds 0 through 19.
+3. Save each sample as both PNG and NPY.
+4. Store solid as 1 and void as 0.
+5. Generate genuinely different stochastic realizations.
+6. Not read or access the reference image at runtime.
+7. Not embed the reference image, target pixels, or a traced copy in the code.
+8. Not use internet access, external datasets, pretrained models, or APIs.
+9. Use common Python scientific packages only.
+10. Create every structure using a procedural algorithm.
+11. Produce one dominant 4-connected solid network.
+12. Make the network span both the horizontal and vertical axes.
+13. Include a short explanation of the algorithm and adjustable parameters.
+14. Return the complete script, not fragments or pseudocode.

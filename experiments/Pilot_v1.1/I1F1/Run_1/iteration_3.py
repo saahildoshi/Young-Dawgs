@@ -1,0 +1,1897 @@
+#!/usr/bin/env python3
+"""
+Procedural generator for 2-D disordered mechanical metamaterials.
+Revision round 3.
+
+Output convention
+-----------------
+solid = 1
+void  = 0
+
+The script creates twenty independent 256x256 realizations using seeds 0..19
+and saves, for each seed:
+
+    generated_microstructures/sample_seed_XX.npy
+    generated_microstructures/sample_seed_XX.png
+
+Algorithm
+---------
+1. Generate a jittered, randomly thinned lattice of pore generators, including
+   ghost generators outside the image.
+
+2. Build a smoothly warped weighted p-norm Voronoi-like partition. Compared
+   with the previous exact Chebyshev construction, this reduces excessive
+   perfect diagonal runs while retaining the desired directional organization.
+
+3. Rank cell interfaces by persistence and axis alignment. Remove only a
+   moderate fraction of low-priority interfaces, then assign the retained
+   interfaces to branch / secondary-vein / trunk-vein width levels. Long,
+   axis-aligned interfaces are preferentially retained and promoted.
+
+4. Reinforce true multi-cell junctions, then choose a common width scale so
+   that the solid fraction is close to the target. A connected boundary-growth
+   correction finishes the requested pixel count without creating islands.
+
+5. For each requested seed, generate several fully procedural candidates and
+   retain the one whose two-point correlation, periodic four-direction
+   lineal-path statistic, and median pore diameter best match the aggregate
+   development targets supplied with the task. Only those scalar target
+   statistics are used; no reference image or target pixels are read or stored.
+
+6. Retain the largest 4-connected solid component and explicitly require the
+   same component to span left-right and top-bottom.
+
+Dependencies
+------------
+numpy, scipy, Pillow
+
+The generator does not read any reference image, external dataset, model, API,
+or internet resource at runtime.
+"""
+
+from pathlib import Path
+import hashlib
+
+import numpy as np
+from scipy import ndimage as ndi
+from PIL import Image
+
+
+# ============================================================================
+# Output configuration
+# ============================================================================
+
+SIZE = 256
+N_SAMPLES = 20
+OUTPUT_DIR = Path("generated_microstructures")
+
+
+# ============================================================================
+# Stochastic pore-generator geometry
+# ============================================================================
+
+CELL_SIZE = 24.15
+KEEP_PROB = 0.82
+GENERATOR_JITTER = 0.42
+
+LP_POWER = 3.2
+ANISO_X = 1.10
+ANISO_Y = 0.95
+SHEAR_STD = 0.06
+
+WARP_AMPLITUDE = 4.0
+WARP_SIGMA_X = 18.0
+WARP_SIGMA_Y = 12.0
+
+SEED_WEIGHT_SCALE = 0.20
+DISTANCE_CHUNK = 12
+
+
+# ============================================================================
+# Interface topology and hierarchical strut widths
+# ============================================================================
+
+# Less aggressive than round 2: keeps more short/medium connections, which
+# restores the two-point statistics while still permitting thicker load paths.
+REMOVE_EDGE_FRACTION = 0.32
+
+# Edge ranking = persistence * axis preference * stochastic modulation.
+EDGE_PRIORITY_NOISE = 0.35
+AXIS_ALIGNMENT_BIAS = 4.0
+HORIZONTAL_BIAS = 1.5
+
+SECONDARY_FRACTION = 0.25
+TRUNK_FRACTION = 0.07
+
+BASE_HALF_WIDTH = 1.80
+SECONDARY_HALF_WIDTH = 3.80
+TRUNK_HALF_WIDTH = 6.50
+JUNCTION_RADIUS = 3.80
+
+WIDTH_SCALE_MIN = 0.35
+WIDTH_SCALE_MAX = 1.50
+N_WIDTH_SCALES = 116
+
+
+# ============================================================================
+# Material-fraction control and cleanup
+# ============================================================================
+
+# A tiny positive controller offset compensates for the final component and
+# candidate-selection steps. The statistical target itself remains 0.394699.
+MATERIAL_CONTROLLER_CENTER = 0.39510
+MATERIAL_CONTROLLER_STD = 0.00100
+MATERIAL_CONTROLLER_MIN = 0.3925
+MATERIAL_CONTROLLER_MAX = 0.3974
+
+MIN_VOID_AREA = 30
+
+FOUR_CONNECTED = ndi.generate_binary_structure(2, 1)
+
+FOUR_NEIGHBOR_KERNEL = np.array(
+    [
+        [0, 1, 0],
+        [1, 0, 1],
+        [0, 1, 0],
+    ],
+    dtype=np.uint8,
+)
+
+
+# ============================================================================
+# Supplied aggregate development targets used for candidate selection
+# ============================================================================
+
+STAT_RADII = np.array(
+    [0, 1, 2, 4, 8, 16, 32, 64],
+    dtype=np.int32,
+)
+
+TARGET_S2 = np.array(
+    [
+        0.394699,
+        0.351303,
+        0.318398,
+        0.253283,
+        0.167153,
+        0.137501,
+        0.155534,
+        0.155713,
+    ],
+    dtype=np.float64,
+)
+
+TARGET_LINEAL = np.array(
+    [
+        0.394699,
+        0.351303,
+        0.308788,
+        0.227493,
+        0.125214,
+        0.054344,
+        0.012596,
+        0.000519,
+    ],
+    dtype=np.float64,
+)
+
+TARGET_MEDIAN_PORE_DIAMETER = 16.4924
+
+# Three candidates give statistical selection while retaining moderate runtime
+# and substantial stochastic diversity.
+CANDIDATES_PER_SEED = 3
+MAX_CANDIDATE_DRAWS = 7
+
+
+# Precompute radial shells once for the fixed output size.
+_yy_shell, _xx_shell = np.indices((SIZE, SIZE))
+
+_radial_distance = np.sqrt(
+    (_yy_shell - SIZE // 2) ** 2
+    + (_xx_shell - SIZE // 2) ** 2
+)
+
+RADIAL_SHELLS = [
+    (
+        (_radial_distance >= r - 0.5)
+        & (_radial_distance < r + 0.5)
+    )
+    for r in STAT_RADII
+]
+
+
+# ============================================================================
+# Basic helpers
+# ============================================================================
+
+def _standardize(a: np.ndarray) -> np.ndarray:
+    """Zero mean and unit standard deviation."""
+    return (
+        (a - a.mean())
+        / (a.std() + 1.0e-12)
+    )
+
+
+def _make_generators(
+    rng: np.random.Generator,
+    n: int,
+) -> np.ndarray:
+    """
+    Create a jittered, randomly thinned lattice of pore generators.
+    """
+    c = CELL_SIZE
+
+    xs = np.arange(
+        -0.5 * c,
+        n + c,
+        c,
+    )
+
+    ys = np.arange(
+        -0.5 * c,
+        n + c,
+        c,
+    )
+
+    points = []
+
+    for y0 in ys:
+        for x0 in xs:
+
+            if rng.random() < KEEP_PROB:
+
+                x = (
+                    x0
+                    + rng.uniform(
+                        -GENERATOR_JITTER,
+                        GENERATOR_JITTER,
+                    )
+                    * c
+                )
+
+                y = (
+                    y0
+                    + rng.uniform(
+                        -GENERATOR_JITTER,
+                        GENERATOR_JITTER,
+                    )
+                    * c
+                )
+
+                points.append(
+                    (x, y)
+                )
+
+    if len(points) < 16:
+        raise RuntimeError(
+            "Too few pore generators; increase KEEP_PROB."
+        )
+
+    return np.asarray(
+        points,
+        dtype=np.float64,
+    )
+
+
+# ============================================================================
+# Warped weighted p-norm partition
+# ============================================================================
+
+def _partition_labels(
+    rng: np.random.Generator,
+    n: int,
+) -> np.ndarray:
+    """
+    Construct a smoothly warped weighted p-norm Voronoi-like partition.
+
+    The warp introduces stochastic curvature and local disorder. The p-norm
+    and weak anisotropy preserve the broad rectilinear/vein-like organization
+    without the excessive exact diagonals produced by a pure L-infinity metric.
+    """
+    points = _make_generators(
+        rng,
+        n,
+    )
+
+    n_points = len(
+        points
+    )
+
+    raw_x = rng.standard_normal(
+        (n, n)
+    )
+
+    raw_y = rng.standard_normal(
+        (n, n)
+    )
+
+    dx = ndi.gaussian_filter(
+        raw_x,
+        sigma=(
+            WARP_SIGMA_Y,
+            WARP_SIGMA_X,
+        ),
+        mode="reflect",
+    )
+
+    dy = ndi.gaussian_filter(
+        raw_y,
+        sigma=(
+            WARP_SIGMA_X,
+            WARP_SIGMA_Y,
+        ),
+        mode="reflect",
+    )
+
+    dx = (
+        _standardize(dx)
+        * WARP_AMPLITUDE
+    )
+
+    dy = (
+        _standardize(dy)
+        * WARP_AMPLITUDE
+    )
+
+    yy, xx = np.mgrid[
+        0:n,
+        0:n,
+    ]
+
+    xw = xx + dx
+    yw = yy + dy
+
+    shear = rng.normal(
+        0.0,
+        SHEAR_STD,
+    )
+
+    xw = (
+        xw
+        + shear
+        * (yw - 0.5 * n)
+    )
+
+    weights = rng.standard_normal(
+        n_points
+    )
+
+    weight_unit = (
+        CELL_SIZE
+        * SEED_WEIGHT_SCALE
+    ) ** LP_POWER
+
+    best_distance = np.full(
+        (n, n),
+        np.inf,
+        dtype=np.float64,
+    )
+
+    labels = np.full(
+        (n, n),
+        -1,
+        dtype=np.int32,
+    )
+
+    for start in range(
+        0,
+        n_points,
+        DISTANCE_CHUNK,
+    ):
+
+        stop = min(
+            start + DISTANCE_CHUNK,
+            n_points,
+        )
+
+        px = points[
+            start:stop,
+            0,
+            None,
+            None,
+        ]
+
+        py = points[
+            start:stop,
+            1,
+            None,
+            None,
+        ]
+
+        d = (
+            np.abs(
+                (
+                    xw[None, :, :]
+                    - px
+                )
+                / ANISO_X
+            )
+            ** LP_POWER
+            +
+            np.abs(
+                (
+                    yw[None, :, :]
+                    - py
+                )
+                / ANISO_Y
+            )
+            ** LP_POWER
+        )
+
+        d += (
+            weights[
+                start:stop,
+                None,
+                None,
+            ]
+            * weight_unit
+        )
+
+        local_index = np.argmin(
+            d,
+            axis=0,
+        )
+
+        local_best = np.take_along_axis(
+            d,
+            local_index[
+                None,
+                :,
+                :,
+            ],
+            axis=0,
+        )[0]
+
+        take = (
+            local_best
+            < best_distance
+        )
+
+        best_distance[take] = (
+            local_best[take]
+        )
+
+        labels[take] = (
+            start
+            + local_index[take]
+        )
+
+    return labels
+
+
+# ============================================================================
+# Interface graph and width hierarchy
+# ============================================================================
+
+def _edge_code(
+    a: np.ndarray,
+    b: np.ndarray,
+    n_labels: int,
+) -> np.ndarray:
+    """
+    Return a unique code for an unordered neighboring-label pair.
+    """
+    lo = np.minimum(
+        a,
+        b,
+    ).astype(
+        np.int64
+    )
+
+    hi = np.maximum(
+        a,
+        b,
+    ).astype(
+        np.int64
+    )
+
+    return (
+        lo * n_labels
+        + hi
+    )
+
+
+def _interface_hierarchy(
+    labels: np.ndarray,
+    rng: np.random.Generator,
+):
+    """
+    Rasterize ordinary, secondary, and trunk interface masks.
+
+    Ranking favors:
+      - long/persistent interfaces,
+      - interfaces predominantly aligned with a coordinate axis,
+      - horizontal interfaces slightly more than vertical ones,
+
+    while retaining a stochastic lognormal perturbation.
+
+    The lowest-priority REMOVE_EDGE_FRACTION is omitted. Unlike round 2,
+    removal is moderate rather than dominant, which preserves favorable
+    short/intermediate-range two-point statistics.
+    """
+    n = labels.shape[0]
+
+    n_labels = (
+        int(labels.max())
+        + 1
+    )
+
+    n_codes = (
+        n_labels
+        * n_labels
+    )
+
+    left = labels[
+        :,
+        :-1,
+    ]
+
+    right = labels[
+        :,
+        1:,
+    ]
+
+    vertical_change = (
+        left != right
+    )
+
+    upper = labels[
+        :-1,
+        :,
+    ]
+
+    lower = labels[
+        1:,
+        :,
+    ]
+
+    horizontal_change = (
+        upper != lower
+    )
+
+    # Left/right label changes correspond to locally vertical walls.
+    vertical_codes = _edge_code(
+        left[vertical_change],
+        right[vertical_change],
+        n_labels,
+    )
+
+    # Up/down label changes correspond to locally horizontal walls.
+    horizontal_codes = _edge_code(
+        upper[horizontal_change],
+        lower[horizontal_change],
+        n_labels,
+    )
+
+    vertical_count = np.bincount(
+        vertical_codes,
+        minlength=n_codes,
+    ).astype(
+        np.float64
+    )
+
+    horizontal_count = np.bincount(
+        horizontal_codes,
+        minlength=n_codes,
+    ).astype(
+        np.float64
+    )
+
+    total_count = (
+        vertical_count
+        + horizontal_count
+    )
+
+    present = np.flatnonzero(
+        total_count > 0
+    )
+
+    axis_alignment = (
+        np.abs(
+            horizontal_count[present]
+            - vertical_count[present]
+        )
+        /
+        (
+            total_count[present]
+            + 1.0e-12
+        )
+    )
+
+    horizontal_preference = (
+        np.maximum(
+            horizontal_count[present]
+            - vertical_count[present],
+            0.0,
+        )
+        /
+        (
+            total_count[present]
+            + 1.0e-12
+        )
+    )
+
+    random_factor = np.exp(
+        EDGE_PRIORITY_NOISE
+        * rng.standard_normal(
+            len(present)
+        )
+    )
+
+    priority = (
+        total_count[present]
+        *
+        (
+            1.0
+            + AXIS_ALIGNMENT_BIAS
+            * axis_alignment
+            + HORIZONTAL_BIAS
+            * horizontal_preference
+        )
+        * random_factor
+    )
+
+    ranked = present[
+        np.argsort(
+            priority
+        )[::-1]
+    ]
+
+    n_edges = len(
+        ranked
+    )
+
+    n_keep = max(
+        8,
+        int(
+            np.rint(
+                (
+                    1.0
+                    - REMOVE_EDGE_FRACTION
+                )
+                * n_edges
+            )
+        ),
+    )
+
+    retained = ranked[
+        :n_keep
+    ]
+
+    n_secondary = max(
+        1,
+        int(
+            np.rint(
+                SECONDARY_FRACTION
+                * n_keep
+            )
+        ),
+    )
+
+    n_trunk = max(
+        1,
+        int(
+            np.rint(
+                TRUNK_FRACTION
+                * n_keep
+            )
+        ),
+    )
+
+    n_secondary = max(
+        n_secondary,
+        n_trunk,
+    )
+
+    # -1 = omitted
+    #  0 = ordinary
+    #  1 = secondary
+    #  2 = trunk
+    level = np.full(
+        n_codes,
+        -1,
+        dtype=np.int8,
+    )
+
+    level[
+        retained
+    ] = 0
+
+    level[
+        retained[
+            :n_secondary
+        ]
+    ] = 1
+
+    level[
+        retained[
+            :n_trunk
+        ]
+    ] = 2
+
+    base_wall = np.zeros(
+        (n, n),
+        dtype=bool,
+    )
+
+    secondary_wall = np.zeros(
+        (n, n),
+        dtype=bool,
+    )
+
+    trunk_wall = np.zeros(
+        (n, n),
+        dtype=bool,
+    )
+
+    # ------------------------------------------------------------------
+    # Rasterize left/right interfaces.
+    # ------------------------------------------------------------------
+
+    yy, xx = np.nonzero(
+        vertical_change
+    )
+
+    codes = _edge_code(
+        left[vertical_change],
+        right[vertical_change],
+        n_labels,
+    )
+
+    edge_level = level[
+        codes
+    ]
+
+    for threshold, wall in (
+        (0, base_wall),
+        (1, secondary_wall),
+        (2, trunk_wall),
+    ):
+
+        selected = (
+            edge_level
+            >= threshold
+        )
+
+        wall[
+            yy[selected],
+            xx[selected],
+        ] = True
+
+        wall[
+            yy[selected],
+            xx[selected] + 1,
+        ] = True
+
+    # ------------------------------------------------------------------
+    # Rasterize up/down interfaces.
+    # ------------------------------------------------------------------
+
+    yy, xx = np.nonzero(
+        horizontal_change
+    )
+
+    codes = _edge_code(
+        upper[horizontal_change],
+        lower[horizontal_change],
+        n_labels,
+    )
+
+    edge_level = level[
+        codes
+    ]
+
+    for threshold, wall in (
+        (0, base_wall),
+        (1, secondary_wall),
+        (2, trunk_wall),
+    ):
+
+        selected = (
+            edge_level
+            >= threshold
+        )
+
+        wall[
+            yy[selected],
+            xx[selected],
+        ] = True
+
+        wall[
+            yy[selected] + 1,
+            xx[selected],
+        ] = True
+
+    return (
+        base_wall,
+        secondary_wall,
+        trunk_wall,
+    )
+
+
+def _junction_mask(
+    labels: np.ndarray,
+) -> np.ndarray:
+    """
+    Detect true >=3-cell junctions using 2x2 neighborhoods.
+    """
+    a = labels[
+        :-1,
+        :-1,
+    ]
+
+    b = labels[
+        :-1,
+        1:,
+    ]
+
+    c = labels[
+        1:,
+        :-1,
+    ]
+
+    d = labels[
+        1:,
+        1:,
+    ]
+
+    stack = np.stack(
+        (a, b, c, d),
+        axis=0,
+    )
+
+    stack.sort(
+        axis=0
+    )
+
+    n_unique = (
+        1
+        + (
+            stack[1:]
+            != stack[:-1]
+        ).sum(
+            axis=0
+        )
+    )
+
+    junction = np.zeros_like(
+        labels,
+        dtype=bool,
+    )
+
+    junction[
+        :-1,
+        :-1,
+    ] = (
+        n_unique >= 3
+    )
+
+    return junction
+
+
+# ============================================================================
+# Connectivity and cleanup
+# ============================================================================
+
+def _fill_small_voids(
+    solid: np.ndarray,
+) -> np.ndarray:
+    """
+    Fill only tiny 4-connected void defects.
+    """
+    labels, n_void = ndi.label(
+        ~solid,
+        structure=FOUR_CONNECTED,
+    )
+
+    if n_void == 0:
+        return solid
+
+    areas = np.bincount(
+        labels.ravel()
+    )
+
+    fill = np.zeros(
+        n_void + 1,
+        dtype=bool,
+    )
+
+    fill[1:] = (
+        areas[1:]
+        < MIN_VOID_AREA
+    )
+
+    return (
+        solid
+        | fill[labels]
+    )
+
+
+def _largest_4_connected_component(
+    solid: np.ndarray,
+) -> np.ndarray:
+    """
+    Retain only the largest 4-connected solid component.
+    """
+    labels, n_components = ndi.label(
+        solid,
+        structure=FOUR_CONNECTED,
+    )
+
+    if n_components == 0:
+        return np.zeros_like(
+            solid,
+            dtype=bool,
+        )
+
+    areas = np.bincount(
+        labels.ravel()
+    )
+
+    areas[0] = 0
+
+    largest = int(
+        np.argmax(
+            areas
+        )
+    )
+
+    return (
+        labels
+        == largest
+    )
+
+
+def _spans_both_axes(
+    solid: np.ndarray,
+) -> bool:
+    """
+    Require one 4-connected component to span both image axes.
+    """
+    labels, n_components = ndi.label(
+        solid,
+        structure=FOUR_CONNECTED,
+    )
+
+    if n_components != 1:
+        return False
+
+    left_right = (
+        np.any(
+            labels[:, 0]
+            == 1
+        )
+        and
+        np.any(
+            labels[:, -1]
+            == 1
+        )
+    )
+
+    top_bottom = (
+        np.any(
+            labels[0, :]
+            == 1
+        )
+        and
+        np.any(
+            labels[-1, :]
+            == 1
+        )
+    )
+
+    return bool(
+        left_right
+        and top_bottom
+    )
+
+
+def _clean_network(
+    solid: np.ndarray,
+) -> np.ndarray:
+    solid = _fill_small_voids(
+        solid
+    )
+
+    solid = _largest_4_connected_component(
+        solid
+    )
+
+    return solid
+
+
+# ============================================================================
+# Width scale and material-content correction
+# ============================================================================
+
+def _network_from_scale(
+    distance_base: np.ndarray,
+    distance_secondary: np.ndarray,
+    distance_trunk: np.ndarray,
+    distance_junction: np.ndarray,
+    scale: float,
+) -> np.ndarray:
+    """
+    Construct the hierarchical network for one common width multiplier.
+    """
+    solid = (
+        distance_base
+        <= BASE_HALF_WIDTH
+        * scale
+    )
+
+    solid |= (
+        distance_secondary
+        <= SECONDARY_HALF_WIDTH
+        * scale
+    )
+
+    solid |= (
+        distance_trunk
+        <= TRUNK_HALF_WIDTH
+        * scale
+    )
+
+    solid |= (
+        distance_junction
+        <= JUNCTION_RADIUS
+        * scale
+    )
+
+    return solid
+
+
+def _grow_to_pixel_count(
+    solid: np.ndarray,
+    target_count: int,
+    rng: np.random.Generator,
+) -> np.ndarray:
+    """
+    Add connected boundary pixels until target_count is reached.
+
+    Pixels with three or two 4-neighbor solid contacts are preferred, so the
+    correction thickens existing struts/corners rather than creating dangling
+    one-pixel branches. All additions remain attached to the main component.
+    """
+    solid = solid.copy()
+
+    need = (
+        int(target_count)
+        - int(solid.sum())
+    )
+
+    if need <= 0:
+        return solid
+
+    priority = ndi.gaussian_filter(
+        rng.standard_normal(
+            solid.shape
+        ),
+        sigma=1.5,
+        mode="reflect",
+    )
+
+    for required_neighbors in (
+        3,
+        2,
+        1,
+    ):
+
+        while need > 0:
+
+            neighbor_count = ndi.convolve(
+                solid.astype(
+                    np.uint8
+                ),
+                FOUR_NEIGHBOR_KERNEL,
+                mode="constant",
+                cval=0,
+            )
+
+            candidates = (
+                (~solid)
+                & (
+                    neighbor_count
+                    >= required_neighbors
+                )
+            )
+
+            flat = np.flatnonzero(
+                candidates
+            )
+
+            if flat.size == 0:
+                break
+
+            take_n = min(
+                need,
+                flat.size,
+            )
+
+            score = (
+                priority.ravel()[
+                    flat
+                ]
+                + 0.10
+                * neighbor_count.ravel()[
+                    flat
+                ]
+            )
+
+            if take_n < flat.size:
+
+                chosen_local = np.argpartition(
+                    score,
+                    -take_n,
+                )[-take_n:]
+
+                chosen = flat[
+                    chosen_local
+                ]
+
+            else:
+                chosen = flat
+
+            solid.ravel()[
+                chosen
+            ] = True
+
+            need -= (
+                chosen.size
+            )
+
+    return solid
+
+
+def _procedural_candidate(
+    topology_rng: np.random.Generator,
+    control_rng: np.random.Generator,
+    n: int,
+):
+    """
+    Generate one fully procedural, connectivity-validated candidate.
+    """
+    labels = _partition_labels(
+        topology_rng,
+        n,
+    )
+
+    (
+        base_wall,
+        secondary_wall,
+        trunk_wall,
+    ) = _interface_hierarchy(
+        labels,
+        topology_rng,
+    )
+
+    junction = _junction_mask(
+        labels
+    )
+
+    distance_base = ndi.distance_transform_edt(
+        ~base_wall
+    )
+
+    if np.any(
+        secondary_wall
+    ):
+        distance_secondary = ndi.distance_transform_edt(
+            ~secondary_wall
+        )
+    else:
+        distance_secondary = np.full(
+            (n, n),
+            np.inf,
+        )
+
+    if np.any(
+        trunk_wall
+    ):
+        distance_trunk = ndi.distance_transform_edt(
+            ~trunk_wall
+        )
+    else:
+        distance_trunk = np.full(
+            (n, n),
+            np.inf,
+        )
+
+    if np.any(
+        junction
+    ):
+        distance_junction = ndi.distance_transform_edt(
+            ~junction
+        )
+    else:
+        distance_junction = np.full(
+            (n, n),
+            np.inf,
+        )
+
+    target_fraction = float(
+        np.clip(
+            MATERIAL_CONTROLLER_CENTER
+            + MATERIAL_CONTROLLER_STD
+            * control_rng.standard_normal(),
+            MATERIAL_CONTROLLER_MIN,
+            MATERIAL_CONTROLLER_MAX,
+        )
+    )
+
+    target_count = int(
+        np.rint(
+            target_fraction
+            * n
+            * n
+        )
+    )
+
+    best_under = None
+    best_under_count = -1
+
+    best_nearest = None
+    best_nearest_error = np.inf
+
+    scales = np.linspace(
+        WIDTH_SCALE_MIN,
+        WIDTH_SCALE_MAX,
+        N_WIDTH_SCALES,
+    )
+
+    for scale in scales:
+
+        solid = _network_from_scale(
+            distance_base,
+            distance_secondary,
+            distance_trunk,
+            distance_junction,
+            float(scale),
+        )
+
+        solid = _clean_network(
+            solid
+        )
+
+        if not _spans_both_axes(
+            solid
+        ):
+            continue
+
+        count = int(
+            solid.sum()
+        )
+
+        error = abs(
+            count
+            - target_count
+        )
+
+        if error < best_nearest_error:
+
+            best_nearest_error = (
+                error
+            )
+
+            best_nearest = (
+                solid
+            )
+
+        if (
+            count
+            <= target_count
+            and
+            count
+            > best_under_count
+        ):
+
+            best_under_count = (
+                count
+            )
+
+            best_under = (
+                solid
+            )
+
+    if best_under is not None:
+        solid = best_under
+
+    elif best_nearest is not None:
+        solid = best_nearest
+
+    else:
+        return None
+
+    if int(
+        solid.sum()
+    ) < target_count:
+
+        solid = _grow_to_pixel_count(
+            solid,
+            target_count,
+            control_rng,
+        )
+
+    solid = _largest_4_connected_component(
+        solid
+    )
+
+    if not _spans_both_axes(
+        solid
+    ):
+        return None
+
+    return solid
+
+
+# ============================================================================
+# Development-statistic estimators used for candidate selection
+# ============================================================================
+
+def _radial_two_point(
+    solid: np.ndarray,
+) -> np.ndarray:
+    """
+    Periodic FFT two-point probability, radially averaged in 1-pixel shells.
+    """
+    a = solid.astype(
+        np.float64
+    )
+
+    transform = np.fft.fftn(
+        a
+    )
+
+    autocorrelation = np.fft.ifftn(
+        transform
+        * np.conj(
+            transform
+        )
+    ).real / a.size
+
+    autocorrelation = np.fft.fftshift(
+        autocorrelation
+    )
+
+    return np.asarray(
+        [
+            float(
+                autocorrelation[
+                    shell
+                ].mean()
+            )
+            for shell
+            in RADIAL_SHELLS
+        ],
+        dtype=np.float64,
+    )
+
+
+def _periodic_lineal_path(
+    solid: np.ndarray,
+) -> np.ndarray:
+    """
+    Periodic four-direction lineal-path probability.
+
+    Directions:
+        horizontal
+        vertical
+        +45 degrees
+        -45 degrees
+
+    Periodic wrapping is deliberately used here. This replaces the
+    non-periodic surrogate from revision round 2.
+    """
+    directions = (
+        (0, 1),
+        (1, 0),
+        (1, 1),
+        (1, -1),
+    )
+
+    values = [
+        float(
+            solid.mean()
+        )
+    ]
+
+    for r in STAT_RADII[
+        1:
+    ]:
+
+        directional = []
+
+        rr = int(
+            r
+        )
+
+        for dy, dx in directions:
+
+            path = np.ones_like(
+                solid,
+                dtype=bool,
+            )
+
+            for k in range(
+                rr + 1
+            ):
+
+                shifted = np.roll(
+                    np.roll(
+                        solid,
+                        -dy * k,
+                        axis=0,
+                    ),
+                    -dx * k,
+                    axis=1,
+                )
+
+                path &= (
+                    shifted
+                )
+
+            directional.append(
+                float(
+                    path.mean()
+                )
+            )
+
+        values.append(
+            float(
+                np.mean(
+                    directional
+                )
+            )
+        )
+
+    return np.asarray(
+        values,
+        dtype=np.float64,
+    )
+
+
+def _median_interior_pore_diameter(
+    solid: np.ndarray,
+) -> float:
+    """
+    Median maximum-inscribed-circle diameter of interior 4-connected pores.
+
+    Pores touching the image boundary are excluded.
+    """
+    void = ~solid
+
+    labels, n_void = ndi.label(
+        void,
+        structure=FOUR_CONNECTED,
+    )
+
+    if n_void == 0:
+        return 0.0
+
+    distance = ndi.distance_transform_edt(
+        void
+    )
+
+    indices = np.arange(
+        1,
+        n_void + 1,
+    )
+
+    maximum_radius = ndi.maximum(
+        distance,
+        labels=labels,
+        index=indices,
+    )
+
+    boundary_labels = set(
+        np.unique(
+            np.concatenate(
+                (
+                    labels[
+                        0,
+                        :,
+                    ],
+                    labels[
+                        -1,
+                        :,
+                    ],
+                    labels[
+                        :,
+                        0,
+                    ],
+                    labels[
+                        :,
+                        -1,
+                    ],
+                )
+            )
+        ).tolist()
+    )
+
+    diameters = [
+        2.0
+        * float(
+            maximum_radius[
+                label_id - 1
+            ]
+        )
+        for label_id
+        in indices
+        if label_id
+        not in boundary_labels
+    ]
+
+    if not diameters:
+
+        diameters = (
+            2.0
+            * np.asarray(
+                maximum_radius
+            )
+        ).tolist()
+
+    return float(
+        np.median(
+            diameters
+        )
+    )
+
+
+def _candidate_score(
+    solid: np.ndarray,
+) -> float:
+    """
+    Compare a candidate only against aggregate statistics supplied in the task.
+
+    S2 receives a slightly higher weight because it was the metric that
+    regressed most strongly in revision round 2.
+    """
+    s2 = _radial_two_point(
+        solid
+    )
+
+    lineal = _periodic_lineal_path(
+        solid
+    )
+
+    pore_diameter = (
+        _median_interior_pore_diameter(
+            solid
+        )
+    )
+
+    s2_rmse = float(
+        np.sqrt(
+            np.mean(
+                (
+                    s2
+                    - TARGET_S2
+                ) ** 2
+            )
+        )
+    )
+
+    lineal_rmse = float(
+        np.sqrt(
+            np.mean(
+                (
+                    lineal
+                    - TARGET_LINEAL
+                ) ** 2
+            )
+        )
+    )
+
+    pore_error = abs(
+        pore_diameter
+        - TARGET_MEDIAN_PORE_DIAMETER
+    )
+
+    return float(
+        1.15
+        * (
+            s2_rmse
+            / 0.010
+        )
+        +
+        1.00
+        * (
+            lineal_rmse
+            / 0.010
+        )
+        +
+        0.05
+        * (
+            pore_error
+            / 1.5
+        )
+    )
+
+
+# ============================================================================
+# Public generator
+# ============================================================================
+
+def generate_microstructure(
+    seed: int,
+    n: int = SIZE,
+) -> np.ndarray:
+    """
+    Generate one validated realization for the requested integer seed.
+
+    The topology RNG is initialized directly with seed. Thus samples 0..19
+    use topology seeds 0..19 exactly.
+
+    A deterministic controller RNG is separate so the small material-fraction
+    correction does not perturb the topology stream between candidates.
+    """
+    topology_rng = np.random.default_rng(
+        seed
+    )
+
+    control_rng = np.random.default_rng(
+        100000
+        + seed
+    )
+
+    best = None
+    best_score = np.inf
+
+    accepted = 0
+
+    for _ in range(
+        MAX_CANDIDATE_DRAWS
+    ):
+
+        candidate = _procedural_candidate(
+            topology_rng,
+            control_rng,
+            n,
+        )
+
+        if candidate is None:
+            continue
+
+        if not _spans_both_axes(
+            candidate
+        ):
+            continue
+
+        score = _candidate_score(
+            candidate
+        )
+
+        accepted += 1
+
+        if score < best_score:
+
+            best_score = (
+                score
+            )
+
+            best = (
+                candidate
+            )
+
+        if (
+            accepted
+            >= CANDIDATES_PER_SEED
+        ):
+            break
+
+    if best is None:
+
+        raise RuntimeError(
+            "Could not generate a valid "
+            "doubly spanning network "
+            f"for seed {seed}."
+        )
+
+    best = _largest_4_connected_component(
+        best
+    )
+
+    if not _spans_both_axes(
+        best
+    ):
+
+        raise RuntimeError(
+            "Final connectivity validation "
+            f"failed for seed {seed}."
+        )
+
+    return best.astype(
+        np.uint8
+    )
+
+
+# ============================================================================
+# Output helpers
+# ============================================================================
+
+def _save_sample(
+    arr: np.ndarray,
+    seed: int,
+    out_dir: Path,
+) -> None:
+    """
+    Save one realization as NPY and PNG.
+
+    NPY:
+        solid = 1
+        void  = 0
+
+    PNG:
+        solid = white
+        void  = black
+    """
+    stem = (
+        f"sample_seed_{seed:02d}"
+    )
+
+    np.save(
+        out_dir
+        / f"{stem}.npy",
+        arr.astype(
+            np.uint8,
+            copy=False,
+        ),
+    )
+
+    png = (
+        arr * 255
+    ).astype(
+        np.uint8
+    )
+
+    Image.fromarray(
+        png,
+        mode="L",
+    ).save(
+        out_dir
+        / f"{stem}.png"
+    )
+
+
+def _component_count(
+    arr: np.ndarray,
+) -> int:
+    """
+    Count 4-connected solid components.
+    """
+    _, n_components = ndi.label(
+        arr.astype(bool),
+        structure=FOUR_CONNECTED,
+    )
+
+    return int(
+        n_components
+    )
+
+
+def _void_count(
+    arr: np.ndarray,
+) -> int:
+    """
+    Count 4-connected void regions.
+    """
+    _, n_void = ndi.label(
+        arr == 0,
+        structure=FOUR_CONNECTED,
+    )
+
+    return int(
+        n_void
+    )
+
+
+# ============================================================================
+# Main
+# ============================================================================
+
+def main() -> None:
+
+    OUTPUT_DIR.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    seen_hashes = set()
+
+    # Exactly the requested seeds: 0 through 19.
+    for seed in range(
+        N_SAMPLES
+    ):
+
+        arr = generate_microstructure(
+            seed,
+            SIZE,
+        )
+
+        # ------------------------------------------------------------
+        # Required invariants
+        # ------------------------------------------------------------
+
+        if arr.shape != (
+            SIZE,
+            SIZE,
+        ):
+
+            raise AssertionError(
+                "Unexpected output dimensions."
+            )
+
+        if arr.dtype != np.uint8:
+
+            raise AssertionError(
+                "Output dtype must be uint8."
+            )
+
+        if not np.all(
+            (arr == 0)
+            | (arr == 1)
+        ):
+
+            raise AssertionError(
+                "Output is not binary."
+            )
+
+        if _component_count(
+            arr
+        ) != 1:
+
+            raise AssertionError(
+                "Final solid is not one "
+                "4-connected component."
+            )
+
+        if not _spans_both_axes(
+            arr.astype(bool)
+        ):
+
+            raise AssertionError(
+                "Final solid does not span "
+                "both horizontal and vertical axes."
+            )
+
+        # ------------------------------------------------------------
+        # Guarantee genuinely distinct stochastic outputs.
+        # ------------------------------------------------------------
+
+        digest = hashlib.sha256(
+            arr.tobytes()
+        ).hexdigest()
+
+        if digest in seen_hashes:
+
+            raise RuntimeError(
+                "Duplicate realization "
+                f"detected for seed {seed}."
+            )
+
+        seen_hashes.add(
+            digest
+        )
+
+        # ------------------------------------------------------------
+        # Save PNG and NPY.
+        # ------------------------------------------------------------
+
+        _save_sample(
+            arr,
+            seed,
+            OUTPUT_DIR,
+        )
+
+        print(
+            f"seed={seed:02d}  "
+            f"solid_fraction={arr.mean():.4f}  "
+            f"solid_components={_component_count(arr)}  "
+            f"void_regions={_void_count(arr):3d}  "
+            f"median_pore_diameter="
+            f"{_median_interior_pore_diameter(arr.astype(bool)):.3f}"
+        )
+
+
+if __name__ == "__main__":
+    main()
