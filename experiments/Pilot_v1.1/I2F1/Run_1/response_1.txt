@@ -1,0 +1,21 @@
+Worked for 2m 22s
+
+Revision 1 incorporates the evaluation feedback while preserving the exact solid fraction, dominant-component fraction, 4-connectivity, bidirectional percolation, dimensions, filenames, dependencies, phase convention, and deterministic seed behavior.
+
+The principal changes are:
+
+* **Lineal-path statistics are now explicitly optimized**, rather than being controlled only indirectly through morphology.
+* Candidate selection is now **two-stage**:
+
+  1. 32 procedural candidates per seed are evaluated for thickness, pore size, connectivity, and \(S_2\).
+  2. The best 6 candidates are additionally evaluated against the supplied lineal-path curve.
+* **\(S_2\) receives stronger selection pressure**, especially at the intermediate and long radii responsible for most remaining spatial-statistics error.
+* Scalar descriptor tolerances were tightened to prevent gains in \(S_2\)/lineal path from sacrificing the already-close thickness and pore metrics.
+* The lineal-path calculation uses a **deterministic 32×32 origin grid and eight orientations**, making it practical for candidate ranking without changing output stochasticity.
+* Every candidate is still rejected unless it has the exact solid-pixel budget, exact dominant-component budget, and both LR/TB percolation.
+
+The script passed syntax validation and a functional generation test. A complete 20-seed × 32-trial development run is computationally longer than the execution window available here, so I have not fabricated post-revision aggregate results.
+
+[Download the complete revised generator — Revision 1](sandbox:/mnt/data/procedural_metamaterial_generator_revision1.py)
+
+This should be used as the submission for **revision round 1 of 3**, rather than changing the fundamental morphology family yet. The next evaluator results will be particularly informative because they will tell us whether the remaining \(S_2\) discrepancy is principally a **candidate-selection problem** or a **representational limitation of the warped-cellular morphology itself**.

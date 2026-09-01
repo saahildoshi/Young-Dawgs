@@ -1,0 +1,47 @@
+Study the attached reference image.
+
+It represents a two-phase disordered mechanical metamaterial. White is
+solid material and black is void.
+
+The solid phase should form a coherent, load-bearing, leaf-vein-like
+network. New samples should have similar pore organization, branching
+character, strut thickness, feature scale, connectivity, and directional
+organization while remaining stochastic.
+
+The measured target descriptors are:
+
+Solid volume fraction: 0.394699
+Largest-component fraction: 0.992384
+Left-right percolation: true
+Top-bottom percolation: true
+Mean local strut thickness: 6.53986 pixels
+10th-percentile strut thickness: 4 pixels
+Median pore diameter: 16.4924 pixels
+
+Two-point correlation data:
+ r=0: 0.394699, r=1: 0.351303, r=2: 0.318398, r=4: 0.253283, r=8: 0.167153, r=16: 0.137501, r=32: 0.155534, r=64: 0.155713
+Lineal-path data:
+ r=0: 0.394699, r=1: 0.351303, r=2: 0.308788, r=4: 0.227493, r=8: 0.125214, r=16: 0.054344, r=32: 0.012596, r=64: 0.000519
+
+Develop a procedural Python generator that produces stochastic,
+previously unseen binary structures approximating these numerical
+descriptors and the visible morphology.
+
+Produce one complete, self-contained Python script.
+
+The script must:
+
+1. Generate twenty independent 256×256 binary microstructures.
+2. Use random seeds 0 through 19.
+3. Save each sample as both PNG and NPY.
+4. Store solid as 1 and void as 0.
+5. Generate genuinely different stochastic realizations.
+6. Not read or access the reference image at runtime.
+7. Not embed the reference image, target pixels, or a traced copy in the code.
+8. Not use internet access, external datasets, pretrained models, or APIs.
+9. Use common Python scientific packages only.
+10. Create every structure using a procedural algorithm.
+11. Produce one dominant 4-connected solid network.
+12. Make the network span both the horizontal and vertical axes.
+13. Include a short explanation of the algorithm and adjustable parameters.
+14. Return the complete script, not fragments or pseudocode.

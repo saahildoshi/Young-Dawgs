@@ -1,0 +1,1052 @@
+Worked for 16m 7s
+
+I used a warped, anisotropic Voronoi cell-wall construction: stochastic blue-noise sites define the pore organization, smooth coordinate warping makes the walls vein-like rather than perfectly polygonal, and a correlated width field produces variable strut thickness. Each seed generates several independent procedural candidates, and only the supplied numerical descriptors—not the reference pixels—are used to select the closest candidate.
+
+I also ran the script as written. Across seeds 0–19, all samples percolated left–right and top–bottom, the minimum largest-component fraction was about 0.9958, the solid fraction was exactly 0.3946991, mean strut thickness averaged about 6.47 px, and median pore diameter averaged about 16.72 px.
+
+[Download the complete Python script](sandbox:/mnt/data/metamaterial_generator.py)
+
+```python
+#!/usr/bin/env python3
+"""
+Procedural generator for stochastic 256x256 two-phase mechanical metamaterials.
+
+Solid = 1, void = 0.
+
+Algorithm
+---------
+1. Place blue-noise-like sites in and around the image.
+2. Build an anisotropic Voronoi tessellation in a smoothly warped coordinate
+   system. Its cell boundaries form the vein skeleton.
+3. Give the vein skeleton a slowly varying local half-width, producing
+   nonuniform struts and organic/jagged pore boundaries.
+4. Select exactly the target number of solid pixels while forcing the base
+   vein skeleton to remain solid.
+5. For each requested seed, generate several fully procedural candidates and
+   choose the one whose scalar descriptors best match the supplied targets.
+   No reference image or pixel template is read or stored.
+
+Main adjustable morphology controls are in PARAMETER_BANK:
+    n_sites       : more sites -> finer pore network / shorter correlation length
+    pool          : larger -> more even blue-noise site spacing
+    anisotropy    : >1 elongates pores and introduces directional organization
+    warp_amp      : larger -> more curved/meandering veins
+    width_jitter  : larger -> broader strut-thickness variation
+
+Dependencies: numpy, scipy, scikit-image, imageio.
+"""
+
+from __future__ import annotations
+
+import argparse
+import csv
+from pathlib import Path
+
+import imageio.v3 as iio
+import numpy as np
+from scipy import ndimage as ndi
+from scipy.spatial import cKDTree
+from skimage.morphology import skeletonize
+
+
+# ------------------------------ Fixed problem size ---------------------------
+
+H = 256
+W = 256
+NPIX = H * W
+
+FOUR_CONNECTED = np.array(
+    [
+        [0, 1, 0],
+        [1, 1, 1],
+        [0, 1, 0],
+    ],
+    dtype=np.uint8,
+)
+
+
+# ------------------------------ Target descriptors --------------------------
+
+TARGET_PHI = 0.394699
+TARGET_LARGEST = 0.992384
+TARGET_THICK_MEAN = 6.53986
+TARGET_THICK_P10 = 4.0
+TARGET_PORE_DIAM = 16.4924
+
+RADII = np.array([0, 1, 2, 4, 8, 16, 32, 64], dtype=int)
+
+TARGET_S2 = np.array(
+    [
+        0.394699,
+        0.351303,
+        0.318398,
+        0.253283,
+        0.167153,
+        0.137501,
+        0.155534,
+        0.155713,
+    ],
+    dtype=float,
+)
+
+TARGET_LP = np.array(
+    [
+        0.394699,
+        0.351303,
+        0.308788,
+        0.227493,
+        0.125214,
+        0.054344,
+        0.012596,
+        0.000519,
+    ],
+    dtype=float,
+)
+
+
+# Candidate bank.
+#
+# Each final seed gets independent stochastic candidates from these parameter
+# neighborhoods, then scalar descriptor matching chooses the best candidate.
+#
+# Tuple fields:
+#   (n_sites, blue-noise pool, anisotropy, warp amplitude, width jitter)
+#
+PARAMETER_BANK = [
+    (96,  8, 1.42, 5.0, 0.95),
+    (100, 8, 1.36, 5.0, 0.95),
+    (102, 8, 1.32, 5.5, 0.90),
+    (104, 10, 1.30, 5.5, 0.90),
+    (106, 8, 1.28, 6.0, 0.85),
+    (108, 6, 1.26, 6.0, 0.85),
+]
+
+
+# Precompute radial shells for periodic two-point correlation.
+_yy, _xx = np.indices((H, W))
+_dy = np.minimum(_yy, H - _yy)
+_dx = np.minimum(_xx, W - _xx)
+_RR = np.hypot(_dx, _dy)
+
+S2_SHELLS = [
+    None if r == 0 else ((_RR >= r - 0.5) & (_RR < r + 0.5))
+    for r in RADII
+]
+
+
+def blue_noise_sites(
+    rng: np.random.Generator,
+    n_sites: int,
+    pad: float = 16.0,
+    pool: int = 8,
+    irregularity_prob: float = 0.12,
+) -> np.ndarray:
+    """
+    Generate stochastic best-candidate blue-noise sites.
+
+    Most of the time the trial point farthest from all existing sites is
+    accepted. Occasionally the second-farthest is used so the tessellation
+    remains disordered rather than becoming overly uniform.
+    """
+    lo = np.array([-pad, -pad], dtype=float)
+    hi = np.array([W - 1 + pad, H - 1 + pad], dtype=float)
+
+    points = [rng.uniform(lo, hi)]
+
+    for _ in range(1, n_sites):
+        candidates = rng.uniform(lo, hi, size=(pool, 2))
+        p = np.asarray(points)
+
+        d2 = (
+            (candidates[:, None, :] - p[None, :, :]) ** 2
+        ).sum(axis=2)
+
+        nearest_d2 = d2.min(axis=1)
+        order = np.argsort(nearest_d2)
+
+        if pool >= 3 and rng.random() < irregularity_prob:
+            chosen = order[-2]
+        else:
+            chosen = order[-1]
+
+        points.append(candidates[chosen])
+
+    return np.asarray(points)
+
+
+def normalized_smooth_noise(
+    rng: np.random.Generator,
+    sigma: float,
+) -> np.ndarray:
+    """Create a zero-mean, unit-variance spatially correlated random field."""
+    z = ndi.gaussian_filter(
+        rng.normal(size=(H, W)),
+        sigma=sigma,
+        mode="reflect",
+    )
+    z -= z.mean()
+    z /= z.std() + 1e-12
+    return z
+
+
+def percolation_status(
+    mask: np.ndarray,
+) -> tuple[bool, bool, float]:
+    """
+    Return:
+        left-right percolation,
+        top-bottom percolation,
+        largest 4-connected component fraction.
+    """
+    labels, n = ndi.label(mask, structure=FOUR_CONNECTED)
+
+    if n == 0:
+        return False, False, 0.0
+
+    counts = np.bincount(labels.ravel())[1:]
+    largest_fraction = float(counts.max() / mask.sum())
+
+    left = set(np.unique(labels[:, 0])) - {0}
+    right = set(np.unique(labels[:, -1])) - {0}
+    top = set(np.unique(labels[0, :])) - {0}
+    bottom = set(np.unique(labels[-1, :])) - {0}
+
+    lr = bool(left & right)
+    tb = bool(top & bottom)
+
+    return lr, tb, largest_fraction
+
+
+def make_voronoi_fields(
+    rng: np.random.Generator,
+    n_sites: int,
+    pool: int,
+    anisotropy: float,
+    warp_amp: float,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """
+    Construct the stochastic vein geometry.
+
+    Returns
+    -------
+    distance:
+        Euclidean distance to the cell-wall skeleton.
+    width_field:
+        Spatially correlated random modulation of local strut width.
+    vein:
+        Mandatory 4-connected base wall network.
+    """
+
+    sites = blue_noise_sites(
+        rng,
+        n_sites=n_sites,
+        pool=pool,
+    )
+
+    yy, xx = np.mgrid[0:H, 0:W]
+
+    # Multiscale smooth coordinate warp.
+    #
+    # Long wavelength:
+    #     bends the global cellular network.
+    #
+    # Shorter wavelength:
+    #     adds local meandering and prevents perfectly straight Voronoi edges.
+    fx = warp_amp * (
+        0.78 * normalized_smooth_noise(rng, 28.0)
+        + 0.22 * normalized_smooth_noise(rng, 8.0)
+    )
+
+    fy = warp_amp * (
+        0.78 * normalized_smooth_noise(rng, 28.0)
+        + 0.22 * normalized_smooth_noise(rng, 8.0)
+    )
+
+    X = xx + fx
+    Y = yy + fy
+
+    # Random preferred direction for every realization.
+    theta = rng.uniform(0.0, np.pi)
+
+    # Small stochastic variation around requested anisotropy.
+    a = anisotropy * np.exp(rng.normal(0.0, 0.04))
+
+    c = np.cos(theta)
+    s = np.sin(theta)
+
+    # Rotate and anisotropically scale the warped image coordinates.
+    qx = c * X + s * Y
+    qy = -s * X + c * Y
+
+    # Apply the same metric to the Voronoi sites.
+    sx = c * sites[:, 0] + s * sites[:, 1]
+    sy = -s * sites[:, 0] + c * sites[:, 1]
+
+    query_points = np.column_stack(
+        [
+            (qx / a).ravel(),
+            (qy * a).ravel(),
+        ]
+    )
+
+    site_points = np.column_stack(
+        [
+            sx / a,
+            sy * a,
+        ]
+    )
+
+    # Nearest-site rasterization of the warped anisotropic Voronoi diagram.
+    labels = cKDTree(site_points).query(
+        query_points,
+        k=1,
+        workers=-1,
+    )[1]
+
+    labels = labels.reshape(H, W)
+
+    # Rasterize interfaces between neighboring cells.
+    #
+    # Both sides of each label transition are marked so the centerline graph
+    # remains robustly 4-connected at T/Y-like junctions.
+    vein = np.zeros((H, W), dtype=bool)
+
+    d = labels[:, 1:] != labels[:, :-1]
+    vein[:, 1:] |= d
+    vein[:, :-1] |= d
+
+    d = labels[1:, :] != labels[:-1, :]
+    vein[1:, :] |= d
+    vein[:-1, :] |= d
+
+    # Very rare safety fallback. With the large number of Voronoi cells above,
+    # the base graph normally spans both directions on its own.
+    lr, tb, _ = percolation_status(vein)
+
+    if not (lr and tb):
+        cy = int(
+            np.clip(
+                H // 2 + rng.integers(-12, 13),
+                0,
+                H - 1,
+            )
+        )
+
+        cx = int(
+            np.clip(
+                W // 2 + rng.integers(-12, 13),
+                0,
+                W - 1,
+            )
+        )
+
+        vein[cy, :] = True
+        vein[:, cx] = True
+
+    # Distance from every pixel to the vein graph.
+    distance = ndi.distance_transform_edt(~vein)
+
+    # Spatially varying half-width.
+    #
+    # The broad term creates thick and thin branches over relatively long
+    # distances; the short term adds limited local width roughness.
+    width_field = (
+        0.82 * normalized_smooth_noise(rng, 17.0)
+        + 0.18 * normalized_smooth_noise(rng, 5.0)
+    )
+
+    width_field -= width_field.mean()
+    width_field /= width_field.std() + 1e-12
+    width_field = np.clip(width_field, -2.2, 2.2)
+
+    return distance, width_field, vein
+
+
+def threshold_exact_fraction(
+    distance: np.ndarray,
+    width_field: np.ndarray,
+    mandatory_vein: np.ndarray,
+    width_jitter: float,
+    phi: float = TARGET_PHI,
+) -> tuple[np.ndarray, float]:
+    """
+    Convert the continuous vein-width field into a binary structure.
+
+    The lowest-priority pixels are selected until exactly round(phi*H*W)
+    pixels are solid. Every base-vein pixel is mandatory so connectivity is
+    preserved.
+
+    The threshold is equivalent to
+
+        distance <= base_width + width_jitter * width_field
+
+    but ranking pixels makes the volume fraction exact rather than approximate.
+    """
+
+    priority = distance - width_jitter * width_field
+    target_count = int(round(phi * priority.size))
+
+    solid = mandatory_vein.copy()
+    mandatory_count = int(solid.sum())
+
+    if mandatory_count > target_count:
+        raise RuntimeError(
+            "Mandatory vein skeleton exceeds requested solid fraction."
+        )
+
+    need = target_count - mandatory_count
+
+    if need > 0:
+        flat_priority = priority.ravel().copy()
+        flat_mandatory = mandatory_vein.ravel()
+
+        # Mandatory pixels have already been selected.
+        flat_priority[flat_mandatory] = np.inf
+
+        available = np.flatnonzero(~flat_mandatory)
+        local_scores = flat_priority[available]
+
+        chosen_local = np.argpartition(
+            local_scores,
+            need - 1,
+        )[:need]
+
+        chosen = available[chosen_local]
+        solid.ravel()[chosen] = True
+
+        cutoff = float(
+            local_scores[chosen_local].max()
+        )
+
+    else:
+        cutoff = float("nan")
+
+    return solid, cutoff
+
+
+def structural_descriptors(
+    solid: np.ndarray,
+) -> dict[str, float | bool | int]:
+    """
+    Measure scalar structural descriptors.
+
+    The strut-thickness definition and pore-diameter definition correspond to
+    the supplied target values:
+
+      strut thickness:
+          2 * EDT(solid), sampled on the solid skeleton
+
+      pore diameter:
+          for every 4-connected void component, take
+          2 * maximum EDT(void), then take the median over pores
+    """
+
+    labels, ncomp = ndi.label(
+        solid,
+        structure=FOUR_CONNECTED,
+    )
+
+    counts = np.bincount(labels.ravel())[1:]
+
+    largest = (
+        float(counts.max() / solid.sum())
+        if counts.size
+        else 0.0
+    )
+
+    left = set(np.unique(labels[:, 0])) - {0}
+    right = set(np.unique(labels[:, -1])) - {0}
+    top = set(np.unique(labels[0, :])) - {0}
+    bottom = set(np.unique(labels[-1, :])) - {0}
+
+    lr = bool(left & right)
+    tb = bool(top & bottom)
+
+    # Local solid strut thickness.
+    dsolid = ndi.distance_transform_edt(solid)
+    skel = skeletonize(solid)
+    thickness = 2.0 * dsolid[skel]
+
+    thickness_mean = (
+        float(thickness.mean())
+        if thickness.size
+        else 0.0
+    )
+
+    thickness_p10 = (
+        float(np.quantile(thickness, 0.10))
+        if thickness.size
+        else 0.0
+    )
+
+    # Void-pore diameter.
+    void = ~solid
+
+    vlabels, npores = ndi.label(
+        void,
+        structure=FOUR_CONNECTED,
+    )
+
+    dvoid = ndi.distance_transform_edt(void)
+
+    if npores > 0:
+        maxima = ndi.maximum(
+            dvoid,
+            labels=vlabels,
+            index=np.arange(1, npores + 1),
+        )
+
+        pore_diameter = float(
+            np.median(
+                2.0 * np.asarray(maxima)
+            )
+        )
+
+    else:
+        pore_diameter = 0.0
+
+    return {
+        "phi": float(solid.mean()),
+        "largest": largest,
+        "lr": lr,
+        "tb": tb,
+        "thickness_mean": thickness_mean,
+        "thickness_p10": thickness_p10,
+        "pore_diameter": pore_diameter,
+        "n_solid_components": int(ncomp),
+        "n_pores": int(npores),
+    }
+
+
+def two_point_radial(
+    solid: np.ndarray,
+) -> np.ndarray:
+    """
+    Periodic two-point probability S2(r), radially averaged in one-pixel shells.
+
+    FFT-based periodic autocorrelation is used.
+    """
+
+    a = solid.astype(float)
+
+    f = np.fft.fft2(a)
+
+    autocorrelation = (
+        np.fft.ifft2(
+            np.abs(f) ** 2
+        ).real
+        / a.size
+    )
+
+    values = []
+
+    for r, shell in zip(RADII, S2_SHELLS):
+
+        if r == 0:
+            values.append(
+                float(autocorrelation[0, 0])
+            )
+        else:
+            values.append(
+                float(
+                    autocorrelation[shell].mean()
+                )
+            )
+
+    return np.asarray(values)
+
+
+def lineal_path_four_directions(
+    solid: np.ndarray,
+) -> np.ndarray:
+    """
+    Lightweight lineal-path estimator.
+
+    It averages the probability that an entire solid line segment exists in:
+        horizontal,
+        vertical,
+        +45 degree diagonal,
+        -45 degree diagonal
+
+    directions.
+
+    This estimator is used only as one term in candidate selection; the
+    generated pixels themselves are never copied or fitted to a reference
+    image.
+    """
+
+    a = solid.astype(bool)
+    out = [float(a.mean())]
+
+    for r in RADII[1:]:
+
+        r = int(r)
+        vals = []
+
+        # Horizontal line segments.
+        hwin = np.lib.stride_tricks.sliding_window_view(
+            a,
+            (1, r + 1),
+        )
+
+        vals.append(
+            float(
+                hwin.all(
+                    axis=(-1, -2)
+                ).mean()
+            )
+        )
+
+        # Vertical line segments.
+        vwin = np.lib.stride_tricks.sliding_window_view(
+            a,
+            (r + 1, 1),
+        )
+
+        vals.append(
+            float(
+                vwin.all(
+                    axis=(-1, -2)
+                ).mean()
+            )
+        )
+
+        # Main diagonal.
+        diag1 = np.ones(
+            (H - r, W - r),
+            dtype=bool,
+        )
+
+        for k in range(r + 1):
+            diag1 &= a[
+                k:H - r + k,
+                k:W - r + k,
+            ]
+
+        vals.append(
+            float(diag1.mean())
+        )
+
+        # Opposite diagonal.
+        diag2 = np.ones(
+            (H - r, W - r),
+            dtype=bool,
+        )
+
+        for k in range(r + 1):
+            diag2 &= a[
+                k:H - r + k,
+                r - k:W - k,
+            ]
+
+        vals.append(
+            float(diag2.mean())
+        )
+
+        out.append(
+            float(np.mean(vals))
+        )
+
+    return np.asarray(out)
+
+
+def candidate_score(
+    solid: np.ndarray,
+    desc: dict[str, float | bool | int],
+) -> float:
+    """
+    Scalar descriptor mismatch.
+
+    Lower is better. Invalid non-percolating or poorly connected samples receive
+    a prohibitive score.
+    """
+
+    if not (
+        desc["lr"]
+        and desc["tb"]
+        and desc["largest"] > 0.985
+    ):
+        return 1.0e9
+
+    s2 = two_point_radial(solid)
+    lp = lineal_path_four_directions(solid)
+
+    score = 0.0
+
+    # Local thickness distribution.
+    score += (
+        (
+            desc["thickness_mean"]
+            - TARGET_THICK_MEAN
+        )
+        / 0.45
+    ) ** 2
+
+    score += 0.55 * (
+        (
+            desc["thickness_p10"]
+            - TARGET_THICK_P10
+        )
+        / 0.75
+    ) ** 2
+
+    # Pore scale.
+    score += 0.85 * (
+        (
+            desc["pore_diameter"]
+            - TARGET_PORE_DIAM
+        )
+        / 1.8
+    ) ** 2
+
+    # r = 0 is the solid volume fraction and is already imposed exactly.
+    score += 0.55 * np.mean(
+        (
+            (
+                s2[1:]
+                - TARGET_S2[1:]
+            )
+            / 0.012
+        ) ** 2
+    )
+
+    # Omit r=64 from the lineal selection term because finite-image
+    # directional conventions become unusually influential at that distance.
+    score += 0.45 * np.mean(
+        (
+            (
+                lp[1:7]
+                - TARGET_LP[1:7]
+            )
+            / 0.012
+        ) ** 2
+    )
+
+    # Weak preference for a largest-component fraction close to the supplied
+    # value. A completely connected solid network is also acceptable.
+    score += 0.15 * (
+        (
+            desc["largest"]
+            - TARGET_LARGEST
+        )
+        / 0.015
+    ) ** 2
+
+    return float(score)
+
+
+def generate_one(
+    seed: int,
+) -> tuple[
+    np.ndarray,
+    dict,
+    tuple,
+    float,
+    np.ndarray,
+    np.ndarray,
+]:
+    """
+    Generate one deterministic stochastic realization for a seed.
+
+    All candidates are descendants of exactly this integer seed via
+    numpy.random.SeedSequence.
+    """
+
+    seed_sequence = np.random.SeedSequence(seed)
+
+    child_sequences = seed_sequence.spawn(
+        len(PARAMETER_BANK)
+    )
+
+    best = None
+
+    for child, base_params in zip(
+        child_sequences,
+        PARAMETER_BANK,
+    ):
+
+        rng = np.random.default_rng(child)
+
+        (
+            n_sites,
+            pool,
+            anisotropy,
+            warp_amp,
+            width_jitter,
+        ) = base_params
+
+        # Seed-dependent parameter dither.
+        #
+        # This prevents different realizations from looking like the same
+        # geometry with only the site positions shuffled.
+        n_sites = int(
+            np.clip(
+                n_sites + rng.integers(-2, 3),
+                90,
+                116,
+            )
+        )
+
+        anisotropy = float(
+            anisotropy
+            * np.exp(
+                rng.normal(
+                    0.0,
+                    0.025,
+                )
+            )
+        )
+
+        warp_amp = float(
+            warp_amp
+            * rng.uniform(
+                0.90,
+                1.10,
+            )
+        )
+
+        width_jitter = float(
+            width_jitter
+            * rng.uniform(
+                0.92,
+                1.08,
+            )
+        )
+
+        distance, width_field, mandatory = (
+            make_voronoi_fields(
+                rng,
+                n_sites=n_sites,
+                pool=pool,
+                anisotropy=anisotropy,
+                warp_amp=warp_amp,
+            )
+        )
+
+        solid, cutoff = threshold_exact_fraction(
+            distance,
+            width_field,
+            mandatory,
+            width_jitter,
+        )
+
+        desc = structural_descriptors(
+            solid
+        )
+
+        score = candidate_score(
+            solid,
+            desc,
+        )
+
+        s2 = two_point_radial(
+            solid
+        )
+
+        lp = lineal_path_four_directions(
+            solid
+        )
+
+        params = (
+            n_sites,
+            pool,
+            anisotropy,
+            warp_amp,
+            width_jitter,
+            cutoff,
+        )
+
+        record = (
+            score,
+            solid,
+            desc,
+            params,
+            s2,
+            lp,
+        )
+
+        if (
+            best is None
+            or score < best[0]
+        ):
+            best = record
+
+    if best is None:
+        raise RuntimeError(
+            f"No candidate generated for seed {seed}."
+        )
+
+    (
+        score,
+        solid,
+        desc,
+        params,
+        s2,
+        lp,
+    ) = best
+
+    # Final hard validation.
+    if not (
+        desc["lr"]
+        and desc["tb"]
+        and desc["largest"] > 0.985
+    ):
+        raise RuntimeError(
+            f"Seed {seed} did not produce the required dominant "
+            "4-connected bi-percolating network."
+        )
+
+    return (
+        solid,
+        desc,
+        params,
+        score,
+        s2,
+        lp,
+    )
+
+
+def main() -> None:
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=Path(
+            "generated_microstructures"
+        ),
+        help=(
+            "Output directory "
+            "(default: generated_microstructures)"
+        ),
+    )
+
+    args = parser.parse_args()
+
+    args.output.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    rows = []
+
+    # Required random seeds 0 through 19.
+    for seed in range(20):
+
+        (
+            solid,
+            desc,
+            params,
+            score,
+            s2,
+            lp,
+        ) = generate_one(seed)
+
+        # Required stored binary convention:
+        # solid = 1
+        # void  = 0
+        arr = solid.astype(
+            np.uint8
+        )
+
+        stem = (
+            f"sample_seed_{seed:02d}"
+        )
+
+        # NPY retains literal 0/1 values.
+        np.save(
+            args.output
+            / f"{stem}.npy",
+            arr,
+        )
+
+        # PNG uses 255 for visible white solid and 0 for black void.
+        iio.imwrite(
+            args.output
+            / f"{stem}.png",
+            (
+                arr * 255
+            ).astype(np.uint8),
+        )
+
+        (
+            n_sites,
+            pool,
+            anisotropy,
+            warp_amp,
+            width_jitter,
+            cutoff,
+        ) = params
+
+        row = {
+            "seed": seed,
+            "score": score,
+            **desc,
+            "n_sites": n_sites,
+            "pool": pool,
+            "anisotropy": anisotropy,
+            "warp_amp": warp_amp,
+            "width_jitter": width_jitter,
+            "width_cutoff": cutoff,
+        }
+
+        for r, value in zip(
+            RADII,
+            s2,
+        ):
+            row[f"S2_r{r}"] = value
+
+        for r, value in zip(
+            RADII,
+            lp,
+        ):
+            row[f"LP_r{r}"] = value
+
+        rows.append(row)
+
+        print(
+            f"seed={seed:02d}  "
+            f"phi={desc['phi']:.6f}  "
+            f"largest={desc['largest']:.5f}  "
+            f"LR={desc['lr']} "
+            f"TB={desc['tb']}  "
+            f"tmean={desc['thickness_mean']:.3f}  "
+            f"t10={desc['thickness_p10']:.3f}  "
+            f"pore={desc['pore_diameter']:.3f}"
+        )
+
+    # Optional diagnostic table. The requested PNG and NPY outputs have already
+    # been created above.
+    csv_path = (
+        args.output
+        / "metrics.csv"
+    )
+
+    with csv_path.open(
+        "w",
+        newline="",
+    ) as f:
+
+        writer = csv.DictWriter(
+            f,
+            fieldnames=list(
+                rows[0].keys()
+            ),
+        )
+
+        writer.writeheader()
+        writer.writerows(rows)
+
+    print(
+        "\nWrote 20 PNG files, "
+        "20 NPY files, and metrics.csv to: "
+        f"{args.output}"
+    )
+
+
+if __name__ == "__main__":
+    main()
+```
+
+The most useful parameters to alter are `n_sites` for feature scale, `anisotropy` for directional organization and pore elongation, `warp_amp` for vein curvature, and `width_jitter` for the spread of local strut thicknesses. The scalar descriptor scoring can also be tightened or relaxed through the denominator values in `candidate_score()`.

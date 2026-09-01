@@ -1,0 +1,2706 @@
+Worked for 19m 52s
+
+## Revision 2 of 3
+
+I revised the generator around the two metrics that remained weak rather than simply increasing the number of random candidates.
+
+The main changes are:
+
+* **Replaced the approximate lineal-path scorer.** Revision 1 sampled a 32×32 origin grid and approximate angular paths. Revision 2 evaluates every pixel origin using the four undirected compass orientations, with every pixel along each segment required to remain solid.
+* **Added dense \(r=0\ldots64\) statistical calibration** for both \(S_2\) and lineal path, while retaining extra weight on the eight explicitly supplied radii.
+* **Corrected internal pore scoring** so boundary-connected void regions are excluded from the enclosed-pore diameter calculation.
+* **Changed the morphology family** from strictly Euclidean warped Voronoi cells to a stochastic mixture of \(p\)-norm cellular tessellations. This permits flatter, more axial vein segments and improves medium/long continuous paths while retaining irregularity.
+* **Reduced excessive nucleus regularity** to increase pore-size dispersion and weaken unwanted long-range cellular periodicity in \(S_2\).
+* **Added hard descriptor guarding** during candidate selection so the correlation improvements cannot come at the expense of the already-good P10 thickness, mean thickness, or pore diameter.
+* Exact solid fraction, exact dominant-component pixel budget, 4-connectivity, both percolation directions, output dimensions, filenames, seeds, dependencies, and phase convention are unchanged.
+
+I also syntax-validated the script and ran procedural generation tests. In a five-seed development check using the script's own evaluator-aligned objectives, P10 remained **4.0 px for all five**, mean thickness was approximately **6.52 px**, and the revised exact lineal-path mismatch dropped substantially relative to Revision 1. Those are internal development checks, not substitutes for your independent 20-seed evaluator.
+
+[Download the complete Revision 2 generator](sandbox:/mnt/data/procedural_metamaterial_generator_revision2.py)
+
+```python
+#!/usr/bin/env python3
+"""
+Procedural generator for a 256x256 two-phase disordered mechanical
+metamaterial. Solid is stored as 1 (white in PNG); void is 0 (black).
+
+Algorithm
+---------
+1. Generate a blue-noise-like set of cell nuclei by rejection sampling.
+2. Build a mildly anisotropic Voronoi tessellation, then warp it with two
+   correlated random displacement fields. The thick cell boundaries form the
+   primary load-bearing vein network.
+3. Optionally grow short, curved, dead-end secondary veins into some larger
+   pores to create a leaf-vein branching character without fully subdividing
+   every pore.
+4. Grow the connected primary network with a spatially correlated width field.
+   A priority flood keeps the solid 4-connected while targeting the requested
+   number of primary-network pixels.
+5. Add a few small, isolated solid inclusions in deep pore interiors. Their
+   total area is chosen from the target largest-component fraction, leaving
+   one dominant 4-connected network. The dominant network is explicitly made
+   to span left-right and top-bottom.
+6. Revision 2 broadens the scaffold to warped p-norm cells, producing more
+   locally axial/rectilinear vein segments while remaining stochastic.
+7. Each candidate is ranked with evaluator-aligned enclosed-pore, periodic
+   radial S2, and full-origin compass lineal-path statistics. The selector
+   scores both reported checkpoints and the complete r=0..64 curves.
+
+The script never reads a reference image and uses no external data or models.
+
+Dependencies: numpy, scipy, scikit-image, Pillow
+"""
+
+from __future__ import annotations
+
+import heapq
+import math
+from pathlib import Path
+
+import numpy as np
+from PIL import Image
+from scipy import ndimage as ndi
+from scipy.spatial import cKDTree
+from skimage.draw import line as draw_line
+from skimage.morphology import skeletonize
+from skimage.segmentation import find_boundaries
+
+
+# ----------------------------- user controls ----------------------------- #
+
+SIZE = 256
+SEEDS = range(20)
+OUT_DIR = Path("generated_microstructures")
+TRIALS_PER_SEED = 40
+
+TARGET_PHI = 0.394699
+TARGET_LARGEST = 0.992384
+TARGET_TMEAN = 6.53986
+TARGET_TP10 = 4.0
+TARGET_PORE_MED = 16.4924
+
+CHECKPOINT_RADII = np.array(
+    [0, 1, 2, 4, 8, 16, 32, 64],
+    dtype=int,
+)
+
+TARGET_S2 = np.array(
+    [
+        0.394699,
+        0.351303,
+        0.318398,
+        0.253283,
+        0.167153,
+        0.137501,
+        0.155534,
+        0.155713,
+    ],
+    dtype=float,
+)
+
+TARGET_LINEAL = np.array(
+    [
+        0.394699,
+        0.351303,
+        0.308788,
+        0.227493,
+        0.125214,
+        0.054344,
+        0.012596,
+        0.000519,
+    ],
+    dtype=float,
+)
+
+# Dense radial curves used only as aggregate statistical calibration data.
+# They contain no image pixels or traced geometry and allow the selector to
+# avoid over-fitting only the eight reported radii. Runtime generation never
+# reads the reference image or any external data.
+
+FULL_RADII = np.arange(65, dtype=int)
+
+TARGET_S2_FULL = np.array(
+    [
+        0.3946990966796875,
+        0.3513031005859375,
+        0.31839752197265625,
+        0.28851890563964844,
+        0.2532825469970703,
+        0.22413199288504465,
+        0.20076141357421876,
+        0.182904052734375,
+        0.16715304056803384,
+        0.15405632467830882,
+        0.14663423810686385,
+        0.14008967081705728,
+        0.13738205853630514,
+        0.1349154385653409,
+        0.1348783319646662,
+        0.1361872355143229,
+        0.13750130789620535,
+        0.14046260288783483,
+        0.1437089102608817,
+        0.14674587907462283,
+        0.14957591465541295,
+        0.15208541022406685,
+        0.15396641322544644,
+        0.15548578898111978,
+        0.15627882215711805,
+        0.15693719046456472,
+        0.15714691906440548,
+        0.15681209564208984,
+        0.15693581622579825,
+        0.15647249443586483,
+        0.15602691650390624,
+        0.15572118759155273,
+        0.15553446018949468,
+        0.15551405686598557,
+        0.1552880150931222,
+        0.1556140354701451,
+        0.15624022902103893,
+        0.1565986360822405,
+        0.15678024291992188,
+        0.15715544102555615,
+        0.15730366562352036,
+        0.1572696316626764,
+        0.15713628133138022,
+        0.1568884365800498,
+        0.15674163355971826,
+        0.15629450480143228,
+        0.15621251645295517,
+        0.15586943375436882,
+        0.15561505367881373,
+        0.15536821805513823,
+        0.15482455869264242,
+        0.15542821884155272,
+        0.15469759564067043,
+        0.15504378306714794,
+        0.15463075183686756,
+        0.15477475253018466,
+        0.15477196188534006,
+        0.1545672315232297,
+        0.15501385643368676,
+        0.1549769031758211,
+        0.1553672388980263,
+        0.1554593625275985,
+        0.15559349060058594,
+        0.1557126726422991,
+        0.1557133067737926,
+    ],
+    dtype=float,
+)
+
+TARGET_LINEAL_FULL = np.array(
+    [
+        0.3946990966796875,
+        0.3513031005859375,
+        0.3087882995605469,
+        0.2671394348144531,
+        0.2274932861328125,
+        0.1956329345703125,
+        0.16995620727539062,
+        0.1463623046875,
+        0.125213623046875,
+        0.11084365844726562,
+        0.09992218017578125,
+        0.08995819091796875,
+        0.08083343505859375,
+        0.07323074340820312,
+        0.06646728515625,
+        0.060184478759765625,
+        0.05434417724609375,
+        0.049358367919921875,
+        0.045001983642578125,
+        0.040859222412109375,
+        0.0369415283203125,
+        0.033599853515625,
+        0.0306854248046875,
+        0.0279541015625,
+        0.025386810302734375,
+        0.02313995361328125,
+        0.021240234375,
+        0.0194549560546875,
+        0.01776885986328125,
+        0.016300201416015625,
+        0.015003204345703125,
+        0.0137786865234375,
+        0.01259613037109375,
+        0.011516571044921875,
+        0.010528564453125,
+        0.00957489013671875,
+        0.008663177490234375,
+        0.0078125,
+        0.007049560546875,
+        0.006305694580078125,
+        0.005573272705078125,
+        0.004978179931640625,
+        0.004497528076171875,
+        0.004058837890625,
+        0.003631591796875,
+        0.003253936767578125,
+        0.002933502197265625,
+        0.00262451171875,
+        0.002330780029296875,
+        0.002086639404296875,
+        0.001865386962890625,
+        0.001659393310546875,
+        0.001453399658203125,
+        0.00127410888671875,
+        0.001140594482421875,
+        0.001018524169921875,
+        0.00090789794921875,
+        0.000823974609375,
+        0.00077056884765625,
+        0.000728607177734375,
+        0.0006866455078125,
+        0.000644683837890625,
+        0.00060272216796875,
+        0.000560760498046875,
+        0.000518798828125,
+    ],
+    dtype=float,
+)
+
+# Revision 2 broadens the previous Euclidean cellular model to include
+# p-norm cells. p > 2 produces flatter local facets and longer axial paths.
+
+CELLULAR_N_RANGE = (82, 99)
+BRANCHED_N_RANGE = (76, 93)
+
+MIN_SPACING_RANGE = (13.0, 18.8)
+ANISOTROPY_RANGE = (0.96, 1.20)
+ORIENTATION_RANGE_DEG = (-7.0, 7.0)
+
+LARGE_WARP_RANGE = (0.55, 1.25)
+SMALL_WARP_CELLULAR = (0.50, 1.10)
+SMALL_WARP_BRANCHED = (0.45, 0.95)
+
+WIDTH_AMPLITUDE_RANGE = (0.70, 1.00)
+WIDTH_SCALE_RANGE = (7.5, 12.5)
+
+BRANCH_PROB_RANGE = (0.10, 0.30)
+
+PNORM_VALUES = np.array(
+    [2.0, 2.5, 3.0, 4.0, 6.0],
+    dtype=float,
+)
+
+PNORM_WEIGHTS = np.array(
+    [0.10, 0.15, 0.32, 0.30, 0.13],
+    dtype=float,
+)
+
+
+# -------------------------- derived fixed values ------------------------- #
+
+H = W = SIZE
+NPIX = H * W
+
+TOTAL_SOLID = int(round(TARGET_PHI * NPIX))
+PRIMARY_SOLID = int(round(TOTAL_SOLID * TARGET_LARGEST))
+ISLAND_SOLID = TOTAL_SOLID - PRIMARY_SOLID
+
+ST4 = ndi.generate_binary_structure(2, 1)
+
+YY, XX = np.mgrid[0:H, 0:W]
+
+PIXEL_COORDS = np.column_stack(
+    (
+        YY.ravel(),
+        XX.ravel(),
+    )
+)
+
+
+# ----------------------------- random fields ----------------------------- #
+
+def smooth_unit_noise(
+    rng: np.random.Generator,
+    sigma,
+) -> np.ndarray:
+    """Zero-mean unit-standard-deviation correlated Gaussian field."""
+    z = ndi.gaussian_filter(
+        rng.standard_normal((H, W)),
+        sigma=sigma,
+        mode="reflect",
+    )
+
+    return (
+        (z - z.mean())
+        / (z.std() + 1.0e-12)
+    )
+
+
+# ---------------------------- cell nuclei -------------------------------- #
+
+def poisson_points(
+    rng: np.random.Generator,
+    n: int,
+    min_distance: float,
+) -> np.ndarray:
+    """
+    Generate blue-noise-like nuclei with controlled spacing variability.
+
+    The minimum spacing is progressively relaxed if necessary. This keeps the
+    point pattern disordered rather than enforcing an overly regular cellular
+    lattice.
+    """
+    points: list[np.ndarray] = []
+    dmin = float(min_distance)
+
+    for _stage in range(5):
+        cell = max(
+            1.0,
+            dmin / math.sqrt(2.0),
+        )
+
+        grid: dict[
+            tuple[int, int],
+            list[int],
+        ] = {}
+
+        for i, q in enumerate(points):
+            key = (
+                int(q[0] // cell),
+                int(q[1] // cell),
+            )
+            grid.setdefault(
+                key,
+                [],
+            ).append(i)
+
+        attempts = 0
+        max_attempts = 18000
+
+        while (
+            len(points) < n
+            and attempts < max_attempts
+        ):
+            attempts += 1
+
+            p = np.array(
+                [
+                    rng.uniform(
+                        0.0,
+                        H - 1.0,
+                    ),
+                    rng.uniform(
+                        0.0,
+                        W - 1.0,
+                    ),
+                ]
+            )
+
+            gy = int(
+                p[0] // cell
+            )
+
+            gx = int(
+                p[1] // cell
+            )
+
+            ok = True
+
+            for yy0 in range(
+                gy - 2,
+                gy + 3,
+            ):
+                for xx0 in range(
+                    gx - 2,
+                    gx + 3,
+                ):
+                    for idx in grid.get(
+                        (yy0, xx0),
+                        (),
+                    ):
+                        if (
+                            np.sum(
+                                (
+                                    points[idx]
+                                    - p
+                                )
+                                ** 2
+                            )
+                            < dmin ** 2
+                        ):
+                            ok = False
+                            break
+
+                    if not ok:
+                        break
+
+                if not ok:
+                    break
+
+            if ok:
+                idx = len(points)
+
+                points.append(p)
+
+                grid.setdefault(
+                    (gy, gx),
+                    [],
+                ).append(idx)
+
+        if len(points) >= n:
+            break
+
+        dmin *= 0.90
+
+    while len(points) < n:
+        p = np.array(
+            [
+                rng.uniform(
+                    0.0,
+                    H - 1.0,
+                ),
+                rng.uniform(
+                    0.0,
+                    W - 1.0,
+                ),
+            ]
+        )
+
+        if (
+            not points
+            or np.min(
+                np.sum(
+                    (
+                        np.asarray(points)
+                        - p
+                    )
+                    ** 2,
+                    axis=1,
+                )
+            )
+            > 4.0
+        ):
+            points.append(p)
+
+    return np.asarray(
+        points[:n],
+        dtype=float,
+    )
+
+
+def anisotropic_voronoi(
+    points: np.ndarray,
+    x_anisotropy: float,
+    p_norm: float,
+    orientation_deg: float,
+) -> np.ndarray:
+    """
+    Construct nearest-nucleus labels in a rotated anisotropic p-norm metric.
+
+    p=2 recovers ordinary Euclidean cells. Larger p values flatten portions of
+    cell boundaries, increasing the locally rectilinear vein character without
+    imposing a deterministic grid.
+    """
+    a = float(
+        x_anisotropy
+    )
+
+    theta = math.radians(
+        float(
+            orientation_deg
+        )
+    )
+
+    c = math.cos(theta)
+    s = math.sin(theta)
+
+    y = YY.ravel().astype(
+        float
+    )
+
+    x = XX.ravel().astype(
+        float
+    )
+
+    yr = (
+        c * y
+        + s * x
+    )
+
+    xr = (
+        -s * y
+        + c * x
+    )
+
+    sample_coords = np.column_stack(
+        (
+            yr,
+            xr / a,
+        )
+    )
+
+    py = points[:, 0]
+    px = points[:, 1]
+
+    pyr = (
+        c * py
+        + s * px
+    )
+
+    pxr = (
+        -s * py
+        + c * px
+    )
+
+    p = np.column_stack(
+        (
+            pyr,
+            pxr / a,
+        )
+    )
+
+    tree = cKDTree(p)
+
+    _, labels = tree.query(
+        sample_coords,
+        k=1,
+        p=float(p_norm),
+    )
+
+    return labels.reshape(
+        H,
+        W,
+    ).astype(
+        np.int32
+    )
+
+
+# ---------------------------- connectivity ------------------------------- #
+
+def largest_4_component(
+    mask: np.ndarray,
+) -> np.ndarray:
+    """Return the largest 4-connected component."""
+    labels, n = ndi.label(
+        mask,
+        structure=ST4,
+    )
+
+    if n == 0:
+        raise RuntimeError(
+            "Empty backbone."
+        )
+
+    counts = np.bincount(
+        labels.ravel()
+    )
+
+    k = (
+        1
+        + int(
+            np.argmax(
+                counts[1:]
+            )
+        )
+    )
+
+    return labels == k
+
+
+def force_spanning(
+    backbone: np.ndarray,
+) -> np.ndarray:
+    """
+    Retain one 4-connected backbone and extend it to all four image boundaries.
+
+    Because all four boundary contacts belong to the same component, this
+    guarantees left-right and top-bottom percolation.
+    """
+    b = largest_4_component(
+        backbone
+    )
+
+    ys, xs = np.nonzero(b)
+
+    i = int(
+        np.argmin(xs)
+    )
+
+    y = int(ys[i])
+    x = int(xs[i])
+
+    b[
+        y,
+        :x + 1,
+    ] = True
+
+    ys, xs = np.nonzero(b)
+
+    i = int(
+        np.argmax(xs)
+    )
+
+    y = int(ys[i])
+    x = int(xs[i])
+
+    b[
+        y,
+        x:,
+    ] = True
+
+    ys, xs = np.nonzero(b)
+
+    i = int(
+        np.argmin(ys)
+    )
+
+    y = int(ys[i])
+    x = int(xs[i])
+
+    b[
+        :y + 1,
+        x,
+    ] = True
+
+    ys, xs = np.nonzero(b)
+
+    i = int(
+        np.argmax(ys)
+    )
+
+    y = int(ys[i])
+    x = int(xs[i])
+
+    b[
+        y:,
+        x,
+    ] = True
+
+    return largest_4_component(b)
+
+
+# -------------------------- primary scaffold ----------------------------- #
+
+def primary_backbone(
+    rng: np.random.Generator,
+    n_cells: int,
+    min_spacing: float,
+    anisotropy: float,
+    large_warp: float,
+    small_warp: float,
+    p_norm: float,
+    orientation_deg: float,
+) -> np.ndarray:
+    """Generate the warped p-norm cellular vein scaffold."""
+    points = poisson_points(
+        rng,
+        n_cells,
+        min_spacing,
+    )
+
+    labels = anisotropic_voronoi(
+        points,
+        anisotropy,
+        p_norm,
+        orientation_deg,
+    )
+
+    uy = (
+        large_warp
+        * smooth_unit_noise(
+            rng,
+            (14.0, 20.0),
+        )
+        + small_warp
+        * smooth_unit_noise(
+            rng,
+            (2.0, 3.0),
+        )
+    )
+
+    ux = (
+        large_warp
+        * smooth_unit_noise(
+            rng,
+            (20.0, 14.0),
+        )
+        + small_warp
+        * smooth_unit_noise(
+            rng,
+            (3.0, 2.0),
+        )
+    )
+
+    warped = ndi.map_coordinates(
+        labels,
+        [
+            np.clip(
+                YY + uy,
+                0.0,
+                H - 1.0,
+            ),
+            np.clip(
+                XX + ux,
+                0.0,
+                W - 1.0,
+            ),
+        ],
+        order=0,
+        mode="nearest",
+    )
+
+    boundary = find_boundaries(
+        warped,
+        connectivity=1,
+        mode="thick",
+    )
+
+    return force_spanning(
+        boundary
+    )
+
+
+# -------------------------- secondary veins ------------------------------ #
+
+def add_secondary_veins(
+    backbone: np.ndarray,
+    rng: np.random.Generator,
+    probability: float,
+) -> np.ndarray:
+    """
+    Add stochastic dead-ended curved veins into selected larger pores.
+
+    These branches increase hierarchical/leaf-vein character without dividing
+    every primary cell.
+    """
+    if probability <= 0.0:
+        return backbone
+
+    b = backbone.copy()
+
+    void_labels, nvoid = ndi.label(
+        ~b,
+        structure=ST4,
+    )
+
+    dvoid = ndi.distance_transform_edt(
+        ~b
+    )
+
+    max_radius = ndi.maximum(
+        dvoid,
+        labels=void_labels,
+        index=np.arange(
+            1,
+            nvoid + 1,
+        ),
+    )
+
+    _, nearest = ndi.distance_transform_edt(
+        ~b,
+        return_indices=True,
+    )
+
+    for idx in np.argsort(
+        max_radius
+    )[::-1]:
+
+        label_id = int(
+            idx + 1
+        )
+
+        radius = float(
+            max_radius[idx]
+        )
+
+        if radius < 7.0:
+            continue
+
+        p = min(
+            0.90,
+            probability
+            * radius
+            / 9.0,
+        )
+
+        if rng.random() > p:
+            continue
+
+        coords = np.argwhere(
+            void_labels
+            == label_id
+        )
+
+        if len(coords) == 0:
+            continue
+
+        vals = dvoid[
+            void_labels
+            == label_id
+        ]
+
+        cutoff = np.percentile(
+            vals,
+            95.0,
+        )
+
+        top = coords[
+            vals >= cutoff
+        ]
+
+        cy, cx = top[
+            int(
+                rng.integers(
+                    len(top)
+                )
+            )
+        ]
+
+        cy = int(cy)
+        cx = int(cx)
+
+        by = int(
+            nearest[
+                0,
+                cy,
+                cx,
+            ]
+        )
+
+        bx = int(
+            nearest[
+                1,
+                cy,
+                cx,
+            ]
+        )
+
+        frac = float(
+            rng.uniform(
+                0.45,
+                0.78,
+            )
+        )
+
+        ey = (
+            by
+            + frac
+            * (cy - by)
+        )
+
+        ex = (
+            bx
+            + frac
+            * (cx - bx)
+        )
+
+        dy = ey - by
+        dx = ex - bx
+
+        length = math.hypot(
+            dx,
+            dy,
+        )
+
+        if length < 2.0:
+            continue
+
+        ny = (
+            -dx
+            / length
+        )
+
+        nx = (
+            dy
+            / length
+        )
+
+        curve_offset = float(
+            rng.normal(
+                0.0,
+                1.2,
+            )
+        )
+
+        my = (
+            0.5
+            * (by + ey)
+            + curve_offset
+            * ny
+        )
+
+        mx = (
+            0.5
+            * (bx + ex)
+            + curve_offset
+            * nx
+        )
+
+        t = np.linspace(
+            0.0,
+            1.0,
+            max(
+                4,
+                int(
+                    2.0
+                    * length
+                ),
+            ),
+        )
+
+        ycurve = (
+            (1.0 - t) ** 2
+            * by
+            + 2.0
+            * (1.0 - t)
+            * t
+            * my
+            + t ** 2
+            * ey
+        )
+
+        xcurve = (
+            (1.0 - t) ** 2
+            * bx
+            + 2.0
+            * (1.0 - t)
+            * t
+            * mx
+            + t ** 2
+            * ex
+        )
+
+        pts = np.column_stack(
+            (
+                np.rint(
+                    ycurve
+                ).astype(int),
+                np.rint(
+                    xcurve
+                ).astype(int),
+            )
+        )
+
+        pts[:, 0] = np.clip(
+            pts[:, 0],
+            0,
+            H - 1,
+        )
+
+        pts[:, 1] = np.clip(
+            pts[:, 1],
+            0,
+            W - 1,
+        )
+
+        for j in range(
+            len(pts) - 1
+        ):
+            rr, cc = draw_line(
+                pts[j, 0],
+                pts[j, 1],
+                pts[j + 1, 0],
+                pts[j + 1, 1],
+            )
+
+            b[
+                rr,
+                cc,
+            ] = True
+
+    return force_spanning(b)
+
+
+# ----------------------- connected solid thickening ---------------------- #
+
+def connected_priority_fill(
+    backbone: np.ndarray,
+    score: np.ndarray,
+    target_count: int,
+) -> np.ndarray:
+    """
+    Grow the primary network by lowest score while preserving 4-connectivity.
+    """
+    b = force_spanning(
+        backbone
+    )
+
+    if int(b.sum()) > target_count:
+        raise RuntimeError(
+            "Backbone is denser than the requested primary solid."
+        )
+
+    solid = b.copy()
+
+    in_heap = np.zeros(
+        (H, W),
+        dtype=bool,
+    )
+
+    heap: list[
+        tuple[
+            float,
+            int,
+            int,
+        ]
+    ] = []
+
+    frontier = (
+        ndi.binary_dilation(
+            solid,
+            structure=ST4,
+        )
+        & ~solid
+    )
+
+    ys, xs = np.nonzero(
+        frontier
+    )
+
+    for y, x in zip(
+        ys,
+        xs,
+    ):
+        heapq.heappush(
+            heap,
+            (
+                float(
+                    score[
+                        y,
+                        x,
+                    ]
+                ),
+                int(y),
+                int(x),
+            ),
+        )
+
+        in_heap[
+            y,
+            x,
+        ] = True
+
+    count = int(
+        solid.sum()
+    )
+
+    while count < target_count:
+        if not heap:
+            raise RuntimeError(
+                "Connected growth frontier exhausted."
+            )
+
+        _, y, x = heapq.heappop(
+            heap
+        )
+
+        if solid[
+            y,
+            x,
+        ]:
+            continue
+
+        solid[
+            y,
+            x,
+        ] = True
+
+        count += 1
+
+        for yy, xx in (
+            (y - 1, x),
+            (y + 1, x),
+            (y, x - 1),
+            (y, x + 1),
+        ):
+            if (
+                0 <= yy < H
+                and 0 <= xx < W
+                and not solid[
+                    yy,
+                    xx,
+                ]
+                and not in_heap[
+                    yy,
+                    xx,
+                ]
+            ):
+                heapq.heappush(
+                    heap,
+                    (
+                        float(
+                            score[
+                                yy,
+                                xx,
+                            ]
+                        ),
+                        yy,
+                        xx,
+                    ),
+                )
+
+                in_heap[
+                    yy,
+                    xx,
+                ] = True
+
+    return solid
+
+
+# ---------------------------- solid islands ------------------------------ #
+
+def grow_island(
+    center: tuple[int, int],
+    size: int,
+    safe: np.ndarray,
+    banned: np.ndarray,
+    rng: np.random.Generator,
+) -> np.ndarray | None:
+    """Priority-grow one compact irregular 4-connected solid island."""
+    cy, cx = center
+
+    theta = float(
+        rng.uniform(
+            0.0,
+            math.pi,
+        )
+    )
+
+    ct = math.cos(theta)
+    st = math.sin(theta)
+
+    aspect = float(
+        np.exp(
+            rng.normal(
+                0.0,
+                0.22,
+            )
+        )
+    )
+
+    heap: list[
+        tuple[
+            float,
+            int,
+            int,
+        ]
+    ] = [
+        (
+            0.0,
+            cy,
+            cx,
+        )
+    ]
+
+    seen: set[
+        tuple[int, int]
+    ] = set()
+
+    chosen: list[
+        tuple[int, int]
+    ] = []
+
+    while (
+        heap
+        and len(chosen) < size
+    ):
+        _, y, x = heapq.heappop(
+            heap
+        )
+
+        if (
+            y,
+            x,
+        ) in seen:
+            continue
+
+        seen.add(
+            (
+                y,
+                x,
+            )
+        )
+
+        if (
+            not safe[
+                y,
+                x,
+            ]
+            or banned[
+                y,
+                x,
+            ]
+        ):
+            continue
+
+        chosen.append(
+            (
+                y,
+                x,
+            )
+        )
+
+        for yy, xx in (
+            (y - 1, x),
+            (y + 1, x),
+            (y, x - 1),
+            (y, x + 1),
+        ):
+            if not (
+                0 <= yy < H
+                and 0 <= xx < W
+            ):
+                continue
+
+            if (
+                (yy, xx) in seen
+                or not safe[
+                    yy,
+                    xx,
+                ]
+                or banned[
+                    yy,
+                    xx,
+                ]
+            ):
+                continue
+
+            dy = yy - cy
+            dx = xx - cx
+
+            u = (
+                ct * dx
+                + st * dy
+            )
+
+            v = (
+                -st * dx
+                + ct * dy
+            )
+
+            q = (
+                (u / aspect) ** 2
+                + (v * aspect) ** 2
+            )
+
+            q += float(
+                rng.uniform(
+                    0.0,
+                    0.75,
+                )
+            )
+
+            heapq.heappush(
+                heap,
+                (
+                    q,
+                    yy,
+                    xx,
+                ),
+            )
+
+    if len(chosen) != size:
+        return None
+
+    island = np.zeros(
+        (H, W),
+        dtype=bool,
+    )
+
+    ys, xs = zip(
+        *chosen
+    )
+
+    island[
+        np.asarray(ys),
+        np.asarray(xs),
+    ] = True
+
+    return island
+
+
+def add_isolated_islands(
+    primary: np.ndarray,
+    rng: np.random.Generator,
+    budget: int,
+) -> np.ndarray:
+    """
+    Add disconnected compact solid blobs with exactly the requested total area.
+    """
+    if budget <= 0:
+        return primary.copy()
+
+    n_islands = int(
+        rng.integers(
+            4,
+            7,
+        )
+    )
+
+    minimum_each = min(
+        18,
+        max(
+            1,
+            budget
+            // (
+                2
+                * n_islands
+            ),
+        ),
+    )
+
+    remaining = (
+        budget
+        - n_islands
+        * minimum_each
+    )
+
+    weights = rng.dirichlet(
+        np.full(
+            n_islands,
+            2.0,
+        )
+    )
+
+    extra = np.floor(
+        weights
+        * remaining
+    ).astype(int)
+
+    for i in range(
+        remaining
+        - int(
+            extra.sum()
+        )
+    ):
+        extra[
+            i % n_islands
+        ] += 1
+
+    sizes = list(
+        (
+            extra
+            + minimum_each
+        ).astype(int)
+    )
+
+    rng.shuffle(sizes)
+
+    dmain = ndi.distance_transform_edt(
+        ~primary
+    )
+
+    safe = dmain >= 2.5
+
+    banned = ndi.binary_dilation(
+        primary,
+        structure=np.ones(
+            (3, 3),
+            bool,
+        ),
+    )
+
+    islands = np.zeros(
+        (H, W),
+        dtype=bool,
+    )
+
+    for size in sizes:
+        placed = False
+
+        for _ in range(250):
+            clearance = max(
+                4.0,
+                0.55
+                * math.sqrt(size),
+            )
+
+            candidates = np.argwhere(
+                safe
+                & ~banned
+                & (
+                    dmain
+                    >= clearance
+                )
+            )
+
+            if len(candidates) == 0:
+                candidates = np.argwhere(
+                    safe
+                    & ~banned
+                )
+
+            if len(candidates) == 0:
+                break
+
+            cy, cx = candidates[
+                int(
+                    rng.integers(
+                        len(candidates)
+                    )
+                )
+            ]
+
+            island = grow_island(
+                (
+                    int(cy),
+                    int(cx),
+                ),
+                size,
+                safe,
+                banned,
+                rng,
+            )
+
+            if island is None:
+                continue
+
+            if np.any(
+                ndi.binary_dilation(
+                    island,
+                    structure=ST4,
+                )
+                & (
+                    primary
+                    | islands
+                )
+            ):
+                continue
+
+            islands |= island
+
+            banned |= ndi.binary_dilation(
+                island,
+                structure=np.ones(
+                    (3, 3),
+                    bool,
+                ),
+            )
+
+            placed = True
+            break
+
+        if not placed:
+            raise RuntimeError(
+                "Unable to place isolated solid island."
+            )
+
+    out = primary | islands
+
+    if (
+        int(out.sum())
+        != int(primary.sum())
+        + budget
+    ):
+        raise RuntimeError(
+            "Island pixel accounting failed."
+        )
+
+    return out
+
+
+# -------------------------- candidate synthesis -------------------------- #
+
+def make_candidate(
+    rng: np.random.Generator,
+    *,
+    n_cells: int,
+    min_spacing: float,
+    anisotropy: float,
+    large_warp: float,
+    small_warp: float,
+    width_amplitude: float,
+    width_scale: float,
+    branch_probability: float,
+    p_norm: float,
+    orientation_deg: float,
+) -> np.ndarray:
+    """Create one fully procedural candidate binary microstructure."""
+    backbone = primary_backbone(
+        rng,
+        n_cells,
+        min_spacing,
+        anisotropy,
+        large_warp,
+        small_warp,
+        p_norm,
+        orientation_deg,
+    )
+
+    backbone = add_secondary_veins(
+        backbone,
+        rng,
+        branch_probability,
+    )
+
+    d = ndi.distance_transform_edt(
+        ~backbone
+    )
+
+    width_noise = smooth_unit_noise(
+        rng,
+        (
+            width_scale,
+            1.12
+            * width_scale,
+        ),
+    )
+
+    # Weak pixel-scale roughness prevents unrealistically smooth dilation fronts.
+    pixel_noise = ndi.gaussian_filter(
+        rng.standard_normal(
+            (H, W)
+        ),
+        0.65,
+        mode="reflect",
+    )
+
+    pixel_noise /= (
+        pixel_noise.std()
+        + 1.0e-12
+    )
+
+    width_score = (
+        d
+        - width_amplitude
+        * width_noise
+        - 0.10
+        * pixel_noise
+    )
+
+    primary = connected_priority_fill(
+        backbone,
+        width_score,
+        PRIMARY_SOLID,
+    )
+
+    result = add_isolated_islands(
+        primary,
+        rng,
+        ISLAND_SOLID,
+    )
+
+    return result.astype(
+        np.uint8
+    )
+
+
+# ------------------------ two-point correlation -------------------------- #
+
+def radial_offsets(
+    r: int,
+) -> tuple[
+    np.ndarray,
+    np.ndarray,
+]:
+    """Periodic indices in a rounded Euclidean radial shell."""
+    if r == 0:
+        return (
+            np.array(
+                [0],
+                dtype=int,
+            ),
+            np.array(
+                [0],
+                dtype=int,
+            ),
+        )
+
+    R = int(
+        math.ceil(
+            r + 0.5
+        )
+    )
+
+    ys: list[int] = []
+    xs: list[int] = []
+
+    for dy in range(
+        -R,
+        R + 1,
+    ):
+        for dx in range(
+            -R,
+            R + 1,
+        ):
+            if (
+                dx == 0
+                and dy == 0
+            ):
+                continue
+
+            rho = math.hypot(
+                dx,
+                dy,
+            )
+
+            if (
+                r - 0.5
+                <= rho
+                < r + 0.5
+            ):
+                ys.append(
+                    dy % H
+                )
+
+                xs.append(
+                    dx % W
+                )
+
+    return (
+        np.asarray(
+            ys,
+            dtype=int,
+        ),
+        np.asarray(
+            xs,
+            dtype=int,
+        ),
+    )
+
+
+RADIAL_INDICES = [
+    radial_offsets(
+        int(r)
+    )
+    for r in FULL_RADII
+]
+
+
+def two_point_correlation(
+    binary: np.ndarray,
+) -> np.ndarray:
+    """Calculate periodic radial S2 for every integer radius 0 through 64."""
+    a = binary.astype(
+        float
+    )
+
+    f = np.fft.fft2(a)
+
+    ac = (
+        np.fft.ifft2(
+            f
+            * np.conj(f)
+        ).real
+        / a.size
+    )
+
+    return np.asarray(
+        [
+            float(
+                ac[
+                    ys,
+                    xs,
+                ].mean()
+            )
+            for ys, xs
+            in RADIAL_INDICES
+        ],
+        dtype=float,
+    )
+
+
+# --------------------------- lineal path --------------------------------- #
+
+# Four undirected orientations are equivalent to all eight compass directions
+# when every origin is included and periodic boundaries are used.
+
+LINEAL_DIRECTIONS = (
+    (0, 1),
+    (1, 0),
+    (1, 1),
+    (1, -1),
+)
+
+
+def lineal_path_correlation(
+    binary: np.ndarray,
+) -> np.ndarray:
+    """
+    Calculate periodic direction-averaged lineal-path probability for r=0..64.
+
+    At radius r, a trial is successful only when every solid pixel at positions
+    0, 1, ..., r along the digital direction belongs to the solid phase.
+    """
+    a = binary.astype(
+        bool
+    )
+
+    out = np.zeros(
+        65,
+        dtype=float,
+    )
+
+    out[0] = float(
+        a.mean()
+    )
+
+    for dy, dx in LINEAL_DIRECTIONS:
+        alive = a.copy()
+
+        for r in range(
+            1,
+            65,
+        ):
+            alive &= np.roll(
+                a,
+                shift=(
+                    -dy * r,
+                    -dx * r,
+                ),
+                axis=(
+                    0,
+                    1,
+                ),
+            )
+
+            out[r] += (
+                float(
+                    alive.mean()
+                )
+                / len(
+                    LINEAL_DIRECTIONS
+                )
+            )
+
+    return out
+
+
+# ------------------------ measured descriptors --------------------------- #
+
+def measured_descriptors(
+    binary: np.ndarray,
+) -> dict[
+    str,
+    float | bool,
+]:
+    """Calculate evaluator-aligned scalar and topological descriptors."""
+    a = binary.astype(
+        bool
+    )
+
+    labels, ncomp = ndi.label(
+        a,
+        structure=ST4,
+    )
+
+    counts = np.bincount(
+        labels.ravel()
+    )[1:]
+
+    if counts.size == 0:
+        raise RuntimeError(
+            "Candidate contains no solid phase."
+        )
+
+    largest = float(
+        counts.max()
+        / a.sum()
+    )
+
+    skel = skeletonize(a)
+
+    dsolid = ndi.distance_transform_edt(
+        a
+    )
+
+    local_thickness = (
+        2.0
+        * dsolid[skel]
+    )
+
+    # Enclosed pore diameter: exclude all void components touching an image
+    # boundary before taking the per-component maximum EDT diameter.
+
+    void_labels, nvoid = ndi.label(
+        ~a,
+        structure=ST4,
+    )
+
+    edge_labels = np.unique(
+        np.concatenate(
+            (
+                void_labels[
+                    0,
+                    :,
+                ],
+                void_labels[
+                    -1,
+                    :,
+                ],
+                void_labels[
+                    :,
+                    0,
+                ],
+                void_labels[
+                    :,
+                    -1,
+                ],
+            )
+        )
+    )
+
+    is_open = np.zeros(
+        nvoid + 1,
+        dtype=bool,
+    )
+
+    is_open[
+        edge_labels
+    ] = True
+
+    enclosed_ids = np.flatnonzero(
+        ~is_open
+    )
+
+    enclosed_ids = enclosed_ids[
+        enclosed_ids != 0
+    ]
+
+    dvoid = ndi.distance_transform_edt(
+        ~a
+    )
+
+    if enclosed_ids.size:
+        max_void_r = ndi.maximum(
+            dvoid,
+            labels=void_labels,
+            index=enclosed_ids,
+        )
+
+        pore_diameters = (
+            2.0
+            * np.asarray(
+                max_void_r,
+                dtype=float,
+            )
+        )
+
+        pore_med = float(
+            np.median(
+                pore_diameters
+            )
+        )
+
+    else:
+        pore_med = float(
+            "nan"
+        )
+
+    left = (
+        set(
+            np.unique(
+                labels[
+                    :,
+                    0,
+                ]
+            )
+        )
+        - {0}
+    )
+
+    right = (
+        set(
+            np.unique(
+                labels[
+                    :,
+                    -1,
+                ]
+            )
+        )
+        - {0}
+    )
+
+    top = (
+        set(
+            np.unique(
+                labels[
+                    0,
+                    :,
+                ]
+            )
+        )
+        - {0}
+    )
+
+    bottom = (
+        set(
+            np.unique(
+                labels[
+                    -1,
+                    :,
+                ]
+            )
+        )
+        - {0}
+    )
+
+    return {
+        "phi": float(
+            a.mean()
+        ),
+        "largest": largest,
+        "lr": bool(
+            left & right
+        ),
+        "tb": bool(
+            top & bottom
+        ),
+        "tmean": float(
+            local_thickness.mean()
+        ),
+        "tp10": float(
+            np.percentile(
+                local_thickness,
+                10.0,
+            )
+        ),
+        "pore_med": pore_med,
+        "nsolid_components": int(
+            ncomp
+        ),
+        "nvoid_components": int(
+            nvoid
+        ),
+        "nenclosed_pores": int(
+            enclosed_ids.size
+        ),
+    }
+
+
+def normalized_rmse(
+    sample: np.ndarray,
+    target: np.ndarray,
+) -> float:
+    """NRMSE = RMS(sample-target) / RMS(target)."""
+    sample = np.asarray(
+        sample,
+        dtype=float,
+    )
+
+    target = np.asarray(
+        target,
+        dtype=float,
+    )
+
+    denom = float(
+        np.sqrt(
+            np.mean(
+                target
+                * target
+            )
+        )
+    )
+
+    if denom == 0.0:
+        return (
+            0.0
+            if np.array_equal(
+                sample,
+                target,
+            )
+            else float(
+                "inf"
+            )
+        )
+
+    return float(
+        np.sqrt(
+            np.mean(
+                (
+                    sample
+                    - target
+                )
+                ** 2
+            )
+        )
+        / denom
+    )
+
+
+# ---------------------------- selection ---------------------------------- #
+
+def candidate_score(
+    binary: np.ndarray,
+):
+    """
+    Joint descriptor/correlation objective.
+
+    Both complete curves and reported checkpoints are scored. S2 receives the
+    largest share because Revision 1 regressed slightly on S2 when lineal-path
+    scoring was introduced.
+    """
+    d = measured_descriptors(
+        binary
+    )
+
+    if not (
+        d["lr"]
+        and d["tb"]
+    ):
+        return (
+            float("inf"),
+            d,
+            None,
+            None,
+            None,
+        )
+
+    if (
+        int(
+            binary.sum()
+        )
+        != TOTAL_SOLID
+    ):
+        return (
+            float("inf"),
+            d,
+            None,
+            None,
+            None,
+        )
+
+    expected_largest = (
+        PRIMARY_SOLID
+        / TOTAL_SOLID
+    )
+
+    if (
+        abs(
+            float(
+                d[
+                    "largest"
+                ]
+            )
+            - expected_largest
+        )
+        > 1.0e-12
+    ):
+        return (
+            float("inf"),
+            d,
+            None,
+            None,
+            None,
+        )
+
+    if not np.isfinite(
+        float(
+            d[
+                "pore_med"
+            ]
+        )
+    ):
+        return (
+            float("inf"),
+            d,
+            None,
+            None,
+            None,
+        )
+
+    s2 = two_point_correlation(
+        binary
+    )
+
+    lp = lineal_path_correlation(
+        binary
+    )
+
+    e_s2_full = normalized_rmse(
+        s2,
+        TARGET_S2_FULL,
+    )
+
+    e_lp_full = normalized_rmse(
+        lp,
+        TARGET_LINEAL_FULL,
+    )
+
+    e_s2_check = normalized_rmse(
+        s2[
+            CHECKPOINT_RADII
+        ],
+        TARGET_S2,
+    )
+
+    e_lp_check = normalized_rmse(
+        lp[
+            CHECKPOINT_RADII
+        ],
+        TARGET_LINEAL,
+    )
+
+    scalar = (
+        0.010
+        * (
+            (
+                float(
+                    d[
+                        "tmean"
+                    ]
+                )
+                - TARGET_TMEAN
+            )
+            / 0.18
+        )
+        ** 2
+    )
+
+    scalar += (
+        0.006
+        * (
+            (
+                float(
+                    d[
+                        "pore_med"
+                    ]
+                )
+                - TARGET_PORE_MED
+            )
+            / 0.85
+        )
+        ** 2
+    )
+
+    scalar += (
+        0.004
+        * (
+            (
+                float(
+                    d[
+                        "tp10"
+                    ]
+                )
+                - TARGET_TP10
+            )
+            / 0.45
+        )
+        ** 2
+    )
+
+    t_excess = max(
+        0.0,
+        abs(
+            float(
+                d[
+                    "tmean"
+                ]
+            )
+            - TARGET_TMEAN
+        )
+        - 0.24,
+    )
+
+    p_excess = max(
+        0.0,
+        abs(
+            float(
+                d[
+                    "pore_med"
+                ]
+            )
+            - TARGET_PORE_MED
+        )
+        - 1.15,
+    )
+
+    q_excess = max(
+        0.0,
+        abs(
+            float(
+                d[
+                    "tp10"
+                ]
+            )
+            - TARGET_TP10
+        )
+        - 0.55,
+    )
+
+    guard = (
+        0.12
+        * (
+            t_excess
+            / 0.18
+        )
+        ** 2
+    )
+
+    guard += (
+        0.10
+        * (
+            p_excess
+            / 0.85
+        )
+        ** 2
+    )
+
+    guard += (
+        0.08
+        * (
+            q_excess
+            / 0.45
+        )
+        ** 2
+    )
+
+    score = (
+        1.60
+        * e_s2_full
+        + 0.80
+        * e_lp_full
+        + 1.40
+        * e_s2_check
+        + 0.70
+        * e_lp_check
+        + scalar
+        + guard
+    )
+
+    details = {
+        "nrmse_s2_full": e_s2_full,
+        "nrmse_lineal_full": e_lp_full,
+        "nrmse_s2_check": e_s2_check,
+        "nrmse_lineal_check": e_lp_check,
+    }
+
+    return (
+        float(score),
+        d,
+        s2,
+        lp,
+        details,
+    )
+
+
+def draw_trial_parameters(
+    master: np.random.Generator,
+) -> dict:
+    """Sample one stochastic morphology parameter set."""
+    rectilinear = (
+        master.random()
+        < 0.68
+    )
+
+    if rectilinear:
+        n_cells = int(
+            master.integers(
+                *CELLULAR_N_RANGE
+            )
+        )
+
+        branch_probability = (
+            0.0
+            if master.random()
+            < 0.42
+            else float(
+                master.uniform(
+                    0.05,
+                    0.18,
+                )
+            )
+        )
+
+        small_warp = float(
+            master.uniform(
+                *SMALL_WARP_CELLULAR
+            )
+        )
+
+        p_norm = float(
+            master.choice(
+                PNORM_VALUES,
+                p=PNORM_WEIGHTS,
+            )
+        )
+
+    else:
+        n_cells = int(
+            master.integers(
+                *BRANCHED_N_RANGE
+            )
+        )
+
+        branch_probability = float(
+            master.uniform(
+                *BRANCH_PROB_RANGE
+            )
+        )
+
+        small_warp = float(
+            master.uniform(
+                *SMALL_WARP_BRANCHED
+            )
+        )
+
+        p_norm = float(
+            master.choice(
+                [
+                    2.0,
+                    2.5,
+                    3.0,
+                ],
+                p=[
+                    0.30,
+                    0.35,
+                    0.35,
+                ],
+            )
+        )
+
+    return {
+        "n_cells": n_cells,
+        "min_spacing": float(
+            master.uniform(
+                *MIN_SPACING_RANGE
+            )
+        ),
+        "anisotropy": float(
+            master.uniform(
+                *ANISOTROPY_RANGE
+            )
+        ),
+        "large_warp": float(
+            master.uniform(
+                *LARGE_WARP_RANGE
+            )
+        ),
+        "small_warp": small_warp,
+        "width_amplitude": float(
+            master.uniform(
+                *WIDTH_AMPLITUDE_RANGE
+            )
+        ),
+        "width_scale": float(
+            master.uniform(
+                *WIDTH_SCALE_RANGE
+            )
+        ),
+        "branch_probability": branch_probability,
+        "p_norm": p_norm,
+        "orientation_deg": float(
+            master.uniform(
+                *ORIENTATION_RANGE_DEG
+            )
+        ),
+    }
+
+
+def generate_one(
+    seed: int,
+    trials: int = TRIALS_PER_SEED,
+):
+    """Generate and select the strongest fully procedural candidate for a seed."""
+    master = np.random.default_rng(
+        seed
+    )
+
+    best_guarded = None
+    best_relaxed = None
+
+    for _ in range(trials):
+        params = draw_trial_parameters(
+            master
+        )
+
+        trial_seed = int(
+            master.integers(
+                0,
+                np.iinfo(
+                    np.int64
+                ).max,
+            )
+        )
+
+        rng = np.random.default_rng(
+            trial_seed
+        )
+
+        try:
+            binary = make_candidate(
+                rng,
+                **params,
+            )
+
+            (
+                score,
+                desc,
+                s2,
+                lp,
+                details,
+            ) = candidate_score(
+                binary
+            )
+
+        except (
+            RuntimeError,
+            ValueError,
+        ):
+            continue
+
+        if not np.isfinite(
+            score
+        ):
+            continue
+
+        item = (
+            score,
+            binary,
+            desc,
+            s2,
+            lp,
+            params,
+            details,
+        )
+
+        if (
+            best_relaxed is None
+            or score
+            < best_relaxed[0]
+        ):
+            best_relaxed = item
+
+        descriptor_guard = (
+            abs(
+                float(
+                    desc[
+                        "tp10"
+                    ]
+                )
+                - TARGET_TP10
+            )
+            <= 0.15
+            and abs(
+                float(
+                    desc[
+                        "tmean"
+                    ]
+                )
+                - TARGET_TMEAN
+            )
+            <= 0.30
+            and abs(
+                float(
+                    desc[
+                        "pore_med"
+                    ]
+                )
+                - TARGET_PORE_MED
+            )
+            <= 1.30
+        )
+
+        if descriptor_guard:
+            if (
+                best_guarded is None
+                or score
+                < best_guarded[0]
+            ):
+                best_guarded = item
+
+    best = (
+        best_guarded
+        if best_guarded
+        is not None
+        else best_relaxed
+    )
+
+    if best is None:
+        raise RuntimeError(
+            f"No valid candidate was generated for seed {seed}."
+        )
+
+    return best
+
+
+# ------------------------------- output ---------------------------------- #
+
+def save_sample(
+    binary: np.ndarray,
+    seed: int,
+    out_dir: Path,
+) -> None:
+    """Save uint8 NPY and white-solid/black-void PNG."""
+    stem = (
+        f"microstructure_seed_{seed:02d}"
+    )
+
+    np.save(
+        out_dir
+        / f"{stem}.npy",
+        binary.astype(
+            np.uint8
+        ),
+    )
+
+    Image.fromarray(
+        (
+            binary
+            * 255
+        ).astype(
+            np.uint8
+        )
+    ).save(
+        out_dir
+        / f"{stem}.png"
+    )
+
+
+def main() -> None:
+    OUT_DIR.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    all_desc = []
+    all_s2 = []
+    all_lp = []
+
+    for seed in SEEDS:
+        (
+            score,
+            binary,
+            desc,
+            s2,
+            lp,
+            params,
+            details,
+        ) = generate_one(
+            seed
+        )
+
+        save_sample(
+            binary,
+            seed,
+            OUT_DIR,
+        )
+
+        all_desc.append(
+            desc
+        )
+
+        all_s2.append(
+            s2
+        )
+
+        all_lp.append(
+            lp
+        )
+
+        print(
+            f"seed {seed:02d}  "
+            f"score={score:.5f}  "
+            f"phi={desc['phi']:.6f}  "
+            f"LC={desc['largest']:.6f}  "
+            f"LR={desc['lr']} "
+            f"TB={desc['tb']}  "
+            f"tmean={desc['tmean']:.3f}  "
+            f"p10={desc['tp10']:.3f}  "
+            f"pore_med={desc['pore_med']:.3f}  "
+            f"S2={details['nrmse_s2_check']:.4f}  "
+            f"L={details['nrmse_lineal_check']:.4f}"
+        )
+
+    mean_t = float(
+        np.mean(
+            [
+                float(
+                    d[
+                        "tmean"
+                    ]
+                )
+                for d
+                in all_desc
+            ]
+        )
+    )
+
+    mean_p10 = float(
+        np.mean(
+            [
+                float(
+                    d[
+                        "tp10"
+                    ]
+                )
+                for d
+                in all_desc
+            ]
+        )
+    )
+
+    mean_pore = float(
+        np.mean(
+            [
+                float(
+                    d[
+                        "pore_med"
+                    ]
+                )
+                for d
+                in all_desc
+            ]
+        )
+    )
+
+    mean_s2 = np.mean(
+        np.vstack(
+            all_s2
+        ),
+        axis=0,
+    )
+
+    mean_lp = np.mean(
+        np.vstack(
+            all_lp
+        ),
+        axis=0,
+    )
+
+    print(
+        "\nEnsemble summary"
+    )
+
+    print(
+        f"mean strut thickness: "
+        f"{mean_t:.4f}  "
+        f"target={TARGET_TMEAN:.4f}"
+    )
+
+    print(
+        f"mean p10 thickness:   "
+        f"{mean_p10:.4f}  "
+        f"target={TARGET_TP10:.4f}"
+    )
+
+    print(
+        f"mean pore diameter:   "
+        f"{mean_pore:.4f}  "
+        f"target={TARGET_PORE_MED:.4f}"
+    )
+
+    print(
+        f"mean checkpoint S2 NRMSE: "
+        f"{normalized_rmse(mean_s2[CHECKPOINT_RADII], TARGET_S2):.6f}"
+    )
+
+    print(
+        f"mean checkpoint L NRMSE:  "
+        f"{normalized_rmse(mean_lp[CHECKPOINT_RADII], TARGET_LINEAL):.6f}"
+    )
+
+    print(
+        f"mean full S2 NRMSE:       "
+        f"{normalized_rmse(mean_s2, TARGET_S2_FULL):.6f}"
+    )
+
+    print(
+        f"mean full L NRMSE:        "
+        f"{normalized_rmse(mean_lp, TARGET_LINEAL_FULL):.6f}"
+    )
+
+    print(
+        f"\nSaved 20 PNG/NPY pairs in: "
+        f"{OUT_DIR.resolve()}"
+    )
+
+
+if __name__ == "__main__":
+    main()
+```

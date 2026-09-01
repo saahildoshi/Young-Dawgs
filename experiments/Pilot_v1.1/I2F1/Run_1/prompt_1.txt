@@ -1,0 +1,49 @@
+Revision round 1 of 3.
+
+The current generator was evaluated on twenty development seeds.
+
+Target metrics:
+
+Solid volume fraction: 0.394699
+Largest-component fraction: 0.992384
+Left-right percolation: true
+Top-bottom percolation: true
+Mean local strut thickness: 6.53986 pixels
+10th-percentile strut thickness: 4 pixels
+Median pore diameter: 16.4924 pixels
+
+Two-point correlation data:
+ r=0: 0.394699, r=1: 0.351303, r=2: 0.318398, r=4: 0.253283, r=8: 0.167153, r=16: 0.137501, r=32: 0.155534, r=64: 0.155713
+Lineal-path data:
+ r=0: 0.394699, r=1: 0.351303, r=2: 0.308788, r=4: 0.227493, r=8: 0.125214, r=16: 0.054344, r=32: 0.012596, r=64: 0.000519
+
+Generated metrics:
+  solid_volume_fraction: all=0.394699 +/- 0 (n=20); valid=0.394699 +/- 0 (n=20)
+  largest_component_fraction: all=0.992384 +/- 2.22045e-16 (n=20); valid=0.992384 +/- 2.22045e-16 (n=20)
+  mean_strut_thickness: all=6.47452 +/- 0.0977682 (n=20); valid=6.47452 +/- 0.0977682 (n=20)
+  p10_strut_thickness: all=4.05902 +/- 0.146951 (n=20); valid=4.05902 +/- 0.146951 (n=20)
+  median_pore_diameter: all=16.7361 +/- 0.54083 (n=20); valid=16.7361 +/- 0.54083 (n=20)
+  nrmse_s2: all=0.0587963 +/- 0.0104776 (n=20); valid=0.0587963 +/- 0.0104776 (n=20)
+  nrmse_lineal_path: all=0.0341908 +/- 0.0108949 (n=20); valid=0.0341908 +/- 0.0108949 (n=20)
+
+Main remaining differences:
+  Reduce mean nrmse_s2 to improve two-point spatial statistics; reduce mean nrmse_lineal_path to improve continuous solid-path statistics.
+  Increase valid_sample_count by enforcing one dominant 4-connected solid network spanning both image axes.
+  Thickness and pore dimensions are reported in pixels and should be compared against the target values above.
+  
+Revise the procedural generator to reduce these differences.
+
+Preserve the metrics that already closely match the target.
+
+Also preserve:
+
+- one dominant 4-connected solid network,
+- horizontal and vertical percolation,
+- stochastic diversity,
+- the exact output dimensions,
+- filenames,
+- dependencies,
+- seed behavior,
+- phase convention.
+
+Return the complete revised script.
