@@ -11,12 +11,26 @@ The complete file reference, metric definitions, output interpretation, and
 copy-paste command catalog are in
 [docs/PROJECT_REFERENCE.md](docs/PROJECT_REFERENCE.md).
 
+The automated/resumable I2F1 research workflow is documented in
+[docs/PIPELINE_V0_1.md](docs/PIPELINE_V0_1.md).
+
 ```bash
 python3 -m venv .venv-macos
 source .venv-macos/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -e .
 python -m pytest -q
+```
+
+Start a Pipeline v0.1 run and inspect its manual model boundary:
+
+```bash
+python -m metamaterial_eval.pipeline start \
+  data/reference/reference_binary.npy \
+  --run-name concrete_01
+
+python -m metamaterial_eval.pipeline status \
+  experiments/pipeline_v0.1/reference_binary/concrete_01
 ```
 
 Run the stored pilot generator and both evaluation protocols:

@@ -18,6 +18,10 @@ dependencies = [
 
 [project.scripts]
 metamaterial-eval = "metamaterial_eval.cli:main"
+young-dawgs-pipeline = "metamaterial_eval.pipeline.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["metamaterial_eval*"]
+
+[tool.setuptools.package-data]
+"metamaterial_eval.pipeline" = ["templates/*.txt"]

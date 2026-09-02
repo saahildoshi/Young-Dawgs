@@ -1,0 +1,57 @@
+The generator uses a connected solid matrix containing a stochastic population
+of enclosed circular voids. The number, radii, and positions of the voids are
+adjustable in ``generate``. Retaining a solid exterior frame guarantees one
+dominant 4-connected phase and percolation in both directions.
+
+```python
+"""Deterministic acceptance-demo generator for Pipeline v0.1."""
+
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+
+import numpy as np
+from PIL import Image
+from skimage.draw import disk
+
+
+def generate(seed: int, size: int = 256, pore_count: int = 42) -> np.ndarray:
+    """Generate a connected solid with seed-dependent enclosed circular pores."""
+    rng = np.random.default_rng(seed)
+    binary = np.ones((size, size), dtype=np.uint8)
+    for _ in range(pore_count):
+        radius = int(rng.integers(5, 15))
+        row = int(rng.integers(radius + 4, size - radius - 4))
+        column = int(rng.integers(radius + 4, size - radius - 4))
+        rr, cc = disk((row, column), radius, shape=binary.shape)
+        binary[rr, cc] = 0
+    binary[:4, :] = 1
+    binary[-4:, :] = 1
+    binary[:, :4] = 1
+    binary[:, -4:] = 1
+    return binary
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--seed-start", type=int, default=0)
+    parser.add_argument("--num-samples", type=int, default=20)
+    parser.add_argument("--output-dir", type=Path, default=Path("generated"))
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    for seed in range(args.seed_start, args.seed_start + args.num_samples):
+        binary = generate(seed)
+        stem = args.output_dir / f"microstructure_seed_{seed:03d}"
+        np.save(stem.with_suffix(".npy"), binary, allow_pickle=False)
+        Image.fromarray(binary * 255, mode="L").save(stem.with_suffix(".png"))
+        print(f"saved seed {seed}")
+
+
+if __name__ == "__main__":
+    main()
+```

@@ -1,0 +1,48 @@
+Revision round {round_number} of {max_rounds}.
+
+The current generator was evaluated on twenty development seeds.
+
+Target metrics:
+
+Solid volume fraction: {solid_volume_fraction}
+Largest-component fraction: {largest_component_fraction}
+Left-right percolation: {left_right_percolation}
+Top-bottom percolation: {top_bottom_percolation}
+Mean local strut thickness: {mean_strut_thickness_px} pixels
+10th-percentile strut thickness: {p10_strut_thickness_px} pixels
+Median pore diameter: {median_pore_diameter_px} pixels
+
+Two-point correlation data:
+{sampled_s2}
+
+Lineal-path data:
+{sampled_lineal_path}
+
+Generated metrics:
+{generated_metrics}
+Valid samples: {valid_count} / {development_count}
+
+Main remaining differences:
+{difference_summary}
+
+Revise the procedural generator to reduce these differences.
+
+Preserve the metrics that already closely match the target.
+
+Also preserve:
+
+- one dominant 4-connected solid network,
+- horizontal and vertical percolation,
+- stochastic diversity,
+- the exact output dimensions,
+- filenames,
+- dependencies,
+- seed behavior,
+- phase convention,
+- the command-line interface: --seed-start, --num-samples, --output-dir.
+
+The script must default to development seeds 0 through 19 but must also run
+unchanged for any requested consecutive seed range, including 100 through 119.
+
+Return the complete revised script.
+
