@@ -1,4 +1,4 @@
-"""Strict reference canonicalization and provenance metadata."""
+"""Strict reference loading and explicit PNG preparation with provenance."""
 
 from __future__ import annotations
 
@@ -26,7 +26,12 @@ def _load_reference(
     *,
     expected_shape: tuple[int, int],
     threshold: float | None,
+    prepare_png: bool = False,
 ) -> np.ndarray:
+    if prepare_png and source.suffix.lower() != ".png":
+        raise ValueError("--prepare-png is only supported for PNG references.")
+    if threshold is not None and not 0.0 <= float(threshold) <= 1.0:
+        raise ValueError("threshold must lie in [0, 1].")
     if source.suffix.lower() == ".npy":
         return validate_binary_array(
             np.load(source, allow_pickle=False), expected_shape=expected_shape
@@ -36,6 +41,16 @@ def _load_reference(
 
     with Image.open(source) as image:
         grayscale = np.asarray(image.convert("L"), dtype=np.uint8)
+    if prepare_png:
+        # Match prepare_target's established order: grayscale -> threshold ->
+        # nearest-neighbor resize. Resampling binary pixels cannot add gray values.
+        effective_threshold = 0.5 if threshold is None else float(threshold)
+        thresholded = (grayscale / 255.0 >= effective_threshold).astype(np.uint8)
+        resized = Image.fromarray(thresholded * 255).resize(
+            (expected_shape[1], expected_shape[0]),
+            resample=Image.Resampling.NEAREST,
+        )
+        return np.ascontiguousarray(np.asarray(resized) != 0, dtype=np.uint8)
     if tuple(grayscale.shape) != expected_shape:
         raise ValueError(
             f"Expected reference shape {expected_shape}, received {grayscale.shape}."
@@ -60,14 +75,22 @@ def canonicalize_reference(
     *,
     threshold: float | None,
     evaluator_hash: str,
+    prepare_png: bool = False,
 ) -> tuple[np.ndarray, dict[str, Any]]:
-    """Create canonical NPY/PNG reference files without morphology changes."""
+    """Save canonical NPY/PNG files, optionally preparing a raw PNG explicitly.
+
+    Preparation thresholds grayscale intensities at 0.5 by default and resizes
+    with nearest-neighbor interpolation. Strict loading remains the default.
+    """
     source = source_path.resolve()
     if not source.is_file():
         raise FileNotFoundError(f"Reference does not exist: {source}")
     reference_dir.mkdir(parents=True, exist_ok=False)
     binary = _load_reference(
-        source, expected_shape=config.image_shape, threshold=threshold
+        source,
+        expected_shape=config.image_shape,
+        threshold=threshold,
+        prepare_png=prepare_png,
     )
     canonical_npy = reference_dir / "reference_binary.npy"
     canonical_png = reference_dir / "reference.png"
@@ -89,8 +112,21 @@ def canonicalize_reference(
         "pipeline_version": config.pipeline_version,
         "evaluator_version": config.evaluator_version,
         "evaluator_sha256": evaluator_hash,
-        "threshold": threshold,
+        "threshold": 0.5 if prepare_png and threshold is None else threshold,
+        "preprocessing": {"enabled": prepare_png},
     }
+    if source.suffix.lower() == ".png":
+        with Image.open(source) as image:
+            metadata["source_shape"] = [image.height, image.width]
+            metadata["source_image_mode"] = image.mode
+    if prepare_png:
+        metadata["preprocessing"].update(
+            {
+                "steps": ["grayscale", "threshold", "resize"],
+                "interpolation": "nearest_neighbor",
+                "aspect_ratio_policy": "stretch_to_target_shape",
+                "output_shape": list(config.image_shape),
+            }
+        )
     write_json(reference_dir / "metadata.json", metadata)
     return binary, metadata
-

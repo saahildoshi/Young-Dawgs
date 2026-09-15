@@ -30,7 +30,7 @@ def script_sha256(source: str) -> str:
 
 
 def _validate_script(source: str) -> str:
-    candidate = source.strip() + "\n"
+    candidate = source.replace("\r\n", "\n").replace("\r", "\n").strip() + "\n"
     if not candidate.strip():
         raise ScriptExtractionError("The extracted Python script is empty.")
     try:
@@ -64,10 +64,11 @@ def write_new_script(response: str, destination: Path) -> tuple[str, str]:
         raise FileExistsError(f"Historical script will not be overwritten: {destination}")
     source = extract_python_script(response)
     destination.parent.mkdir(parents=True, exist_ok=True)
-    destination.write_text(source, encoding="utf-8")
-    digest = script_sha256(source)
-    destination.with_name(destination.stem + "_sha256.txt").write_text(
-        digest + "\n", encoding="utf-8"
+    # Binary writes avoid Windows text-mode LF -> CRLF translation. Hash the
+    # bytes actually saved, not a platform-independent in-memory approximation.
+    destination.write_bytes(source.encode("utf-8"))
+    digest = sha256_file(destination)
+    destination.with_name(destination.stem + "_sha256.txt").write_bytes(
+        (digest + "\n").encode("utf-8")
     )
     return source, digest
-

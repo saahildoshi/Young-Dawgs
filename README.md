@@ -14,9 +14,10 @@ copy-paste command catalog are in
 The automated/resumable I2F1 research workflow is documented in
 [docs/PIPELINE_V0_1.md](docs/PIPELINE_V0_1.md).
 
-```bash
-python3 -m venv .venv-macos
-source .venv-macos/bin/activate
+```powershell
+py -3.10 -m venv .venv
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+.\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -e .
 python -m pytest -q
@@ -24,25 +25,25 @@ python -m pytest -q
 
 Start a Pipeline v0.1 run and inspect its manual model boundary:
 
-```bash
-python -m metamaterial_eval.pipeline start \
-  data/reference/reference_binary.npy \
+```powershell
+python -m metamaterial_eval.pipeline start `
+  data\reference\reference_binary.npy `
   --run-name concrete_01
 
-python -m metamaterial_eval.pipeline status \
-  experiments/pipeline_v0.1/reference_binary/concrete_01
+python -m metamaterial_eval.pipeline status `
+  experiments\pipeline_v0.1\reference_binary\concrete_01
 ```
 
 Run the stored pilot generator and both evaluation protocols:
 
-```bash
-python experiments/pilot_voronoi/generate_microstructures.py \
-  --output-dir experiments/pilot_voronoi/samples
+```powershell
+python experiments\pilot_voronoi\generate_microstructures.py `
+  --output-dir experiments\pilot_voronoi\samples
 
-python -m metamaterial_eval evaluate \
-  data/reference/reference_binary.npy \
-  experiments/pilot_voronoi/samples \
-  --output-dir experiments/pilot_voronoi/results/finite_domain
+python -m metamaterial_eval evaluate `
+  data\reference\reference_binary.npy `
+  experiments\pilot_voronoi\samples `
+  --output-dir experiments\pilot_voronoi\results\finite_domain
 
 python scripts/evaluate_and_plot.py
 ```

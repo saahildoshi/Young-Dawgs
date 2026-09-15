@@ -35,15 +35,14 @@ def write_json(path: Path, value: Any) -> None:
     """Atomically write strict, indented JSON."""
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_text(
-        json.dumps(value, indent=2, allow_nan=False) + "\n",
-        encoding="utf-8",
+    temporary.write_bytes(
+        (json.dumps(value, indent=2, allow_nan=False) + "\n").encode("utf-8")
     )
     temporary.replace(path)
 
 
 def read_json(path: Path) -> dict[str, Any]:
-    with path.open(encoding="utf-8") as stream:
+    with path.open(encoding="utf-8-sig") as stream:
         value = json.load(stream)
     if not isinstance(value, dict):
         raise ValueError(f"Expected a JSON object in {path}.")
@@ -70,6 +69,7 @@ def advance(
 ) -> None:
     manifest.update(updates)
     manifest["status"] = status
+    manifest["completion_status"] = "complete" if status == COMPLETE else "incomplete"
     manifest["failure_reason"] = None
     manifest["recoverable_state"] = None
     save_manifest(run_dir, manifest)

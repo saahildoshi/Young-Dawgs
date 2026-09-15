@@ -1,0 +1,52 @@
+Study the attached reference image.
+
+It represents a binary disordered mechanical metamaterial. White is solid
+and black is void.
+
+The measured target descriptors are:
+
+Solid volume fraction: 0.310883
+Largest-component fraction: 0.876755
+Left-right percolation: true
+Top-bottom percolation: true
+Mean local strut thickness: 2.655 pixels
+10th-percentile strut thickness: 2 pixels
+Median pore diameter: 6.32456 pixels
+
+Two-point correlation data:
+r=0: 0.310883, r=1: 0.213261, r=2: 0.155861, r=4: 0.103486, r=8: 0.091954, r=16: 0.096406, r=32: 0.097038, r=64: 0.096978
+
+Lineal-path data:
+r=0: 0.310883, r=1: 0.213261, r=2: 0.140850, r=4: 0.068787, r=8: 0.018925, r=16: 0.002205, r=32: 0.000088, r=64: 0.000000
+
+Develop a procedural Python generator that produces stochastic,
+previously unseen binary structures approximating these numerical
+descriptors and the visible morphology.
+
+Produce one complete, self-contained Python script.
+
+The script must:
+
+1. Generate twenty independent 256×256 binary microstructures by default.
+2. Default to random seeds 0 through 19.
+3. Accept these command-line arguments exactly:
+   --seed-start INTEGER, --num-samples INTEGER, --output-dir PATH.
+4. Use --seed-start and --num-samples to generate the requested consecutive seeds.
+5. Save each sample as both PNG and NPY in --output-dir.
+6. Name outputs so the integer seed is recoverable, for example microstructure_seed_100.npy.
+7. Store solid as 1 and void as 0.
+8. Generate genuinely different stochastic realizations.
+9. Not read or access the reference image at runtime.
+10. Not embed the reference image, target pixels, or a traced copy in the code.
+11. Not use internet access, external datasets, pretrained models, or APIs.
+12. Use common Python scientific packages only.
+13. Create every structure using a procedural algorithm.
+14. Produce one dominant 4-connected solid network.
+15. Make the network span both the horizontal and vertical axes.
+16. Include a short explanation of the algorithm and adjustable parameters.
+17. Return the complete script, not fragments or pseudocode.
+
+The command-line defaults must remain seeds 0 through 19, twenty samples,
+and a 256×256 output. The pipeline will later invoke the same unchanged script
+with seeds 100 through 119 for held-out validation.
+

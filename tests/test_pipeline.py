@@ -29,6 +29,7 @@ from metamaterial_eval.pipeline.runner import (
 from metamaterial_eval.pipeline.scripts import (
     ScriptExtractionError,
     extract_python_script,
+    script_sha256,
     sha256_file,
     write_new_script,
 )
@@ -37,6 +38,7 @@ from metamaterial_eval.pipeline.state import (
     FAILED,
     FINAL_GENERATOR_FROZEN,
     WAITING_FOR_INITIAL_LLM,
+    WAITING_FOR_REVISION,
     advance,
     fail,
     load_manifest,
@@ -188,11 +190,60 @@ def test_08_historical_iteration_script_is_never_overwritten(tmp_path: Path) -> 
     assert destination.read_bytes() == original
 
 
+def test_08b_script_hash_is_based_on_exact_saved_lf_bytes(tmp_path: Path) -> None:
+    destination = tmp_path / "iteration_0.py"
+    _, digest = write_new_script(
+        "```python\r\nimport sys\r\nprint(sys.version)\r\n```", destination
+    )
+    assert b"\r\n" not in destination.read_bytes()
+    assert digest == sha256_file(destination)
+    assert (tmp_path / "iteration_0_sha256.txt").read_text().strip() == digest
+
+
+def test_08c_legacy_windows_crlf_script_is_reconciled_without_rewrite(
+    tmp_path: Path,
+) -> None:
+    response = "```python\nimport sys\nprint(sys.version)\n```"
+    source = extract_python_script(response)
+    source_digest = script_sha256(source)
+    destination = tmp_path / "iteration_0.py"
+    windows_bytes = source.encode("utf-8").replace(b"\n", b"\r\n")
+    destination.write_bytes(windows_bytes)
+    (tmp_path / "iteration_0_sha256.txt").write_text(source_digest + "\n")
+
+    _, actual_digest = _write_or_reuse_script(
+        response, destination, expected_hash=source_digest
+    )
+    assert destination.read_bytes() == windows_bytes
+    assert actual_digest == sha256_file(destination)
+    recovery = json.loads((tmp_path / "iteration_0_hash_recovery.json").read_text())
+    assert recovery["script_bytes_changed"] is False
+    assert recovery["actual_file_sha256"] == actual_digest
+
+
+def test_08d_hash_recovery_rejects_real_code_changes(tmp_path: Path) -> None:
+    response = "```python\nimport sys\nprint(sys.version)\n```"
+    destination = tmp_path / "iteration_0.py"
+    destination.write_bytes(b"import sys\r\nprint('changed')\r\n")
+    (tmp_path / "iteration_0_sha256.txt").write_text(script_sha256(extract_python_script(response)))
+    with pytest.raises(FileExistsError, match="differs"):
+        _write_or_reuse_script(response, destination)
+
+
 def test_09_normal_fenced_python_response_is_extracted() -> None:
     response = "Explanation.\n```python\nimport numpy as np\nprint(np.__version__)\n```\nDone."
     source = extract_python_script(response)
     assert source.startswith("import numpy as np")
     assert "Explanation" not in source
+
+
+def test_09b_windows_utf8_bom_response_is_accepted(tmp_path: Path) -> None:
+    response_path = tmp_path / "response_0.txt"
+    response_path.write_bytes(
+        b"\xef\xbb\xbf```python\r\nimport sys\r\nprint(sys.version)\r\n```"
+    )
+    source = extract_python_script(response_path.read_text(encoding="utf-8-sig"))
+    assert source == "import sys\nprint(sys.version)\n"
 
 
 def test_10_ambiguous_script_response_fails_safely() -> None:
@@ -212,6 +263,17 @@ def test_11_subprocess_stdout_and_stderr_are_captured(tmp_path: Path) -> None:
     assert Path(result.stdout_path).read_text().strip() == "out"
     assert Path(result.stderr_path).read_text().strip() == "err"
     assert json.loads((tmp_path / "logs" / "metadata.json").read_text())["return_code"] == 0
+
+
+def test_11b_subprocess_start_failure_is_captured(tmp_path: Path) -> None:
+    result = run_subprocess(
+        [str(tmp_path / "missing-executable")],
+        cwd=tmp_path,
+        log_dir=tmp_path / "start-failure",
+        timeout_seconds=5,
+    )
+    assert not result.succeeded and result.return_code is None
+    assert "Could not start process" in Path(result.stderr_path).read_text()
 
 
 def test_12_generator_timeout_is_recorded(tmp_path: Path) -> None:
@@ -245,6 +307,44 @@ def test_14_recoverable_failed_state_can_resume(tmp_path: Path) -> None:
     )
     assert resume_run(run_dir)["status"] == FAILED
     assert resume_run(run_dir, retry_failed=True)["status"] == WAITING_FOR_INITIAL_LLM
+
+
+def test_14b_failed_legacy_windows_hash_run_resumes_safely(tmp_path: Path) -> None:
+    run_dir = start_run(REFERENCE, run_name="windows-recovery", runs_root=tmp_path)
+    response = (
+        REPOSITORY / "tests/fixtures/pipeline/manual_response.txt"
+    ).read_text(encoding="utf-8")
+    response_path = run_dir / "iteration_0/response_0.txt"
+    response_path.write_text(response, encoding="utf-8")
+    source = extract_python_script(response)
+    source_digest = script_sha256(source)
+    script_path = run_dir / "iteration_0/iteration_0.py"
+    script_path.write_bytes(source.encode("utf-8").replace(b"\n", b"\r\n"))
+    script_path.with_name("iteration_0_sha256.txt").write_text(source_digest + "\n")
+    manifest = load_manifest(run_dir)
+    manifest["iterations"]["0"].update(
+        {
+            "generator_path": str(script_path),
+            "generator_sha256": source_digest,
+            "active_generator_path": str(script_path),
+            "active_generator_sha256": source_digest,
+        }
+    )
+    manifest["iteration_generator_hashes"]["0"] = {"generator": source_digest}
+    fail(
+        run_dir,
+        manifest,
+        "RuntimeError: Active model-generated script was modified after extraction.",
+        recoverable_state=WAITING_FOR_INITIAL_LLM,
+    )
+
+    recovered = resume_run(run_dir, retry_failed=True)
+    assert recovered["status"] == WAITING_FOR_REVISION
+    assert recovered["current_iteration"] == 1
+    assert (run_dir / "iteration_0/iteration_0_hash_recovery.json").is_file()
+    assert recovered["iterations"]["0"]["hash_recovery_path"].endswith(
+        "iteration_0_hash_recovery.json"
+    )
 
 
 def test_15_final_generator_is_hashed_and_frozen_before_heldout(tmp_path: Path) -> None:

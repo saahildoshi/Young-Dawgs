@@ -44,8 +44,9 @@ scientific descriptor and plotting behavior still comes from evaluator v1.1.
 
 From the repository root:
 
-```bash
-source .venv-macos/bin/activate
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+.\.venv\Scripts\Activate.ps1
 python -m pip install -e .
 python -m metamaterial_eval.pipeline --help
 python -m metamaterial_eval.pipeline start --help
@@ -59,9 +60,9 @@ The editable install also provides the equivalent command
 This command uses the existing canonical reference and creates a run named
 `concrete_01`:
 
-```bash
-python -m metamaterial_eval.pipeline start \
-  data/reference/reference_binary.npy \
+```powershell
+python -m metamaterial_eval.pipeline start `
+  data\reference\reference_binary.npy `
   --run-name concrete_01
 ```
 
@@ -85,16 +86,41 @@ boundary:
 For an ambiguous grayscale PNG, the pipeline fails unless an explicit threshold
 is supplied:
 
-```bash
-python -m metamaterial_eval.pipeline start \
-  path/to/reference.png \
-  --threshold 0.5 \
+```powershell
+python -m metamaterial_eval.pipeline start `
+  path\to\reference.png `
+  --threshold 0.5 `
   --run-name png_reference_01
 ```
 
-Strict binary PNGs containing only 0 and 255 do not need a threshold. References
-must already be `256 x 256`; Pipeline v0.1 deliberately performs no silent
-resizing or morphology-changing cleanup.
+Strict binary PNGs containing only 0 and 255 do not need a threshold. Without
+the preparation option, references must already be `256 x 256`.
+
+### Prepare a raw PNG automatically
+
+For a PNG of any dimensions, use:
+
+```powershell
+python -m metamaterial_eval.pipeline start `
+  path\to\your_image.png `
+  --prepare-png `
+  --threshold 0.5 `
+  --run-name image_01
+```
+
+This converts the image to grayscale, thresholds intensities at or above 0.5
+as solid, and resizes the binary result to `256 x 256` using nearest-neighbor
+interpolation. With `--prepare-png`, the threshold defaults to 0.5 if omitted.
+White/light pixels become solid `1`; black/dark pixels become void `0`.
+Non-square images are stretched to the target dimensions, not cropped or padded;
+crop beforehand if preserving aspect ratio is important.
+
+The original image is preserved. The run saves the prepared
+`reference/reference_binary.npy` and `reference/reference.png`, records the
+original dimensions and preprocessing in `metadata.json`, and immediately
+continues through target evaluation and initial prompt creation. Inspect the
+prepared PNG before using the prompt, because resizing may change fine features.
+The option applies only to PNGs; NPY inputs remain strictly validated and unchanged.
 
 ## Manual LLM handoff
 
@@ -102,9 +128,9 @@ Pipeline v0.1 ships with the `manual-file` provider because the repository has
 no authenticated model API integration. The status command always identifies
 the exact file required next:
 
-```bash
-python -m metamaterial_eval.pipeline status \
-  experiments/pipeline_v0.1/reference_binary/concrete_01
+```powershell
+python -m metamaterial_eval.pipeline status `
+  experiments\pipeline_v0.1\reference_binary\concrete_01
 ```
 
 For iteration 0:
@@ -116,9 +142,9 @@ For iteration 0:
    `iteration_0/response_0.txt`.
 5. Resume the run:
 
-```bash
-python -m metamaterial_eval.pipeline resume \
-  experiments/pipeline_v0.1/reference_binary/concrete_01
+```powershell
+python -m metamaterial_eval.pipeline resume `
+  experiments\pipeline_v0.1\reference_binary\concrete_01
 ```
 
 The pipeline extracts one unambiguous complete Python script, hashes it, runs it
@@ -129,9 +155,9 @@ raw target differences, and writes `iteration_1/prompt_1.txt`. It then pauses at
 Repeat the same handoff for `response_1.txt`, `response_2.txt`, and
 `response_3.txt`:
 
-```bash
-python -m metamaterial_eval.pipeline resume \
-  experiments/pipeline_v0.1/reference_binary/concrete_01
+```powershell
+python -m metamaterial_eval.pipeline resume `
+  experiments\pipeline_v0.1\reference_binary\concrete_01
 ```
 
 One resume command advances through every deterministic stage until the next
@@ -154,9 +180,9 @@ preserved as a non-recoverable failed run.
 If a stage is marked failed but the manifest names a `recoverable_state`, fix
 the recorded cause and use:
 
-```bash
-python -m metamaterial_eval.pipeline resume \
-  experiments/pipeline_v0.1/reference_binary/concrete_01 \
+```powershell
+python -m metamaterial_eval.pipeline resume `
+  experiments\pipeline_v0.1\reference_binary\concrete_01 `
   --retry-failed
 ```
 
@@ -167,22 +193,22 @@ part of the experimental record.
 
 Every new pipeline generator must accept:
 
-```bash
-python iteration_0.py \
-  --seed-start 0 \
-  --num-samples 20 \
-  --output-dir path/to/output
+```powershell
+python iteration_0.py `
+  --seed-start 0 `
+  --num-samples 20 `
+  --output-dir path\to\output
 ```
 
 The script must default to 20 samples with seeds 0–19, but it must also support
 any requested consecutive seed range. The pipeline uses the identical frozen
 script for held-out validation:
 
-```bash
-python final_generator.py \
-  --seed-start 100 \
-  --num-samples 20 \
-  --output-dir path/to/heldout
+```powershell
+python final_generator.py `
+  --seed-start 100 `
+  --num-samples 20 `
+  --output-dir path\to\heldout
 ```
 
 Each seed must yield one `.npy` and one `.png` file whose filename contains the
@@ -268,6 +294,27 @@ CREATED → REFERENCE_READY → TARGET_EVALUATED
 `FAILED` retains a plain-language reason. Where deterministic retry is safe, it
 also retains the state from which `--retry-failed` may continue.
 
+### Recover a legacy Windows line-ending failure
+
+Older Pipeline v0.1 code could record the LF hash before Windows saved the
+script with CRLF line endings. The corrected pipeline verifies that the saved
+script differs from the response only by that exact newline conversion, records
+`iteration_i_hash_recovery.json`, preserves every original byte, updates the
+active hash to the actual file, and continues. It never accepts other code
+changes as newline recovery.
+
+For the existing `scanthroughfemoralhead` run, wait for OneDrive to finish
+syncing the corrected code and run:
+
+```powershell
+python -m metamaterial_eval.pipeline resume `
+  experiments\pipeline_v0.1\scanthroughfemoralhead\image_01 `
+  --retry-failed
+```
+
+Do not delete or edit `response_0.txt`, `iteration_0.py`, its hash sidecar, or
+the manifest before running this command.
+
 ## Inspecting results
 
 Read `final/summary.md` first. It contains target values, the full development
@@ -298,7 +345,8 @@ must never be hard-coded in the repository.
 
 ## Current limitations and safety
 
-- Only strict `.npy` and `.png` references are accepted.
+- Only `.npy` and `.png` references are accepted; raw PNG conversion requires
+  the explicit `--prepare-png` option.
 - The shipped provider is manual; there is no authenticated API call.
 - The pipeline runs model-generated code in a separate process and isolated
   output directory, but this is not an operating-system security sandbox.
@@ -307,19 +355,22 @@ must never be hard-coded in the repository.
   perform model selection or early stopping.
 - Integrity hashes detect changes to the reference, evaluator, and frozen
   generator. They do not replace repository backups or version control.
+- Windows is the supported execution environment. Pipeline-controlled hashed
+  scripts and JSON are written as explicit UTF-8/LF bytes; PowerShell UTF-8 BOM
+  response files and UTF-8 subprocess output are handled explicitly.
 
 ## Validation commands
 
 Run the orchestration tests:
 
-```bash
+```powershell
 python -m pytest tests/test_pipeline.py -q
 ```
 
 Run all reusable-package tests and the frozen evaluator acceptance suite:
 
-```bash
+```powershell
 python -m pytest tests -q
-EVALUATOR_PATH=validation/evaluators/evaluator_v1_1.py \
-  python -m pytest validation/test_evaluator.py -q
+$env:EVALUATOR_PATH = "validation\evaluators\evaluator_v1_1.py"
+python -m pytest validation\test_evaluator.py -q
 ```

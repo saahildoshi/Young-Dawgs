@@ -51,7 +51,9 @@ class ManualFileProvider(LLMProvider):
         if not path.is_file():
             return None
         return LLMResponse(
-            text=path.read_text(encoding="utf-8"),
+            # Windows PowerShell 5's UTF-8 output may include a BOM. Decoding it
+            # does not modify the immutable raw response file.
+            text=path.read_text(encoding="utf-8-sig"),
             model=context.get("model"),
             metadata={"response_path": str(path)},
         )

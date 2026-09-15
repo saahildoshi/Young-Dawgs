@@ -32,6 +32,11 @@ def _parser() -> argparse.ArgumentParser:
         "start", help="Canonicalize a reference and create the initial I2 prompt."
     )
     start.add_argument("reference", type=Path, help="Strict binary .npy or .png reference.")
+    start.add_argument(
+        "--prepare-png",
+        action="store_true",
+        help="Convert a raw PNG to grayscale, threshold, and resize to 256 x 256.",
+    )
     start.add_argument("--run-name", help="Run identifier; generated from UTC time if omitted.")
     start.add_argument(
         "--runs-root",
@@ -42,7 +47,7 @@ def _parser() -> argparse.ArgumentParser:
     start.add_argument(
         "--threshold",
         type=float,
-        help="Explicit [0,1] threshold for an ambiguous grayscale PNG.",
+        help="PNG threshold in [0,1]; defaults to 0.5 with --prepare-png.",
     )
     start.add_argument(
         "--provider",
@@ -106,6 +111,7 @@ def main(argv: list[str] | None = None) -> int:
                 run_name=args.run_name,
                 runs_root=args.runs_root,
                 threshold=args.threshold,
+                prepare_png=args.prepare_png,
                 provider_name=args.provider,
                 model_name=args.model,
                 config=config,

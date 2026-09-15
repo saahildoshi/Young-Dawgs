@@ -57,6 +57,9 @@ def run_subprocess(
     stderr = ""
     environment = os.environ.copy()
     environment["PYTHONNOUSERSITE"] = "1"
+    environment["PYTHONIOENCODING"] = "utf-8"
+    environment["PYTHONUTF8"] = "1"
+    environment["PYTHONDONTWRITEBYTECODE"] = "1"
     try:
         completed = subprocess.run(
             list(command),
@@ -64,6 +67,8 @@ def run_subprocess(
             env=environment,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=timeout_seconds,
             check=False,
         )
@@ -77,6 +82,10 @@ def run_subprocess(
         stderr += (
             "\n" if stderr and not stderr.endswith("\n") else ""
         ) + f"Process exceeded timeout of {timeout_seconds:.3f} seconds.\n"
+    except OSError as error:
+        # Missing executables / invalid working directories must still leave a
+        # durable failure record rather than escaping before logs are saved.
+        stderr = f"Could not start process: {type(error).__name__}: {error}\n"
 
     duration = time.monotonic() - start
     stdout_path = log_dir / "stdout.txt"
@@ -124,4 +133,3 @@ def run_generator(
         log_dir=log_dir,
         timeout_seconds=timeout_seconds,
     )
-

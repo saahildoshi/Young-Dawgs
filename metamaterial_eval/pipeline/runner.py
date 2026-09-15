@@ -244,6 +244,7 @@ def start_run(
     run_name: str | None = None,
     runs_root: Path | None = None,
     threshold: float | None = None,
+    prepare_png: bool = False,
     provider_name: str = "manual-file",
     model_name: str | None = None,
     config: PipelineConfig | None = None,
@@ -283,6 +284,7 @@ def start_run(
             config,
             threshold=threshold,
             evaluator_hash=manifest["evaluator_sha256"],
+            prepare_png=prepare_png,
         )
         manifest["reference_hash"] = metadata["sha256_canonical_binary"]
         manifest["reference_sha256"] = metadata["sha256_canonical_binary"]
@@ -334,23 +336,68 @@ def _record_generator(
     info[f"{label}_sha256"] = digest
     info["active_generator_path"] = str(path)
     info["active_generator_sha256"] = digest
+    recovery_path = path.with_name(path.stem + "_hash_recovery.json")
+    if recovery_path.is_file():
+        info["hash_recovery_path"] = str(recovery_path)
     hashes = manifest["iteration_generator_hashes"].setdefault(str(iteration), {})
     hashes[label] = digest
 
 
-def _write_or_reuse_script(response: str, destination: Path) -> tuple[str, str]:
-    """Recover an interrupted extraction only when every byte still agrees."""
-    if not destination.exists():
-        return write_new_script(response, destination)
+def _write_or_reuse_script(
+    response: str, destination: Path, *, expected_hash: str | None = None
+) -> tuple[str, str]:
+    """Reuse identical code; reconcile only the legacy Windows newline bug.
+
+    Legacy CRLF scripts are NOT rewritten. Their exact bytes must match the
+    LF-extracted response with only Windows newline expansion, and both the
+    manifest and sidecar hashes must agree with an allowed representation.
+    """
     source = extract_python_script(response)
-    digest = script_sha256(source)
-    if destination.read_text(encoding="utf-8") != source:
+    source_digest = script_sha256(source)
+    if not destination.exists():
+        if expected_hash is not None and expected_hash != source_digest:
+            raise RuntimeError("Response differs from the previously recorded generator hash.")
+        return write_new_script(response, destination)
+    canonical_bytes = source.encode("utf-8")
+    saved_bytes = destination.read_bytes()
+    if saved_bytes not in (canonical_bytes, canonical_bytes.replace(b"\n", b"\r\n")):
         raise FileExistsError(
             f"Historical script differs from the current response: {destination}"
         )
+    digest = sha256_file(destination)
+    allowed_hashes = {source_digest, digest}
+    if expected_hash is not None and expected_hash not in allowed_hashes:
+        raise RuntimeError("Existing script does not match its recorded manifest hash.")
     sidecar = destination.with_name(destination.stem + "_sha256.txt")
-    if not sidecar.is_file() or sidecar.read_text(encoding="utf-8").strip() != digest:
+    if not sidecar.is_file():
         raise RuntimeError(f"Existing script hash record is missing or inconsistent: {sidecar}")
+    sidecar_hash = sidecar.read_text(encoding="utf-8-sig").strip()
+    if sidecar_hash not in allowed_hashes:
+        raise RuntimeError(f"Existing script hash record is missing or inconsistent: {sidecar}")
+    if sidecar_hash != digest or (expected_hash is not None and expected_hash != digest):
+        recovery_path = destination.with_name(destination.stem + "_hash_recovery.json")
+        if recovery_path.exists():
+            record = read_json(recovery_path)
+            if (
+                record.get("actual_file_sha256") != digest
+                or record.get("extracted_source_sha256") != source_digest
+            ):
+                raise RuntimeError("Existing Windows hash-recovery record is inconsistent.")
+        else:
+            write_json(
+                recovery_path,
+                {
+                    "reason": "legacy_windows_lf_crlf_hash_mismatch",
+                    "created_at_utc": utc_now(),
+                    "script_path": str(destination),
+                    "previous_manifest_sha256": expected_hash,
+                    "original_sidecar_sha256": sidecar_hash,
+                    "extracted_source_sha256": source_digest,
+                    "actual_file_sha256": digest,
+                    "script_bytes_changed": False,
+                    "original_sidecar_preserved": True,
+                },
+            )
     return source, digest
 
 
@@ -721,7 +768,11 @@ def _resume_waiting_for_model(
     iteration_dir = _iteration_dir(run_dir, iteration)
     script_path = iteration_dir / f"iteration_{iteration}.py"
     try:
-        _, digest = _write_or_reuse_script(response, script_path)
+        _, digest = _write_or_reuse_script(
+            response,
+            script_path,
+            expected_hash=manifest["iterations"][str(iteration)].get("generator_sha256"),
+        )
     except (ScriptExtractionError, FileExistsError) as error:
         fail(
             run_dir,
@@ -748,7 +799,9 @@ def _resume_repair(
     script_path = _iteration_dir(run_dir, iteration) / "generator_repair.py"
     try:
         _, digest = _write_or_reuse_script(
-            response_path.read_text(encoding="utf-8"), script_path
+            response_path.read_text(encoding="utf-8-sig"),
+            script_path,
+            expected_hash=info.get("repair_generator_sha256"),
         )
     except (ScriptExtractionError, FileExistsError) as error:
         fail(
@@ -777,6 +830,7 @@ def resume_run(run_dir: Path, *, retry_failed: bool = False) -> dict[str, Any]:
         if not retry_failed or manifest.get("recoverable_state") is None:
             return manifest
         manifest["status"] = manifest["recoverable_state"]
+        manifest["completion_status"] = "incomplete"
         manifest["failure_reason"] = None
         manifest["recoverable_state"] = None
         save_manifest(run_dir, manifest)
