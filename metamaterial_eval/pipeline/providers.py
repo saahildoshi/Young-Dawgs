@@ -50,10 +50,24 @@ class ManualFileProvider(LLMProvider):
         path = Path(context["response_path"])
         if not path.is_file():
             return None
+        before = path.stat()
+        raw = path.read_bytes()
+        after = path.stat()
+        # OneDrive and editors may create an empty file first, then populate it.
+        # Treat blank or actively changing content as "not ready" instead of a
+        # malformed model response. The next resume will read it again.
+        if (
+            before.st_size != after.st_size
+            or before.st_mtime_ns != after.st_mtime_ns
+            or not raw
+        ):
+            return None
+        text = raw.decode("utf-8-sig")
+        if not text.strip():
+            return None
         return LLMResponse(
-            # Windows PowerShell 5's UTF-8 output may include a BOM. Decoding it
-            # does not modify the immutable raw response file.
-            text=path.read_text(encoding="utf-8-sig"),
+            # Decoding does not modify the immutable raw response file.
+            text=text,
             model=context.get("model"),
             metadata={"response_path": str(path)},
         )

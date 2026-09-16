@@ -140,6 +140,8 @@ For iteration 0:
 3. Send the prompt without changing it.
 4. Save the model’s complete raw response, unmodified, as
    `iteration_0/response_0.txt`.
+   Wait for the editor and OneDrive to finish saving it. A blank or actively
+   changing response remains in the waiting state and is never extracted.
 5. Resume the run:
 
 ```powershell

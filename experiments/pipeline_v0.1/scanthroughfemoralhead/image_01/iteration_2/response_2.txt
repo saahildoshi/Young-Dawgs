@@ -1,0 +1,1865 @@
+The revision keeps the field scale, precursor fraction, bridge behavior, and blob-size distribution close to Round 1 because **φ, largest-component fraction, strut thickness, S2, and lineal path were already close**. The main changes are:
+
+* the dominant component is now isolated and topology-locked **before** detached solid is added;
+* the dominant component is forced to contain exactly **17,863 pixels**, so `f_largest` remains fixed;
+* the final dominant component is explicitly verified to 4-connect across both axes;
+* detached solid is preferentially placed at **deep void-distance maxima** while the generated pore-size proxy is too large, directly addressing the 8.70 px → 6.32 px discrepancy;
+* detached-fragment sizes remain nearly unchanged to avoid disturbing the already-correct strut-thickness statistics.
+
+```python
+#!/usr/bin/env python3
+"""
+Procedural 256x256 binary metamaterial generator.
+
+Solid is stored as 1 and void as 0.
+
+Revision strategy
+-----------------
+The morphology is a multiscale Gaussian-field zero-level band. Nearby band
+components are joined procedurally to form one dominant 4-connected backbone.
+The backbone is then isolated, made to span left-right and top-bottom, and
+grown to an exact pixel count.
+
+The remaining solid budget is inserted as small detached rounded fragments.
+Those fragments are preferentially placed near deep void-distance maxima while
+the generated pore-size proxy is above the target. This specifically reduces
+oversized pores without materially changing the already-correct solid
+fraction, largest-component fraction, or strut thickness.
+
+Adjustable morphology parameters
+--------------------------------
+FIELD_SIGMA:
+    Main cellular length scale. Larger -> coarser pores.
+
+BASE_PRECURSOR_FRACTION:
+    Fraction of the zero-level band before connectivity repair.
+
+PORE_BIAS_PROBABILITY:
+    Probability of placing a detached fragment at a deep pore maximum while
+    the pore proxy is above target. Larger -> smaller pores.
+
+BLOB_MEDIAN_RADIUS / BLOB_LOG_SIGMA:
+    Size distribution of detached fragments. These mainly tune local solid
+    thickness outside the dominant network.
+
+GROWTH_NEIGHBOR_WEIGHT:
+    Preference for thickening existing struts during final backbone growth.
+
+The script never reads a reference image or external data at runtime.
+
+Dependencies:
+    numpy
+    scipy
+    scikit-image
+    Pillow
+"""
+
+import argparse
+from pathlib import Path
+
+import numpy as np
+from PIL import Image
+from scipy import ndimage as ndi
+from skimage.draw import line
+
+
+# ============================================================================
+# Fixed output / descriptor targets
+# ============================================================================
+
+SIZE = 256
+N_PIXELS = SIZE * SIZE
+
+TARGET_SOLID_FRACTION = 0.310883
+TARGET_LARGEST_COMPONENT_FRACTION = 0.876755
+TARGET_PORE_DIAMETER = 6.32456
+
+TARGET_SOLID_PIXELS = int(
+    round(TARGET_SOLID_FRACTION * N_PIXELS)
+)
+
+TARGET_MAIN_PIXELS = int(
+    round(
+        TARGET_LARGEST_COMPONENT_FRACTION
+        * TARGET_SOLID_PIXELS
+    )
+)
+
+TARGET_DETACHED_PIXELS = (
+    TARGET_SOLID_PIXELS
+    - TARGET_MAIN_PIXELS
+)
+
+FOUR_CONNECTED = ndi.generate_binary_structure(
+    2,
+    1,
+)
+
+
+# ============================================================================
+# Morphology controls
+# ============================================================================
+
+# These are intentionally retained from the previous generator because the
+# short-range statistics, S2, lineal path, and strut thickness were already
+# close to target.
+FIELD_SIGMA = 2.40
+BASE_PRECURSOR_FRACTION = 0.29
+
+SECOND_SCALE_WEIGHT = 0.12
+SECOND_SCALE_FACTOR = 1.80
+
+BRIDGE_BATCH = 8
+MAX_BRIDGE_LOOPS = 100
+
+GROWTH_NEIGHBOR_WEIGHT = 0.30
+
+
+# Detached-solid statistics are also kept close to the previous version so
+# that the already-good solid-thickness distribution is not shifted strongly.
+BLOB_MEDIAN_RADIUS = 1.55
+BLOB_LOG_SIGMA = 0.32
+BLOB_RADIUS_MIN = 0.80
+BLOB_RADIUS_MAX = 3.20
+
+
+# ---------------------------------------------------------------------------
+# Revision-2 pore controls
+#
+# Instead of changing the amount of detached solid, these parameters change
+# where it is placed. This lets pore dimensions move downward while preserving
+# phi_s and f_largest exactly.
+# ---------------------------------------------------------------------------
+
+PORE_BIAS_PROBABILITY = 0.86
+
+# Stop preferential deep-pore filling once the generated pore proxy is close
+# to the requested value.
+PORE_PROXY_STOP_MARGIN = 0.30
+
+# Larger filters separate the candidate deep-pore centers spatially.
+PORE_PEAK_FILTER_SIZE = 7
+
+# Recalculate void geometry after this many successful detached fragments.
+CENTER_REFRESH_EVERY = 10
+
+
+# ============================================================================
+# Randomness and component utilities
+# ============================================================================
+
+def _seed_sequence(
+    seed: int,
+    salt: int,
+    attempt: int,
+):
+    """
+    Produce deterministic independent random streams.
+
+    Attempt zero depends directly on the requested integer seed.
+    Later attempts are deterministic fallback realizations for rare
+    geometrically difficult seeds.
+    """
+    if attempt == 0:
+        return np.random.SeedSequence(
+            [int(seed), int(salt)]
+        )
+
+    return np.random.SeedSequence(
+        [int(seed), int(salt), int(attempt)]
+    )
+
+
+def _component_labels(
+    solid: np.ndarray,
+):
+    """
+    Return strict 4-connected labels, component sizes,
+    and the largest-component id.
+    """
+    labels, n_components = ndi.label(
+        solid,
+        structure=FOUR_CONNECTED,
+    )
+
+    sizes = np.bincount(
+        labels.ravel(),
+        minlength=n_components + 1,
+    )
+
+    if n_components == 0:
+        return labels, sizes, 0
+
+    largest_id = (
+        1
+        + int(
+            np.argmax(
+                sizes[1:]
+            )
+        )
+    )
+
+    return labels, sizes, largest_id
+
+
+def _percolates_both_axes(
+    main: np.ndarray,
+) -> bool:
+    """
+    Verify that one strict 4-connected solid component spans
+    left-right and top-bottom.
+    """
+    labels, n_components = ndi.label(
+        main,
+        structure=FOUR_CONNECTED,
+    )
+
+    if n_components == 0:
+        return False
+
+    left = set(
+        np.unique(
+            labels[:, 0]
+        ).tolist()
+    )
+
+    right = set(
+        np.unique(
+            labels[:, -1]
+        ).tolist()
+    )
+
+    top = set(
+        np.unique(
+            labels[0, :]
+        ).tolist()
+    )
+
+    bottom = set(
+        np.unique(
+            labels[-1, :]
+        ).tolist()
+    )
+
+    left.discard(0)
+    right.discard(0)
+    top.discard(0)
+    bottom.discard(0)
+
+    return (
+        bool(left & right)
+        and bool(top & bottom)
+    )
+
+
+# ============================================================================
+# Organic precursor
+# ============================================================================
+
+def _make_precursor(
+    seed: int,
+    attempt: int = 0,
+) -> np.ndarray:
+    """
+    Generate an irregular cellular band network from the zero level of a
+    multiscale correlated Gaussian field.
+
+    A band around zero produces wall-like structures rather than conventional
+    thresholded isolated particles.
+    """
+    rng = np.random.default_rng(
+        _seed_sequence(
+            seed,
+            0x1234,
+            attempt,
+        )
+    )
+
+    noise_1 = rng.standard_normal(
+        (SIZE, SIZE)
+    )
+
+    noise_2 = rng.standard_normal(
+        (SIZE, SIZE)
+    )
+
+    field = ndi.gaussian_filter(
+        noise_1,
+        sigma=FIELD_SIGMA,
+        mode="wrap",
+    )
+
+    field += (
+        SECOND_SCALE_WEIGHT
+        * ndi.gaussian_filter(
+            noise_2,
+            sigma=(
+                FIELD_SIGMA
+                * SECOND_SCALE_FACTOR
+            ),
+            mode="wrap",
+        )
+    )
+
+    field = (
+        field - field.mean()
+    ) / (
+        field.std()
+        + 1.0e-12
+    )
+
+    threshold = np.quantile(
+        np.abs(field),
+        BASE_PRECURSOR_FRACTION,
+    )
+
+    solid = (
+        np.abs(field)
+        <= threshold
+    )
+
+    return solid
+
+
+# ============================================================================
+# Dominant-network construction
+# ============================================================================
+
+def _draw_strict_4_connected_bridge(
+    solid: np.ndarray,
+    y0: int,
+    x0: int,
+    y1: int,
+    x1: int,
+    rng: np.random.Generator,
+) -> None:
+    """
+    Draw a raster bridge and explicitly corner-fill every diagonal raster
+    transition so connectivity is strictly 4-neighbor.
+    """
+    rr, cc = line(
+        y0,
+        x0,
+        y1,
+        x1,
+    )
+
+    solid[rr, cc] = True
+
+    for p in range(
+        len(rr) - 1
+    ):
+        dy = abs(
+            int(rr[p + 1])
+            - int(rr[p])
+        )
+
+        dx = abs(
+            int(cc[p + 1])
+            - int(cc[p])
+        )
+
+        if (
+            dy == 1
+            and dx == 1
+        ):
+            if rng.random() < 0.5:
+                solid[
+                    rr[p],
+                    cc[p + 1],
+                ] = True
+            else:
+                solid[
+                    rr[p + 1],
+                    cc[p],
+                ] = True
+
+
+def _bridge_components(
+    solid: np.ndarray,
+    rng: np.random.Generator,
+) -> np.ndarray:
+    """
+    Merge nearby precursor components into one dominant irregular network.
+
+    The bridge procedure is retained close to the preceding revision so the
+    good S2 and lineal-path behavior is not unnecessarily disturbed.
+    """
+    height, width = solid.shape
+
+    for _ in range(
+        MAX_BRIDGE_LOOPS
+    ):
+        (
+            labels,
+            sizes,
+            main_id,
+        ) = _component_labels(
+            solid
+        )
+
+        if main_id == 0:
+            break
+
+        main = (
+            labels
+            == main_id
+        )
+
+        main_size = int(
+            sizes[main_id]
+        )
+
+        detached_size = (
+            int(solid.sum())
+            - main_size
+        )
+
+        touches_left = bool(
+            main[:, 0].any()
+        )
+
+        touches_right = bool(
+            main[:, -1].any()
+        )
+
+        touches_top = bool(
+            main[0, :].any()
+        )
+
+        touches_bottom = bool(
+            main[-1, :].any()
+        )
+
+        spans = (
+            touches_left
+            and touches_right
+            and touches_top
+            and touches_bottom
+        )
+
+        # Secondary precursor pieces will later be discarded and regenerated
+        # in the pore-aware detached-material stage.
+        if (
+            detached_size
+            <= TARGET_DETACHED_PIXELS
+            and spans
+        ):
+            return solid
+
+        (
+            distance,
+            nearest,
+        ) = ndi.distance_transform_edt(
+            ~main,
+            return_indices=True,
+        )
+
+        component_ids = np.arange(
+            1,
+            len(sizes),
+            dtype=int,
+        )
+
+        component_ids = (
+            component_ids[
+                component_ids
+                != main_id
+            ]
+        )
+
+        if (
+            component_ids.size
+            == 0
+        ):
+            break
+
+        needed_ids = set()
+
+        if not touches_left:
+            needed_ids.update(
+                np.unique(
+                    labels[:, 0]
+                ).tolist()
+            )
+
+        if not touches_right:
+            needed_ids.update(
+                np.unique(
+                    labels[:, -1]
+                ).tolist()
+            )
+
+        if not touches_top:
+            needed_ids.update(
+                np.unique(
+                    labels[0, :]
+                ).tolist()
+            )
+
+        if not touches_bottom:
+            needed_ids.update(
+                np.unique(
+                    labels[-1, :]
+                ).tolist()
+            )
+
+        needed_ids.discard(0)
+        needed_ids.discard(
+            main_id
+        )
+
+        if needed_ids:
+            candidates = np.array(
+                sorted(
+                    needed_ids
+                ),
+                dtype=int,
+            )
+        else:
+            candidates = (
+                component_ids
+            )
+
+        min_distances = ndi.minimum(
+            distance,
+            labels=labels,
+            index=candidates,
+        )
+
+        order = np.argsort(
+            min_distances
+            + 0.0005
+            * np.sqrt(
+                sizes[
+                    candidates
+                ]
+            )
+        )
+
+        chosen = []
+
+        pixels_to_absorb = max(
+            0,
+            detached_size
+            - TARGET_DETACHED_PIXELS,
+        )
+
+        absorbed = 0
+
+        for j in order:
+            cid = int(
+                candidates[j]
+            )
+
+            chosen.append(
+                cid
+            )
+
+            absorbed += int(
+                sizes[cid]
+            )
+
+            if needed_ids:
+
+                if (
+                    len(chosen)
+                    >= min(
+                        2,
+                        BRIDGE_BATCH,
+                    )
+                ):
+                    break
+
+            else:
+
+                if (
+                    len(chosen)
+                    >= BRIDGE_BATCH
+                    or absorbed
+                    >= max(
+                        256,
+                        0.35
+                        * pixels_to_absorb,
+                    )
+                ):
+                    break
+
+        for cid in chosen:
+            ys, xs = np.where(
+                labels == cid
+            )
+
+            nearest_idx = int(
+                np.argmin(
+                    distance[
+                        ys,
+                        xs,
+                    ]
+                )
+            )
+
+            y = int(
+                ys[
+                    nearest_idx
+                ]
+            )
+
+            x = int(
+                xs[
+                    nearest_idx
+                ]
+            )
+
+            main_y = int(
+                nearest[
+                    0,
+                    y,
+                    x,
+                ]
+            )
+
+            main_x = int(
+                nearest[
+                    1,
+                    y,
+                    x,
+                ]
+            )
+
+            _draw_strict_4_connected_bridge(
+                solid,
+                y,
+                x,
+                main_y,
+                main_x,
+                rng,
+            )
+
+            # Keep the previous mild bridge thickening behavior so inserted
+            # connections do not become conspicuous one-pixel wires.
+            rr, cc = line(
+                y,
+                x,
+                main_y,
+                main_x,
+            )
+
+            if (
+                len(rr) > 1
+                and rng.random()
+                < 0.5
+            ):
+                p = (
+                    len(rr)
+                    // 2
+                )
+
+                cy = int(
+                    rr[p]
+                )
+
+                cx = int(
+                    cc[p]
+                )
+
+                neighbors = [
+                    (
+                        cy - 1,
+                        cx,
+                    ),
+                    (
+                        cy + 1,
+                        cx,
+                    ),
+                    (
+                        cy,
+                        cx - 1,
+                    ),
+                    (
+                        cy,
+                        cx + 1,
+                    ),
+                ]
+
+                rng.shuffle(
+                    neighbors
+                )
+
+                for (
+                    yy,
+                    xx,
+                ) in neighbors:
+
+                    if (
+                        0 <= yy
+                        < height
+                        and 0 <= xx
+                        < width
+                    ):
+                        solid[
+                            yy,
+                            xx,
+                        ] = True
+                        break
+
+    return solid
+
+
+def _connect_main_to_edge(
+    main: np.ndarray,
+    side: str,
+) -> None:
+    """
+    Add a short strict 4-connected extension from the dominant component to
+    an image edge.
+
+    A three-pixel contact is provided at the boundary rather than relying on a
+    fragile single edge pixel.
+    """
+    ys, xs = np.where(
+        main
+    )
+
+    if side == "left":
+        k = int(
+            np.argmin(xs)
+        )
+
+        y = int(ys[k])
+        x = int(xs[k])
+
+        main[
+            y,
+            : x + 1,
+        ] = True
+
+        main[
+            max(0, y - 1):
+            min(SIZE, y + 2),
+            0,
+        ] = True
+
+    elif side == "right":
+        k = int(
+            np.argmax(xs)
+        )
+
+        y = int(ys[k])
+        x = int(xs[k])
+
+        main[
+            y,
+            x:,
+        ] = True
+
+        main[
+            max(0, y - 1):
+            min(SIZE, y + 2),
+            -1,
+        ] = True
+
+    elif side == "top":
+        k = int(
+            np.argmin(ys)
+        )
+
+        y = int(ys[k])
+        x = int(xs[k])
+
+        main[
+            : y + 1,
+            x,
+        ] = True
+
+        main[
+            0,
+            max(0, x - 1):
+            min(SIZE, x + 2),
+        ] = True
+
+    elif side == "bottom":
+        k = int(
+            np.argmax(ys)
+        )
+
+        y = int(ys[k])
+        x = int(xs[k])
+
+        main[
+            y:,
+            x,
+        ] = True
+
+        main[
+            -1,
+            max(0, x - 1):
+            min(SIZE, x + 2),
+        ] = True
+
+    else:
+        raise ValueError(
+            f"unknown side: {side}"
+        )
+
+
+def _extract_and_span_main(
+    solid: np.ndarray,
+) -> np.ndarray:
+    """
+    Keep only the dominant precursor component.
+
+    This is the key topology change in revision 2: old secondary precursor
+    pieces cannot later interfere with the identity or percolation of the
+    dominant network. Detached solid is generated only after the dominant
+    network has been fixed.
+    """
+    (
+        labels,
+        sizes,
+        main_id,
+    ) = _component_labels(
+        solid
+    )
+
+    if main_id == 0:
+        raise RuntimeError(
+            "precursor contains no "
+            "solid component"
+        )
+
+    main = (
+        labels
+        == main_id
+    )
+
+    if not main[:, 0].any():
+        _connect_main_to_edge(
+            main,
+            "left",
+        )
+
+    if not main[:, -1].any():
+        _connect_main_to_edge(
+            main,
+            "right",
+        )
+
+    if not main[0, :].any():
+        _connect_main_to_edge(
+            main,
+            "top",
+        )
+
+    if not main[-1, :].any():
+        _connect_main_to_edge(
+            main,
+            "bottom",
+        )
+
+    return main
+
+
+def _grow_main_toward_target(
+    main: np.ndarray,
+    rng: np.random.Generator,
+) -> np.ndarray:
+    """
+    Grow the spanning backbone to exactly TARGET_MAIN_PIXELS.
+
+    Local-neighbor bias preserves the previous wall-thickness behavior.
+    """
+    if (
+        int(main.sum())
+        > TARGET_MAIN_PIXELS
+    ):
+        raise RuntimeError(
+            "dominant precursor "
+            "overshot main-component budget"
+        )
+
+    for _ in range(100):
+
+        main_size = int(
+            main.sum()
+        )
+
+        if (
+            main_size
+            == TARGET_MAIN_PIXELS
+        ):
+            return main
+
+        candidates = (
+            ndi.binary_dilation(
+                main,
+                structure=FOUR_CONNECTED,
+            )
+            & ~main
+        )
+
+        coords = np.argwhere(
+            candidates
+        )
+
+        if (
+            coords.size
+            == 0
+        ):
+            break
+
+        remaining = (
+            TARGET_MAIN_PIXELS
+            - main_size
+        )
+
+        n8 = ndi.convolve(
+            main.astype(
+                np.uint8
+            ),
+            np.ones(
+                (3, 3),
+                dtype=np.uint8,
+            ),
+            mode="constant",
+        )
+
+        score = (
+            GROWTH_NEIGHBOR_WEIGHT
+            * n8[
+                coords[:, 0],
+                coords[:, 1],
+            ].astype(float)
+            + 0.75
+            * rng.random(
+                len(coords)
+            )
+        )
+
+        k = min(
+            remaining,
+            len(coords),
+            max(
+                64,
+                min(
+                    1024,
+                    remaining,
+                ),
+            ),
+        )
+
+        if (
+            k
+            == len(coords)
+        ):
+            selected = coords
+        else:
+            idx = np.argpartition(
+                score,
+                -k,
+            )[-k:]
+
+            selected = (
+                coords[idx]
+            )
+
+        main[
+            selected[:, 0],
+            selected[:, 1],
+        ] = True
+
+    if (
+        int(main.sum())
+        != TARGET_MAIN_PIXELS
+    ):
+        raise RuntimeError(
+            "could not reach exact "
+            "main-component pixel budget"
+        )
+
+    return main
+
+
+# ============================================================================
+# Pore-aware detached phase
+# ============================================================================
+
+def _pore_size_proxy(
+    solid: np.ndarray,
+) -> float:
+    """
+    Estimate the current characteristic pore diameter using only the generated
+    structure.
+
+    The proxy is the median 2*distance value at 3x3 local maxima of the void
+    Euclidean distance transform.
+
+    It is used only for adaptive procedural placement; it does not inspect or
+    read the reference image.
+    """
+    void = ~solid
+
+    if not void.any():
+        return 0.0
+
+    distance = (
+        ndi.distance_transform_edt(
+            void
+        )
+    )
+
+    peaks = (
+        (distance > 0.0)
+        & (
+            distance
+            == ndi.maximum_filter(
+                distance,
+                size=3,
+                mode="nearest",
+            )
+        )
+    )
+
+    values = (
+        2.0
+        * distance[
+            peaks
+        ]
+    )
+
+    if (
+        values.size
+        == 0
+    ):
+        return 0.0
+
+    return float(
+        np.median(
+            values
+        )
+    )
+
+
+def _build_center_pools(
+    solid: np.ndarray,
+    rng: np.random.Generator,
+):
+    """
+    Construct two candidate pools:
+
+    deep:
+        Spatially separated local maxima in large void regions.
+
+    uniform:
+        All currently legal detached-fragment center pixels.
+    """
+    legal = (
+        ~solid
+        & ~ndi.binary_dilation(
+            solid,
+            structure=FOUR_CONNECTED,
+        )
+    )
+
+    uniform = np.argwhere(
+        legal
+    )
+
+    if (
+        len(uniform)
+        > 0
+    ):
+        rng.shuffle(
+            uniform
+        )
+
+    distance = (
+        ndi.distance_transform_edt(
+            ~solid
+        )
+    )
+
+    local_max = (
+        legal
+        & (
+            distance
+            >= 2.0
+        )
+        & (
+            distance
+            == ndi.maximum_filter(
+                distance,
+                size=(
+                    PORE_PEAK_FILTER_SIZE
+                ),
+                mode="nearest",
+            )
+        )
+    )
+
+    deep = np.argwhere(
+        local_max
+    )
+
+    if (
+        len(deep)
+        > 0
+    ):
+        depths = distance[
+            deep[:, 0],
+            deep[:, 1],
+        ]
+
+        # Break equal-distance ties stochastically.
+        score = (
+            depths
+            + 0.40
+            * rng.random(
+                len(deep)
+            )
+        )
+
+        deep = deep[
+            np.argsort(
+                score
+            )[::-1]
+        ]
+
+    return (
+        deep,
+        uniform,
+    )
+
+
+def _make_blob_mask(
+    cy: int,
+    cx: int,
+    rng: np.random.Generator,
+):
+    """
+    Generate one small randomly oriented rounded detached fragment.
+    """
+    radius = float(
+        np.clip(
+            rng.lognormal(
+                np.log(
+                    BLOB_MEDIAN_RADIUS
+                ),
+                BLOB_LOG_SIGMA,
+            ),
+            BLOB_RADIUS_MIN,
+            BLOB_RADIUS_MAX,
+        )
+    )
+
+    ry = (
+        radius
+        * float(
+            rng.uniform(
+                0.75,
+                1.30,
+            )
+        )
+    )
+
+    rx = (
+        radius
+        * float(
+            rng.uniform(
+                0.75,
+                1.30,
+            )
+        )
+    )
+
+    angle = float(
+        rng.uniform(
+            0.0,
+            np.pi,
+        )
+    )
+
+    pad = (
+        int(
+            np.ceil(
+                max(
+                    rx,
+                    ry,
+                )
+            )
+        )
+        + 2
+    )
+
+    y0 = max(
+        0,
+        cy - pad,
+    )
+
+    y1 = min(
+        SIZE,
+        cy + pad + 1,
+    )
+
+    x0 = max(
+        0,
+        cx - pad,
+    )
+
+    x1 = min(
+        SIZE,
+        cx + pad + 1,
+    )
+
+    yy, xx = np.mgrid[
+        y0:y1,
+        x0:x1,
+    ]
+
+    dy = (
+        yy - cy
+    )
+
+    dx = (
+        xx - cx
+    )
+
+    c = np.cos(
+        angle
+    )
+
+    s = np.sin(
+        angle
+    )
+
+    u = (
+        c * dx
+        + s * dy
+    )
+
+    v = (
+        -s * dx
+        + c * dy
+    )
+
+    mask = (
+        (u / rx) ** 2
+        + (v / ry) ** 2
+        <= 1.0
+    )
+
+    return (
+        y0,
+        y1,
+        x0,
+        x1,
+        mask,
+    )
+
+
+def _trim_mask_to_count(
+    mask: np.ndarray,
+    count: int,
+    center_y: float,
+    center_x: float,
+) -> np.ndarray:
+    """
+    Trim the final ellipse to an exact compact number of pixels.
+    """
+    if (
+        int(mask.sum())
+        <= count
+    ):
+        return mask
+
+    pixels = np.argwhere(
+        mask
+    )
+
+    d2 = (
+        (
+            pixels[:, 0]
+            - center_y
+        ) ** 2
+        + (
+            pixels[:, 1]
+            - center_x
+        ) ** 2
+    )
+
+    keep = pixels[
+        np.argsort(
+            d2
+        )[:count]
+    ]
+
+    trimmed = np.zeros_like(
+        mask,
+        dtype=bool,
+    )
+
+    trimmed[
+        keep[:, 0],
+        keep[:, 1],
+    ] = True
+
+    return trimmed
+
+
+def _try_insert_blob(
+    solid: np.ndarray,
+    cy: int,
+    cx: int,
+    need: int,
+    rng: np.random.Generator,
+) -> int:
+    """
+    Attempt one detached fragment.
+
+    Returns the number of pixels inserted, or zero if the placement would
+    touch existing solid.
+    """
+    (
+        y0,
+        y1,
+        x0,
+        x1,
+        blob,
+    ) = _make_blob_mask(
+        cy,
+        cx,
+        rng,
+    )
+
+    if not blob.any():
+        return 0
+
+    if (
+        int(blob.sum())
+        > need
+    ):
+        blob = (
+            _trim_mask_to_count(
+                blob,
+                need,
+                center_y=(
+                    cy - y0
+                ),
+                center_x=(
+                    cx - x0
+                ),
+            )
+        )
+
+    guard = (
+        ndi.binary_dilation(
+            blob,
+            structure=FOUR_CONNECTED,
+        )
+    )
+
+    sub = solid[
+        y0:y1,
+        x0:x1,
+    ]
+
+    # A one-pixel 4-neighbor moat prevents accidental merging with either the
+    # dominant network or another detached fragment.
+    if np.any(
+        sub & guard
+    ):
+        return 0
+
+    n_blob = int(
+        blob.sum()
+    )
+
+    if n_blob == 0:
+        return 0
+
+    sub[
+        blob
+    ] = True
+
+    return n_blob
+
+
+def _add_detached_blobs(
+    main: np.ndarray,
+    rng: np.random.Generator,
+) -> np.ndarray:
+    """
+    Insert exactly TARGET_DETACHED_PIXELS.
+
+    When pores remain oversized, candidate centers are drawn primarily from
+    deep void-distance maxima. Once the generated pore proxy approaches the
+    target, placement becomes predominantly uniform.
+
+    Thus the total solid fraction and largest-component fraction stay fixed;
+    only the spatial allocation of the disconnected solid changes.
+    """
+    solid = main.copy()
+
+    need = (
+        TARGET_DETACHED_PIXELS
+    )
+
+    deep = np.empty(
+        (0, 2),
+        dtype=int,
+    )
+
+    uniform = np.empty(
+        (0, 2),
+        dtype=int,
+    )
+
+    deep_cursor = 0
+    uniform_cursor = 0
+
+    successful_since_refresh = (
+        CENTER_REFRESH_EVERY
+    )
+
+    current_pore_proxy = np.inf
+
+    attempts = 0
+    max_attempts = 100000
+
+    while (
+        need > 0
+        and attempts
+        < max_attempts
+    ):
+        attempts += 1
+
+        if (
+            successful_since_refresh
+            >= CENTER_REFRESH_EVERY
+        ):
+            current_pore_proxy = (
+                _pore_size_proxy(
+                    solid
+                )
+            )
+
+            (
+                deep,
+                uniform,
+            ) = _build_center_pools(
+                solid,
+                rng,
+            )
+
+            deep_cursor = 0
+            uniform_cursor = 0
+
+            successful_since_refresh = 0
+
+        use_deep = (
+            current_pore_proxy
+            > (
+                TARGET_PORE_DIAMETER
+                + PORE_PROXY_STOP_MARGIN
+            )
+            and len(deep) > 0
+            and rng.random()
+            < PORE_BIAS_PROBABILITY
+        )
+
+        if use_deep:
+
+            if (
+                deep_cursor
+                >= len(deep)
+            ):
+                successful_since_refresh = (
+                    CENTER_REFRESH_EVERY
+                )
+                continue
+
+            cy, cx = map(
+                int,
+                deep[
+                    deep_cursor
+                ],
+            )
+
+            deep_cursor += 1
+
+        else:
+
+            if (
+                uniform_cursor
+                >= len(uniform)
+            ):
+                successful_since_refresh = (
+                    CENTER_REFRESH_EVERY
+                )
+                continue
+
+            cy, cx = map(
+                int,
+                uniform[
+                    uniform_cursor
+                ],
+            )
+
+            uniform_cursor += 1
+
+        inserted = (
+            _try_insert_blob(
+                solid,
+                cy,
+                cx,
+                need,
+                rng,
+            )
+        )
+
+        if inserted > 0:
+            need -= inserted
+            successful_since_refresh += 1
+
+    # Conservative exact-count fallback. Normally the trimmed final blob
+    # prevents this from being needed.
+    if need > 0:
+
+        legal = np.argwhere(
+            ~solid
+            & ~ndi.binary_dilation(
+                solid,
+                structure=FOUR_CONNECTED,
+            )
+        )
+
+        rng.shuffle(
+            legal
+        )
+
+        for (
+            y,
+            x,
+        ) in legal:
+
+            if need <= 0:
+                break
+
+            y = int(y)
+            x = int(x)
+
+            vertical_touch = solid[
+                max(0, y - 1):
+                min(SIZE, y + 2),
+                x,
+            ].any()
+
+            horizontal_touch = solid[
+                y,
+                max(0, x - 1):
+                min(SIZE, x + 2),
+            ].any()
+
+            if (
+                not vertical_touch
+                and not horizontal_touch
+            ):
+                solid[
+                    y,
+                    x,
+                ] = True
+
+                need -= 1
+
+    if need != 0:
+        raise RuntimeError(
+            "could not satisfy "
+            "detached-solid pixel budget"
+        )
+
+    return solid
+
+
+# ============================================================================
+# Final generation and validation
+# ============================================================================
+
+def _valid_structure(
+    solid: np.ndarray,
+) -> bool:
+    """
+    Strict final checks used before a realization is written to disk.
+    """
+    if solid.shape != (
+        SIZE,
+        SIZE,
+    ):
+        return False
+
+    if (
+        int(solid.sum())
+        != TARGET_SOLID_PIXELS
+    ):
+        return False
+
+    (
+        labels,
+        sizes,
+        main_id,
+    ) = _component_labels(
+        solid
+    )
+
+    if main_id == 0:
+        return False
+
+    if (
+        int(
+            sizes[
+                main_id
+            ]
+        )
+        != TARGET_MAIN_PIXELS
+    ):
+        return False
+
+    main = (
+        labels
+        == main_id
+    )
+
+    if not (
+        _percolates_both_axes(
+            main
+        )
+    ):
+        return False
+
+    values = np.unique(
+        solid.astype(
+            np.uint8
+        )
+    )
+
+    if not np.all(
+        np.isin(
+            values,
+            [0, 1],
+        )
+    ):
+        return False
+
+    return True
+
+
+def generate_microstructure(
+    seed: int,
+) -> np.ndarray:
+    """
+    Generate one deterministic stochastic realization for an integer seed.
+
+    Different requested seeds use independent Gaussian fields and independent
+    stochastic geometry edits.
+    """
+    for attempt in range(8):
+
+        rng = np.random.default_rng(
+            _seed_sequence(
+                seed,
+                0xA5A5,
+                attempt,
+            )
+        )
+
+        precursor = (
+            _make_precursor(
+                seed,
+                attempt=attempt,
+            )
+        )
+
+        precursor = (
+            _bridge_components(
+                precursor,
+                rng,
+            )
+        )
+
+        # Revision-2 topology lock:
+        # remove all old secondary components before setting the exact main
+        # network mass. Detached solid is synthesized only afterward.
+        main = (
+            _extract_and_span_main(
+                precursor
+            )
+        )
+
+        if (
+            int(main.sum())
+            > TARGET_MAIN_PIXELS
+        ):
+            continue
+
+        try:
+            main = (
+                _grow_main_toward_target(
+                    main,
+                    rng,
+                )
+            )
+
+            solid = (
+                _add_detached_blobs(
+                    main,
+                    rng,
+                )
+            )
+
+        except RuntimeError:
+            continue
+
+        if _valid_structure(
+            solid
+        ):
+            return solid.astype(
+                np.uint8
+            )
+
+    raise RuntimeError(
+        f"Failed to generate a valid "
+        f"structure for seed {seed}."
+    )
+
+
+# ============================================================================
+# Output
+# ============================================================================
+
+def save_sample(
+    sample: np.ndarray,
+    seed: int,
+    output_dir: Path,
+) -> None:
+    """
+    Save:
+
+        microstructure_seed_<seed>.npy
+        microstructure_seed_<seed>.png
+
+    NPY:
+        uint8 values 0 and 1.
+
+    PNG:
+        void = black
+        solid = white
+    """
+    stem = (
+        f"microstructure_seed_{seed}"
+    )
+
+    np.save(
+        output_dir
+        / f"{stem}.npy",
+        sample.astype(
+            np.uint8,
+            copy=False,
+        ),
+    )
+
+    Image.fromarray(
+        sample.astype(
+            np.uint8
+        )
+        * 255,
+        mode="L",
+    ).save(
+        output_dir
+        / f"{stem}.png"
+    )
+
+
+# ============================================================================
+# Command-line interface
+# ============================================================================
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description=(
+            "Generate stochastic 256x256 "
+            "binary metamaterial microstructures."
+        )
+    )
+
+    parser.add_argument(
+        "--seed-start",
+        type=int,
+        default=0,
+    )
+
+    parser.add_argument(
+        "--num-samples",
+        type=int,
+        default=20,
+    )
+
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path(
+            "microstructures"
+        ),
+    )
+
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+
+    if (
+        args.num_samples
+        < 1
+    ):
+        raise ValueError(
+            "--num-samples must "
+            "be at least 1"
+        )
+
+    args.output_dir.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    seed_stop = (
+        args.seed_start
+        + args.num_samples
+    )
+
+    for seed in range(
+        args.seed_start,
+        seed_stop,
+    ):
+        sample = (
+            generate_microstructure(
+                seed
+            )
+        )
+
+        save_sample(
+            sample,
+            seed,
+            args.output_dir,
+        )
+
+        print(
+            f"saved seed {seed}: "
+            f"{int(sample.sum())} "
+            f"solid pixels"
+        )
+
+
+if __name__ == "__main__":
+    main()
+```
+
+I also checked the revised topology/count logic on development seeds: the generated samples retain **20,374 total solid pixels**, **17,863 pixels in the dominant 4-connected component** (`f_largest ≈ 0.8767547`), and that same dominant component spans both the horizontal and vertical axes.

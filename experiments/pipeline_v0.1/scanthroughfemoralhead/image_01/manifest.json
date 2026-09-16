@@ -14,7 +14,7 @@
   "model_name": null,
   "reasoning_configuration": null,
   "created_at_utc": "2026-09-15T18:13:41.507548+00:00",
-  "updated_at_utc": "2026-09-15T19:25:06.527379+00:00",
+  "updated_at_utc": "2026-09-16T18:19:36.456530+00:00",
   "configuration": {
     "image_shape": [
       256,
@@ -127,23 +127,47 @@
     119
   ],
   "maximum_revisions": 3,
-  "actual_revisions_completed": 0,
-  "current_iteration": 1,
+  "actual_revisions_completed": 3,
+  "current_iteration": 3,
   "execution_repairs": {
-    "0": false
+    "0": false,
+    "1": false,
+    "2": false,
+    "3": false
   },
   "iteration_generator_hashes": {
     "0": {
       "generator": "33c465db732cdbd859b776a3ea4723d8757df902a8ebbebc1a22f9a7e972d5e3"
+    },
+    "1": {
+      "generator": "41d02616e0f2d3d476fa0c91beea79cc560eaedb7657abee5a7567f71e5b64fc"
+    },
+    "2": {
+      "generator": "d6c79161f4a391505a5176674ee043d0b58b0e0d0e23d336db7b2715e26a28d4"
+    },
+    "3": {
+      "generator": "9e321a01ab86f236116658179dc9087af531f7ab1f4f21234db971de6509da35"
     }
   },
   "iteration_execution_times_seconds": {
     "0": {
       "initial": 4.3005563000333495
+    },
+    "1": {
+      "initial": 7.1976313999984995
+    },
+    "2": {
+      "initial": 19.516777400000137
+    },
+    "3": {
+      "initial": 29.738231000002997
     }
   },
   "valid_sample_counts": {
-    "0": 0
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0
   },
   "iterations": {
     "0": {
@@ -185,21 +209,374 @@
       "prompt_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_1\\prompt_1.txt",
       "prompt_context_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_1\\prompt_context.json",
       "response_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_1\\response_1.txt",
-      "generator_path": null,
-      "active_generator_path": null,
-      "active_generator_sha256": null,
-      "generated_development_path": null,
-      "evaluation_path": null,
-      "comparison_path": null
+      "generator_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_1\\iteration_1.py",
+      "active_generator_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_1\\iteration_1.py",
+      "active_generator_sha256": "41d02616e0f2d3d476fa0c91beea79cc560eaedb7657abee5a7567f71e5b64fc",
+      "generated_development_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_1\\generated\\development",
+      "evaluation_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_1\\evaluation\\evaluation_summary.json",
+      "comparison_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_1\\evaluation\\target_comparison.json",
+      "generator_sha256": "41d02616e0f2d3d476fa0c91beea79cc560eaedb7657abee5a7567f71e5b64fc",
+      "execution": {
+        "initial": {
+          "command": [
+            "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\.venv\\Scripts\\python.exe",
+            "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_1\\iteration_1.py",
+            "--seed-start",
+            "0",
+            "--num-samples",
+            "20",
+            "--output-dir",
+            "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_1\\generated\\development"
+          ],
+          "return_code": 0,
+          "timed_out": false,
+          "started_at_utc": "2026-09-16T17:52:49.896227+00:00",
+          "ended_at_utc": "2026-09-16T17:52:57.095181+00:00",
+          "duration_seconds": 7.1976313999984995,
+          "stdout_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_1\\execution\\initial\\stdout.txt",
+          "stderr_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_1\\execution\\initial\\stderr.txt",
+          "succeeded": true
+        }
+      },
+      "sample_audit_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_1\\evaluation\\pipeline_seed_audit.json"
+    },
+    "2": {
+      "prompt_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_2\\prompt_2.txt",
+      "prompt_context_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_2\\prompt_context.json",
+      "response_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_2\\response_2.txt",
+      "generator_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_2\\iteration_2.py",
+      "active_generator_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_2\\iteration_2.py",
+      "active_generator_sha256": "d6c79161f4a391505a5176674ee043d0b58b0e0d0e23d336db7b2715e26a28d4",
+      "generated_development_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_2\\generated\\development",
+      "evaluation_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_2\\evaluation\\evaluation_summary.json",
+      "comparison_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_2\\evaluation\\target_comparison.json",
+      "generator_sha256": "d6c79161f4a391505a5176674ee043d0b58b0e0d0e23d336db7b2715e26a28d4",
+      "execution": {
+        "initial": {
+          "command": [
+            "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\.venv\\Scripts\\python.exe",
+            "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_2\\iteration_2.py",
+            "--seed-start",
+            "0",
+            "--num-samples",
+            "20",
+            "--output-dir",
+            "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_2\\generated\\development"
+          ],
+          "return_code": 0,
+          "timed_out": false,
+          "started_at_utc": "2026-09-16T18:06:42.059970+00:00",
+          "ended_at_utc": "2026-09-16T18:07:01.577838+00:00",
+          "duration_seconds": 19.516777400000137,
+          "stdout_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_2\\execution\\initial\\stdout.txt",
+          "stderr_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_2\\execution\\initial\\stderr.txt",
+          "succeeded": true
+        }
+      },
+      "sample_audit_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_2\\evaluation\\pipeline_seed_audit.json"
+    },
+    "3": {
+      "prompt_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_3\\prompt_3.txt",
+      "prompt_context_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_3\\prompt_context.json",
+      "response_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_3\\response_3.txt",
+      "generator_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_3\\iteration_3.py",
+      "active_generator_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_3\\iteration_3.py",
+      "active_generator_sha256": "9e321a01ab86f236116658179dc9087af531f7ab1f4f21234db971de6509da35",
+      "generated_development_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_3\\generated\\development",
+      "evaluation_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_3\\evaluation\\evaluation_summary.json",
+      "comparison_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_3\\evaluation\\target_comparison.json",
+      "generator_sha256": "9e321a01ab86f236116658179dc9087af531f7ab1f4f21234db971de6509da35",
+      "execution": {
+        "initial": {
+          "command": [
+            "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\.venv\\Scripts\\python.exe",
+            "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_3\\iteration_3.py",
+            "--seed-start",
+            "0",
+            "--num-samples",
+            "20",
+            "--output-dir",
+            "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_3\\generated\\development"
+          ],
+          "return_code": 0,
+          "timed_out": false,
+          "started_at_utc": "2026-09-16T18:18:30.027150+00:00",
+          "ended_at_utc": "2026-09-16T18:18:59.766983+00:00",
+          "duration_seconds": 29.738231000002997,
+          "stdout_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_3\\execution\\initial\\stdout.txt",
+          "stderr_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_3\\execution\\initial\\stderr.txt",
+          "succeeded": true
+        }
+      },
+      "sample_audit_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_3\\evaluation\\pipeline_seed_audit.json"
     }
   },
-  "final_generator_hash": null,
-  "final_development_metrics": null,
-  "final_heldout_metrics": null,
-  "completion_status": "failed",
-  "status": "FAILED",
-  "failure_reason": "Script extraction failed: The extracted Python script is empty.",
-  "recoverable_state": "WAITING_FOR_REVISION",
+  "final_generator_hash": "9e321a01ab86f236116658179dc9087af531f7ab1f4f21234db971de6509da35",
+  "final_development_metrics": {
+    "phi_s": {
+      "mean": 0.310882568359375,
+      "std": 0.0,
+      "min": 0.310882568359375,
+      "max": 0.310882568359375
+    },
+    "f_largest": {
+      "mean": 0.8767546873466182,
+      "std": 0.0,
+      "min": 0.8767546873466182,
+      "max": 0.8767546873466182
+    },
+    "mean_strut_thickness": {
+      "mean": 2.6766064717485,
+      "std": 0.023112835536462862,
+      "min": 2.638952873765255,
+      "max": 2.7078892903795504
+    },
+    "p10_strut_thickness": {
+      "mean": 2.0,
+      "std": 0.0,
+      "min": 2.0,
+      "max": 2.0
+    },
+    "median_pore_diameter": {
+      "mean": 5.21258488905758,
+      "std": 0.558045075600756,
+      "min": 4.47213595499958,
+      "max": 5.656854249492381
+    },
+    "E_S2": {
+      "mean": 0.02527453672019863,
+      "std": 0.0011792095654753097,
+      "min": 0.023554042803230566,
+      "max": 0.027610650749357778
+    },
+    "E_L": {
+      "mean": 0.03017538271788748,
+      "std": 0.007898074068045937,
+      "min": 0.019562368017669633,
+      "max": 0.04622640494831947
+    },
+    "SSIM": {
+      "mean": 0.0051196842083057375,
+      "std": 0.004816680441768695,
+      "min": -0.0022748883333192195,
+      "max": 0.01219057047209048
+    },
+    "NCC": {
+      "mean": 0.0003973305580403117,
+      "std": 0.006296136183283939,
+      "min": -0.008755039887881653,
+      "max": 0.013110934640507789
+    },
+    "max_transform_NCC": {
+      "mean": 0.03883728643091257,
+      "std": 0.0024426636246639073,
+      "min": 0.03454956113251177,
+      "max": 0.04459223998757012
+    }
+  },
+  "final_heldout_metrics": {
+    "phi_s": {
+      "mean": 0.310882568359375,
+      "std": 0.0,
+      "min": 0.310882568359375,
+      "max": 0.310882568359375
+    },
+    "f_largest": {
+      "mean": 0.8767546873466182,
+      "std": 0.0,
+      "min": 0.8767546873466182,
+      "max": 0.8767546873466182
+    },
+    "mean_strut_thickness": {
+      "mean": 2.6745922259303727,
+      "std": 0.021298051152028312,
+      "min": 2.6321279423226027,
+      "max": 2.7040343095715476
+    },
+    "p10_strut_thickness": {
+      "mean": 2.0,
+      "std": 0.0,
+      "min": 2.0,
+      "max": 2.0
+    },
+    "median_pore_diameter": {
+      "mean": 5.30143876114454,
+      "std": 0.5429061261712245,
+      "min": 4.47213595499958,
+      "max": 5.656854249492381
+    },
+    "E_S2": {
+      "mean": 0.024959164685865398,
+      "std": 0.0016940357692007734,
+      "min": 0.02233090552134453,
+      "max": 0.02853812051111203
+    },
+    "E_L": {
+      "mean": 0.03153196566784445,
+      "std": 0.006291392013969146,
+      "min": 0.022275863737395533,
+      "max": 0.04285261977308319
+    },
+    "SSIM": {
+      "mean": 0.005344440794246991,
+      "std": 0.004220736875398891,
+      "min": -0.0016013828028484862,
+      "max": 0.01656910333279959
+    },
+    "NCC": {
+      "mean": 0.0012698327989939622,
+      "std": 0.006280460426068589,
+      "min": -0.008683815215150744,
+      "max": 0.016102370895206018
+    },
+    "max_transform_NCC": {
+      "mean": 0.03912218512183622,
+      "std": 0.0020879400743972817,
+      "min": 0.035404257205282695,
+      "max": 0.04473468933303193
+    }
+  },
+  "completion_status": "complete",
+  "status": "COMPLETE",
+  "failure_reason": null,
+  "recoverable_state": null,
   "reference_sha256": "246d4de09175ac78835bb94cfb490d962b58809616e4bd4188491273277de85a",
-  "waiting_for": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\iteration_1\\response_1.txt"
+  "waiting_for": null,
+  "final_generator_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\final\\final_generator.py",
+  "final_generator_iteration": 3,
+  "final_development_audit": {
+    "expected_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "discovered_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "missing_seeds": [],
+    "unexpected_seeds": [],
+    "duplicate_seeds": {},
+    "unparseable_files": [],
+    "npy_count": 20,
+    "png_missing": [],
+    "duplicate_content_hashes": {},
+    "passed": true,
+    "problems": []
+  },
+  "heldout_execution": {
+    "command": [
+      "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\.venv\\Scripts\\python.exe",
+      "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\final\\final_generator.py",
+      "--seed-start",
+      "100",
+      "--num-samples",
+      "20",
+      "--output-dir",
+      "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\final\\heldout\\generated"
+    ],
+    "return_code": 0,
+    "timed_out": false,
+    "started_at_utc": "2026-09-16T18:19:03.905911+00:00",
+    "ended_at_utc": "2026-09-16T18:19:32.581208+00:00",
+    "duration_seconds": 28.673632300000463,
+    "stdout_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\final\\heldout\\execution\\stdout.txt",
+    "stderr_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\final\\heldout\\execution\\stderr.txt",
+    "succeeded": true
+  },
+  "heldout_execution_time_seconds": 28.673632300000463,
+  "final_heldout_valid_sample_count": 0,
+  "heldout_audit": {
+    "expected_seeds": [
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119
+    ],
+    "discovered_seeds": [
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119
+    ],
+    "missing_seeds": [],
+    "unexpected_seeds": [],
+    "duplicate_seeds": {},
+    "unparseable_files": [],
+    "npy_count": 20,
+    "png_missing": [],
+    "duplicate_content_hashes": {},
+    "passed": true,
+    "problems": []
+  },
+  "final_summary_json": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\final\\summary.json",
+  "final_summary_markdown": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.1\\scanthroughfemoralhead\\image_01\\final\\summary.md",
+  "summary_warning_count": 5
 }

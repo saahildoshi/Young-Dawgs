@@ -1,0 +1,1467 @@
+#!/usr/bin/env python3
+"""
+Procedural generator for 256x256 binary disordered mechanical metamaterials.
+
+Revision 1 replaces the previous Gaussian zero-level-set labyrinth with a
+warped cellular/Voronoi interface network. This raises the pore length scale
+without requiring thicker struts. For each requested seed, several nearby
+procedural morphology families are generated from deterministic substreams and
+the one that best matches the supplied numerical descriptors is retained.
+Candidate selection uses only the numerical targets below; the reference image
+is never read or accessed at runtime.
+
+Hard constraints enforced on every output:
+  * 256x256 binary uint8, solid=1 and void=0
+  * exact solid-pixel budget
+  * exact dominant 4-connected component pixel budget
+  * that same component spans left-right and top-bottom
+  * remaining solid stays 4-disconnected from the dominant component
+
+Dependencies: numpy, scipy, scikit-image, Pillow
+"""
+
+import argparse
+from pathlib import Path
+
+import numpy as np
+from PIL import Image
+from scipy import ndimage as ndi
+from scipy.spatial import cKDTree
+from skimage.morphology import skeletonize
+
+
+SIZE = 256
+N_PIXELS = SIZE * SIZE
+FOUR = ndi.generate_binary_structure(2, 1)
+Y_GRID, X_GRID = np.mgrid[0:SIZE, 0:SIZE]
+
+TARGET_PHI = 0.310883
+TARGET_LCF = 0.876755
+TARGET_MEAN_STRUT = 2.655
+TARGET_P10_STRUT = 2.0
+TARGET_MEDIAN_PORE = 6.324555320336759
+
+RADII = np.array([0, 1, 2, 4, 8, 16, 32, 64], dtype=int)
+
+TARGET_S2 = np.array([
+    0.310883,
+    0.213261,
+    0.155861,
+    0.103486,
+    0.091954,
+    0.096406,
+    0.097038,
+    0.096978,
+])
+
+TARGET_L = np.array([
+    0.310883,
+    0.213261,
+    0.140850,
+    0.068787,
+    0.018925,
+    0.002205,
+    0.000088,
+    0.000000,
+])
+
+TARGET_SOLID = int(round(TARGET_PHI * N_PIXELS))
+TARGET_MAIN = int(round(TARGET_LCF * TARGET_SOLID))
+TARGET_DETACHED = TARGET_SOLID - TARGET_MAIN
+
+
+# Small parameter spread improves robustness across requested seeds.
+FAMILIES = (
+    dict(
+        n_sites=345,
+        neighbor_weight=4.0,
+        warp=2.0,
+        warp_sigma=18.0,
+        detached_radius=2.5,
+        near_probability=0.03,
+    ),
+    dict(
+        n_sites=350,
+        neighbor_weight=4.0,
+        warp=2.0,
+        warp_sigma=18.0,
+        detached_radius=2.7,
+        near_probability=0.04,
+    ),
+    dict(
+        n_sites=355,
+        neighbor_weight=4.0,
+        warp=2.5,
+        warp_sigma=16.0,
+        detached_radius=2.8,
+        near_probability=0.03,
+    ),
+    dict(
+        n_sites=350,
+        neighbor_weight=4.0,
+        warp=3.5,
+        warp_sigma=13.0,
+        detached_radius=2.8,
+        near_probability=0.02,
+    ),
+    dict(
+        n_sites=345,
+        neighbor_weight=3.5,
+        warp=4.0,
+        warp_sigma=12.0,
+        detached_radius=2.6,
+        near_probability=0.03,
+    ),
+    dict(
+        n_sites=355,
+        neighbor_weight=4.5,
+        warp=3.0,
+        warp_sigma=14.0,
+        detached_radius=2.9,
+        near_probability=0.01,
+    ),
+)
+
+
+# Radial masks for the evaluator-style periodic S2 statistic.
+C = SIZE // 2
+YY, XX = np.mgrid[-C:C, -C:C]
+RR = np.sqrt(XX * XX + YY * YY)
+
+S2_MASKS = []
+
+for r in RADII:
+    if r == 0:
+        mask = np.zeros((SIZE, SIZE), dtype=bool)
+        mask[C, C] = True
+    else:
+        mask = (RR >= r - 0.5) & (RR < r + 0.5)
+
+    S2_MASKS.append(mask)
+
+
+def rng_for(seed, family, salt, attempt=0):
+    return np.random.default_rng(
+        np.random.SeedSequence(
+            [
+                int(seed),
+                int(family),
+                int(salt),
+                int(attempt),
+            ]
+        )
+    )
+
+
+def geometry_seed(seed, family, attempt):
+    return (
+        int(seed)
+        + 100003 * (int(family) + 1)
+        + 10000019 * int(attempt)
+    )
+
+
+def components(mask):
+    labels, n = ndi.label(
+        mask,
+        structure=FOUR,
+    )
+
+    sizes = np.bincount(
+        labels.ravel(),
+        minlength=n + 1,
+    )
+
+    if n == 0:
+        return labels, sizes, 0
+
+    largest = 1 + int(
+        np.argmax(sizes[1:])
+    )
+
+    return labels, sizes, largest
+
+
+def largest_component(mask):
+    labels, _, largest = components(mask)
+
+    if largest == 0:
+        return np.zeros_like(
+            mask,
+            dtype=bool,
+        )
+
+    return labels == largest
+
+
+def ensure_spanning(main):
+    """
+    Ensure the same 4-connected component touches all four boundaries.
+    """
+    main = main.copy()
+
+    if not main[:, 0].any():
+        ys, xs = np.where(main)
+        i = int(np.argmin(xs))
+
+        main[
+            int(ys[i]),
+            : int(xs[i]) + 1,
+        ] = True
+
+    if not main[:, -1].any():
+        ys, xs = np.where(main)
+        i = int(np.argmax(xs))
+
+        main[
+            int(ys[i]),
+            int(xs[i]):,
+        ] = True
+
+    if not main[0, :].any():
+        ys, xs = np.where(main)
+        i = int(np.argmin(ys))
+
+        main[
+            : int(ys[i]) + 1,
+            int(xs[i]),
+        ] = True
+
+    if not main[-1, :].any():
+        ys, xs = np.where(main)
+        i = int(np.argmax(ys))
+
+        main[
+            int(ys[i]):,
+            int(xs[i]),
+        ] = True
+
+    return main
+
+
+def repulsive_points(
+    rng,
+    n_points,
+    min_distance=4.0,
+):
+    """
+    Mildly repulsive nuclei suppress pathological tiny Voronoi cells.
+    """
+    points = []
+
+    min_d2 = float(min_distance) ** 2
+    tries = 0
+
+    while (
+        len(points) < n_points
+        and tries < 250000
+    ):
+        tries += 1
+
+        p = np.array(
+            [
+                rng.uniform(
+                    0,
+                    SIZE - 1,
+                ),
+                rng.uniform(
+                    0,
+                    SIZE - 1,
+                ),
+            ]
+        )
+
+        if not points:
+            points.append(p)
+            continue
+
+        old = np.asarray(points)
+
+        if (
+            np.min(
+                np.sum(
+                    (old - p) ** 2,
+                    axis=1,
+                )
+            )
+            >= min_d2
+        ):
+            points.append(p)
+
+    if len(points) < n_points:
+        extra = rng.uniform(
+            0,
+            SIZE - 1,
+            size=(
+                n_points - len(points),
+                2,
+            ),
+        )
+
+        points.extend(extra)
+
+    return np.asarray(
+        points,
+        dtype=float,
+    )
+
+
+def warped_voronoi_boundary(
+    gseed,
+    n_sites,
+    warp,
+    warp_sigma,
+):
+    """
+    Create a curved, disordered, two-sided 4-connected cellular interface.
+    """
+    rng = np.random.default_rng(
+        np.random.SeedSequence(
+            [
+                int(gseed),
+                0x51A7,
+            ]
+        )
+    )
+
+    sites = repulsive_points(
+        rng,
+        n_sites,
+        min_distance=4.0,
+    )
+
+    dy = ndi.gaussian_filter(
+        rng.standard_normal(
+            (SIZE, SIZE)
+        ),
+        warp_sigma,
+        mode="reflect",
+    )
+
+    dx = ndi.gaussian_filter(
+        rng.standard_normal(
+            (SIZE, SIZE)
+        ),
+        warp_sigma,
+        mode="reflect",
+    )
+
+    dy *= warp / (
+        dy.std()
+        + 1e-12
+    )
+
+    dx *= warp / (
+        dx.std()
+        + 1e-12
+    )
+
+    query = np.column_stack(
+        (
+            np.clip(
+                (Y_GRID + dy).ravel(),
+                0,
+                SIZE - 1,
+            ),
+            np.clip(
+                (X_GRID + dx).ravel(),
+                0,
+                SIZE - 1,
+            ),
+        )
+    )
+
+    tree = cKDTree(sites)
+
+    _, labels = tree.query(
+        query,
+        k=1,
+        workers=-1,
+    )
+
+    labels = labels.reshape(
+        SIZE,
+        SIZE,
+    )
+
+    boundary = np.zeros(
+        (SIZE, SIZE),
+        dtype=bool,
+    )
+
+    boundary[:-1, :] |= (
+        labels[:-1, :]
+        != labels[1:, :]
+    )
+
+    boundary[1:, :] |= (
+        labels[1:, :]
+        != labels[:-1, :]
+    )
+
+    boundary[:, :-1] |= (
+        labels[:, :-1]
+        != labels[:, 1:]
+    )
+
+    boundary[:, 1:] |= (
+        labels[:, 1:]
+        != labels[:, :-1]
+    )
+
+    return boundary
+
+
+def grow_main(
+    main,
+    rng,
+    neighbor_weight,
+    width_sigma=5.0,
+):
+    """
+    Grow the dominant component to exactly TARGET_MAIN pixels.
+    """
+    main = main.copy()
+
+    width = ndi.gaussian_filter(
+        rng.standard_normal(
+            main.shape
+        ),
+        width_sigma,
+        mode="reflect",
+    )
+
+    width = (
+        width - width.mean()
+    ) / (
+        width.std()
+        + 1e-12
+    )
+
+    while (
+        int(main.sum())
+        < TARGET_MAIN
+    ):
+        candidate = (
+            ndi.binary_dilation(
+                main,
+                structure=FOUR,
+            )
+            & ~main
+        )
+
+        coords = np.argwhere(
+            candidate
+        )
+
+        if coords.size == 0:
+            raise RuntimeError(
+                "No pixels available "
+                "for connected growth."
+            )
+
+        local_n = ndi.convolve(
+            main.astype(
+                np.uint8
+            ),
+            np.ones(
+                (3, 3),
+                np.uint8,
+            ),
+            mode="constant",
+        )
+
+        score = (
+            width[
+                coords[:, 0],
+                coords[:, 1],
+            ]
+            + neighbor_weight
+            * local_n[
+                coords[:, 0],
+                coords[:, 1],
+            ].astype(float)
+            + 0.75
+            * rng.random(
+                len(coords)
+            )
+        )
+
+        remaining = (
+            TARGET_MAIN
+            - int(main.sum())
+        )
+
+        k = min(
+            256,
+            remaining,
+            len(coords),
+        )
+
+        if k == len(coords):
+            chosen = coords
+        else:
+            idx = np.argpartition(
+                score,
+                -k,
+            )[-k:]
+
+            chosen = coords[idx]
+
+        main[
+            chosen[:, 0],
+            chosen[:, 1],
+        ] = True
+
+    return main
+
+
+def make_main(
+    seed,
+    family,
+    params,
+    attempt,
+):
+    boundary = (
+        warped_voronoi_boundary(
+            geometry_seed(
+                seed,
+                family,
+                attempt,
+            ),
+            int(
+                params["n_sites"]
+            ),
+            float(
+                params["warp"]
+            ),
+            float(
+                params["warp_sigma"]
+            ),
+        )
+    )
+
+    main = largest_component(
+        boundary
+    )
+
+    main = ensure_spanning(
+        main
+    )
+
+    if int(main.sum()) > TARGET_MAIN:
+        raise RuntimeError(
+            "Cellular precursor "
+            "exceeded main-component "
+            "budget."
+        )
+
+    main = grow_main(
+        main,
+        rng_for(
+            seed,
+            family,
+            0xBEEF,
+            attempt,
+        ),
+        neighbor_weight=float(
+            params[
+                "neighbor_weight"
+            ]
+        ),
+    )
+
+    if int(main.sum()) != TARGET_MAIN:
+        raise RuntimeError(
+            "Main-component budget "
+            "was not reached exactly."
+        )
+
+    return main
+
+
+def add_detached(
+    main,
+    rng,
+    median_far_radius,
+    near_probability,
+):
+    """
+    Add the remaining solid while keeping it 4-disconnected from main.
+    """
+    solid = main.copy()
+
+    remaining = (
+        TARGET_DETACHED
+    )
+
+    dmain = (
+        ndi.distance_transform_edt(
+            ~main
+        )
+    )
+
+    forbidden = (
+        ndi.binary_dilation(
+            main,
+            structure=FOUR,
+        )
+    )
+
+    near = np.argwhere(
+        (
+            dmain
+            >= np.sqrt(2.0)
+            - 1e-9
+        )
+        & (
+            dmain <= 5.5
+        )
+        & ~forbidden
+    )
+
+    far = np.argwhere(
+        (dmain > 5.5)
+        & ~forbidden
+    )
+
+    if len(far) == 0:
+        far = np.argwhere(
+            ~forbidden
+        )
+
+    attempts = 0
+
+    while (
+        remaining > 0
+        and attempts < 120000
+    ):
+        attempts += 1
+
+        use_near = (
+            len(near) > 0
+            and rng.random()
+            < near_probability
+        )
+
+        pool = (
+            near
+            if use_near
+            else far
+        )
+
+        cy, cx = pool[
+            int(
+                rng.integers(
+                    len(pool)
+                )
+            )
+        ]
+
+        cy = int(cy)
+        cx = int(cx)
+
+        if solid[cy, cx]:
+            continue
+
+        median = (
+            1.05
+            if use_near
+            else median_far_radius
+        )
+
+        radius = float(
+            np.clip(
+                rng.lognormal(
+                    np.log(median),
+                    0.42,
+                ),
+                0.55,
+                4.5,
+            )
+        )
+
+        aspect = float(
+            np.clip(
+                np.exp(
+                    rng.normal(
+                        0,
+                        0.35,
+                    )
+                ),
+                0.55,
+                1.8,
+            )
+        )
+
+        ry = (
+            radius
+            * np.sqrt(aspect)
+        )
+
+        rx = (
+            radius
+            / np.sqrt(aspect)
+        )
+
+        pad = (
+            int(
+                np.ceil(
+                    max(
+                        ry,
+                        rx,
+                    )
+                )
+            )
+            + 2
+        )
+
+        y0 = max(
+            0,
+            cy - pad,
+        )
+
+        y1 = min(
+            SIZE,
+            cy + pad + 1,
+        )
+
+        x0 = max(
+            0,
+            cx - pad,
+        )
+
+        x1 = min(
+            SIZE,
+            cx + pad + 1,
+        )
+
+        yy, xx = np.ogrid[
+            y0:y1,
+            x0:x1,
+        ]
+
+        blob = (
+            (
+                (yy - cy)
+                / ry
+            )
+            ** 2
+            + (
+                (xx - cx)
+                / rx
+            )
+            ** 2
+            <= 1.0
+        )
+
+        if not blob.any():
+            continue
+
+        local_forbidden = (
+            forbidden[
+                y0:y1,
+                x0:x1,
+            ]
+        )
+
+        if np.any(
+            blob
+            & local_forbidden
+        ):
+            continue
+
+        sub = solid[
+            y0:y1,
+            x0:x1,
+        ]
+
+        new = (
+            blob
+            & ~sub
+        )
+
+        n_new = int(
+            new.sum()
+        )
+
+        if n_new == 0:
+            continue
+
+        if n_new <= remaining:
+            sub[blob] = True
+            remaining -= n_new
+            continue
+
+        coords = np.argwhere(
+            new
+        )
+
+        if np.any(
+            sub & blob
+        ):
+            distance_existing = (
+                ndi.distance_transform_edt(
+                    ~(sub & blob)
+                )
+            )
+
+            order_score = (
+                distance_existing[
+                    coords[:, 0],
+                    coords[:, 1],
+                ]
+            )
+        else:
+            order_score = (
+                (
+                    coords[:, 0]
+                    - (cy - y0)
+                )
+                ** 2
+                + (
+                    coords[:, 1]
+                    - (cx - x0)
+                )
+                ** 2
+            )
+
+        take = coords[
+            np.argsort(
+                order_score
+            )[:remaining]
+        ]
+
+        partial = np.zeros_like(
+            blob,
+            dtype=bool,
+        )
+
+        partial[
+            take[:, 0],
+            take[:, 1],
+        ] = True
+
+        if np.any(
+            partial
+            & local_forbidden
+        ):
+            continue
+
+        sub[partial] = True
+
+        remaining = 0
+
+    if remaining:
+        raise RuntimeError(
+            "Could not place "
+            "complete detached-solid "
+            "budget."
+        )
+
+    return solid
+
+
+# ---------------------------------------------------------------------
+# Descriptor calculations used only for deterministic candidate choice.
+# ---------------------------------------------------------------------
+
+def strut_stats(solid):
+    distance = (
+        ndi.distance_transform_edt(
+            solid
+        )
+    )
+
+    skeleton = skeletonize(
+        solid
+    )
+
+    values = (
+        2.0
+        * distance[skeleton]
+    )
+
+    if values.size == 0:
+        return 0.0, 0.0
+
+    return (
+        float(
+            values.mean()
+        ),
+        float(
+            np.percentile(
+                values,
+                10.0,
+            )
+        ),
+    )
+
+
+def median_pore(solid):
+    void = ~solid
+
+    distance = (
+        ndi.distance_transform_edt(
+            void
+        )
+    )
+
+    maxima = (
+        void
+        & (
+            distance
+            == ndi.maximum_filter(
+                distance,
+                size=3,
+            )
+        )
+    )
+
+    values = (
+        2.0
+        * distance[maxima]
+    )
+
+    if values.size == 0:
+        return 0.0
+
+    return float(
+        np.median(values)
+    )
+
+
+def two_point(solid):
+    a = solid.astype(
+        float
+    )
+
+    f = np.fft.fft2(
+        a
+    )
+
+    correlation = np.real(
+        np.fft.ifft2(
+            f * np.conj(f)
+        )
+    ) / float(a.size)
+
+    correlation = (
+        np.fft.fftshift(
+            correlation
+        )
+    )
+
+    return np.array(
+        [
+            float(
+                correlation[
+                    mask
+                ].mean()
+            )
+            for mask
+            in S2_MASKS
+        ]
+    )
+
+
+def bresenham_path(
+    dy,
+    dx,
+):
+    """
+    Integer path from (0,0) to (dy,dx).
+    """
+    y0 = 0
+    x0 = 0
+
+    y1 = int(dy)
+    x1 = int(dx)
+
+    sy = (
+        1
+        if y1 >= 0
+        else -1
+    )
+
+    sx = (
+        1
+        if x1 >= 0
+        else -1
+    )
+
+    ay = abs(y1)
+    ax = abs(x1)
+
+    path = []
+
+    if ax >= ay:
+        err = ax // 2
+        y = y0
+        x = x0
+
+        for _ in range(
+            ax + 1
+        ):
+            path.append(
+                (y, x)
+            )
+
+            x += sx
+            err -= ay
+
+            if err < 0:
+                y += sy
+                err += ax
+
+    else:
+        err = ay // 2
+        y = y0
+        x = x0
+
+        for _ in range(
+            ay + 1
+        ):
+            path.append(
+                (y, x)
+            )
+
+            y += sy
+            err -= ax
+
+            if err < 0:
+                x += sx
+                err += ay
+
+    return path
+
+
+def periodic_line_probability(
+    solid,
+    dy,
+    dx,
+):
+    ok = np.ones_like(
+        solid,
+        dtype=bool,
+    )
+
+    for py, px in bresenham_path(
+        dy,
+        dx,
+    ):
+        ok &= np.roll(
+            solid,
+            shift=(
+                -py,
+                -px,
+            ),
+            axis=(
+                0,
+                1,
+            ),
+        )
+
+    return float(
+        ok.mean()
+    )
+
+
+def lineal_path(solid):
+    output = []
+
+    for r in RADII:
+        r = int(r)
+
+        if r == 0:
+            output.append(
+                float(
+                    solid.mean()
+                )
+            )
+
+        else:
+            output.append(
+                float(
+                    np.mean(
+                        [
+                            periodic_line_probability(
+                                solid,
+                                0,
+                                r,
+                            ),
+                            periodic_line_probability(
+                                solid,
+                                r,
+                                0,
+                            ),
+                            periodic_line_probability(
+                                solid,
+                                r,
+                                r,
+                            ),
+                            periodic_line_probability(
+                                solid,
+                                r,
+                                -r,
+                            ),
+                        ]
+                    )
+                )
+            )
+
+    return np.asarray(
+        output
+    )
+
+
+def candidate_score(solid):
+    mean_strut, p10 = (
+        strut_stats(
+            solid
+        )
+    )
+
+    pore = median_pore(
+        solid
+    )
+
+    s2 = two_point(
+        solid
+    )
+
+    lp = lineal_path(
+        solid
+    )
+
+    score = (
+        (
+            (
+                mean_strut
+                - TARGET_MEAN_STRUT
+            )
+            / 0.04
+        )
+        ** 2
+    )
+
+    score += (
+        0.2
+        * (
+            (
+                p10
+                - TARGET_P10_STRUT
+            )
+            / 0.25
+        )
+        ** 2
+    )
+
+    score += (
+        0.8
+        * (
+            (
+                pore
+                - TARGET_MEDIAN_PORE
+            )
+            / 0.40
+        )
+        ** 2
+    )
+
+    s2_scale = np.array(
+        [
+            0.020,
+            0.015,
+            0.015,
+            0.012,
+            0.010,
+            0.010,
+            0.010,
+            0.010,
+        ]
+    )
+
+    lp_scale = np.array(
+        [
+            0.020,
+            0.015,
+            0.012,
+            0.008,
+            0.004,
+            0.0015,
+            0.0002,
+            0.0001,
+        ]
+    )
+
+    score += (
+        0.7
+        * np.mean(
+            (
+                (
+                    s2
+                    - TARGET_S2
+                )
+                / s2_scale
+            )
+            ** 2
+        )
+    )
+
+    score += (
+        0.7
+        * np.mean(
+            (
+                (
+                    lp
+                    - TARGET_L
+                )
+                / lp_scale
+            )
+            ** 2
+        )
+    )
+
+    return float(score)
+
+
+def hard_valid(solid):
+    if solid.shape != (
+        SIZE,
+        SIZE,
+    ):
+        return False
+
+    if int(
+        solid.sum()
+    ) != TARGET_SOLID:
+        return False
+
+    if not np.array_equal(
+        solid,
+        solid.astype(bool),
+    ):
+        return False
+
+    labels, sizes, largest = (
+        components(
+            solid.astype(bool)
+        )
+    )
+
+    if largest == 0:
+        return False
+
+    if int(
+        sizes[largest]
+    ) != TARGET_MAIN:
+        return False
+
+    main = (
+        labels == largest
+    )
+
+    return bool(
+        main[:, 0].any()
+        and main[:, -1].any()
+        and main[0, :].any()
+        and main[-1, :].any()
+    )
+
+
+def generate_candidate(
+    seed,
+    family,
+    params,
+):
+    for attempt in range(3):
+        try:
+            main = make_main(
+                seed,
+                family,
+                params,
+                attempt,
+            )
+
+            solid = add_detached(
+                main,
+                rng_for(
+                    seed,
+                    family,
+                    0xD37A,
+                    attempt,
+                ),
+                float(
+                    params[
+                        "detached_radius"
+                    ]
+                ),
+                float(
+                    params[
+                        "near_probability"
+                    ]
+                ),
+            ).astype(
+                np.uint8
+            )
+
+            if hard_valid(
+                solid
+            ):
+                return solid
+
+        except RuntimeError:
+            pass
+
+    raise RuntimeError(
+        f"Failed candidate "
+        f"seed={seed}, "
+        f"family={family}"
+    )
+
+
+def generate_microstructure(seed):
+    """
+    Return the best fully procedural deterministic realization for one seed.
+    """
+    best = None
+    best_score = np.inf
+
+    for family, params in enumerate(
+        FAMILIES
+    ):
+        sample = generate_candidate(
+            seed,
+            family,
+            params,
+        )
+
+        score = candidate_score(
+            sample.astype(bool)
+        )
+
+        if score < best_score:
+            best = sample
+            best_score = score
+
+    if (
+        best is None
+        or not hard_valid(best)
+    ):
+        raise RuntimeError(
+            f"Failed to generate "
+            f"valid seed {seed}"
+        )
+
+    return best.astype(
+        np.uint8,
+        copy=False,
+    )
+
+
+def save_sample(
+    sample,
+    seed,
+    output_dir,
+):
+    stem = (
+        f"microstructure_seed_{seed}"
+    )
+
+    np.save(
+        output_dir
+        / f"{stem}.npy",
+        sample.astype(
+            np.uint8,
+            copy=False,
+        ),
+    )
+
+    Image.fromarray(
+        sample.astype(
+            np.uint8,
+            copy=False,
+        )
+        * 255,
+        mode="L",
+    ).save(
+        output_dir
+        / f"{stem}.png"
+    )
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description=(
+            "Generate stochastic "
+            "256x256 binary "
+            "metamaterial "
+            "microstructures."
+        )
+    )
+
+    parser.add_argument(
+        "--seed-start",
+        type=int,
+        default=0,
+    )
+
+    parser.add_argument(
+        "--num-samples",
+        type=int,
+        default=20,
+    )
+
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path(
+            "microstructures"
+        ),
+    )
+
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+
+    if args.num_samples < 1:
+        raise ValueError(
+            "--num-samples must "
+            "be at least 1"
+        )
+
+    args.output_dir.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    for seed in range(
+        args.seed_start,
+        args.seed_start
+        + args.num_samples,
+    ):
+        sample = (
+            generate_microstructure(
+                seed
+            )
+        )
+
+        save_sample(
+            sample,
+            seed,
+            args.output_dir,
+        )
+
+        print(
+            f"saved seed {seed}: "
+            f"solid="
+            f"{int(sample.sum())}, "
+            f"main={TARGET_MAIN}"
+        )
+
+
+if __name__ == "__main__":
+    main()

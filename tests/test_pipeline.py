@@ -19,6 +19,7 @@ from metamaterial_eval.pipeline.prompts import (
     build_initial_prompt,
     format_sampled_curve,
 )
+from metamaterial_eval.pipeline.providers import ManualFileProvider
 from metamaterial_eval.pipeline.reporting import build_final_summary
 from metamaterial_eval.pipeline.runner import (
     _freeze_final_generator,
@@ -244,6 +245,15 @@ def test_09b_windows_utf8_bom_response_is_accepted(tmp_path: Path) -> None:
     )
     source = extract_python_script(response_path.read_text(encoding="utf-8-sig"))
     assert source == "import sys\nprint(sys.version)\n"
+
+
+@pytest.mark.parametrize("content", [b"", b"   \r\n\t"])
+def test_09c_blank_manual_response_remains_waiting(
+    tmp_path: Path, content: bytes
+) -> None:
+    response_path = tmp_path / "response_1.txt"
+    response_path.write_bytes(content)
+    assert ManualFileProvider._read({"response_path": str(response_path)}) is None
 
 
 def test_10_ambiguous_script_response_fails_safely() -> None:

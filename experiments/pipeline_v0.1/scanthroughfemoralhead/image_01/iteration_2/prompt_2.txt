@@ -1,0 +1,61 @@
+Revision round 2 of 3.
+
+The current generator was evaluated on twenty development seeds.
+
+Target metrics:
+
+Solid volume fraction: 0.310883
+Largest-component fraction: 0.876755
+Left-right percolation: true
+Top-bottom percolation: true
+Mean local strut thickness: 2.655 pixels
+10th-percentile strut thickness: 2 pixels
+Median pore diameter: 6.32456 pixels
+
+Two-point correlation data:
+r=0: 0.310883, r=1: 0.213261, r=2: 0.155861, r=4: 0.103486, r=8: 0.091954, r=16: 0.096406, r=32: 0.097038, r=64: 0.096978
+
+Lineal-path data:
+r=0: 0.310883, r=1: 0.213261, r=2: 0.140850, r=4: 0.068787, r=8: 0.018925, r=16: 0.002205, r=32: 0.000088, r=64: 0.000000
+
+Generated metrics:
+- phi_s: 0.310883 +/- 0
+- f_largest: 0.876755 +/- 0
+- mean_strut_thickness: 2.6518 +/- 0.00896607
+- p10_strut_thickness: 2 +/- 0
+- median_pore_diameter: 8.70282 +/- 0.246717
+- E_S2: 0.0144907 +/- 0.00106934
+- E_L: 0.0341854 +/- 0.00469479
+Valid samples: 0 / 20
+
+Main remaining differences:
+- solid_volume_fraction matches the target within numerical precision.
+- largest_component_fraction matches the target within numerical precision.
+- mean_strut_thickness is 0.12% below the target (mean 2.6518, target 2.655).
+- p10_strut_thickness matches the target within numerical precision.
+- median_pore_diameter is 37.60% above the target (mean 8.70282, target 6.32456).
+- 0 of 20 samples satisfy the topology validity rule.
+- Mean S2 NRMSE is 0.0144907.
+- Mean lineal-path NRMSE is 0.0341854.
+
+Revise the procedural generator to reduce these differences.
+
+Preserve the metrics that already closely match the target.
+
+Also preserve:
+
+- one dominant 4-connected solid network,
+- horizontal and vertical percolation,
+- stochastic diversity,
+- the exact output dimensions,
+- filenames,
+- dependencies,
+- seed behavior,
+- phase convention,
+- the command-line interface: --seed-start, --num-samples, --output-dir.
+
+The script must default to development seeds 0 through 19 but must also run
+unchanged for any requested consecutive seed range, including 100 through 119.
+
+Return the complete revised script.
+
