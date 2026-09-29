@@ -1,0 +1,62 @@
+Revision round 1 of 3.
+
+The current generator was evaluated on 20 development seeds.
+
+Topology policy: single_connected_network
+Engineering validity: component_count == 1 and Px == 1 and Py == 1
+The reference has been preprocessed to retain only its largest 4-connected solid component.
+The generated solid phase must form one 4-connected component.
+All solid pixels must belong to the same network, spanning the image horizontally and vertically.
+Do not create disconnected solid islands, detached particles, or isolated regions.
+Do not add isolated solid islands merely to match solid volume fraction.
+Preserve the target morphology and other descriptors by modifying the connected network itself.
+The measured percolation values below describe the reference; the generated design must span both axes even if the reference does not.
+
+Target metrics measured from the active reference:
+
+Solid volume fraction: 0.477341
+Solid component count: 1
+Largest-component fraction: 1.000000
+Left-right percolation: true
+Top-bottom percolation: true
+Mean local strut thickness: 4.11262 pixels
+10th-percentile strut thickness: 2.82843 pixels
+Median enclosed-pore diameter: 7.2111 pixels
+
+Two-point correlation data:
+r=0: 0.477341, r=1: 0.394779, r=2: 0.332253, r=4: 0.236434, r=8: 0.214039, r=16: 0.225797, r=32: 0.228194, r=64: 0.228173
+
+Lineal-path data:
+r=0: 0.477341, r=1: 0.394779, r=2: 0.314194, r=4: 0.194878, r=8: 0.087105, r=16: 0.018608, r=32: 0.001362, r=64: 0.000000
+
+Generated metrics (mean +/- population standard deviation):
+- component_count: 1 +/- 0
+- phi_s: 0.477341 +/- 0
+- f_largest: 1 +/- 0
+- mean_strut_thickness: 3.27613 +/- 0.0229213
+- p10_strut_thickness: 2 +/- 0
+- median_pore_diameter: 4.88679 +/- 0.565075
+- E_S2: 0.0407423 +/- 0.00145631
+- E_L: 0.0826854 +/- 0.00545838
+Valid samples: 20 / 20
+
+Main remaining differences:
+- component_count matches the target within numerical precision.
+- solid_volume_fraction matches the target within numerical precision.
+- largest_component_fraction matches the target within numerical precision.
+- mean_strut_thickness is 20.34% below the target (mean 3.27613, target 4.11262).
+- p10_strut_thickness is 29.29% below the target (mean 2, target 2.82843).
+- median_pore_diameter is 32.23% below the target (mean 4.88679, target 7.2111).
+- 20 of 20 samples satisfy the topology validity rule.
+- Mean S2 NRMSE is 0.0407423.
+- Mean lineal-path NRMSE is 0.0826854.
+
+Revise the generator to reduce these differences and satisfy the engineering
+validity rule. Preserve metrics already close to the target, stochastic
+diversity, dimensions, filenames, dependencies, seed behavior, phase convention,
+and the --seed-start / --num-samples / --output-dir interface.
+
+The pipeline evaluates generated images without removing disconnected material.
+N/A means undefined; do not optimize toward an artificial zero for that metric.
+Return the complete revised script. It must default to seeds 0 through 19 and
+run unchanged for any requested consecutive seed range.

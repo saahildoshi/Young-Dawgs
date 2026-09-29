@@ -1,4 +1,4 @@
-"""Central configuration for Pipeline v0.1."""
+"""Central configuration for the versioned procedural-generation pipeline."""
 
 from __future__ import annotations
 
@@ -7,9 +7,10 @@ from pathlib import Path
 from typing import Any
 
 
-PIPELINE_VERSION = "0.1.0"
-PROMPT_VERSION = "1.0"
+PIPELINE_VERSION = "0.2.0"
+PROMPT_VERSION = "1.1"
 EVALUATOR_VERSION = "1.1"
+TOPOLOGY_MODES = ("preserve_reference", "single_connected_network")
 IMAGE_SHAPE = (256, 256)
 DEVELOPMENT_SEEDS = tuple(range(20))
 HELDOUT_SEEDS = tuple(range(100, 120))
@@ -39,8 +40,13 @@ class PipelineConfig:
     pipeline_version: str = PIPELINE_VERSION
     prompt_version: str = PROMPT_VERSION
     evaluator_version: str = EVALUATOR_VERSION
+    topology_mode: str = "preserve_reference"
 
     def __post_init__(self) -> None:
+        if self.topology_mode not in TOPOLOGY_MODES:
+            raise ValueError(f"topology_mode must be one of {TOPOLOGY_MODES}.")
+        if self.topology_mode == "single_connected_network" and self.prompt_version != "1.1":
+            raise ValueError("single_connected_network requires prompt_version 1.1.")
         if len(self.image_shape) != 2 or any(value <= 0 for value in self.image_shape):
             raise ValueError("image_shape must contain two positive integers.")
         if not self.development_seeds or not self.heldout_seeds:
@@ -70,6 +76,11 @@ class PipelineConfig:
     @classmethod
     def from_dict(cls, values: dict[str, Any]) -> "PipelineConfig":
         converted = dict(values)
+        # Missing policy identifies pre-v0.2 manifests. Never opt an existing
+        # experiment into reference cleaning or a different validity definition.
+        converted.setdefault("topology_mode", "preserve_reference")
+        converted.setdefault("pipeline_version", "0.1.0")
+        converted.setdefault("prompt_version", "1.0")
         for key in (
             "image_shape",
             "development_seeds",
@@ -86,5 +97,4 @@ def default_evaluator_path() -> Path:
 
 
 def default_runs_root() -> Path:
-    return repository_root() / "experiments" / "pipeline_v0.1"
-
+    return repository_root() / "experiments" / "pipeline_v0.2"

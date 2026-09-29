@@ -1,5 +1,10 @@
 # Pipeline v0.1 Reference
 
+Historical guide: new starts now use pipeline v0.2 and the default output root
+`experiments/pipeline_v0.2`. See [the v0.2 guide](PIPELINE_V0_2.md) for current
+commands and topology policies. Existing v0.1 manifests retain their original
+prompt and validity policy when resumed.
+
 Pipeline v0.1 implements the project’s I2F1 experimental workflow for binary
 2-D microstructures. It converts a reference into a traceable target, prepares
 quantitative prompts, executes model-produced procedural generators, evaluates

@@ -11,6 +11,7 @@ from .state import write_json
 
 
 METRIC_MAP = {
+    "component_count": ("component_count", "component_count"),
     "solid_volume_fraction": ("phi_s", "phi_s"),
     "largest_component_fraction": ("f_largest", "f_largest"),
     "mean_strut_thickness": ("mean_strut_thickness", "mean_strut_thickness"),
@@ -33,10 +34,12 @@ def compare_to_target(
     differences: dict[str, Any] = {}
     lines: list[str] = []
     for output_key, (target_key, generated_key) in METRIC_MAP.items():
-        target_value = float(target[target_key])
+        if target_key not in target or generated_key not in generated:
+            continue  # pre-v0.2 reports have no component-count summary
+        target_value = target[target_key]
         mean = generated[generated_key]["mean"]
         std = generated[generated_key]["std"]
-        if mean is None:
+        if mean is None or target_value is None:
             differences[output_key] = {
                 "target": target_value,
                 "generated_mean": None,
@@ -44,7 +47,7 @@ def compare_to_target(
                 "absolute_difference": None,
                 "relative_percent_error": None,
             }
-            lines.append(f"{output_key} is undefined for this ensemble.")
+            lines.append(f"{output_key} is undefined for the target or ensemble.")
             continue
         mean = float(mean)
         difference = mean - target_value
@@ -92,7 +95,25 @@ def compare_to_target(
             f"Mean lineal-path NRMSE is {format_number(generated['E_L']['mean'])}.",
         ]
     )
-    return {"differences": differences, "summary_lines": lines}
+    if target.get("topology_mode") == "single_connected_network":
+        disconnected = report.get("disconnected_sample_count", 0)
+        if disconnected:
+            lines.extend([
+                f"{disconnected} generated structures contain disconnected solid components.",
+                "Target solid component count: 1; largest-component fraction: 1.000000.",
+                "Generated mean solid component count: "
+                f"{format_number(generated['component_count']['mean'])}; mean largest-component "
+                f"fraction: {format_number(generated['f_largest']['mean'])}.",
+                "Revise the generator so that all solid material belongs to the main "
+                "4-connected network. Do not add isolated solid islands merely to match "
+                "solid volume fraction. Preserve morphology and other descriptors by "
+                "modifying the connected network itself.",
+            ])
+    return {
+        "topology_mode": target.get("topology_mode", "preserve_reference"),
+        "validity_rule": target.get("validity_rule"),
+        "differences": differences, "summary_lines": lines,
+    }
 
 
 def _summary_values(report: dict[str, Any]) -> dict[str, Any]:
@@ -100,6 +121,9 @@ def _summary_values(report: dict[str, Any]) -> dict[str, Any]:
     return {
         "valid_sample_count": report["valid_sample_count"],
         "sample_count": report["sample_count"],
+        "component_count": summary.get("component_count", {}).get("mean"),
+        "component_count_std": summary.get("component_count", {}).get("std"),
+        "legacy_valid_sample_count": report.get("legacy_valid_sample_count", report["valid_sample_count"]),
         "phi_s": summary["phi_s"]["mean"],
         "f_largest": summary["f_largest"]["mean"],
         "mean_strut_thickness": summary["mean_strut_thickness"]["mean"],
@@ -118,6 +142,7 @@ def _compare_dev_heldout(
 ) -> dict[str, Any]:
     comparison: dict[str, Any] = {}
     for key in (
+        "component_count",
         "phi_s",
         "f_largest",
         "mean_strut_thickness",
@@ -205,11 +230,15 @@ def build_final_summary(
         "reference_name": manifest["reference_name"],
         "pipeline_version": manifest["pipeline_version"],
         "evaluator_version": manifest["evaluator_version"],
+        "topology_mode": target.get("topology_mode", "preserve_reference"),
+        "validity_rule": target.get("validity_rule"),
+        "reference_cleaning": manifest.get("reference_cleaning"),
         "prompt_strategy": "I2F1",
         "iterations_completed": len(trajectory),
         "target": {
-            key: target[key]
+            key: target.get(key)
             for key in (
+                "component_count",
                 "phi_s",
                 "f_largest",
                 "Px",
@@ -233,13 +262,14 @@ def build_final_summary(
             "target_information_available_to_generator": {
                 "solid_fraction": True,
                 "largest_component_fraction": True,
+                "component_count": "component_count" in target,
                 "S2": True,
                 "lineal_path": True,
                 "thickness": True,
                 "pore_diameter": True,
             },
         },
-        "warnings": warnings,
+        "warnings": warnings + manifest.get("reference_cleaning", {}).get("warnings", []),
     }
     final_dir = run_dir / "final"
     write_json(final_dir / "summary.json", summary)
@@ -258,6 +288,8 @@ def render_summary_markdown(summary: dict[str, Any]) -> str:
         f"Run ID: `{summary['run_id']}`  ",
         f"Pipeline version: `{summary['pipeline_version']}`  ",
         f"Evaluator: `v{summary['evaluator_version']}`  ",
+        f"Topology policy: `{summary['topology_mode']}`  ",
+        f"Validity: `{summary['validity_rule']}`  ",
         "Prompt strategy: `I2F1`  ",
         f"Iterations completed: `{summary['iterations_completed']}`",
         "",
@@ -268,19 +300,32 @@ def render_summary_markdown(summary: dict[str, Any]) -> str:
     ]
     for key, value in target.items():
         lines.append(f"| {key} | {format_number(value)} |")
+    cleaning = summary.get("reference_cleaning")
+    if cleaning:
+        lines.extend([
+            "", "## Reference preprocessing", "",
+            f"- Solid components: {cleaning['raw_component_count']} raw; "
+            f"{cleaning['retained_component_count']} retained.",
+            f"- Removed components: {cleaning['removed_component_count']}.",
+            f"- Removed solid pixels: {cleaning['removed_solid_pixels']} "
+            f"({100 * cleaning['removed_solid_fraction']:.4f}% of raw solid).",
+            f"- Removed image-area fraction: {cleaning['removed_image_fraction']:.6f}.",
+            f"- Retained image solid fraction: {cleaning['retained_solid_fraction']:.6f}.",
+        ])
     lines.extend(
         [
             "",
             "## Development trajectory",
             "",
-            "| Iteration | Valid | $\\phi_s$ | $f_\\mathrm{largest}$ | "
+            "| Iteration | Policy valid | Mean components | $\\phi_s$ | $f_\\mathrm{largest}$ | "
             "Mean thickness | P10 | Pore diameter | $S_2$ NRMSE | $L$ NRMSE |",
-            "|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+            "|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
         ]
     )
     for row in summary["development_trajectory"]:
         lines.append(
             f"| {row['iteration']} | {row['valid_sample_count']}/{row['sample_count']} | "
+            f"{format_number(row['component_count'])} | "
             f"{format_number(row['phi_s'])} | {format_number(row['f_largest'])} | "
             f"{format_number(row['mean_strut_thickness'])} | "
             f"{format_number(row['p10_strut_thickness'])} | "
@@ -298,6 +343,9 @@ def render_summary_markdown(summary: dict[str, Any]) -> str:
                 f"## {heading}",
                 "",
                 f"- Valid samples: {row['valid_sample_count']}/{row['sample_count']}",
+                f"- Mean solid component count: {format_number(row['component_count'])} "
+                f"+/- {format_number(row['component_count_std'])} (population SD)",
+                f"- Legacy v1.1 valid samples: {row['legacy_valid_sample_count']}/{row['sample_count']}",
                 f"- Mean $S_2$ NRMSE: {format_number(row['E_S2'])}",
                 f"- Mean $L$ NRMSE: {format_number(row['E_L'])}",
                 f"- $D_\\mathrm{{pair}}$: {format_number(row['D_pair'])}",

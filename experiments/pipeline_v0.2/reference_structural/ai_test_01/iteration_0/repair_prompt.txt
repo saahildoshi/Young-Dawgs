@@ -1,0 +1,30 @@
+The script did not execute.
+
+Complete traceback:
+
+Traceback (most recent call last):
+  File "C:\Users\sd22446\OneDrive - University of Georgia\Young-Dawgs-VSCode\experiments\pipeline_v0.2\reference_structural\ai_test_01\iteration_0\iteration_0.py", line 613, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\sd22446\OneDrive - University of Georgia\Young-Dawgs-VSCode\experiments\pipeline_v0.2\reference_structural\ai_test_01\iteration_0\iteration_0.py", line 595, in main
+    array = generate_microstructure(seed)
+  File "C:\Users\sd22446\OneDrive - University of Georgia\Young-Dawgs-VSCode\experiments\pipeline_v0.2\reference_structural\ai_test_01\iteration_0\iteration_0.py", line 499, in generate_microstructure
+    solid = connected_strut_growth(
+        rng=rng,
+        skeleton=connected_wall_skeleton,
+        target_pixels=target_pixels,
+    )
+  File "C:\Users\sd22446\OneDrive - University of Georgia\Young-Dawgs-VSCode\experiments\pipeline_v0.2\reference_structural\ai_test_01\iteration_0\iteration_0.py", line 353, in connected_strut_growth
+    raise RuntimeError(
+    ...<2 lines>...
+    )
+RuntimeError: Initial connected skeleton exceeds requested solid fraction. Reduce NUM_SITES or the initial wall dilation.
+
+Correct only the execution problem.
+
+Do not change the intended morphology, generation strategy, dimensions,
+number of samples, filenames, seed behavior, phase convention, or output
+interface.
+
+Return the complete corrected script.
+

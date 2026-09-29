@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any, Sequence
+from .topology import validity_rule
 
 
 TEMPLATE_DIR = Path(__file__).resolve().parent / "templates"
@@ -42,7 +43,14 @@ def _target_fields(target: dict[str, Any]) -> dict[str, str]:
     sampled = target["sampled_descriptors"]
     return {
         "solid_volume_fraction": format_number(target["phi_s"]),
-        "largest_component_fraction": format_number(target["f_largest"]),
+        "largest_component_fraction": (
+            f"{target['f_largest']:.6f}" if target.get("prompt_version") == "1.1"
+            else format_number(target["f_largest"])
+        ),
+        "component_count": format_number(target.get("component_count")),
+        "topology_mode": target.get("topology_mode", "preserve_reference"),
+        "validity_rule": validity_rule(target.get("topology_mode", "preserve_reference")),
+        "topology_instructions": _topology_instructions(target),
         "left_right_percolation": format_boolean(target["Px"]),
         "top_bottom_percolation": format_boolean(target["Py"]),
         "mean_strut_thickness_px": format_number(target["mean_strut_thickness"]),
@@ -53,15 +61,40 @@ def _target_fields(target: dict[str, Any]) -> dict[str, str]:
     }
 
 
+def _topology_instructions(target: dict[str, Any]) -> str:
+    if target.get("topology_mode") == "single_connected_network":
+        return (
+            "The reference has been preprocessed to retain only its largest "
+            "4-connected solid component.\n"
+            "The generated solid phase must form one 4-connected component.\n"
+            "All solid pixels must belong to the same network, spanning the image "
+            "horizontally and vertically.\n"
+            "Do not create disconnected solid islands, detached particles, or isolated regions.\n"
+            "Do not add isolated solid islands merely to match solid volume fraction.\n"
+            "Preserve the target morphology and other descriptors by modifying the "
+            "connected network itself.\n"
+            "The measured percolation values below describe the reference; the generated "
+            "design must span both axes even if the reference does not."
+        )
+    return (
+        "The reference topology has been preserved without removing components.\n"
+        "Match the measured descriptors and visible morphology. This policy retains "
+        "the historical engineering rule f_largest >= 0.98 with percolation on both axes; "
+        "it does not require exactly one component."
+    )
+
+
 def build_initial_prompt(target: dict[str, Any]) -> str:
-    """Render Pipeline Prompt v1.0 using measured target descriptors."""
-    return _template("initial_i2.txt").format(**_target_fields(target))
+    """Render the configured prompt version using measured target descriptors."""
+    name = "initial_i2_v1_1.txt" if target.get("prompt_version") == "1.1" else "initial_i2.txt"
+    return _template(name).format(**_target_fields(target))
 
 
 def format_generated_metrics(report: dict[str, Any]) -> str:
     summary = report["ensemble_summary"]
     lines = []
     for key in (
+        "component_count",
         "phi_s",
         "f_largest",
         "mean_strut_thickness",
@@ -70,6 +103,8 @@ def format_generated_metrics(report: dict[str, Any]) -> str:
         "E_S2",
         "E_L",
     ):
+        if key not in summary:
+            continue
         item = summary[key]
         lines.append(
             f"- {key}: {format_number(item['mean'])} +/- "
@@ -105,11 +140,11 @@ def build_feedback_prompt(
             ),
         }
     )
-    return _template("feedback_i2.txt").format(**fields)
+    name = "feedback_i2_v1_1.txt" if target.get("prompt_version") == "1.1" else "feedback_i2.txt"
+    return _template(name).format(**fields)
 
 
 def build_execution_repair_prompt(stderr: str) -> str:
     return _template("execution_repair.txt").format(
         traceback=stderr.rstrip() or "No traceback was emitted."
     )
-

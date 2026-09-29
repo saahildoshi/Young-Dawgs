@@ -12,7 +12,9 @@ copy-paste command catalog are in
 [docs/PROJECT_REFERENCE.md](docs/PROJECT_REFERENCE.md).
 
 The automated/resumable I2F1 research workflow is documented in
-[docs/PIPELINE_V0_1.md](docs/PIPELINE_V0_1.md).
+[docs/PIPELINE_V0_2.md](docs/PIPELINE_V0_2.md), including optional connected-network
+reference cleaning and Windows commands. The
+[v0.1 guide](docs/PIPELINE_V0_1.md) remains available for historical runs.
 
 ```powershell
 py -3.10 -m venv .venv
@@ -23,7 +25,8 @@ python -m pip install -e .
 python -m pytest -q
 ```
 
-Start a Pipeline v0.1 run and inspect its manual model boundary:
+Start a Pipeline v0.2 run and inspect its manual model boundary (reference
+topology is preserved unless `--topology-mode single_connected_network` is added):
 
 ```powershell
 python -m metamaterial_eval.pipeline start `
@@ -31,7 +34,7 @@ python -m metamaterial_eval.pipeline start `
   --run-name concrete_01
 
 python -m metamaterial_eval.pipeline status `
-  experiments\pipeline_v0.1\reference_binary\concrete_01
+  experiments\pipeline_v0.2\reference_binary\concrete_01
 ```
 
 Run the stored pilot generator and both evaluation protocols:

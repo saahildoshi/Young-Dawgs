@@ -1,0 +1,41 @@
+Revision round {round_number} of {max_rounds}.
+
+The current generator was evaluated on {development_count} development seeds.
+
+Topology policy: {topology_mode}
+Engineering validity: {validity_rule}
+{topology_instructions}
+
+Target metrics measured from the active reference:
+
+Solid volume fraction: {solid_volume_fraction}
+Solid component count: {component_count}
+Largest-component fraction: {largest_component_fraction}
+Left-right percolation: {left_right_percolation}
+Top-bottom percolation: {top_bottom_percolation}
+Mean local strut thickness: {mean_strut_thickness_px} pixels
+10th-percentile strut thickness: {p10_strut_thickness_px} pixels
+Median enclosed-pore diameter: {median_pore_diameter_px} pixels
+
+Two-point correlation data:
+{sampled_s2}
+
+Lineal-path data:
+{sampled_lineal_path}
+
+Generated metrics (mean +/- population standard deviation):
+{generated_metrics}
+Valid samples: {valid_count} / {development_count}
+
+Main remaining differences:
+{difference_summary}
+
+Revise the generator to reduce these differences and satisfy the engineering
+validity rule. Preserve metrics already close to the target, stochastic
+diversity, dimensions, filenames, dependencies, seed behavior, phase convention,
+and the --seed-start / --num-samples / --output-dir interface.
+
+The pipeline evaluates generated images without removing disconnected material.
+N/A means undefined; do not optimize toward an artificial zero for that metric.
+Return the complete revised script. It must default to seeds 0 through 19 and
+run unchanged for any requested consecutive seed range.

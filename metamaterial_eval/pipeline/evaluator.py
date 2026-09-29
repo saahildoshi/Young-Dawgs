@@ -18,6 +18,7 @@ from .execution import run_subprocess
 from .prompts import format_sampled_curve
 from .scripts import sha256_bytes, sha256_file
 from .state import write_json
+from .topology import apply_report_policy, is_valid, validity_rule
 
 
 class PipelineEvaluationError(RuntimeError):
@@ -62,12 +63,16 @@ def extract_target_descriptors(
         "shape": list(array.shape),
         "phase_convention": {"solid": 1, "void": 0},
         "connectivity": 4,
-        "validity_rule": "f_largest >= 0.98 and Px == 1 and Py == 1",
+        "validity_rule": validity_rule(config.topology_mode),
+        "topology_mode": config.topology_mode,
+        "prompt_version": config.prompt_version,
+        "component_count": int(basic["component_count"]),
         "phi_s": float(basic["phi_s"]),
         "f_largest": float(basic["f_largest"]),
         "Px": int(basic["Px"]),
         "Py": int(basic["Py"]),
-        "valid": bool(evaluator.structure_is_valid(basic)),
+        "valid": is_valid(basic, config.topology_mode),
+        "legacy_valid": bool(evaluator.structure_is_valid(basic)),
         "mean_strut_thickness": float(local["mean_strut_thickness"]),
         "p10_strut_thickness": float(local["p10_strut_thickness"]),
         "median_pore_diameter": float(local["median_pore_diameter"]),
@@ -96,7 +101,29 @@ def extract_target_descriptors(
             config.sample_radii,
         ),
     }
-    return result
+    # Missing enclosed pores / empty phases have undefined dimensions in v1.1.
+    # Retain that meaning as JSON null, not a substituted target value.
+    return evaluator.json_safe(result)
+
+
+def policy_report_filename(config: PipelineConfig) -> str:
+    return (
+        "evaluation_summary.json" if config.prompt_version == "1.0"
+        else "pipeline_evaluation_summary.json"
+    )
+
+
+def save_policy_report(
+    report: dict[str, Any], output_dir: Path, config: PipelineConfig, evaluator_path: Path
+) -> dict[str, Any]:
+    """Keep legacy output intact; persist the new policy-aware summary separately."""
+    if config.prompt_version == "1.0":
+        return report
+    enriched = apply_report_policy(
+        report, config.topology_mode, load_evaluator(str(evaluator_path.resolve()))
+    )
+    write_json(output_dir / policy_report_filename(config), enriched)
+    return enriched
 
 
 def audit_generated_samples(
@@ -195,7 +222,7 @@ def run_v1_1_evaluation(
         raise PipelineEvaluationError("Evaluator did not create evaluation_summary.json.")
     with report_path.open(encoding="utf-8") as stream:
         report = json.load(stream)
-    return report, audit
+    return save_policy_report(report, output_dir, config, evaluator_path), audit
 
 
 def seed_from_filename(filename: str) -> int | None:

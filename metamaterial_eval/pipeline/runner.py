@@ -14,7 +14,9 @@ from .evaluator import (
     PipelineEvaluationError,
     evaluator_hash,
     extract_target_descriptors,
+    policy_report_filename,
     run_v1_1_evaluation,
+    save_policy_report,
 )
 from .execution import ExecutionResult, run_generator
 from .prompts import (
@@ -144,6 +146,7 @@ def _initial_manifest(
         "evaluator_path": str(evaluator_path.resolve()),
         "evaluator_sha256": evaluator_hash(evaluator_path),
         "prompt_version": config.prompt_version,
+        "topology_mode": config.topology_mode,
         "prompt_strategy": "I2F1",
         "llm_provider": provider,
         "model_name": model,
@@ -190,12 +193,16 @@ def _write_prompt_context(
             ],
             "iteration": iteration,
             "target_metrics_path": str(_target_path(iteration_dir.parent)),
+            "topology_mode": target.get("topology_mode", "preserve_reference"),
+            "validity_rule": target.get("validity_rule"),
+            "reference_image_path": str(iteration_dir.parent / "reference" / "reference.png"),
             "development_report_path": development_report,
             "comparison_path": comparison,
             "heldout_data_included": False,
             "target_information_available_to_generator": {
                 "solid_fraction": True,
                 "largest_component_fraction": True,
+                "component_count": "component_count" in target,
                 "S2": True,
                 "lineal_path": True,
                 "thickness": True,
@@ -285,9 +292,12 @@ def start_run(
             threshold=threshold,
             evaluator_hash=manifest["evaluator_sha256"],
             prepare_png=prepare_png,
+            evaluator_path=evaluator_path,
         )
         manifest["reference_hash"] = metadata["sha256_canonical_binary"]
         manifest["reference_sha256"] = metadata["sha256_canonical_binary"]
+        manifest["reference_cleaning"] = metadata["cleaning"]
+        manifest["reference_raw_sha256"] = metadata["sha256_raw_binary"]
         advance(run_dir, manifest, REFERENCE_READY)
 
         target = extract_target_descriptors(binary, config, evaluator_path)
@@ -508,7 +518,9 @@ def _evaluate_iteration(
         report_path = evaluation_dir / "evaluation_summary.json"
         audit_path = evaluation_dir / "pipeline_seed_audit.json"
         if report_path.is_file() and audit_path.is_file():
-            report = read_json(report_path)
+            report = save_policy_report(
+                read_json(report_path), evaluation_dir, config, Path(manifest["evaluator_path"])
+            )
             audit = read_json(audit_path)
             if not audit.get("passed") or report.get("sample_count") != len(
                 config.development_seeds
@@ -536,7 +548,8 @@ def _evaluate_iteration(
     comparison = compare_to_target(_read_target(run_dir), report, len(config.development_seeds))
     comparison_path = evaluation_dir / "target_comparison.json"
     write_json(comparison_path, comparison)
-    info["evaluation_path"] = str(evaluation_dir / "evaluation_summary.json")
+    info["evaluation_path"] = str(evaluation_dir / policy_report_filename(config))
+    info["legacy_evaluation_path"] = str(evaluation_dir / "evaluation_summary.json")
     info["sample_audit_path"] = str(evaluation_dir / "pipeline_seed_audit.json")
     info["comparison_path"] = str(comparison_path)
     manifest["valid_sample_counts"][str(iteration)] = report["valid_sample_count"]
@@ -694,7 +707,9 @@ def _evaluate_heldout(
         report_path = output_dir / "evaluation_summary.json"
         audit_path = output_dir / "pipeline_seed_audit.json"
         if report_path.is_file() and audit_path.is_file():
-            report = read_json(report_path)
+            report = save_policy_report(
+                read_json(report_path), output_dir, config, Path(manifest["evaluator_path"])
+            )
             audit = read_json(audit_path)
             if not audit.get("passed") or report.get("sample_count") != len(
                 config.heldout_seeds
@@ -856,7 +871,7 @@ def resume_run(run_dir: Path, *, retry_failed: bool = False) -> dict[str, Any]:
                 run_dir,
                 manifest,
                 config,
-                read_json(heldout_path / "evaluation_summary.json"),
+                read_json(heldout_path / policy_report_filename(config)),
                 read_json(heldout_path / "pipeline_seed_audit.json"),
             )
         else:

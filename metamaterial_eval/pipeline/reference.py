@@ -12,8 +12,10 @@ from PIL import Image
 
 from metamaterial_eval.io import validate_binary_array
 
-from .config import PipelineConfig
+from .config import PipelineConfig, default_evaluator_path
+from .evaluator import load_evaluator
 from .state import utc_now, write_json
+from .topology import structural_reference
 
 
 def array_sha256(array: np.ndarray) -> str:
@@ -76,6 +78,7 @@ def canonicalize_reference(
     threshold: float | None,
     evaluator_hash: str,
     prepare_png: bool = False,
+    evaluator_path: Path | None = None,
 ) -> tuple[np.ndarray, dict[str, Any]]:
     """Save canonical NPY/PNG files, optionally preparing a raw PNG explicitly.
 
@@ -86,12 +89,17 @@ def canonicalize_reference(
     if not source.is_file():
         raise FileNotFoundError(f"Reference does not exist: {source}")
     reference_dir.mkdir(parents=True, exist_ok=False)
-    binary = _load_reference(
+    raw = _load_reference(
         source,
         expected_shape=config.image_shape,
         threshold=threshold,
         prepare_png=prepare_png,
     )
+    evaluator = load_evaluator(str((evaluator_path or default_evaluator_path()).resolve()))
+    binary, cleaning = structural_reference(raw, config.topology_mode, evaluator)
+    for name, array in (("reference_raw", raw), ("reference_structural", binary)):
+        np.save(reference_dir / f"{name}.npy", array, allow_pickle=False)
+        Image.fromarray(array * 255).save(reference_dir / f"{name}.png")
     canonical_npy = reference_dir / "reference_binary.npy"
     canonical_png = reference_dir / "reference.png"
     np.save(canonical_npy, binary, allow_pickle=False)
@@ -108,6 +116,13 @@ def canonicalize_reference(
         "dtype": str(binary.dtype),
         "phase_convention": {"solid": 1, "void": 0},
         "sha256_canonical_binary": array_sha256(binary),
+        "sha256_raw_binary": array_sha256(raw),
+        "sha256_structural_binary": array_sha256(binary),
+        "raw_path": str(reference_dir / "reference_raw.npy"),
+        "structural_path": str(reference_dir / "reference_structural.npy"),
+        "topology_mode": config.topology_mode,
+        "cleaning": cleaning,
+        "active_target": "reference_structural",
         "created_at_utc": utc_now(),
         "pipeline_version": config.pipeline_version,
         "evaluator_version": config.evaluator_version,

@@ -1,4 +1,4 @@
-"""Command-line interface for the resumable Pipeline v0.1 workflow."""
+"""Command-line interface for the resumable, versioned pipeline workflow."""
 
 from __future__ import annotations
 
@@ -10,11 +10,13 @@ from .config import (
     EVALUATOR_TIMEOUT_SECONDS,
     GENERATOR_TIMEOUT_SECONDS,
     MAX_FEEDBACK_ROUNDS,
+    TOPOLOGY_MODES,
     PipelineConfig,
     default_evaluator_path,
     default_runs_root,
 )
 from .runner import resume_run, start_run, status_message
+from .preparation import prepare_reference
 from .state import FAILED
 
 
@@ -27,6 +29,14 @@ def _parser() -> argparse.ArgumentParser:
         ),
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
+    prepare = subparsers.add_parser(
+        "prepare-reference", help="Save raw/structural references, descriptors and prompt preview."
+    )
+    prepare.add_argument("reference", type=Path)
+    prepare.add_argument("--output-dir", required=True, type=Path)
+    prepare.add_argument("--topology-mode", choices=TOPOLOGY_MODES, default="preserve_reference")
+    prepare.add_argument("--prepare-png", action="store_true")
+    prepare.add_argument("--threshold", type=float)
 
     start = subparsers.add_parser(
         "start", help="Canonicalize a reference and create the initial I2 prompt."
@@ -38,6 +48,11 @@ def _parser() -> argparse.ArgumentParser:
         help="Convert a raw PNG to grayscale, threshold, and resize to 256 x 256.",
     )
     start.add_argument("--run-name", help="Run identifier; generated from UTC time if omitted.")
+    start.add_argument(
+        "--topology-mode", choices=TOPOLOGY_MODES, default="preserve_reference",
+        help="single_connected_network keeps the largest reference component and requires "
+             "one spanning solid component in every sample; default preserves the reference.",
+    )
     start.add_argument(
         "--runs-root",
         type=Path,
@@ -100,8 +115,23 @@ def main(argv: list[str] | None = None) -> int:
     parser = _parser()
     args = parser.parse_args(argv)
     try:
+        if args.command == "prepare-reference":
+            metadata = prepare_reference(
+                args.reference, args.output_dir,
+                config=PipelineConfig(topology_mode=args.topology_mode),
+                threshold=args.threshold, prepare_png=args.prepare_png,
+            )
+            cleaning = metadata["cleaning"]
+            print(f"Prepared reference: {args.output_dir.resolve()}")
+            print(f"Solid components: {cleaning['raw_component_count']} raw; "
+                  f"{cleaning['retained_component_count']} retained")
+            print(f"Removed solid pixels: {cleaning['removed_solid_pixels']}")
+            for warning in cleaning["warnings"]:
+                print(f"Warning: {warning}")
+            return 0
         if args.command == "start":
             config = PipelineConfig(
+                topology_mode=args.topology_mode,
                 max_feedback_rounds=args.max_feedback_rounds,
                 generator_timeout_seconds=args.generator_timeout,
                 evaluator_timeout_seconds=args.evaluator_timeout,
