@@ -174,7 +174,7 @@ def test_07_start_creates_versioned_run_directories(tmp_path: Path) -> None:
     assert (run_dir / "reference" / "reference_binary.npy").is_file()
     assert (run_dir / "reference" / "target_metrics.json").is_file()
     assert (run_dir / "iteration_0" / "prompt_0.txt").is_file()
-    assert manifest["waiting_for"].endswith("iteration_0/response_0.txt")
+    assert manifest["waiting_for"].replace("\\", "/").endswith("iteration_0/response_0.txt")
 
 
 def test_08_historical_iteration_script_is_never_overwritten(tmp_path: Path) -> None:
