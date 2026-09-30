@@ -15,7 +15,7 @@
   "model_name": null,
   "reasoning_configuration": null,
   "created_at_utc": "2026-09-29T18:10:50.395576+00:00",
-  "updated_at_utc": "2026-09-29T19:42:51.407627+00:00",
+  "updated_at_utc": "2026-09-30T18:16:10.960754+00:00",
   "configuration": {
     "image_shape": [
       256,
@@ -129,11 +129,13 @@
     119
   ],
   "maximum_revisions": 3,
-  "actual_revisions_completed": 1,
-  "current_iteration": 2,
+  "actual_revisions_completed": 3,
+  "current_iteration": 3,
   "execution_repairs": {
     "0": true,
-    "1": false
+    "1": false,
+    "2": false,
+    "3": false
   },
   "iteration_generator_hashes": {
     "0": {
@@ -142,6 +144,12 @@
     },
     "1": {
       "generator": "8cdc1d92764937b09b17f21cb7ab82278a80e2df694d6df28f05ceecc248b0fc"
+    },
+    "2": {
+      "generator": "158aa8bf1d82854b3c25cc0b39b0df3dc91e6352a666fda9f65935d70f388f6f"
+    },
+    "3": {
+      "generator": "0b33b526c414cb9650398264153d79f25368bb59d47abeb269db20b9b2e7859f"
     }
   },
   "iteration_execution_times_seconds": {
@@ -151,11 +159,19 @@
     },
     "1": {
       "initial": 1.3914274000562727
+    },
+    "2": {
+      "initial": 1.5228178000543267
+    },
+    "3": {
+      "initial": 1.5122603999916464
     }
   },
   "valid_sample_counts": {
     "0": 20,
-    "1": 20
+    "1": 20,
+    "2": 20,
+    "3": 20
   },
   "iterations": {
     "0": {
@@ -258,19 +274,214 @@
       "prompt_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_2\\prompt_2.txt",
       "prompt_context_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_2\\prompt_context.json",
       "response_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_2\\response_2.txt",
-      "generator_path": null,
-      "active_generator_path": null,
-      "active_generator_sha256": null,
-      "generated_development_path": null,
-      "evaluation_path": null,
-      "comparison_path": null
+      "generator_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_2\\iteration_2.py",
+      "active_generator_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_2\\iteration_2.py",
+      "active_generator_sha256": "158aa8bf1d82854b3c25cc0b39b0df3dc91e6352a666fda9f65935d70f388f6f",
+      "generated_development_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_2\\generated\\development",
+      "evaluation_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_2\\evaluation\\pipeline_evaluation_summary.json",
+      "comparison_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_2\\evaluation\\target_comparison.json",
+      "generator_sha256": "158aa8bf1d82854b3c25cc0b39b0df3dc91e6352a666fda9f65935d70f388f6f",
+      "execution": {
+        "initial": {
+          "command": [
+            "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\.venv\\Scripts\\python.exe",
+            "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_2\\iteration_2.py",
+            "--seed-start",
+            "0",
+            "--num-samples",
+            "20",
+            "--output-dir",
+            "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_2\\generated\\development"
+          ],
+          "return_code": 0,
+          "timed_out": false,
+          "started_at_utc": "2026-09-30T17:59:17.510796+00:00",
+          "ended_at_utc": "2026-09-30T17:59:19.034608+00:00",
+          "duration_seconds": 1.5228178000543267,
+          "stdout_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_2\\execution\\initial\\stdout.txt",
+          "stderr_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_2\\execution\\initial\\stderr.txt",
+          "succeeded": true
+        }
+      },
+      "legacy_evaluation_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_2\\evaluation\\evaluation_summary.json",
+      "sample_audit_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_2\\evaluation\\pipeline_seed_audit.json"
+    },
+    "3": {
+      "prompt_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_3\\prompt_3.txt",
+      "prompt_context_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_3\\prompt_context.json",
+      "response_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_3\\response_3.txt",
+      "generator_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_3\\iteration_3.py",
+      "active_generator_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_3\\iteration_3.py",
+      "active_generator_sha256": "0b33b526c414cb9650398264153d79f25368bb59d47abeb269db20b9b2e7859f",
+      "generated_development_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_3\\generated\\development",
+      "evaluation_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_3\\evaluation\\pipeline_evaluation_summary.json",
+      "comparison_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_3\\evaluation\\target_comparison.json",
+      "generator_sha256": "0b33b526c414cb9650398264153d79f25368bb59d47abeb269db20b9b2e7859f",
+      "execution": {
+        "initial": {
+          "command": [
+            "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\.venv\\Scripts\\python.exe",
+            "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_3\\iteration_3.py",
+            "--seed-start",
+            "0",
+            "--num-samples",
+            "20",
+            "--output-dir",
+            "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_3\\generated\\development"
+          ],
+          "return_code": 0,
+          "timed_out": false,
+          "started_at_utc": "2026-09-30T18:15:59.664676+00:00",
+          "ended_at_utc": "2026-09-30T18:16:01.177927+00:00",
+          "duration_seconds": 1.5122603999916464,
+          "stdout_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_3\\execution\\initial\\stdout.txt",
+          "stderr_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_3\\execution\\initial\\stderr.txt",
+          "succeeded": true
+        }
+      },
+      "legacy_evaluation_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_3\\evaluation\\evaluation_summary.json",
+      "sample_audit_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_3\\evaluation\\pipeline_seed_audit.json"
     }
   },
-  "final_generator_hash": null,
-  "final_development_metrics": null,
-  "final_heldout_metrics": null,
-  "completion_status": "incomplete",
-  "status": "WAITING_FOR_REVISION",
+  "final_generator_hash": "0b33b526c414cb9650398264153d79f25368bb59d47abeb269db20b9b2e7859f",
+  "final_development_metrics": {
+    "phi_s": {
+      "mean": 0.4773406982421875,
+      "std": 0.0,
+      "min": 0.4773406982421875,
+      "max": 0.4773406982421875
+    },
+    "f_largest": {
+      "mean": 1.0,
+      "std": 0.0,
+      "min": 1.0,
+      "max": 1.0
+    },
+    "mean_strut_thickness": {
+      "mean": 4.112636452929126,
+      "std": 0.020781272558800006,
+      "min": 4.071703328670325,
+      "max": 4.149053083107242
+    },
+    "p10_strut_thickness": {
+      "mean": 2.8284271247461907,
+      "std": 4.440892098500626e-16,
+      "min": 2.8284271247461903,
+      "max": 2.8284271247461903
+    },
+    "median_pore_diameter": {
+      "mean": 7.21110255092798,
+      "std": 1.7763568394002505e-15,
+      "min": 7.211102550927978,
+      "max": 7.211102550927978
+    },
+    "E_S2": {
+      "mean": 0.009760090791030337,
+      "std": 0.0009420820195964586,
+      "min": 0.008041563231219883,
+      "max": 0.01178037467535484
+    },
+    "E_L": {
+      "mean": 0.026879302739136135,
+      "std": 0.0032426367828433693,
+      "min": 0.019434969243280295,
+      "max": 0.03191707925256094
+    },
+    "SSIM": {
+      "mean": 0.01120849062794289,
+      "std": 0.008993678099595876,
+      "min": -0.0031873964318233734,
+      "max": 0.03333509396388382
+    },
+    "NCC": {
+      "mean": 0.008296515311092982,
+      "std": 0.011647715975280235,
+      "min": -0.0105593490792189,
+      "max": 0.03659560208824935
+    },
+    "max_transform_NCC": {
+      "mean": 0.05355854074751955,
+      "std": 0.0028490202315628005,
+      "min": 0.049255880806363395,
+      "max": 0.059653211154573
+    },
+    "component_count": {
+      "mean": 1.0,
+      "std": 0.0,
+      "min": 1.0,
+      "max": 1.0
+    }
+  },
+  "final_heldout_metrics": {
+    "phi_s": {
+      "mean": 0.4773406982421875,
+      "std": 0.0,
+      "min": 0.4773406982421875,
+      "max": 0.4773406982421875
+    },
+    "f_largest": {
+      "mean": 1.0,
+      "std": 0.0,
+      "min": 1.0,
+      "max": 1.0
+    },
+    "mean_strut_thickness": {
+      "mean": 4.109571394676481,
+      "std": 0.02563277907017309,
+      "min": 4.0696426464795294,
+      "max": 4.170663010903784
+    },
+    "p10_strut_thickness": {
+      "mean": 2.8284271247461907,
+      "std": 4.440892098500626e-16,
+      "min": 2.8284271247461903,
+      "max": 2.8284271247461903
+    },
+    "median_pore_diameter": {
+      "mean": 7.21110255092798,
+      "std": 1.7763568394002505e-15,
+      "min": 7.211102550927978,
+      "max": 7.211102550927978
+    },
+    "E_S2": {
+      "mean": 0.010552927027988221,
+      "std": 0.001214663208590406,
+      "min": 0.008815353778820771,
+      "max": 0.012794776443632222
+    },
+    "E_L": {
+      "mean": 0.027826988912557683,
+      "std": 0.0030964852415530444,
+      "min": 0.021843264966244547,
+      "max": 0.03135019010721892
+    },
+    "SSIM": {
+      "mean": 0.011394469764091416,
+      "std": 0.008029369251250591,
+      "min": -0.008246995924320225,
+      "max": 0.025085951358647884
+    },
+    "NCC": {
+      "mean": 0.009354596575940195,
+      "std": 0.010160907497466155,
+      "min": -0.007868275342035238,
+      "max": 0.02815541627617332
+    },
+    "max_transform_NCC": {
+      "mean": 0.05396525984643481,
+      "std": 0.00290825716274114,
+      "min": 0.050846060741971934,
+      "max": 0.06136571262368988
+    },
+    "component_count": {
+      "mean": 1.0,
+      "std": 0.0,
+      "min": 1.0,
+      "max": 1.0
+    }
+  },
+  "completion_status": "complete",
+  "status": "COMPLETE",
   "failure_reason": null,
   "recoverable_state": null,
   "reference_sha256": "f93846c31a3852f1e18eb76a39b1db7ab44c70dde0ebee594f1fae8dfadcfcc9",
@@ -312,5 +523,142 @@
     "warnings": []
   },
   "reference_raw_sha256": "f93846c31a3852f1e18eb76a39b1db7ab44c70dde0ebee594f1fae8dfadcfcc9",
-  "waiting_for": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\iteration_2\\response_2.txt"
+  "waiting_for": null,
+  "final_generator_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\final\\final_generator.py",
+  "final_generator_iteration": 3,
+  "final_development_audit": {
+    "expected_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "discovered_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "missing_seeds": [],
+    "unexpected_seeds": [],
+    "duplicate_seeds": {},
+    "unparseable_files": [],
+    "npy_count": 20,
+    "png_missing": [],
+    "duplicate_content_hashes": {},
+    "passed": true,
+    "problems": []
+  },
+  "heldout_execution": {
+    "command": [
+      "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\.venv\\Scripts\\python.exe",
+      "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\final\\final_generator.py",
+      "--seed-start",
+      "100",
+      "--num-samples",
+      "20",
+      "--output-dir",
+      "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\final\\heldout\\generated"
+    ],
+    "return_code": 0,
+    "timed_out": false,
+    "started_at_utc": "2026-09-30T18:16:05.630126+00:00",
+    "ended_at_utc": "2026-09-30T18:16:07.104818+00:00",
+    "duration_seconds": 1.473661399912089,
+    "stdout_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\final\\heldout\\execution\\stdout.txt",
+    "stderr_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\final\\heldout\\execution\\stderr.txt",
+    "succeeded": true
+  },
+  "heldout_execution_time_seconds": 1.473661399912089,
+  "final_heldout_valid_sample_count": 20,
+  "heldout_audit": {
+    "expected_seeds": [
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119
+    ],
+    "discovered_seeds": [
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119
+    ],
+    "missing_seeds": [],
+    "unexpected_seeds": [],
+    "duplicate_seeds": {},
+    "unparseable_files": [],
+    "npy_count": 20,
+    "png_missing": [],
+    "duplicate_content_hashes": {},
+    "passed": true,
+    "problems": []
+  },
+  "final_summary_json": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\final\\summary.json",
+  "final_summary_markdown": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\final\\summary.md",
+  "summary_warning_count": 0
 }

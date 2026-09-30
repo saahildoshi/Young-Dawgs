@@ -1,0 +1,53 @@
+
+EVALUATOR SANITY CHECKS
+case                       E_S2       E_L      f_largest  result
+target vs target                0         0             --  PASS
+periodic translation            0         0             --  PASS
+matched Bernoulli           0.108     0.562         0.0053  PASS
+
+TARGET METRICS
+phi_s     f_largest  Px  Py  mean_strut  p10_strut  median_pore
+  0.4773     1.0000   1   1      4.1126     2.8284       7.2111
+
+GENERATED SAMPLE METRICS
+sample                    phi_s   f_largest Px Py   strut_mu strut_p10 pore_med     E_S2       E_L     SSIM      NCC     TNCC copy?
+microstructure_seed_0.np  0.4773    1.0000  1  1     4.1451    2.8284   7.2111    0.0103    0.0213   0.0248   0.0295   0.0574    no
+microstructure_seed_1.np  0.4773    1.0000  1  1     4.0993    2.8284   7.2111    0.0080    0.0257   0.0150   0.0077   0.0523    no
+microstructure_seed_2.np  0.4773    1.0000  1  1     4.1134    2.8284   7.2111    0.0091    0.0275  -0.0004  -0.0063   0.0532    no
+microstructure_seed_3.np  0.4773    1.0000  1  1     4.0771    2.8284   7.2111    0.0087    0.0284   0.0030  -0.0074   0.0567    no
+microstructure_seed_4.np  0.4773    1.0000  1  1     4.0963    2.8284   7.2111    0.0106    0.0304   0.0166   0.0156   0.0542    no
+microstructure_seed_5.np  0.4773    1.0000  1  1     4.1491    2.8284   7.2111    0.0114    0.0194   0.0096   0.0098   0.0548    no
+microstructure_seed_6.np  0.4773    1.0000  1  1     4.1261    2.8284   7.2111    0.0099    0.0225   0.0140   0.0088   0.0521    no
+microstructure_seed_7.np  0.4773    1.0000  1  1     4.1197    2.8284   7.2111    0.0102    0.0265   0.0164   0.0187   0.0578    no
+microstructure_seed_8.np  0.4773    1.0000  1  1     4.0957    2.8284   7.2111    0.0107    0.0271  -0.0032  -0.0066   0.0597    no
+microstructure_seed_9.np  0.4773    1.0000  1  1     4.1244    2.8284   7.2111    0.0101    0.0290   0.0101   0.0086   0.0524    no
+microstructure_seed_10.n  0.4773    1.0000  1  1     4.0717    2.8284   7.2111    0.0087    0.0308   0.0145   0.0050   0.0514    no
+microstructure_seed_11.n  0.4773    1.0000  1  1     4.1026    2.8284   7.2111    0.0101    0.0274   0.0130   0.0088   0.0526    no
+microstructure_seed_12.n  0.4773    1.0000  1  1     4.0997    2.8284   7.2111    0.0087    0.0274   0.0120   0.0090   0.0493    no
+microstructure_seed_13.n  0.4773    1.0000  1  1     4.1018    2.8284   7.2111    0.0091    0.0258   0.0047   0.0024   0.0518    no
+microstructure_seed_14.n  0.4773    1.0000  1  1     4.1361    2.8284   7.2111    0.0097    0.0228   0.0098   0.0087   0.0527    no
+microstructure_seed_15.n  0.4773    1.0000  1  1     4.1170    2.8284   7.2111    0.0088    0.0316   0.0031   0.0013   0.0512    no
+microstructure_seed_16.n  0.4773    1.0000  1  1     4.1287    2.8284   7.2111    0.0100    0.0282  -0.0023  -0.0106   0.0564    no
+microstructure_seed_17.n  0.4773    1.0000  1  1     4.0993    2.8284   7.2111    0.0090    0.0271   0.0333   0.0366   0.0494    no
+microstructure_seed_18.n  0.4773    1.0000  1  1     4.1411    2.8284   7.2111    0.0118    0.0319   0.0226   0.0208   0.0557    no
+microstructure_seed_19.n  0.4773    1.0000  1  1     4.1086    2.8284   7.2111    0.0103    0.0267   0.0076   0.0055   0.0501    no
+
+ENSEMBLE SUMMARY
+Samples evaluated: 20
+Topology-valid samples: 20
+D_pair: 0.488144 -> HEALTHY (criterion: D_pair > 0.05)
+Potential trivial copies (transform-aware periodic NCC >= 0.85): none
+metric                    mean        std        min        max
+phi_s                       0.47734    0.00000    0.47734    0.47734
+f_largest                   1.00000    0.00000    1.00000    1.00000
+mean_strut_thickness        4.11264    0.02078    4.07170    4.14905
+p10_strut_thickness         2.82843    0.00000    2.82843    2.82843
+median_pore_diameter        7.21110    0.00000    7.21110    7.21110
+E_S2                        0.00976    0.00094    0.00804    0.01178
+E_L                         0.02688    0.00324    0.01943    0.03192
+SSIM                        0.01121    0.00899   -0.00319    0.03334
+NCC                         0.00830    0.01165   -0.01056    0.03660
+max_transform_NCC           0.05356    0.00285    0.04926    0.05965
+
+JSON report: C:\Users\sd22446\OneDrive - University of Georgia\Young-Dawgs-VSCode\experiments\pipeline_v0.2\reference_structural\ai_test_01\iteration_3\evaluation\evaluation_summary.json
+Figures: C:\Users\sd22446\OneDrive - University of Georgia\Young-Dawgs-VSCode\experiments\pipeline_v0.2\reference_structural\ai_test_01\iteration_3\evaluation\figures

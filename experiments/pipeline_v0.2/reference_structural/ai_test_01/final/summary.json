@@ -1,0 +1,245 @@
+{
+  "run_id": "ai_test_01",
+  "reference_name": "reference_structural",
+  "pipeline_version": "0.2.0",
+  "evaluator_version": "1.1",
+  "topology_mode": "single_connected_network",
+  "validity_rule": "component_count == 1 and Px == 1 and Py == 1",
+  "reference_cleaning": {
+    "topology_mode": "single_connected_network",
+    "connectivity": 4,
+    "tie_break": "first_label_in_row_major_order",
+    "raw": {
+      "phi_s": 0.4773406982421875,
+      "f_largest": 1.0,
+      "Px": 1,
+      "Py": 1,
+      "component_count": 1,
+      "solid_pixels": 31283,
+      "largest_component_pixels": 31283
+    },
+    "structural": {
+      "phi_s": 0.4773406982421875,
+      "f_largest": 1.0,
+      "Px": 1,
+      "Py": 1,
+      "component_count": 1,
+      "solid_pixels": 31283,
+      "largest_component_pixels": 31283
+    },
+    "raw_component_count": 1,
+    "retained_component_count": 1,
+    "removed_component_count": 0,
+    "removed_solid_pixels": 0,
+    "removed_solid_fraction": 0.0,
+    "removed_image_fraction": 0.0,
+    "retained_solid_fraction": 0.4773406982421875,
+    "fraction_definitions": {
+      "removed_solid_fraction": "removed pixels / raw solid pixels",
+      "removed_image_fraction": "removed pixels / all image pixels",
+      "retained_solid_fraction": "retained solid pixels / all image pixels"
+    },
+    "reference_satisfies_engineering_rule": true,
+    "warnings": []
+  },
+  "prompt_strategy": "I2F1",
+  "iterations_completed": 4,
+  "target": {
+    "component_count": 1,
+    "phi_s": 0.4773406982421875,
+    "f_largest": 1.0,
+    "Px": 1,
+    "Py": 1,
+    "mean_strut_thickness": 4.112623910345319,
+    "p10_strut_thickness": 2.8284271247461903,
+    "median_pore_diameter": 7.211102550927978
+  },
+  "development_trajectory": [
+    {
+      "iteration": 0,
+      "valid_sample_count": 20,
+      "sample_count": 20,
+      "component_count": 1.0,
+      "component_count_std": 0.0,
+      "legacy_valid_sample_count": 20,
+      "phi_s": 0.4773406982421875,
+      "f_largest": 1.0,
+      "mean_strut_thickness": 3.2761255338408035,
+      "p10_strut_thickness": 2.0,
+      "median_pore_diameter": 4.88678735807206,
+      "E_S2": 0.0407423162340946,
+      "E_L": 0.08268538670039557,
+      "D_pair": 0.495614302785773,
+      "diversity_healthy": true,
+      "copy_flags": []
+    },
+    {
+      "iteration": 1,
+      "valid_sample_count": 20,
+      "sample_count": 20,
+      "component_count": 1.0,
+      "component_count_std": 0.0,
+      "legacy_valid_sample_count": 20,
+      "phi_s": 0.4773406982421875,
+      "f_largest": 1.0,
+      "mean_strut_thickness": 4.0707313542358055,
+      "p10_strut_thickness": 2.8284271247461907,
+      "median_pore_diameter": 7.21110255092798,
+      "E_S2": 0.009008636900028424,
+      "E_L": 0.030935367868478114,
+      "D_pair": 0.48810440866570726,
+      "diversity_healthy": true,
+      "copy_flags": []
+    },
+    {
+      "iteration": 2,
+      "valid_sample_count": 20,
+      "sample_count": 20,
+      "component_count": 1.0,
+      "component_count_std": 0.0,
+      "legacy_valid_sample_count": 20,
+      "phi_s": 0.4773406982421875,
+      "f_largest": 1.0,
+      "mean_strut_thickness": 4.106628195645273,
+      "p10_strut_thickness": 2.8284271247461907,
+      "median_pore_diameter": 7.21110255092798,
+      "E_S2": 0.009391014537626637,
+      "E_L": 0.02892453343402481,
+      "D_pair": 0.48573030170641446,
+      "diversity_healthy": true,
+      "copy_flags": []
+    },
+    {
+      "iteration": 3,
+      "valid_sample_count": 20,
+      "sample_count": 20,
+      "component_count": 1.0,
+      "component_count_std": 0.0,
+      "legacy_valid_sample_count": 20,
+      "phi_s": 0.4773406982421875,
+      "f_largest": 1.0,
+      "mean_strut_thickness": 4.112636452929126,
+      "p10_strut_thickness": 2.8284271247461907,
+      "median_pore_diameter": 7.21110255092798,
+      "E_S2": 0.009760090791030337,
+      "E_L": 0.026879302739136135,
+      "D_pair": 0.48814376027960527,
+      "diversity_healthy": true,
+      "copy_flags": []
+    }
+  ],
+  "final_development_performance": {
+    "iteration": 3,
+    "valid_sample_count": 20,
+    "sample_count": 20,
+    "component_count": 1.0,
+    "component_count_std": 0.0,
+    "legacy_valid_sample_count": 20,
+    "phi_s": 0.4773406982421875,
+    "f_largest": 1.0,
+    "mean_strut_thickness": 4.112636452929126,
+    "p10_strut_thickness": 2.8284271247461907,
+    "median_pore_diameter": 7.21110255092798,
+    "E_S2": 0.009760090791030337,
+    "E_L": 0.026879302739136135,
+    "D_pair": 0.48814376027960527,
+    "diversity_healthy": true,
+    "copy_flags": []
+  },
+  "heldout_performance": {
+    "valid_sample_count": 20,
+    "sample_count": 20,
+    "component_count": 1.0,
+    "component_count_std": 0.0,
+    "legacy_valid_sample_count": 20,
+    "phi_s": 0.4773406982421875,
+    "f_largest": 1.0,
+    "mean_strut_thickness": 4.109571394676481,
+    "p10_strut_thickness": 2.8284271247461907,
+    "median_pore_diameter": 7.21110255092798,
+    "E_S2": 0.010552927027988221,
+    "E_L": 0.027826988912557683,
+    "D_pair": 0.48820688348067437,
+    "diversity_healthy": true,
+    "copy_flags": []
+  },
+  "development_vs_heldout": {
+    "component_count": {
+      "development": 1.0,
+      "heldout": 1.0,
+      "absolute_difference": 0.0,
+      "relative_percent_change": 0.0
+    },
+    "phi_s": {
+      "development": 0.4773406982421875,
+      "heldout": 0.4773406982421875,
+      "absolute_difference": 0.0,
+      "relative_percent_change": 0.0
+    },
+    "f_largest": {
+      "development": 1.0,
+      "heldout": 1.0,
+      "absolute_difference": 0.0,
+      "relative_percent_change": 0.0
+    },
+    "mean_strut_thickness": {
+      "development": 4.112636452929126,
+      "heldout": 4.109571394676481,
+      "absolute_difference": -0.0030650582526456915,
+      "relative_percent_change": -0.0745278190213647
+    },
+    "p10_strut_thickness": {
+      "development": 2.8284271247461907,
+      "heldout": 2.8284271247461907,
+      "absolute_difference": 0.0,
+      "relative_percent_change": 0.0
+    },
+    "median_pore_diameter": {
+      "development": 7.21110255092798,
+      "heldout": 7.21110255092798,
+      "absolute_difference": 0.0,
+      "relative_percent_change": 0.0
+    },
+    "E_S2": {
+      "development": 0.009760090791030337,
+      "heldout": 0.010552927027988221,
+      "absolute_difference": 0.0007928362369578838,
+      "relative_percent_change": 8.123246534617397
+    },
+    "E_L": {
+      "development": 0.026879302739136135,
+      "heldout": 0.027826988912557683,
+      "absolute_difference": 0.0009476861734215476,
+      "relative_percent_change": 3.5257096607707803
+    },
+    "D_pair": {
+      "development": 0.48814376027960527,
+      "heldout": 0.48820688348067437,
+      "absolute_difference": 6.312320106910407e-05,
+      "relative_percent_change": 0.012931272753122473
+    }
+  },
+  "generator_metadata": {
+    "script_path": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.2\\reference_structural\\ai_test_01\\final\\final_generator.py",
+    "sha256": "0b33b526c414cb9650398264153d79f25368bb59d47abeb269db20b9b2e7859f",
+    "source_iteration": 3,
+    "line_count": 1283,
+    "heldout_runtime_seconds": 1.473661399912089,
+    "repair_used": {
+      "0": true,
+      "1": false,
+      "2": false,
+      "3": false
+    },
+    "target_information_available_to_generator": {
+      "solid_fraction": true,
+      "largest_component_fraction": true,
+      "component_count": true,
+      "S2": true,
+      "lineal_path": true,
+      "thickness": true,
+      "pore_diameter": true
+    }
+  },
+  "warnings": []
+}
