@@ -7,6 +7,14 @@ percolation calculations use 4-connectivity.
 
 ## Start here
 
+For native 256/512/1024 rendering of the successful v0.3 generator and matched
+convergence validation, see [Pipeline v0.4: resolution independence](docs/PIPELINE_V0_4_RESOLUTION.md).
+This does not add CAD, vectorization or FEM.
+
+For controlled design variability (10 parameter designs × 2 seeds), see
+[Pipeline v0.3: parametric exploration](docs/PIPELINE_V0_3_EXPLORATION.md).
+It runs alongside the existing replication workflow, without FEM automation.
+
 The complete file reference, metric definitions, output interpretation, and
 copy-paste command catalog are in
 [docs/PROJECT_REFERENCE.md](docs/PROJECT_REFERENCE.md).

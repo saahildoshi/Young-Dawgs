@@ -1,0 +1,106 @@
+PARAMETRIC EXPLORATION — pipeline 0.3.0
+
+Study the attached reference/reference_structural.png. White is solid, black void.
+Infer a procedural model of its morphological family, not a pixel reconstruction.
+The image is a design-space anchor, NOT a point every output must match exactly.
+
+Write ONE complete Python module exposing this exact interface:
+
+def generate_microstructure(seed, solid_fraction_target, strut_scale, pore_scale):
+    # Return a (256, 256) numpy.ndarray with dtype uint8, values 0/1.
+    ...
+
+The pipeline—not you—selects parameter combinations and writes all output files.
+There are 10 Latin-hypercube designs with 2 stochastic replicates each.
+Do not hard-code the plan, reference pixels or separate designs. No import-time
+execution, file I/O, plotting, internet, external datasets, API calls or subprocesses.
+Use only numpy, scipy, scikit-image, pillow, matplotlib and the Python standard library.
+Use a local seeded random generator. Same parameters and seed must reproduce exactly;
+different seeds should produce structurally distinct realizations, not just translations.
+
+Controls and exploration bounds:
+{
+  "solid_fraction_target": [
+    0.42960662841796876,
+    0.5250747680664063
+  ],
+  "strut_scale": [
+    3.4957303237935213,
+    4.729517496897117
+  ],
+  "pore_scale": [
+    5.768882040742383,
+    8.653323061113573
+  ]
+}
+
+solid_fraction_target is dimensionless. strut_scale and pore_scale are requested
+characteristic scales in pixels, associated respectively with evaluator mean strut
+thickness and median enclosed-pore diameter. They are approximate controls, not
+promises of exact measured values. Increasing a control should usually increase its
+associated metric while preserving the recognizable morphological family.
+These controls may be coupled: explain dependencies and infeasible combinations.
+Do not secretly ignore or clip controls, and do not force every descriptor to an exact value.
+
+Hard constraints: binary 256 x 256; exactly ONE 4-connected solid component; a solid
+path left-to-right and top-to-bottom; no isolated dots, particles or detached islands.
+Do not add islands merely to match density. Modify the connected network itself.
+The pipeline does not clean or repair generated samples.
+
+Morphology-family gates against the anchor (not objectives to minimize toward zero):
+E_S2 <= 0.25; E_L <= 0.25.
+Each error is RMSE(sample curve, anchor curve) / RMS(anchor curve), radii 0..64.
+Use the established periodic S2 and four-direction lineal conventions. Keep useful
+design variation within these limits rather than returning statistical clones.
+The bounds/limits are provisional operator choices, not universal scientific standards.
+
+Measured anchor descriptors:
+{
+  "phi_s": 0.4773406982421875,
+  "mean_strut_thickness": 4.112623910345319,
+  "p10_strut_thickness": 2.8284271247461903,
+  "median_pore_diameter": 7.211102550927978,
+  "component_count": 1,
+  "f_largest": 1.0,
+  "Px": 1,
+  "Py": 1
+}
+Anchor sampled curves:
+{
+  "radii": [
+    0,
+    1,
+    2,
+    4,
+    8,
+    16,
+    32,
+    64
+  ],
+  "s2": [
+    0.4773406982421875,
+    0.3947792053222656,
+    0.33225250244140625,
+    0.2364339828491211,
+    0.21403948465983072,
+    0.22579738071986608,
+    0.22819389180934174,
+    0.22817278775301847
+  ],
+  "lineal_path": [
+    0.4773406982421875,
+    0.3947792053222656,
+    0.3141937255859375,
+    0.19487762451171875,
+    0.08710479736328125,
+    0.01860809326171875,
+    0.001361846923828125,
+    0.0
+  ],
+  "s2_text": "r=0: 0.477341, r=1: 0.394779, r=2: 0.332253, r=4: 0.236434, r=8: 0.214039, r=16: 0.225797, r=32: 0.228194, r=64: 0.228173",
+  "lineal_path_text": "r=0: 0.477341, r=1: 0.394779, r=2: 0.314194, r=4: 0.194878, r=8: 0.087105, r=16: 0.018608, r=32: 0.001362, r=64: 0.000000"
+}
+
+Return one fenced Python block containing the full module. Explain the algorithm,
+each control, expected tradeoffs and limitations outside that block. No FEM,
+stiffness or strength claims: this stage only generates and measures morphology.

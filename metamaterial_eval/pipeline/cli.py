@@ -29,6 +29,38 @@ def _parser() -> argparse.ArgumentParser:
         ),
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
+    rv = subparsers.add_parser("resolution-validate", help="Run a separate matched v0.3/v0.4 native-resolution validation.")
+    rv.add_argument("source_run", type=Path)
+    rv.add_argument("--output-dir", type=Path, required=True)
+    rv.add_argument("--resolutions", type=int, nargs="+", default=[256, 512, 1024])
+    rv.add_argument("--designs", type=int, default=5)
+    rv.add_argument("--timeout", type=float, default=600)
+    rg = subparsers.add_parser("resolution-generate", help="Generate one native-resolution structure with the audited v0.4 model.")
+    rg.add_argument("--seed", type=int, required=True)
+    rg.add_argument("--solid-fraction-target", type=float, required=True)
+    rg.add_argument("--strut-scale", type=float, required=True)
+    rg.add_argument("--pore-scale", type=float, required=True)
+    rg.add_argument("--resolution", type=int, default=256)
+    rg.add_argument("--output-dir", type=Path, required=True)
+    explore = subparsers.add_parser("explore-start", help="Plan a separate parametric exploration experiment.")
+    explore.add_argument("reference", type=Path)
+    explore.add_argument("--output-dir", type=Path, required=True)
+    explore.add_argument("--s2-limit", type=float, required=True)
+    explore.add_argument("--lineal-limit", type=float, required=True)
+    explore.add_argument("--bounds", type=Path, help="JSON object with all three control bounds.")
+    explore.add_argument("--designs", type=int, default=10)
+    explore.add_argument("--replicates", type=int, default=2)
+    explore.add_argument("--design-seed", type=int, default=42)
+    explore.add_argument("--seed-start", type=int, default=0)
+    explore.add_argument("--prepare-png", action="store_true")
+    explore.add_argument("--threshold", type=float)
+    explore.add_argument("--generator-timeout", type=float, default=GENERATOR_TIMEOUT_SECONDS)
+    er = subparsers.add_parser("explore-resume", help="Execute a reviewed parameterized generator and measure designs.")
+    er.add_argument("run_dir", type=Path)
+    er.add_argument("--execute", action="store_true", help="Acknowledge execution of reviewed, unsandboxed Python.")
+    er.add_argument("--retry-failed", action="store_true")
+    es = subparsers.add_parser("explore-status", help="Read an exploration manifest.")
+    es.add_argument("run_dir", type=Path)
     prepare = subparsers.add_parser(
         "prepare-reference", help="Save raw/structural references, descriptors and prompt preview."
     )
@@ -115,6 +147,37 @@ def main(argv: list[str] | None = None) -> int:
     parser = _parser()
     args = parser.parse_args(argv)
     try:
+        if args.command == "resolution-validate":
+            from .resolution_validation import validate_resolutions
+            m = validate_resolutions(args.source_run, args.output_dir, args.resolutions, args.designs, args.timeout)
+            print(f"Validation execution: {m['status']}. Read summary/resolution_convergence.md for scientific gates.")
+            return 0 if m["status"] == "COMPLETE" else 2
+        if args.command == "resolution-generate":
+            from .resolution_worker import perform_job
+            from .resolution import validate_resolution
+            result = perform_job({"seed": args.seed, "resolution": validate_resolution(args.resolution),
+                                  "requested": {"solid_fraction_target": args.solid_fraction_target,
+                                                "strut_scale": args.strut_scale, "pore_scale": args.pore_scale}},
+                                 args.output_dir.resolve())
+            print(f"Native generation: {result['status']}. Output: {args.output_dir.resolve()}")
+            return 0 if result["status"] == "COMPLETE" else 2
+        if args.command.startswith("explore-"):
+            import json
+            from .exploration import start_exploration, resume_exploration, load_exploration
+            from .state import read_json
+            if args.command == "explore-start":
+                run = start_exploration(
+                    args.reference, args.output_dir, s2_limit=args.s2_limit,
+                    lineal_limit=args.lineal_limit, bounds=read_json(args.bounds) if args.bounds else None,
+                    designs=args.designs, replicates=args.replicates, design_seed=args.design_seed,
+                    seed_start=args.seed_start, prepare_png=args.prepare_png, threshold=args.threshold,
+                    timeout=args.generator_timeout)
+                print(f"Exploration prepared: {run}\nSend prompt.txt and reference/reference_structural.png to the LLM; save response.txt.")
+                return 0
+            manifest = (load_exploration(args.run_dir) if args.command == "explore-status" else
+                        resume_exploration(args.run_dir, execute=args.execute, retry_failed=args.retry_failed))
+            print(json.dumps(manifest, indent=2))
+            return 2 if manifest["status"] == "FAILED" else 0
         if args.command == "prepare-reference":
             metadata = prepare_reference(
                 args.reference, args.output_dir,
