@@ -7,6 +7,26 @@ percolation calculations use 4-connectivity.
 
 ## Start here
 
+The latest validation-only milestone is
+[Pipeline v0.4.3: P10 metric qualification](docs/PIPELINE_V0_4_3_P10_QUALIFICATION.md).
+Its amended decision is **PASS within the tested domain**: 10/10 independent
+invariant controls, 3/3 deliberate-thinning detections, 4/4 local-neck outcomes,
+and 10/10 saved native pairs passed the registered replacement checks.
+Whole-mask P10 remains diagnostic. This is not an exhaustive neck-strength or
+manufacturing certification, and no CAD has been started.
+
+The preceding milestone is
+[Pipeline v0.4.2: thickness convergence verification](docs/PIPELINE_V0_4_2_THICKNESS.md).
+All ten native 1024→2048 pairs passed the mean/P10/pore numerical limits. Its
+historical status remains **HOLD solely on analytic P10 calibration**.
+Generator v0.4.1 and evaluator v1.1 remain unchanged; no CAD has been started.
+
+For the topology correction, thickness/pore convergence investigation, preserved
+30-case rerun, and Windows commands, start with
+[Pipeline v0.4.1: resolution-convergence stabilization](docs/PIPELINE_V0_4_1_STABILIZATION.md).
+That historical v0.4.1 run has topology 30/30 but retains **HOLD** under its
+512→1024 mean/P10 thickness gates. Its results are not retroactively changed.
+
 For native 256/512/1024 rendering of the successful v0.3 generator and matched
 convergence validation, see [Pipeline v0.4: resolution independence](docs/PIPELINE_V0_4_RESOLUTION.md).
 This does not add CAD, vectorization or FEM.
