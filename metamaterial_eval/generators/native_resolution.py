@@ -1,7 +1,7 @@
 """Native-resolution continuation of the successful v0.3 cellular generator.
 
 Coordinates, sigmas, amplitudes and distance scores use baseline-pixel units
-(1 unit = 1/256 domain length); the raster samples them at spacing 256/N.
+(1 unit = 1/256 nominal domain length); endpoints remain [0,255] at every N.
 No completed binary image is resized. v0.3 is retained byte-for-byte separately.
 """
 from copy import deepcopy
@@ -10,7 +10,7 @@ import numpy as np
 from scipy import ndimage as ndi
 from scipy.spatial import cKDTree
 from . import v03_baseline as baseline
-from ..pipeline.resolution import BASE_RESOLUTION, resolution_scale, validate_resolution
+from ..pipeline.resolution import BASE_RESOLUTION, coordinate_scale, validate_resolution
 
 SOURCE_V03_SHA256 = "61304070aad94b8eb4595c65ce61dc9cab35fe14caada60bc4526fb0175f3839"
 GENERATOR_VERSION = "0.4.0"
@@ -24,7 +24,7 @@ def _field(rng, grid_size, blur, resolution):
     canonical latent representation; ONLY this floating field is interpolated.
     """
     latent = baseline._smooth_field(rng, grid_size, blur)
-    coordinates = np.indices((resolution, resolution), dtype=float) / resolution_scale(resolution)
+    coordinates = np.indices((resolution, resolution), dtype=float) / coordinate_scale(resolution)
     return ndi.map_coordinates(latent, coordinates, order=3, mode="reflect")
 
 
@@ -75,7 +75,7 @@ generate_microstructure_at_resolution = generate_microstructure
 def _render_native(rng, phi, strut_scale, pore_scale, resolution):
     """Generate one stochastic cellular-wall candidate."""
     side = resolution
-    scale = resolution_scale(side)
+    scale = coordinate_scale(side)
 
     # Both characteristic scales influence cellular spacing.
     # The density term compensates for excessive thickening

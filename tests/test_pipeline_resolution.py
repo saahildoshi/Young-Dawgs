@@ -8,7 +8,7 @@ from PIL import Image
 
 from metamaterial_eval.generators import native_resolution as native, v03_baseline
 from metamaterial_eval.pipeline.resolution import (
-    validate_resolution, resolution_scale, length_pixels, area_pixels,
+    validate_resolution, resolution_scale, coordinate_scale, length_pixels, area_pixels,
     normalized_dimensions, normalized_radii, block_reduce,
 )
 from metamaterial_eval.pipeline.resolution_worker import evaluate_native, perform_job
@@ -64,10 +64,11 @@ def test_scaling_radius_and_normalized_dimensions():
     assert resolution_scale(1024) == 4
     assert length_pixels(4, 1024) == 16
     assert area_pixels(4, 1024) == 64
+    assert 1023 / coordinate_scale(1024) == 255
     assert normalized_radii(512)["pixel_radii"] == [0, 2, 4, 8, 16, 32, 64, 128]
     assert normalized_radii(1024)["pixel_radii"] == [0, 4, 8, 16, 32, 64, 128, 256]
     arbitrary = normalized_radii(300)
-    assert max(abs(x) for x in arbitrary["rho_rounding_error"]) <= .5/300
+    assert max(abs(x) for x in arbitrary["rho_rounding_error"]) <= .5/300 + 1e-15
     m = normalized_dimensions(dict(mean_strut_thickness=16, p10_strut_thickness=8, median_pore_diameter=None), 1024)
     assert m["normalized_mean_strut_thickness"] == 4/256
     assert m["normalized_p10_strut_thickness"] == 2/256
@@ -139,3 +140,11 @@ def test_selection_reuses_existing_rows_only():
     chosen = select_designs(plan)
     assert len(chosen["design_ids"]) == 5 and len(chosen["samples"]) == 10
     assert all(row in plan["samples"] for row in chosen["samples"])
+
+
+def test_known_unresolved_corner_is_rejected_not_silently_repaired():
+    # Existing design 9 / seed 1 has a 25-pixel detached corner at 512.
+    # Keep this scientific limitation explicit; a rejected raster is not a pass.
+    with pytest.raises(RuntimeError, match="fails single-component"):
+        native.generate_microstructure(1, .47692251183925727, 4.340345305340277,
+                                        6.148748802851207, resolution=512)

@@ -40,22 +40,32 @@ def evaluate_native(array):
 
 
 def perform_job(job, directory):
-    """Persist failures as evidence; successful outputs are never repaired."""
+    """Persist failures; opt-in v0.4.1 repairs occur only inside its generator."""
+    generator = model
+    requested_version = job.get("generator_version", "0.4.0")
+    if requested_version == "0.4.1":
+        from metamaterial_eval.generators import stabilized_resolution as generator
+    elif requested_version != "0.4.0":
+        raise ValueError(f"Unsupported generator version: {requested_version}")
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=False)
     n = job["resolution"]
-    record = {**job, "pipeline_version": "0.4.0", "resolution_scale": n / 256,
-              "generator_sha256": sha256_file(Path(model.__file__)),
+    record = {**job, "pipeline_version": requested_version, "resolution_scale": n / 256,
+              "generator_sha256": sha256_file(Path(generator.__file__)),
+              "native_renderer_sha256": sha256_file(Path(model.__file__)),
               "source_v03_generator_sha256": sha256_file(Path(v03_baseline.__file__)),
               "evaluator_sha256": sha256_file(default_evaluator_path()),
               "environment": {"python": sys.version, **{k: version(k) for k in
                               ("numpy", "scipy", "scikit-image", "Pillow", "matplotlib")}},
               "status": "FAILED"}
     try:
-        model._select.cache_clear()  # each timing includes baseline candidate selection
+        generator._select.cache_clear()  # each timing includes baseline candidate selection
         tracemalloc.start()
         start = time.perf_counter()
-        array = model.generate_microstructure(job["seed"], **job["requested"], resolution=n)
+        if requested_version == "0.4.1":
+            array, record["topology_repair"] = generator.generate_with_metadata(job["seed"], **job["requested"], resolution=n)
+        else:
+            array = generator.generate_microstructure(job["seed"], **job["requested"], resolution=n)
         record["generation_seconds"] = time.perf_counter() - start
         _, peak = tracemalloc.get_traced_memory()
         tracemalloc.stop()
@@ -66,7 +76,7 @@ def perform_job(job, directory):
         np.save(directory / "microstructure.npy", array, allow_pickle=False)
         Image.fromarray(array * 255).save(directory / "microstructure.png")
         # Repeat the native rendering with the same accepted latent realization.
-        repeated = model.generate_microstructure(job["seed"], **job["requested"], resolution=n)
+        repeated = generator.generate_microstructure(job["seed"], **job["requested"], resolution=n)
         record["exact_repeat"] = bool(np.array_equal(array, repeated))
         start = time.perf_counter()
         record["evaluation"] = evaluate_native(array)

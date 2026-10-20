@@ -19,6 +19,15 @@ def resolution_scale(resolution):
     return validate_resolution(resolution) / BASE_RESOLUTION
 
 
+def coordinate_scale(resolution):
+    """Endpoint-aligned coordinate scale: preserve v0.3 sample bounds [0,255].
+
+    Distinct from nominal N/256 descriptor normalization. The O(1/N) correction
+    avoids expanding the physical domain past its previously sampled edges.
+    """
+    return (validate_resolution(resolution) - 1) / (BASE_RESOLUTION - 1)
+
+
 def length_pixels(length_at_256, resolution):
     return float(length_at_256) * resolution_scale(resolution)
 

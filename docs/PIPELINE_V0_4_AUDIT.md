@@ -36,16 +36,16 @@ scikit-image 0.26.0; local verification records its different environment.
 | Quantity in generator | Class | v0.4 handling |
 |---|---|---|
 | Array shape / indices / 256 FFT dimensions | Grid sampling | Native N×N grid; evaluation radii scale with N |
-| Pitch prefactor 13.25, scale anchors 7.21110255 and 4.11262391 | Baseline spatial calibration | Preserve controls and compute geometry in baseline units; raster coordinates use 256/N |
+| Pitch prefactor 13.25, scale anchors 7.21110255 and 4.11262391 | Baseline spatial calibration | Preserve controls and compute geometry in baseline units; raster coordinates use endpoint-aligned 255/(N−1) |
 | Margin 2.5×pitch, exclusion 0.72×pitch, site positions and repulsive displacement | Linear spatial | Same physical positions in baseline units; pixel coordinates scale N/256 |
 | Warp amplitude 1.7×(pitch/13)^0.75 | Linear spatial | Same baseline-unit deformation evaluated on requested native grid |
 | Gaussian blur sigmas 1 and 2 | Linear spatial / latent field | Keep canonical continuous field, interpolate only that field; physical correlation lengths fixed |
 | Random grids 20, 42, 15, 34 | Latent feature counts / spatial frequency | Fixed; do not consume additional random draws at higher N |
 | Site count max(4, round(((256+2×margin)/pitch)^2)) | Physical feature count | Fixed; original domain 256 retained in this expression |
-| Painted cellular transition on both neighboring pixels | Baseline spatial interface thickness | Native transition + EDT buffer of 1−256/N baseline units |
-| EDT distances and radial distances | Linear spatial | Native EDT divided by N/256; radial distance remains in baseline units |
+| Painted cellular transition on both neighboring pixels | Baseline spatial interface thickness | Native transition + EDT buffer of 1−255/(N−1) baseline units |
+| EDT distances and radial distances | Linear spatial | Native EDT divided by (N−1)/255; radial distance remains in baseline units |
 | Requested void pixel count (1−phi)×side² | Area | Uses N²; density quantile retains original definition |
-| Spatial offsets in random locations, coordinate boundaries | Linear spatial | Baseline-coordinate physical domain preserved; native samples at i×256/N |
+| Spatial offsets in random locations, coordinate boundaries | Linear spatial | Original sampled endpoints preserved; native samples at i×255/(N−1); nominal normalization remains N |
 | Harmonic orders 2/3, weights .13/.055, size/width lognormal factors .18/.14/.08 | Dimensionless morphology | Unchanged |
 | Pitch exponents .82/.44, density factor 1.2, reference phi .477340698 | Dimensionless morphology | Unchanged |
 | Score weights .80/−.20, warp mixture .25, repulsion relaxation .28 | Dimensionless algorithm/model | Unchanged |

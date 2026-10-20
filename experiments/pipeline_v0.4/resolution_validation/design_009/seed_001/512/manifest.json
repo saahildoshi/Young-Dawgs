@@ -1,0 +1,28 @@
+{
+  "sample_id": "design_009_rep_01",
+  "design_id": 9,
+  "replicate": 1,
+  "seed": 1,
+  "requested": {
+    "solid_fraction_target": 0.47692251183925727,
+    "strut_scale": 4.340345305340277,
+    "pore_scale": 6.148748802851207
+  },
+  "resolution": 512,
+  "historical_sample": "/Users/saahildoshi/Library/CloudStorage/OneDrive-UniversityofGeorgia/Young-Dawgs-VSCode/experiments/pipeline_v0.3/exploration_test_01/attempt_001/samples/design_009_rep_01.npy",
+  "pipeline_version": "0.4.0",
+  "resolution_scale": 2.0,
+  "generator_sha256": "2ed622d96eb49df566c5adf8e4d9d4414984a8dead238b4d97e5d0b5af26be89",
+  "source_v03_generator_sha256": "61304070aad94b8eb4595c65ce61dc9cab35fe14caada60bc4526fb0175f3839",
+  "evaluator_sha256": "5f28ed1f77f95fd23a517cd223bbe6c6b5edc7d5508093f36f523b2d4f85cebb",
+  "environment": {
+    "python": "3.10.0 (v3.10.0:b494f5935c, Oct  4 2021, 14:59:19) [Clang 12.0.5 (clang-1205.0.22.11)]",
+    "numpy": "1.26.4",
+    "scipy": "1.13.1",
+    "scikit-image": "0.25.2",
+    "Pillow": "12.3.0",
+    "matplotlib": "3.10.9"
+  },
+  "status": "FAILED",
+  "error": "Traceback (most recent call last):\n  File \"/Users/saahildoshi/Library/CloudStorage/OneDrive-UniversityofGeorgia/Young-Dawgs-VSCode/metamaterial_eval/pipeline/resolution_worker.py\", line 58, in perform_job\n    array = model.generate_microstructure(job[\"seed\"], **job[\"requested\"], resolution=n)\n  File \"/Users/saahildoshi/Library/CloudStorage/OneDrive-UniversityofGeorgia/Young-Dawgs-VSCode/metamaterial_eval/generators/native_resolution.py\", line 68, in generate_microstructure\n    raise RuntimeError(\"Matched native realization fails single-component spanning topology; \"\nRuntimeError: Matched native realization fails single-component spanning topology; no new seed, island removal or bridging was substituted.\n"
+}

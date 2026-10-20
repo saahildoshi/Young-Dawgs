@@ -9,7 +9,7 @@ from scipy.stats import spearmanr
 from .config import default_evaluator_path
 from .evaluator import load_evaluator
 from .resolution import block_reduce
-from .state import write_json
+from .state import read_json, write_json
 
 DIMENSIONS = ("mean_strut_thickness", "p10_strut_thickness", "median_pore_diameter")
 TARGETS = {"phi_s_absolute": .005, "mean_strut_relative": .05, "p10_strut_relative": .10,
@@ -84,6 +84,8 @@ def build_report(run, manifest, selected):
         group = sorted([j for j in jobs if (j["design_id"], j["seed"]) == key], key=lambda j: j["resolution"])
         comparisons.extend(compare_pair(run, a, b, evaluator) for a, b in itertools.combinations(group, 2))
     completed = [j for j in jobs if j["status"] == "COMPLETE"]
+    matched_designs = {i for i in {j["design_id"] for j in jobs}
+                       if all(j["status"] == "COMPLETE" for j in jobs if j["design_id"] == i)}
     main = [c for c in comparisons if c["low_resolution"] == 256 and c["high_resolution"] == 1024]
     summary = {"pipeline_version": "0.4.0", "source_run": manifest["source_run"],
                "source_v03_sha256": manifest["source_v03_sha256"],
@@ -96,6 +98,8 @@ def build_report(run, manifest, selected):
                                for j in jobs if j["resolution"] == 256],
                "provisional_targets": TARGETS, "comparisons": comparisons,
                "control_trends": control_trends(jobs), "runtime": {},
+               "matched_control_design_ids": sorted(matched_designs),
+               "matched_control_trends": control_trends([j for j in jobs if j["design_id"] in matched_designs]),
                "all_256_to_1024_targets_pass": bool(main) and all(c["targets_pass"] for c in main),
                "rows": jobs,
                "curve_method": "Full native evaluator curves interpolated onto rho=0:1/256:0.25; NRMSE denominator is lower-resolution curve RMS.",
@@ -132,6 +136,8 @@ def build_report(run, manifest, selected):
         if arrays:
             _, mean = evaluator.pairwise_disagreement(np.array(arrays))
             summary["secondary_diversity"][str(n)] = {"common_grid_mean_pairwise_disagreement": mean}
+    if (directory / "failure_diagnostics.json").exists():
+        summary["rejected_candidate_diagnostics"] = read_json(directory / "failure_diagnostics.json")
     write_json(directory / "resolution_convergence.json", evaluator.json_safe(summary))
     fields = ["design_id", "seed", "resolution", "status", "phi_s", "component_count", "Px", "Py", *DIMENSIONS,
               *("normalized_"+k for k in DIMENSIONS), "generation_seconds", "evaluation_seconds", "peak_traced_generation_bytes", "error"]
@@ -189,6 +195,11 @@ def write_markdown(directory, report):
               "| N | Density control | Strut control | Pore control |", "|---|---:|---:|---:|"]
     for n, trends in report["control_trends"].items():
         lines.append(f"| {n} | " + " | ".join(fmt(v["spearman_design_means"]) for v in trends.values()) + " |")
+    lines += ["", "The table above uses all complete groups available at each N. For a fair matched-cohort comparison:", "",
+              f"Complete at every resolution: designs {report['matched_control_design_ids']}.", "",
+              "| N | Matched density | Matched strut | Matched pore |", "|---|---:|---:|---:|"]
+    for n, trends in report["matched_control_trends"].items():
+        lines.append(f"| {n} | " + " | ".join(fmt(v["spearman_design_means"]) for v in trends.values()) + " |")
     lines += ["", "## Runtime", "", "| N | Mean generation s | Mean evaluation s | Mean PNG+NPY bytes | Mean peak traced bytes |", "|---|---:|---:|---:|---:|"]
     for n, values in report["runtime"].items():
         lines.append(f"| {n} | " + " | ".join(fmt(values[k]) for k in ("generation_seconds", "evaluation_seconds", "mean_output_bytes", "peak_traced_generation_bytes")) + " |")
@@ -203,6 +214,8 @@ def write_markdown(directory, report):
               "## Failures", ""]
     failures = [j for j in rows if j["status"] != "COMPLETE"]
     lines += [f"- Design {j['design_id']}, seed {j['seed']}, N={j['resolution']}: {j.get('error', 'See job manifest')}" for j in failures] or ["None."]
+    if "rejected_candidate_diagnostics" in report:
+        lines += ["", "Diagnostic replays of rejected rasters are saved in failure_diagnostics.json and each failed job's rejected_evidence directory. They are NOT accepted outputs."]
     (directory / "resolution_convergence.md").write_bytes(("\n".join(lines)+"\n").encode())
 
 
@@ -248,11 +261,12 @@ def make_figures(run, directory, jobs, report):
     axes[0,0].legend(fontsize=7, ncol=2)
     fig.tight_layout(); fig.savefig(directory / "normalized_metrics.png", dpi=150); plt.close(fig)
     fig, axes = plt.subplots(1, 3, figsize=(14, 4))
-    for n, controls in report["control_trends"].items():
+    for n, controls in report["matched_control_trends"].items():
         for ax, (control, info) in zip(axes, controls.items()):
             ax.scatter(info["requested"], info["measured_design_mean"], label=n)
             ax.set(xlabel=control, ylabel=info["metric"])
             ax.legend()
+    fig.suptitle("Controls: same complete design groups at every resolution")
     fig.tight_layout(); fig.savefig(directory / "parameter_controls.png", dpi=150); plt.close(fig)
     fig, axes = plt.subplots(1, 2, figsize=(10, 4))
     nn = [int(n) for n in report["runtime"]]

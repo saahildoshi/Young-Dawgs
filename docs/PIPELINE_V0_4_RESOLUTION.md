@@ -94,8 +94,11 @@ maximum density and opposite strut/pore corners. It does not sample new bounds.
   remain unchanged.
 
 Geometry uses **baseline-pixel coordinates**, mathematically equivalent to
-normalized coordinates divided by 256. The requested raster samples those
-coordinates at spacing 256/N. This retains the old arithmetic and makes exact
+normalized coordinates divided by 256. The requested raster samples the same
+closed endpoint range [0,255], at spacing 255/(N−1). Nominal length/area scaling
+and metric normalization still use N/256 and N. This small endpoint correction
+prevents an expanded boundary strip from cutting off a corner connection.
+It retains the old arithmetic and makes exact
 256 regression practical. See [the audit](PIPELINE_V0_4_AUDIT.md) for every
 generator constant category and the orchestration assumptions.
 
@@ -111,7 +114,7 @@ not binary-mask upscaling. It deliberately retains the original random bandwidth
 Higher N does not add smaller random pores or new high-frequency noise.
 
 The native cellular transition initially occupies two native pixels. Its EDT
-buffer restores the approximate physical width of v0.3's two-baseline-pixel
+buffer (1−255/(N−1) baseline units) restores the approximate physical width of v0.3's two-baseline-pixel
 interface. The exact lattice footprint is not perfectly resolution invariant;
 it is a documented approximation to a raster-defined baseline model.
 

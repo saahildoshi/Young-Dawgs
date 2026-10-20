@@ -41,6 +41,8 @@ def _parser() -> argparse.ArgumentParser:
     rg.add_argument("--strut-scale", type=float, required=True)
     rg.add_argument("--pore-scale", type=float, required=True)
     rg.add_argument("--resolution", type=int, default=256)
+    rg.add_argument("--generator-version", choices=["0.4.0", "0.4.1"], default="0.4.0",
+                    help="Opt into the explicit normalized-gap topology pass with 0.4.1.")
     rg.add_argument("--output-dir", type=Path, required=True)
     explore = subparsers.add_parser("explore-start", help="Plan a separate parametric exploration experiment.")
     explore.add_argument("reference", type=Path)
@@ -156,6 +158,7 @@ def main(argv: list[str] | None = None) -> int:
             from .resolution_worker import perform_job
             from .resolution import validate_resolution
             result = perform_job({"seed": args.seed, "resolution": validate_resolution(args.resolution),
+                                  "generator_version": args.generator_version,
                                   "requested": {"solid_fraction_target": args.solid_fraction_target,
                                                 "strut_scale": args.strut_scale, "pore_scale": args.pore_scale}},
                                  args.output_dir.resolve())
