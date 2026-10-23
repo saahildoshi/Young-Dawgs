@@ -1,0 +1,488 @@
+{
+  "acceptance": {
+    "area_allowance_rationale": "64*binary64epsilon*domainarea for GEOS summation/order roundoff only; exact coordinates, edge multiplicity and zero Boolean geometry differences are mandatory independently.",
+    "area_arithmetic_allowance": 1.4901161193847656e-08,
+    "exact_binary64_segment_and_vertex_multisets": true,
+    "fresh_evaluator_integration_pairs": 1,
+    "frozen_descriptors_exact": true,
+    "geometric_equals": true,
+    "max_added_area": 0.0,
+    "max_boundary_line_set_difference": 0.0,
+    "max_displacement": 0.0,
+    "max_removed_area": 0.0,
+    "max_symmetric_area": 0.0,
+    "protected_geometry_exact": true,
+    "raster_xor": 0,
+    "repair_clearance_loss": 0.0,
+    "topology_and_manifold_preserved": true
+  },
+  "cad_kernel_import_performed": false,
+  "canonical_significant_digits": 17,
+  "coordinate_orientation": {
+    "x": "right",
+    "y": "down"
+  },
+  "coordinate_unit": "raster_cell",
+  "domain": [
+    0,
+    0,
+    1024,
+    1024
+  ],
+  "expected_fixtures": 4,
+  "fixture_replacement_allowed": false,
+  "fixtures": [
+    {
+      "canonical_raster_path": "experiments/pipeline_v0.4.1/resolution_validation/design_009/seed_001/1024/microstructure.npy",
+      "canonical_raster_sha256": "e4b28517f4147a9f5eefd045a023f8f7bf2f99c63e950d995ad9ce5bbe68faf8",
+      "contact_count": 0,
+      "coordinate_dtype": "IEEE754_binary64",
+      "design": "design_009",
+      "id": "A_G1_D9S1",
+      "parameters": {
+        "pore_scale": 6.148748802851207,
+        "solid_fraction_target": 0.47692251183925727,
+        "strut_scale": 4.340345305340277
+      },
+      "prior_validation_path": null,
+      "prior_validation_sha256": null,
+      "qualification_path": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_009_seed_001/solid_separate_contacts/qualification.json",
+      "qualification_sha256": "726fec477c4a193290cacc7ea3ad66e2c5c08ee1f8d67ff467352510b3025580",
+      "reason": "No manifold regularization; exact source is already manifold.",
+      "resolution": 1024,
+      "seed": 1,
+      "simplification_epsilon": null,
+      "source_area": 500104.0,
+      "source_bounds": [
+        0.0,
+        0.0,
+        1024.0,
+        1024.0
+      ],
+      "source_fixture": "design_009_seed_001",
+      "source_geometry_path": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_009_seed_001/exact_geometry/exact_polygon.wkb",
+      "source_geometry_sha256": "4700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1",
+      "source_integrity": {
+        "components": 1,
+        "cross_ring_intersections": [],
+        "duplicate_edges": 0,
+        "exterior_length": 10142.0,
+        "holes": 412,
+        "internal_length": 71050.0,
+        "minimum_component_area": 500104.0,
+        "nondegree_two_vertices": [],
+        "ogc_valid": true,
+        "passed": true,
+        "simple_rings": true,
+        "zero_edges": 0
+      },
+      "source_manifest_path": "experiments/pipeline_v0.5/scientific_requalification/run_001/regression/source_manifests/design_009_seed_001.json",
+      "source_manifest_sha256": "41399239a0daaabb481850e2feeecb2be6a6a2c2ac4cd604c36cb7ab7fbdd7d2",
+      "source_provenance": {
+        "canonical_path": "experiments/pipeline_v0.4.1/resolution_validation/design_009/seed_001/1024/microstructure.npy",
+        "canonical_sha256": "e4b28517f4147a9f5eefd045a023f8f7bf2f99c63e950d995ad9ce5bbe68faf8",
+        "coordinates": {
+          "cell_mapping": "(row,column) -> [column,column+1] x [row,row+1]",
+          "center_mapping": "(column+0.5,row+0.5)",
+          "display_transform": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "domain": [
+            0,
+            1024,
+            0,
+            1024
+          ],
+          "physical_scale": null,
+          "solid": 1,
+          "units": "raster_cell",
+          "void": 0,
+          "x_axis": "right",
+          "y_axis": "down"
+        },
+        "fixture": "design_009_seed_001",
+        "generator_sha256": "dcc4529aab090cb1ff2fe9bfd1b0325ca3b1f00724743aeefe9a9c6aea78239b",
+        "generator_version": "0.4.1",
+        "paths": {
+          "exact": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_009_seed_001/exact_geometry/exact_polygon.wkb",
+          "exact_boundaries": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_009_seed_001/exact_geometry/exact_boundaries.json",
+          "input_manifest": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_009_seed_001/input_manifest.json",
+          "manifold": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_009_seed_001/solid_separate_contacts/manifold_candidate.wkb",
+          "qualification": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_009_seed_001/solid_separate_contacts/qualification.json"
+        },
+        "registered_source_controls": {
+          "pore_scale": 6.148748802851207,
+          "solid_fraction_target": 0.47692251183925727,
+          "strut_scale": 4.340345305340277
+        },
+        "saved_topology_repair": {
+          "added_area_fraction": 1.430511474609375e-05,
+          "added_pixels": 15,
+          "bridge_width_normalized": 0.00784313725490196,
+          "bridges": [
+            {
+              "added_pixels": 15,
+              "centerline_length_normalized": 0.002932551319648094,
+              "end_normalized_yx": [
+                0.0,
+                0.011730205278592375
+              ],
+              "end_yx": [
+                0,
+                12
+              ],
+              "start_normalized_yx": [
+                0.0,
+                0.008797653958944282
+              ],
+              "start_yx": [
+                0,
+                9
+              ]
+            }
+          ],
+          "candidate_index": 0,
+          "components_after": 1,
+          "components_before": 2,
+          "max_added_area_fraction": 0.001,
+          "max_length_normalized": 0.01568627450980392,
+          "policy": "nearest-point normalized capsule; addition only",
+          "raw_pixel_sha256": "b7402470ec587fdc217f83f8429941bcdd1533d50c8d54cd0a6af5179edf5313",
+          "removed_pixels": 0,
+          "repaired_pixel_sha256": "a29ab50312d0181c6bce0aa1fa644da953fdb467f42acd945d79507c3d28d145"
+        },
+        "sha256": {
+          "exact": "4700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1",
+          "exact_boundaries": "a48b74aeffdab897d6b504cebb8f90a827a0b6ed5ad29883a7e0b8a41babb37c",
+          "input_manifest": "23da18e0bd2c8a964a0f2abbf90a09038a1f6c0121e95bb97f00c2b57112c4ca",
+          "manifold": "4700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1",
+          "qualification": "726fec477c4a193290cacc7ea3ad66e2c5c08ee1f8d67ff467352510b3025580"
+        }
+      },
+      "source_stage": "regression",
+      "source_state": "G1",
+      "vertices": 47382
+    },
+    {
+      "canonical_raster_path": "experiments/pipeline_v0.4.1/resolution_validation/design_000/seed_000/1024/microstructure.npy",
+      "canonical_raster_sha256": "5d5bf7b578c659e8c2c66e6154cb1fbcbddbf015d9b4f276b8d008c739a6097d",
+      "contact_count": 1,
+      "coordinate_dtype": "IEEE754_binary64",
+      "design": "design_000",
+      "id": "B_G2_D0S0",
+      "parameters": {
+        "pore_scale": 8.405665555093796,
+        "solid_fraction_target": 0.47949869779450194,
+        "strut_scale": 3.8117182167728196
+      },
+      "prior_validation_path": null,
+      "prior_validation_sha256": null,
+      "qualification_path": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_000_seed_000/solid_separate_contacts/qualification.json",
+      "qualification_sha256": "bddf88a0916c40bd2d3837f2b16177dc72689d3122958a4b0b56ad8125375670",
+      "reason": "One recorded point-contact regularization.",
+      "resolution": 1024,
+      "seed": 0,
+      "simplification_epsilon": null,
+      "source_area": 502791.0625,
+      "source_bounds": [
+        0.0,
+        0.0,
+        1024.0,
+        1024.0
+      ],
+      "source_fixture": "design_000_seed_000",
+      "source_geometry_path": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_000_seed_000/solid_separate_contacts/manifold_candidate.wkb",
+      "source_geometry_sha256": "add909c523bf92daca538006aa352c83b4d26bc3f21b09eec7b1defd79d6a15a",
+      "source_integrity": {
+        "components": 1,
+        "cross_ring_intersections": [],
+        "duplicate_edges": 0,
+        "exterior_length": 9374.0,
+        "holes": 289,
+        "internal_length": 58175.707106781185,
+        "minimum_component_area": 502791.0625,
+        "nondegree_two_vertices": [],
+        "ogc_valid": true,
+        "passed": true,
+        "simple_rings": true,
+        "zero_edges": 0
+      },
+      "source_manifest_path": "experiments/pipeline_v0.5/scientific_requalification/run_001/regression/source_manifests/design_000_seed_000.json",
+      "source_manifest_sha256": "3d9c0847f343b666252f481f308621f83e381a46c1d5ddd72d52e3c0967e6307",
+      "source_provenance": {
+        "canonical_path": "experiments/pipeline_v0.4.1/resolution_validation/design_000/seed_000/1024/microstructure.npy",
+        "canonical_sha256": "5d5bf7b578c659e8c2c66e6154cb1fbcbddbf015d9b4f276b8d008c739a6097d",
+        "coordinates": {
+          "cell_mapping": "(row,column) -> [column,column+1] x [row,row+1]",
+          "center_mapping": "(column+0.5,row+0.5)",
+          "display_transform": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "domain": [
+            0,
+            1024,
+            0,
+            1024
+          ],
+          "physical_scale": null,
+          "solid": 1,
+          "units": "raster_cell",
+          "void": 0,
+          "x_axis": "right",
+          "y_axis": "down"
+        },
+        "fixture": "design_000_seed_000",
+        "generator_sha256": "dcc4529aab090cb1ff2fe9bfd1b0325ca3b1f00724743aeefe9a9c6aea78239b",
+        "generator_version": "0.4.1",
+        "paths": {
+          "exact": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_000_seed_000/exact_geometry/exact_polygon.wkb",
+          "exact_boundaries": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_000_seed_000/exact_geometry/exact_boundaries.json",
+          "input_manifest": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_000_seed_000/input_manifest.json",
+          "manifold": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_000_seed_000/solid_separate_contacts/manifold_candidate.wkb",
+          "qualification": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_000_seed_000/solid_separate_contacts/qualification.json"
+        },
+        "registered_source_controls": {
+          "pore_scale": 8.405665555093796,
+          "solid_fraction_target": 0.47949869779450194,
+          "strut_scale": 3.8117182167728196
+        },
+        "saved_topology_repair": {
+          "added_area_fraction": 0.0,
+          "added_pixels": 0,
+          "bridge_width_normalized": 0.00784313725490196,
+          "bridges": [],
+          "candidate_index": 0,
+          "components_after": 1,
+          "components_before": 1,
+          "max_added_area_fraction": 0.001,
+          "max_length_normalized": 0.01568627450980392,
+          "policy": "nearest-point normalized capsule; addition only",
+          "raw_pixel_sha256": "6e5a61750b5a7b0f20a8157c15ebec050713dc183fc2100eef9d5f1936d2e68d",
+          "removed_pixels": 0,
+          "repaired_pixel_sha256": "6e5a61750b5a7b0f20a8157c15ebec050713dc183fc2100eef9d5f1936d2e68d"
+        },
+        "sha256": {
+          "exact": "875abdad3c94b557f8f68a455111b13f56f1b0fd8f1b26b5784af2b4433f7ac7",
+          "exact_boundaries": "5f2136317ff32906e70f2f8588bf70a1ab51ebde3af4318a564e7d9a9b7f00ed",
+          "input_manifest": "0ddbe90d0f2aafa5c5122c910d8870089feb532d8f72821d0f7f3ea4a09f11a9",
+          "manifold": "add909c523bf92daca538006aa352c83b4d26bc3f21b09eec7b1defd79d6a15a",
+          "qualification": "bddf88a0916c40bd2d3837f2b16177dc72689d3122958a4b0b56ad8125375670"
+        }
+      },
+      "source_stage": "regression",
+      "source_state": "G2",
+      "vertices": 38832
+    },
+    {
+      "canonical_raster_path": "experiments/pipeline_v0.5/scientific_validation/run_001/parameter_holdouts/design_004_seed_001/native1024/microstructure.npy",
+      "canonical_raster_sha256": "6530617a8a05904df84d7cbf688e580dd04ca8e6730d872bbc131449f7604d33",
+      "contact_count": 7,
+      "coordinate_dtype": "IEEE754_binary64",
+      "design": "design_004",
+      "id": "C_G3_D4S1_E050",
+      "parameters": {
+        "pore_scale": 8.236978748665196,
+        "solid_fraction_target": 0.49028746565201314,
+        "strut_scale": 4.381248789778841
+      },
+      "prior_validation_path": "experiments/pipeline_v0.5/scientific_requalification/run_001/regression/parameter_holdouts/design_004_seed_001/epsilon_0p50/independent_validation.json",
+      "prior_validation_sha256": "26d902db319b37eed6af2d5a3085072d7f704c6ac51e78b0d76bda42ba75f1c0",
+      "qualification_path": "experiments/pipeline_v0.5/scientific_validation/run_001/parameter_holdouts/design_004_seed_001/ingress_qualification.json",
+      "qualification_sha256": "9aa528283691fde2b8eef4ee282f547106ec045c1a37d3057ea9812c6ae6a641",
+      "reason": "Explicit saved corrected historical-failure realization, epsilon0.50, nonzero reduction; no production tolerance selected.",
+      "resolution": 1024,
+      "seed": 1,
+      "simplification_epsilon": 0.5,
+      "source_area": 514104.4375,
+      "source_bounds": [
+        0.0,
+        0.0,
+        1024.0,
+        1024.0
+      ],
+      "source_fixture": "design_004_seed_001",
+      "source_geometry_path": "experiments/pipeline_v0.5/scientific_requalification/run_001/regression/parameter_holdouts/design_004_seed_001/epsilon_0p50/candidate.wkb",
+      "source_geometry_sha256": "f3b8f49cb7688f470a8bf5cac8ee2d1cc64f1d16a1f219190bd9bf7de49b501c",
+      "source_integrity": {
+        "components": 1,
+        "cross_ring_intersections": [],
+        "duplicate_edges": 0,
+        "exterior_length": 9556.878669181073,
+        "holes": 265,
+        "internal_length": 54483.317134545534,
+        "minimum_component_area": 514104.4375,
+        "nondegree_two_vertices": [],
+        "ogc_valid": true,
+        "passed": true,
+        "simple_rings": true,
+        "zero_edges": 0
+      },
+      "source_manifest_path": "experiments/pipeline_v0.5/scientific_requalification/run_001/regression/source_manifests/design_004_seed_001.json",
+      "source_manifest_sha256": "c5df3dca8364cd9d280cafd47f26ba742e540222e56211044b318c6a11ed021e",
+      "source_provenance": {
+        "canonical_path": "experiments/pipeline_v0.5/scientific_validation/run_001/parameter_holdouts/design_004_seed_001/native1024/microstructure.npy",
+        "canonical_sha256": "6530617a8a05904df84d7cbf688e580dd04ca8e6730d872bbc131449f7604d33",
+        "paths": {
+          "exact": "experiments/pipeline_v0.5/scientific_validation/run_001/parameter_holdouts/design_004_seed_001/G1.wkb",
+          "exact_boundaries": "experiments/pipeline_v0.5/scientific_validation/run_001/parameter_holdouts/design_004_seed_001/exact_boundaries.json",
+          "input_manifest": "experiments/pipeline_v0.5/scientific_validation/run_001/parameter_holdouts/design_004_seed_001/input_manifest.json",
+          "manifold": "experiments/pipeline_v0.5/scientific_validation/run_001/parameter_holdouts/design_004_seed_001/G2.wkb",
+          "qualification": "experiments/pipeline_v0.5/scientific_validation/run_001/parameter_holdouts/design_004_seed_001/ingress_qualification.json"
+        },
+        "sha256": {
+          "exact": "f096cc1982f122619995a372c6624651f26d09f4e8cb1243d4f5c0e8601a1902",
+          "exact_boundaries": "e2c3998411f64e91840df2683a2d620f63f910163b9beb7e6d6237b56d9e7bfd",
+          "input_manifest": "fb4678b752110a4b9b224cbcf38c95364e84fc9018646aa232c06fdbda70187a",
+          "manifold": "f3dc6960bbe1c34a20937fd719ca7e24c1ec597575f9bd0b6235014186e3d89d",
+          "qualification": "9aa528283691fde2b8eef4ee282f547106ec045c1a37d3057ea9812c6ae6a641"
+        }
+      },
+      "source_stage": "regression",
+      "source_state": "G3",
+      "vertices": 35048
+    },
+    {
+      "canonical_raster_path": "experiments/pipeline_v0.5/scientific_requalification/run_001/independent_cohort/parameter_holdouts/c1_design_000_seed_12031/native1024/microstructure.npy",
+      "canonical_raster_sha256": "f9bfae5665f784c34375fa6c58e49e1786b48b48c2cc78e595694f8aacf624a6",
+      "contact_count": 6,
+      "coordinate_dtype": "IEEE754_binary64",
+      "design": "c1_design_000",
+      "id": "D_G2_C1P0S12031",
+      "parameters": {
+        "pore_scale": 7.613457122817572,
+        "solid_fraction_target": 0.4739179243244948,
+        "strut_scale": 4.312930197067614
+      },
+      "prior_validation_path": null,
+      "prior_validation_sha256": null,
+      "qualification_path": "experiments/pipeline_v0.5/scientific_requalification/run_001/independent_cohort/parameter_holdouts/c1_design_000_seed_12031/ingress_qualification.json",
+      "qualification_sha256": "c30ec7d81774cf9f2aabb3d68a38a227227aad2a7b6c69b36ab3f550690fa963",
+      "reason": "First saved independent realization containing documented one-cell pore186 with two-contact6.25% change.",
+      "resolution": 1024,
+      "seed": 12031,
+      "simplification_epsilon": null,
+      "source_area": 496939.375,
+      "source_bounds": [
+        0.0,
+        0.0,
+        1024.0,
+        1024.0
+      ],
+      "source_fixture": "c1_design_000_seed_12031",
+      "source_geometry_path": "experiments/pipeline_v0.5/scientific_requalification/run_001/independent_cohort/parameter_holdouts/c1_design_000_seed_12031/G2.wkb",
+      "source_geometry_sha256": "caee26c7051fc6d8324f519fce6e5d782c0abf2d294fa7bb1decddb53175764c",
+      "source_integrity": {
+        "components": 1,
+        "cross_ring_intersections": [],
+        "duplicate_edges": 0,
+        "exterior_length": 9480.0,
+        "holes": 289,
+        "internal_length": 57898.24264068712,
+        "minimum_component_area": 496939.375,
+        "nondegree_two_vertices": [],
+        "ogc_valid": true,
+        "passed": true,
+        "simple_rings": true,
+        "zero_edges": 0
+      },
+      "source_manifest_path": "experiments/pipeline_v0.5/scientific_requalification/run_001/independent_cohort/source_manifests/c1_design_000_seed_12031.json",
+      "source_manifest_sha256": "29beb50ca0d50ccf1b860309ef4db9f70a4a9548e5f4bd735b2ae4e35dc1fa72",
+      "source_provenance": {
+        "canonical_path": "experiments/pipeline_v0.5/scientific_requalification/run_001/independent_cohort/parameter_holdouts/c1_design_000_seed_12031/native1024/microstructure.npy",
+        "canonical_sha256": "f9bfae5665f784c34375fa6c58e49e1786b48b48c2cc78e595694f8aacf624a6",
+        "paths": {
+          "exact": "experiments/pipeline_v0.5/scientific_requalification/run_001/independent_cohort/parameter_holdouts/c1_design_000_seed_12031/G1.wkb",
+          "exact_boundaries": "experiments/pipeline_v0.5/scientific_requalification/run_001/independent_cohort/parameter_holdouts/c1_design_000_seed_12031/exact_boundaries.json",
+          "input_manifest": "experiments/pipeline_v0.5/scientific_requalification/run_001/independent_cohort/parameter_holdouts/c1_design_000_seed_12031/input_manifest.json",
+          "manifold": "experiments/pipeline_v0.5/scientific_requalification/run_001/independent_cohort/parameter_holdouts/c1_design_000_seed_12031/G2.wkb",
+          "qualification": "experiments/pipeline_v0.5/scientific_requalification/run_001/independent_cohort/parameter_holdouts/c1_design_000_seed_12031/ingress_qualification.json"
+        },
+        "sha256": {
+          "exact": "d3f9a633abbcf262160ae44fab808c63b5265a0d9f047316e98069b2eb52862c",
+          "exact_boundaries": "872ecbd41230ae86bcbbab4b5c72417d2204b564496e3acf3ef9870ebd666bc9",
+          "input_manifest": "7a1dfe5fc8e17da0863316bcb99af7d0f81157fe6d54699e229f2650d90781ee",
+          "manifold": "caee26c7051fc6d8324f519fce6e5d782c0abf2d294fa7bb1decddb53175764c",
+          "qualification": "c30ec7d81774cf9f2aabb3d68a38a227227aad2a7b6c69b36ab3f550690fa963"
+        }
+      },
+      "source_stage": "independent_cohort",
+      "source_state": "G2",
+      "vertices": 38928
+    }
+  ],
+  "full_study_tracemalloc": false,
+  "independence": "Writer walks saved polygon rings. Reader tokenizes saved XML/path text, classifies nesting with a spatial index and even-odd parity, and constructs shells/holes without original coordinates or sidecar ownership. Python floats and Shapely/GEOS are shared; preview uses Sharp/libvips SVG rendering, separately from scientific rasterization.",
+  "inherited_statuses": {
+    "FEM": "UNQUALIFIED",
+    "cad_kernel_interoperability": "UNQUALIFIED",
+    "cumulative_small_pore_fidelity": "UNQUALIFIED",
+    "manufacturing": "UNQUALIFIED",
+    "overall_scientific": "HOLD_SMALL_PORE_POLICY",
+    "physical_dimensions": "UNASSIGNED",
+    "production_simplification": "HOLD_UNQUALIFIED"
+  },
+  "memory_policy": "Process lifetime peak RSS including native GEOS; selected isolated exporter/importer traced peaks measured separately, not presented as full-study peak.",
+  "new_repairs_allowed": false,
+  "no_downstream_implementation": [
+    "DXF",
+    "STEP",
+    "STL",
+    "CAD kernel",
+    "3D",
+    "meshing",
+    "FEM",
+    "manufacturing"
+  ],
+  "physical_scale": null,
+  "pipeline_version": "v0.5D1",
+  "precision_diagnostics": [
+    17,
+    12,
+    9,
+    6,
+    3
+  ],
+  "purpose": "Research-only SVG serialization and independent file reimport; source scientific HOLD retained.",
+  "references": [
+    {
+      "title": "W3C SVG paths",
+      "url": "https://www.w3.org/TR/SVG2/paths.html"
+    },
+    {
+      "title": "W3C SVG fill rule",
+      "url": "https://www.w3.org/TR/SVG2/painting.html#FillRuleProperty"
+    },
+    {
+      "title": "Python binary floating point",
+      "url": "https://docs.python.org/3/tutorial/floatingpoint.html"
+    }
+  ],
+  "run_id": "run_001",
+  "source_generation_allowed": false,
+  "source_modifications_allowed": false,
+  "svg_subset": {
+    "auxiliary_geometry": false,
+    "commands": [
+      "M",
+      "L",
+      "Z"
+    ],
+    "fill_rule": "evenodd",
+    "metadata_required": true,
+    "namespace": "http://www.w3.org/2000/svg",
+    "one_compound_path": true,
+    "solid_path_id": "solid-geometry",
+    "transforms": false,
+    "version": "1.1"
+  }
+}

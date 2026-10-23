@@ -1,0 +1,2068 @@
+{
+  "canonical_passes": 19,
+  "negative_cases": 31,
+  "negative_failures_detected": 31,
+  "negative_records": [
+    {
+      "case": "unsupported_curve",
+      "comparison": null,
+      "detected": true,
+      "error": "Unsupported path command or implicit coordinates: C",
+      "parsed": false
+    },
+    {
+      "case": "unsupported_arc",
+      "comparison": null,
+      "detected": true,
+      "error": "Unsupported path command or implicit coordinates: A",
+      "parsed": false
+    },
+    {
+      "case": "unsupported_relative",
+      "comparison": null,
+      "detected": true,
+      "error": "Unsupported path command or implicit coordinates: m",
+      "parsed": false
+    },
+    {
+      "case": "missing_closure",
+      "comparison": null,
+      "detected": true,
+      "error": "Missing path closure",
+      "parsed": false
+    },
+    {
+      "case": "incorrect_closure",
+      "comparison": null,
+      "detected": true,
+      "error": "Close without at least three vertices",
+      "parsed": false
+    },
+    {
+      "case": "invalid_numeric",
+      "comparison": null,
+      "detected": true,
+      "error": "Invalid numeric coordinate",
+      "parsed": false
+    },
+    {
+      "case": "nonfinite",
+      "comparison": null,
+      "detected": true,
+      "error": "Nonfinite or out-of-domain coordinate",
+      "parsed": false
+    },
+    {
+      "case": "out_of_bounds",
+      "comparison": null,
+      "detected": true,
+      "error": "Nonfinite or out-of-domain coordinate",
+      "parsed": false
+    },
+    {
+      "case": "repeated_coordinates",
+      "comparison": null,
+      "detected": true,
+      "error": "Degenerate or repeated consecutive vertex",
+      "parsed": false
+    },
+    {
+      "case": "crossing_ring",
+      "comparison": null,
+      "detected": true,
+      "error": "Invalid/self-intersecting ring",
+      "parsed": false
+    },
+    {
+      "case": "point_contact",
+      "comparison": null,
+      "detected": true,
+      "error": "Crossing, touching or overlapping subpaths",
+      "parsed": false
+    },
+    {
+      "case": "overlapping_rings",
+      "comparison": null,
+      "detected": true,
+      "error": "Crossing, touching or overlapping subpaths",
+      "parsed": false
+    },
+    {
+      "case": "root_transform",
+      "comparison": null,
+      "detected": true,
+      "error": "Unsupported root namespace, attributes or version",
+      "parsed": false
+    },
+    {
+      "case": "path_transform",
+      "comparison": null,
+      "detected": true,
+      "error": "Unsupported solid path, fill, stroke or transform",
+      "parsed": false
+    },
+    {
+      "case": "wrong_namespace",
+      "comparison": null,
+      "detected": true,
+      "error": "Unsupported root namespace, attributes or version",
+      "parsed": false
+    },
+    {
+      "case": "wrong_fill_rule",
+      "comparison": null,
+      "detected": true,
+      "error": "Unsupported solid path, fill, stroke or transform",
+      "parsed": false
+    },
+    {
+      "case": "missing_geometry_id",
+      "comparison": null,
+      "detected": true,
+      "error": "Unsupported solid path, fill, stroke or transform",
+      "parsed": false
+    },
+    {
+      "case": "extra_geometry",
+      "comparison": null,
+      "detected": true,
+      "error": "Require metadata and exactly one solid path; no extra primitives",
+      "parsed": false
+    },
+    {
+      "case": "duplicate_geometry_id",
+      "comparison": null,
+      "detected": true,
+      "error": "Require metadata and exactly one solid path; no extra primitives",
+      "parsed": false
+    },
+    {
+      "case": "missing_metadata",
+      "comparison": null,
+      "detected": true,
+      "error": "Require metadata and exactly one solid path; no extra primitives",
+      "parsed": false
+    },
+    {
+      "case": "physical_units",
+      "comparison": null,
+      "detected": true,
+      "error": "Incorrect viewBox/display dimensions",
+      "parsed": false
+    },
+    {
+      "case": "wrong_viewbox",
+      "comparison": null,
+      "detected": true,
+      "error": "Incorrect viewBox/display dimensions",
+      "parsed": false
+    },
+    {
+      "case": "orientation_reversed",
+      "comparison": {
+        "area": {
+          "added": 6500.0,
+          "boolean_identity_error": 0.0,
+          "candidate_area": 6500.0,
+          "net_area": 0.0,
+          "net_identity_error": 0.0,
+          "reference_area": 6500.0,
+          "relative_symmetric": 2.0,
+          "removed": 6500.0,
+          "symmetric": 13000.0
+        },
+        "area_arithmetic_allowance": 1.4901161193847656e-08,
+        "boundary_line_set_difference_length": 1040.0,
+        "coordinate_comparison": {
+          "exact_segments": false,
+          "exact_vertices": false,
+          "imported_vertices": 8,
+          "method": "Binary64 hex vertex and undirected edge multisets, preserving multiplicity; independent of winding, cyclic start and component order.",
+          "missing_vertex_instances": 8,
+          "new_vertex_instances": 8,
+          "source_coordinate_examples_not_recovered": [
+            [
+              "0x1.4000000000000p+3",
+              "0x1.4000000000000p+3"
+            ],
+            [
+              "0x1.4000000000000p+3",
+              "0x1.9000000000000p+6"
+            ],
+            [
+              "0x1.9000000000000p+6",
+              "0x1.9000000000000p+6"
+            ],
+            [
+              "0x1.9000000000000p+6",
+              "0x1.4000000000000p+3"
+            ],
+            [
+              "0x1.e000000000000p+5",
+              "0x1.e000000000000p+5"
+            ],
+            [
+              "0x1.4000000000000p+4",
+              "0x1.e000000000000p+5"
+            ],
+            [
+              "0x1.4000000000000p+4",
+              "0x1.4000000000000p+4"
+            ],
+            [
+              "0x1.e000000000000p+5",
+              "0x1.4000000000000p+4"
+            ]
+          ],
+          "source_vertices": 8
+        },
+        "dedicated_manifold": {
+          "all_rings_simple": true,
+          "contacts": [],
+          "exact_contact_tolerance": 0,
+          "manifold": true,
+          "method": "STRtree segment intersections plus unique incident boundary rays/local links",
+          "near_contacts": [],
+          "near_distance": 0.0,
+          "ogc_valid": true,
+          "overlaps": [],
+          "ring_count": 2,
+          "segment_count": 8,
+          "unclosed_rings": [],
+          "zero_length_segments": []
+        },
+        "distance": {
+          "candidate_to_source": {
+            "gap": 0.025,
+            "lower": 914.0,
+            "samples": 20808,
+            "upper": 914.0125,
+            "worst_xy": [
+              100.0,
+              1014.0
+            ]
+          },
+          "lower": 914.0,
+          "method": "Endpoints and gap<=spacing on changed line-set pieces; exact nearest segments; distance is1-Lipschitz, add gap/2. Floating GEOS, no interval claim.",
+          "sample_spacing": 0.025,
+          "source_to_candidate": {
+            "gap": 0.025,
+            "lower": 914.0,
+            "samples": 20808,
+            "upper": 914.0125,
+            "worst_xy": [
+              10.0,
+              10.0
+            ]
+          },
+          "upper": 914.0125
+        },
+        "gates": {
+          "area_arithmetic_only": true,
+          "continuous_topology": false,
+          "dedicated_manifold": true,
+          "exact_binary64_segments": false,
+          "exact_binary64_vertices": false,
+          "geometric_equals": false,
+          "imported_manifold_incidence": true,
+          "source_manifold": true,
+          "zero_added_removed_symmetric": false,
+          "zero_boundary_line_set_difference": false,
+          "zero_displacement": false
+        },
+        "imported_integrity": {
+          "components": 1,
+          "cross_ring_intersections": [],
+          "duplicate_edges": 0,
+          "exterior_length": 360.0,
+          "holes": 1,
+          "internal_length": 160.0,
+          "minimum_component_area": 6500.0,
+          "nondegree_two_vertices": [],
+          "ogc_valid": true,
+          "passed": true,
+          "simple_rings": true,
+          "zero_edges": 0
+        },
+        "imported_shoelace_area": 6500.0,
+        "passed": false,
+        "source_integrity": {
+          "components": 1,
+          "cross_ring_intersections": [],
+          "duplicate_edges": 0,
+          "exterior_length": 360.0,
+          "holes": 1,
+          "internal_length": 160.0,
+          "minimum_component_area": 6500.0,
+          "nondegree_two_vertices": [],
+          "ogc_valid": true,
+          "passed": true,
+          "simple_rings": true,
+          "zero_edges": 0
+        },
+        "source_shoelace_area": 6500.0,
+        "topology": {
+          "exterior_incidence": [
+            {
+              "after_domain_sides": null,
+              "before_domain_sides": [
+                true,
+                true,
+                true,
+                true
+              ],
+              "preserved": false,
+              "source_void": 0
+            },
+            {
+              "after_domain_sides": [
+                true,
+                true,
+                true,
+                true
+              ],
+              "before_domain_sides": [
+                false,
+                false,
+                false,
+                false
+              ],
+              "preserved": false,
+              "source_void": 1
+            }
+          ],
+          "holes": {
+            "ambiguous_or_missing": 1,
+            "candidate_count": 1,
+            "passed": false,
+            "records": [
+              {
+                "candidate_area": null,
+                "candidate_ids": [],
+                "reciprocal_anchors": false,
+                "relative_area_distortion": null,
+                "source_area": 1600.0,
+                "source_id": 0
+              }
+            ],
+            "reverse_matches": [
+              []
+            ],
+            "source_count": 1
+          },
+          "limitation": "Component/side incidence does not certify unchanged channel width.",
+          "passed": false,
+          "solid": {
+            "ambiguous_or_missing": 1,
+            "candidate_count": 1,
+            "passed": false,
+            "records": [
+              {
+                "candidate_area": null,
+                "candidate_ids": [],
+                "reciprocal_anchors": false,
+                "relative_area_distortion": null,
+                "source_area": 6500.0,
+                "source_id": 0
+              }
+            ],
+            "reverse_matches": [
+              []
+            ],
+            "source_count": 1
+          },
+          "void": {
+            "ambiguous_or_missing": 2,
+            "candidate_count": 2,
+            "passed": false,
+            "records": [
+              {
+                "candidate_area": null,
+                "candidate_ids": [
+                  0,
+                  1
+                ],
+                "reciprocal_anchors": false,
+                "relative_area_distortion": null,
+                "source_area": 1040476.0,
+                "source_id": 0
+              },
+              {
+                "candidate_area": 1040476.0,
+                "candidate_ids": [
+                  0
+                ],
+                "reciprocal_anchors": false,
+                "relative_area_distortion": 649.2975,
+                "source_area": 1600.0,
+                "source_id": 1
+              }
+            ],
+            "reverse_matches": [
+              [
+                0,
+                1
+              ],
+              [
+                0
+              ]
+            ],
+            "source_count": 2
+          }
+        }
+      },
+      "detected": true,
+      "error": null,
+      "parsed": true
+    },
+    {
+      "case": "filled_pore",
+      "comparison": {
+        "area": {
+          "added": 1600.0,
+          "boolean_identity_error": 0.0,
+          "candidate_area": 8100.0,
+          "net_area": 1600.0,
+          "net_identity_error": 0.0,
+          "reference_area": 6500.0,
+          "relative_symmetric": 0.24615384615384617,
+          "removed": 0.0,
+          "symmetric": 1600.0
+        },
+        "area_arithmetic_allowance": 1.4901161193847656e-08,
+        "boundary_line_set_difference_length": 160.0,
+        "coordinate_comparison": {
+          "exact_segments": false,
+          "exact_vertices": false,
+          "imported_vertices": 4,
+          "method": "Binary64 hex vertex and undirected edge multisets, preserving multiplicity; independent of winding, cyclic start and component order.",
+          "missing_vertex_instances": 4,
+          "new_vertex_instances": 0,
+          "source_coordinate_examples_not_recovered": [
+            [
+              "0x1.e000000000000p+5",
+              "0x1.e000000000000p+5"
+            ],
+            [
+              "0x1.4000000000000p+4",
+              "0x1.e000000000000p+5"
+            ],
+            [
+              "0x1.4000000000000p+4",
+              "0x1.4000000000000p+4"
+            ],
+            [
+              "0x1.e000000000000p+5",
+              "0x1.4000000000000p+4"
+            ]
+          ],
+          "source_vertices": 8
+        },
+        "dedicated_manifold": {
+          "all_rings_simple": true,
+          "contacts": [],
+          "exact_contact_tolerance": 0,
+          "manifold": true,
+          "method": "STRtree segment intersections plus unique incident boundary rays/local links",
+          "near_contacts": [],
+          "near_distance": 0.0,
+          "ogc_valid": true,
+          "overlaps": [],
+          "ring_count": 1,
+          "segment_count": 4,
+          "unclosed_rings": [],
+          "zero_length_segments": []
+        },
+        "distance": {
+          "candidate_to_source": {
+            "gap": 0.0,
+            "lower": 0.0,
+            "samples": 0,
+            "upper": 0.0,
+            "worst_xy": null
+          },
+          "lower": 40.0,
+          "method": "Endpoints and gap<=spacing on changed line-set pieces; exact nearest segments; distance is1-Lipschitz, add gap/2. Floating GEOS, no interval claim.",
+          "sample_spacing": 0.025,
+          "source_to_candidate": {
+            "gap": 0.025,
+            "lower": 40.0,
+            "samples": 6404,
+            "upper": 40.0125,
+            "worst_xy": [
+              60.0,
+              60.0
+            ]
+          },
+          "upper": 40.0125
+        },
+        "gates": {
+          "area_arithmetic_only": false,
+          "continuous_topology": false,
+          "dedicated_manifold": true,
+          "exact_binary64_segments": false,
+          "exact_binary64_vertices": false,
+          "geometric_equals": false,
+          "imported_manifold_incidence": true,
+          "source_manifold": true,
+          "zero_added_removed_symmetric": false,
+          "zero_boundary_line_set_difference": false,
+          "zero_displacement": false
+        },
+        "imported_integrity": {
+          "components": 1,
+          "cross_ring_intersections": [],
+          "duplicate_edges": 0,
+          "exterior_length": 360.0,
+          "holes": 0,
+          "internal_length": 0.0,
+          "minimum_component_area": 8100.0,
+          "nondegree_two_vertices": [],
+          "ogc_valid": true,
+          "passed": true,
+          "simple_rings": true,
+          "zero_edges": 0
+        },
+        "imported_shoelace_area": 8100.0,
+        "passed": false,
+        "source_integrity": {
+          "components": 1,
+          "cross_ring_intersections": [],
+          "duplicate_edges": 0,
+          "exterior_length": 360.0,
+          "holes": 1,
+          "internal_length": 160.0,
+          "minimum_component_area": 6500.0,
+          "nondegree_two_vertices": [],
+          "ogc_valid": true,
+          "passed": true,
+          "simple_rings": true,
+          "zero_edges": 0
+        },
+        "source_shoelace_area": 6500.0,
+        "topology": {
+          "exterior_incidence": [
+            {
+              "after_domain_sides": [
+                true,
+                true,
+                true,
+                true
+              ],
+              "before_domain_sides": [
+                true,
+                true,
+                true,
+                true
+              ],
+              "preserved": true,
+              "source_void": 0
+            },
+            {
+              "after_domain_sides": null,
+              "before_domain_sides": [
+                false,
+                false,
+                false,
+                false
+              ],
+              "preserved": false,
+              "source_void": 1
+            }
+          ],
+          "holes": {
+            "ambiguous_or_missing": 1,
+            "candidate_count": 0,
+            "passed": false,
+            "records": [
+              {
+                "candidate_area": null,
+                "candidate_ids": [],
+                "reciprocal_anchors": false,
+                "relative_area_distortion": null,
+                "source_area": 1600.0,
+                "source_id": 0
+              }
+            ],
+            "reverse_matches": [],
+            "source_count": 1
+          },
+          "limitation": "Component/side incidence does not certify unchanged channel width.",
+          "passed": false,
+          "solid": {
+            "ambiguous_or_missing": 1,
+            "candidate_count": 1,
+            "passed": false,
+            "records": [
+              {
+                "candidate_area": 8100.0,
+                "candidate_ids": [
+                  0
+                ],
+                "reciprocal_anchors": false,
+                "relative_area_distortion": 0.24615384615384617,
+                "source_area": 6500.0,
+                "source_id": 0
+              }
+            ],
+            "reverse_matches": [
+              [
+                0
+              ]
+            ],
+            "source_count": 1
+          },
+          "void": {
+            "ambiguous_or_missing": 1,
+            "candidate_count": 1,
+            "passed": false,
+            "records": [
+              {
+                "candidate_area": 1040476.0,
+                "candidate_ids": [
+                  0
+                ],
+                "reciprocal_anchors": true,
+                "relative_area_distortion": 0.0,
+                "source_area": 1040476.0,
+                "source_id": 0
+              },
+              {
+                "candidate_area": null,
+                "candidate_ids": [],
+                "reciprocal_anchors": false,
+                "relative_area_distortion": null,
+                "source_area": 1600.0,
+                "source_id": 1
+              }
+            ],
+            "reverse_matches": [
+              [
+                0
+              ]
+            ],
+            "source_count": 2
+          }
+        }
+      },
+      "detected": true,
+      "error": null,
+      "parsed": true
+    },
+    {
+      "case": "pore_opened_to_exterior",
+      "comparison": {
+        "area": {
+          "added": 0.0,
+          "boolean_identity_error": 0.0,
+          "candidate_area": 6400.0,
+          "net_area": -100.0,
+          "net_identity_error": 0.0,
+          "reference_area": 6500.0,
+          "relative_symmetric": 0.015384615384615385,
+          "removed": 100.0,
+          "symmetric": 100.0
+        },
+        "area_arithmetic_allowance": 1.4901161193847656e-08,
+        "boundary_line_set_difference_length": 40.0,
+        "coordinate_comparison": {
+          "exact_segments": false,
+          "exact_vertices": false,
+          "imported_vertices": 12,
+          "method": "Binary64 hex vertex and undirected edge multisets, preserving multiplicity; independent of winding, cyclic start and component order.",
+          "missing_vertex_instances": 0,
+          "new_vertex_instances": 4,
+          "source_coordinate_examples_not_recovered": [],
+          "source_vertices": 8
+        },
+        "dedicated_manifold": {
+          "all_rings_simple": true,
+          "contacts": [],
+          "exact_contact_tolerance": 0,
+          "manifold": true,
+          "method": "STRtree segment intersections plus unique incident boundary rays/local links",
+          "near_contacts": [],
+          "near_distance": 0.0,
+          "ogc_valid": true,
+          "overlaps": [],
+          "ring_count": 1,
+          "segment_count": 12,
+          "unclosed_rings": [],
+          "zero_length_segments": []
+        },
+        "distance": {
+          "candidate_to_source": {
+            "gap": 0.025,
+            "lower": 5.0,
+            "samples": 802,
+            "upper": 5.0125,
+            "worst_xy": [
+              15.0,
+              50.0
+            ]
+          },
+          "lower": 5.0,
+          "method": "Endpoints and gap<=spacing on changed line-set pieces; exact nearest segments; distance is1-Lipschitz, add gap/2. Floating GEOS, no interval claim.",
+          "sample_spacing": 0.025,
+          "source_to_candidate": {
+            "gap": 0.025,
+            "lower": 5.0,
+            "samples": 802,
+            "upper": 5.0125,
+            "worst_xy": [
+              10.0,
+              45.0
+            ]
+          },
+          "upper": 5.0125
+        },
+        "gates": {
+          "area_arithmetic_only": false,
+          "continuous_topology": false,
+          "dedicated_manifold": true,
+          "exact_binary64_segments": false,
+          "exact_binary64_vertices": false,
+          "geometric_equals": false,
+          "imported_manifold_incidence": true,
+          "source_manifold": true,
+          "zero_added_removed_symmetric": false,
+          "zero_boundary_line_set_difference": false,
+          "zero_displacement": false
+        },
+        "imported_integrity": {
+          "components": 1,
+          "cross_ring_intersections": [],
+          "duplicate_edges": 0,
+          "exterior_length": 520.0,
+          "holes": 0,
+          "internal_length": 0.0,
+          "minimum_component_area": 6400.0,
+          "nondegree_two_vertices": [],
+          "ogc_valid": true,
+          "passed": true,
+          "simple_rings": true,
+          "zero_edges": 0
+        },
+        "imported_shoelace_area": 6400.0,
+        "passed": false,
+        "source_integrity": {
+          "components": 1,
+          "cross_ring_intersections": [],
+          "duplicate_edges": 0,
+          "exterior_length": 360.0,
+          "holes": 1,
+          "internal_length": 160.0,
+          "minimum_component_area": 6500.0,
+          "nondegree_two_vertices": [],
+          "ogc_valid": true,
+          "passed": true,
+          "simple_rings": true,
+          "zero_edges": 0
+        },
+        "source_shoelace_area": 6500.0,
+        "topology": {
+          "exterior_incidence": [
+            {
+              "after_domain_sides": [
+                true,
+                true,
+                true,
+                true
+              ],
+              "before_domain_sides": [
+                true,
+                true,
+                true,
+                true
+              ],
+              "preserved": true,
+              "source_void": 0
+            },
+            {
+              "after_domain_sides": [
+                true,
+                true,
+                true,
+                true
+              ],
+              "before_domain_sides": [
+                false,
+                false,
+                false,
+                false
+              ],
+              "preserved": false,
+              "source_void": 1
+            }
+          ],
+          "holes": {
+            "ambiguous_or_missing": 1,
+            "candidate_count": 0,
+            "passed": false,
+            "records": [
+              {
+                "candidate_area": null,
+                "candidate_ids": [],
+                "reciprocal_anchors": false,
+                "relative_area_distortion": null,
+                "source_area": 1600.0,
+                "source_id": 0
+              }
+            ],
+            "reverse_matches": [],
+            "source_count": 1
+          },
+          "limitation": "Component/side incidence does not certify unchanged channel width.",
+          "passed": false,
+          "solid": {
+            "ambiguous_or_missing": 0,
+            "candidate_count": 1,
+            "passed": true,
+            "records": [
+              {
+                "candidate_area": 6400.0,
+                "candidate_ids": [
+                  0
+                ],
+                "reciprocal_anchors": true,
+                "relative_area_distortion": 0.015384615384615385,
+                "source_area": 6500.0,
+                "source_id": 0
+              }
+            ],
+            "reverse_matches": [
+              [
+                0
+              ]
+            ],
+            "source_count": 1
+          },
+          "void": {
+            "ambiguous_or_missing": 1,
+            "candidate_count": 1,
+            "passed": false,
+            "records": [
+              {
+                "candidate_area": 1042176.0,
+                "candidate_ids": [
+                  0
+                ],
+                "reciprocal_anchors": true,
+                "relative_area_distortion": 0.0016338675759940643,
+                "source_area": 1040476.0,
+                "source_id": 0
+              },
+              {
+                "candidate_area": 1042176.0,
+                "candidate_ids": [
+                  0
+                ],
+                "reciprocal_anchors": false,
+                "relative_area_distortion": 650.36,
+                "source_area": 1600.0,
+                "source_id": 1
+              }
+            ],
+            "reverse_matches": [
+              [
+                0,
+                1
+              ]
+            ],
+            "source_count": 2
+          }
+        }
+      },
+      "detected": true,
+      "error": null,
+      "parsed": true
+    },
+    {
+      "case": "raster_invisible_continuous_shift",
+      "comparison": {
+        "area": {
+          "added": 0.0,
+          "boolean_identity_error": 0.0,
+          "candidate_area": 6499.099999999999,
+          "net_area": -0.9000000000005457,
+          "net_identity_error": -5.648814749292796e-13,
+          "reference_area": 6500.0,
+          "relative_symmetric": 0.00013846153846153552,
+          "removed": 0.8999999999999808,
+          "symmetric": 0.8999999999999808
+        },
+        "area_arithmetic_allowance": 1.4901161193847656e-08,
+        "boundary_line_set_difference_length": 180.02,
+        "coordinate_comparison": {
+          "exact_segments": false,
+          "exact_vertices": false,
+          "imported_vertices": 8,
+          "method": "Binary64 hex vertex and undirected edge multisets, preserving multiplicity; independent of winding, cyclic start and component order.",
+          "missing_vertex_instances": 2,
+          "new_vertex_instances": 2,
+          "source_coordinate_examples_not_recovered": [
+            [
+              "0x1.4000000000000p+3",
+              "0x1.4000000000000p+3"
+            ],
+            [
+              "0x1.4000000000000p+3",
+              "0x1.9000000000000p+6"
+            ]
+          ],
+          "source_vertices": 8
+        },
+        "dedicated_manifold": {
+          "all_rings_simple": true,
+          "contacts": [],
+          "exact_contact_tolerance": 0,
+          "manifold": true,
+          "method": "STRtree segment intersections plus unique incident boundary rays/local links",
+          "near_contacts": [],
+          "near_distance": 0.0,
+          "ogc_valid": true,
+          "overlaps": [],
+          "ring_count": 2,
+          "segment_count": 8,
+          "unclosed_rings": [],
+          "zero_length_segments": []
+        },
+        "distance": {
+          "candidate_to_source": {
+            "gap": 0.025,
+            "lower": 0.009999999999999787,
+            "samples": 3601,
+            "upper": 0.022499999999999788,
+            "worst_xy": [
+              10.01,
+              99.975
+            ]
+          },
+          "lower": 0.009999999999999787,
+          "method": "Endpoints and gap<=spacing on changed line-set pieces; exact nearest segments; distance is1-Lipschitz, add gap/2. Floating GEOS, no interval claim.",
+          "sample_spacing": 0.025,
+          "source_to_candidate": {
+            "gap": 0.025,
+            "lower": 0.009999999999999787,
+            "samples": 3605,
+            "upper": 0.022499999999999788,
+            "worst_xy": [
+              10.0,
+              10.0
+            ]
+          },
+          "upper": 0.022499999999999788
+        },
+        "gates": {
+          "area_arithmetic_only": false,
+          "continuous_topology": true,
+          "dedicated_manifold": true,
+          "exact_binary64_segments": false,
+          "exact_binary64_vertices": false,
+          "geometric_equals": false,
+          "imported_manifold_incidence": true,
+          "source_manifold": true,
+          "zero_added_removed_symmetric": false,
+          "zero_boundary_line_set_difference": false,
+          "zero_displacement": false
+        },
+        "imported_integrity": {
+          "components": 1,
+          "cross_ring_intersections": [],
+          "duplicate_edges": 0,
+          "exterior_length": 359.98,
+          "holes": 1,
+          "internal_length": 160.0,
+          "minimum_component_area": 6499.099999999999,
+          "nondegree_two_vertices": [],
+          "ogc_valid": true,
+          "passed": true,
+          "simple_rings": true,
+          "zero_edges": 0
+        },
+        "imported_shoelace_area": 6499.099999999999,
+        "passed": false,
+        "source_integrity": {
+          "components": 1,
+          "cross_ring_intersections": [],
+          "duplicate_edges": 0,
+          "exterior_length": 360.0,
+          "holes": 1,
+          "internal_length": 160.0,
+          "minimum_component_area": 6500.0,
+          "nondegree_two_vertices": [],
+          "ogc_valid": true,
+          "passed": true,
+          "simple_rings": true,
+          "zero_edges": 0
+        },
+        "source_shoelace_area": 6500.0,
+        "topology": {
+          "exterior_incidence": [
+            {
+              "after_domain_sides": [
+                true,
+                true,
+                true,
+                true
+              ],
+              "before_domain_sides": [
+                true,
+                true,
+                true,
+                true
+              ],
+              "preserved": true,
+              "source_void": 0
+            },
+            {
+              "after_domain_sides": [
+                false,
+                false,
+                false,
+                false
+              ],
+              "before_domain_sides": [
+                false,
+                false,
+                false,
+                false
+              ],
+              "preserved": true,
+              "source_void": 1
+            }
+          ],
+          "holes": {
+            "ambiguous_or_missing": 0,
+            "candidate_count": 1,
+            "passed": true,
+            "records": [
+              {
+                "boundary_sampled_hausdorff": 0.0,
+                "candidate_area": 1600.0,
+                "candidate_covers_source": true,
+                "candidate_ids": [
+                  0
+                ],
+                "candidate_perimeter": 160.0,
+                "intersection_area": 1600.0,
+                "reciprocal_anchors": true,
+                "relative_area_distortion": 0.0,
+                "source_area": 1600.0,
+                "source_covers_candidate": true,
+                "source_id": 0,
+                "source_perimeter": 160.0,
+                "symmetric_area": 0.0
+              }
+            ],
+            "reverse_matches": [
+              [
+                0
+              ]
+            ],
+            "source_count": 1
+          },
+          "limitation": "Component/side incidence does not certify unchanged channel width.",
+          "passed": true,
+          "solid": {
+            "ambiguous_or_missing": 0,
+            "candidate_count": 1,
+            "passed": true,
+            "records": [
+              {
+                "candidate_area": 6499.099999999999,
+                "candidate_ids": [
+                  0
+                ],
+                "reciprocal_anchors": true,
+                "relative_area_distortion": 0.00013846153846162242,
+                "source_area": 6500.0,
+                "source_id": 0
+              }
+            ],
+            "reverse_matches": [
+              [
+                0
+              ]
+            ],
+            "source_count": 1
+          },
+          "void": {
+            "ambiguous_or_missing": 0,
+            "candidate_count": 2,
+            "passed": true,
+            "records": [
+              {
+                "candidate_area": 1040476.9,
+                "candidate_ids": [
+                  0
+                ],
+                "reciprocal_anchors": true,
+                "relative_area_distortion": 8.649887167251172e-07,
+                "source_area": 1040476.0,
+                "source_id": 0
+              },
+              {
+                "candidate_area": 1600.0,
+                "candidate_ids": [
+                  1
+                ],
+                "reciprocal_anchors": true,
+                "relative_area_distortion": 0.0,
+                "source_area": 1600.0,
+                "source_id": 1
+              }
+            ],
+            "reverse_matches": [
+              [
+                0
+              ],
+              [
+                1
+              ]
+            ],
+            "source_count": 2
+          }
+        }
+      },
+      "detected": true,
+      "error": null,
+      "parsed": true
+    },
+    {
+      "case": "tampered_source_hash",
+      "detected": true,
+      "error": "Source hash differs from trusted registration",
+      "parsed": false
+    },
+    {
+      "case": "tampered_svg_bytes",
+      "detected": true,
+      "error": "SVG hash mismatch/tampering",
+      "parsed": false
+    },
+    {
+      "case": "missing_source_identifier",
+      "detected": true,
+      "error": "Missing required provenance fields",
+      "parsed": false
+    },
+    {
+      "case": "promoted_scientific_status",
+      "detected": true,
+      "error": "Required source HOLD/UNQUALIFIED statuses not propagated",
+      "parsed": false
+    },
+    {
+      "case": "malformed_xml",
+      "detected": true,
+      "error": "Malformed XML: unclosed token: line 1, column 5",
+      "parsed": false
+    }
+  ],
+  "passed": false,
+  "positive_cases": 20,
+  "precision_configurations": 100,
+  "rows": [
+    {
+      "case": "integer_rectangle",
+      "coordinates_exact": true,
+      "digits": 17,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "integer_rectangle",
+      "coordinates_exact": true,
+      "digits": 12,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "integer_rectangle",
+      "coordinates_exact": true,
+      "digits": 9,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "integer_rectangle",
+      "coordinates_exact": true,
+      "digits": 6,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "integer_rectangle",
+      "coordinates_exact": true,
+      "digits": 3,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "half_integer",
+      "coordinates_exact": true,
+      "digits": 17,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "half_integer",
+      "coordinates_exact": true,
+      "digits": 12,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "half_integer",
+      "coordinates_exact": true,
+      "digits": 9,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "half_integer",
+      "coordinates_exact": true,
+      "digits": 6,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "half_integer",
+      "coordinates_exact": true,
+      "digits": 3,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "quarter_cell",
+      "coordinates_exact": true,
+      "digits": 17,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "quarter_cell",
+      "coordinates_exact": true,
+      "digits": 12,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "quarter_cell",
+      "coordinates_exact": true,
+      "digits": 9,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "quarter_cell",
+      "coordinates_exact": true,
+      "digits": 6,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "quarter_cell",
+      "coordinates_exact": false,
+      "digits": 3,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": false,
+      "symmetric_area": 5.562308717107099
+    },
+    {
+      "case": "non_dyadic_binary64",
+      "coordinates_exact": true,
+      "digits": 17,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "non_dyadic_binary64",
+      "coordinates_exact": true,
+      "digits": 12,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "non_dyadic_binary64",
+      "coordinates_exact": true,
+      "digits": 9,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "non_dyadic_binary64",
+      "coordinates_exact": true,
+      "digits": 6,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "non_dyadic_binary64",
+      "coordinates_exact": true,
+      "digits": 3,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "subpixel_diamond",
+      "coordinates_exact": true,
+      "digits": 17,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "subpixel_diamond",
+      "coordinates_exact": true,
+      "digits": 12,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "subpixel_diamond",
+      "coordinates_exact": true,
+      "digits": 9,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "subpixel_diamond",
+      "coordinates_exact": true,
+      "digits": 6,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "subpixel_diamond",
+      "coordinates_exact": null,
+      "digits": 3,
+      "error": "Degenerate or repeated consecutive vertex",
+      "parsed": false,
+      "roundtrip_pass": false,
+      "symmetric_area": null
+    },
+    {
+      "case": "nearby_pores",
+      "coordinates_exact": true,
+      "digits": 17,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "nearby_pores",
+      "coordinates_exact": false,
+      "digits": 12,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": false,
+      "symmetric_area": 4.646949491871055e-11
+    },
+    {
+      "case": "nearby_pores",
+      "coordinates_exact": null,
+      "digits": 9,
+      "error": "Crossing, touching or overlapping subpaths",
+      "parsed": false,
+      "roundtrip_pass": false,
+      "symmetric_area": null
+    },
+    {
+      "case": "nearby_pores",
+      "coordinates_exact": null,
+      "digits": 6,
+      "error": "Crossing, touching or overlapping subpaths",
+      "parsed": false,
+      "roundtrip_pass": false,
+      "symmetric_area": null
+    },
+    {
+      "case": "nearby_pores",
+      "coordinates_exact": null,
+      "digits": 3,
+      "error": "Crossing, touching or overlapping subpaths",
+      "parsed": false,
+      "roundtrip_pass": false,
+      "symmetric_area": null
+    },
+    {
+      "case": "nearly_touching_shell",
+      "coordinates_exact": true,
+      "digits": 17,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "nearly_touching_shell",
+      "coordinates_exact": false,
+      "digits": 12,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": false,
+      "symmetric_area": 4.643396778192255e-11
+    },
+    {
+      "case": "nearly_touching_shell",
+      "coordinates_exact": null,
+      "digits": 9,
+      "error": "Crossing, touching or overlapping subpaths",
+      "parsed": false,
+      "roundtrip_pass": false,
+      "symmetric_area": null
+    },
+    {
+      "case": "nearly_touching_shell",
+      "coordinates_exact": null,
+      "digits": 6,
+      "error": "Crossing, touching or overlapping subpaths",
+      "parsed": false,
+      "roundtrip_pass": false,
+      "symmetric_area": null
+    },
+    {
+      "case": "nearly_touching_shell",
+      "coordinates_exact": null,
+      "digits": 3,
+      "error": "Crossing, touching or overlapping subpaths",
+      "parsed": false,
+      "roundtrip_pass": false,
+      "symmetric_area": null
+    },
+    {
+      "case": "concentric_nested_islands",
+      "coordinates_exact": true,
+      "digits": 17,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": false,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "concentric_nested_islands",
+      "coordinates_exact": true,
+      "digits": 12,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "concentric_nested_islands",
+      "coordinates_exact": true,
+      "digits": 9,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "concentric_nested_islands",
+      "coordinates_exact": true,
+      "digits": 6,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "concentric_nested_islands",
+      "coordinates_exact": true,
+      "digits": 3,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "near_domain_edge",
+      "coordinates_exact": true,
+      "digits": 17,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "near_domain_edge",
+      "coordinates_exact": false,
+      "digits": 12,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": false,
+      "symmetric_area": 2.296474121976644e-09
+    },
+    {
+      "case": "near_domain_edge",
+      "coordinates_exact": false,
+      "digits": 9,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": false,
+      "symmetric_area": 5.960464477539062e-07
+    },
+    {
+      "case": "near_domain_edge",
+      "coordinates_exact": false,
+      "digits": 6,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": false,
+      "symmetric_area": 0.0074755865096978145
+    },
+    {
+      "case": "near_domain_edge",
+      "coordinates_exact": null,
+      "digits": 3,
+      "error": "Degenerate or repeated consecutive vertex",
+      "parsed": false,
+      "roundtrip_pass": false,
+      "symmetric_area": null
+    },
+    {
+      "case": "very_short_collinear_edge",
+      "coordinates_exact": true,
+      "digits": 17,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "very_short_collinear_edge",
+      "coordinates_exact": false,
+      "digits": 12,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": false,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "very_short_collinear_edge",
+      "coordinates_exact": false,
+      "digits": 9,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": false,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "very_short_collinear_edge",
+      "coordinates_exact": false,
+      "digits": 6,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": false,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "very_short_collinear_edge",
+      "coordinates_exact": false,
+      "digits": 3,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": false,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "acute_corner",
+      "coordinates_exact": true,
+      "digits": 17,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "acute_corner",
+      "coordinates_exact": true,
+      "digits": 12,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "acute_corner",
+      "coordinates_exact": true,
+      "digits": 9,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "acute_corner",
+      "coordinates_exact": false,
+      "digits": 6,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": false,
+      "symmetric_area": 0.009794902100610625
+    },
+    {
+      "case": "acute_corner",
+      "coordinates_exact": false,
+      "digits": 3,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": false,
+      "symmetric_area": 0.009794902100610625
+    },
+    {
+      "case": "several_holes",
+      "coordinates_exact": true,
+      "digits": 17,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "several_holes",
+      "coordinates_exact": true,
+      "digits": 12,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "several_holes",
+      "coordinates_exact": true,
+      "digits": 9,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "several_holes",
+      "coordinates_exact": true,
+      "digits": 6,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "several_holes",
+      "coordinates_exact": true,
+      "digits": 3,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "single_hole",
+      "coordinates_exact": true,
+      "digits": 17,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "single_hole",
+      "coordinates_exact": true,
+      "digits": 12,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "single_hole",
+      "coordinates_exact": true,
+      "digits": 9,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "single_hole",
+      "coordinates_exact": true,
+      "digits": 6,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "single_hole",
+      "coordinates_exact": true,
+      "digits": 3,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "multiple_solid_components",
+      "coordinates_exact": true,
+      "digits": 17,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "multiple_solid_components",
+      "coordinates_exact": true,
+      "digits": 12,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "multiple_solid_components",
+      "coordinates_exact": true,
+      "digits": 9,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "multiple_solid_components",
+      "coordinates_exact": true,
+      "digits": 6,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "multiple_solid_components",
+      "coordinates_exact": true,
+      "digits": 3,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "deep_concavity",
+      "coordinates_exact": true,
+      "digits": 17,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "deep_concavity",
+      "coordinates_exact": true,
+      "digits": 12,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "deep_concavity",
+      "coordinates_exact": true,
+      "digits": 9,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "deep_concavity",
+      "coordinates_exact": true,
+      "digits": 6,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "deep_concavity",
+      "coordinates_exact": true,
+      "digits": 3,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "narrow_exterior_channel",
+      "coordinates_exact": true,
+      "digits": 17,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "narrow_exterior_channel",
+      "coordinates_exact": false,
+      "digits": 12,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": false,
+      "symmetric_area": 1.7980283928409335e-09
+    },
+    {
+      "case": "narrow_exterior_channel",
+      "coordinates_exact": false,
+      "digits": 9,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": false,
+      "symmetric_area": 3.2427976748294896e-06
+    },
+    {
+      "case": "narrow_exterior_channel",
+      "coordinates_exact": null,
+      "digits": 6,
+      "error": "Degenerate or repeated consecutive vertex",
+      "parsed": false,
+      "roundtrip_pass": false,
+      "symmetric_area": null
+    },
+    {
+      "case": "narrow_exterior_channel",
+      "coordinates_exact": null,
+      "digits": 3,
+      "error": "Degenerate or repeated consecutive vertex",
+      "parsed": false,
+      "roundtrip_pass": false,
+      "symmetric_area": null
+    },
+    {
+      "case": "one_cell_interior_pore",
+      "coordinates_exact": true,
+      "digits": 17,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "one_cell_interior_pore",
+      "coordinates_exact": true,
+      "digits": 12,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "one_cell_interior_pore",
+      "coordinates_exact": true,
+      "digits": 9,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "one_cell_interior_pore",
+      "coordinates_exact": true,
+      "digits": 6,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "one_cell_interior_pore",
+      "coordinates_exact": true,
+      "digits": 3,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "thousands_of_vertices",
+      "coordinates_exact": true,
+      "digits": 17,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "thousands_of_vertices",
+      "coordinates_exact": false,
+      "digits": 12,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": false,
+      "symmetric_area": 3.864900581749338e-07
+    },
+    {
+      "case": "thousands_of_vertices",
+      "coordinates_exact": false,
+      "digits": 9,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": false,
+      "symmetric_area": 0.0003815480459408465
+    },
+    {
+      "case": "thousands_of_vertices",
+      "coordinates_exact": false,
+      "digits": 6,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": false,
+      "symmetric_area": 0.3814045332417234
+    },
+    {
+      "case": "thousands_of_vertices",
+      "coordinates_exact": null,
+      "digits": 3,
+      "error": "Degenerate or repeated consecutive vertex",
+      "parsed": false,
+      "roundtrip_pass": false,
+      "symmetric_area": null
+    },
+    {
+      "case": "hundreds_of_holes",
+      "coordinates_exact": true,
+      "digits": 17,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "hundreds_of_holes",
+      "coordinates_exact": true,
+      "digits": 12,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "hundreds_of_holes",
+      "coordinates_exact": true,
+      "digits": 9,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "hundreds_of_holes",
+      "coordinates_exact": true,
+      "digits": 6,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "hundreds_of_holes",
+      "coordinates_exact": true,
+      "digits": 3,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "manifold_regularized_contact",
+      "coordinates_exact": true,
+      "digits": 17,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "manifold_regularized_contact",
+      "coordinates_exact": true,
+      "digits": 12,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "manifold_regularized_contact",
+      "coordinates_exact": true,
+      "digits": 9,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "manifold_regularized_contact",
+      "coordinates_exact": true,
+      "digits": 6,
+      "error": null,
+      "parsed": true,
+      "roundtrip_pass": true,
+      "symmetric_area": 0.0
+    },
+    {
+      "case": "manifold_regularized_contact",
+      "coordinates_exact": null,
+      "digits": 3,
+      "error": "Degenerate or repeated consecutive vertex",
+      "parsed": false,
+      "roundtrip_pass": false,
+      "symmetric_area": null
+    }
+  ]
+}
