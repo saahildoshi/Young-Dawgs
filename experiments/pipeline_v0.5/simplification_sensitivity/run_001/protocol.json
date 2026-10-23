@@ -1,0 +1,449 @@
+{
+  "code_sha256": {
+    "docs/pipeline_v0.5/V0_5B1_PLAN.md": "40e8dd9f4f5148594b001f37dccd99401b4511cacf042bb03f90ea5015c5e83c",
+    "docs/pipeline_v0.5/V0_5B1_PROTOCOL.json": "d70e7cf113e1e15f313fa04ff8d9695ec336cdf82567e3a340d0bb9c113770f0",
+    "metamaterial_eval/geometry/__init__.py": "7f390aff568811578a41403c6edcfd8d04acf2fdcee61fea575da7dbe80fa178",
+    "metamaterial_eval/geometry/boundaries.py": "a791ed20516303088704bca00d4bf5019ea553638711006540d485da95b81702",
+    "metamaterial_eval/geometry/conversion.py": "2c9501382389eacd55afd0d7adbf3b8db67b0526fadce69c22d50a70c9788c08",
+    "metamaterial_eval/geometry/figures.py": "1904146b7fd179e1a6934bf041b3c26090090932c2c03ab851cb246922741a35",
+    "metamaterial_eval/geometry/inputs.py": "9bcbe17a0fff70cd75b28e3ffbaf7d63a2c39e9548dcd187f9c622cd4ceb68a8",
+    "metamaterial_eval/geometry/manifold/__init__.py": "db1611e6a4f1592aee7719cfa066ee24fcba49c9be423439139eeb016effb736",
+    "metamaterial_eval/geometry/manifold/candidates.py": "aa8f341eba9acd27fe9fce81b01cc24dffaadc18f4da1966a9b66187db80afc7",
+    "metamaterial_eval/geometry/manifold/contacts.py": "71f092fc8600897dfdf4ff4cdce06c8bca8ffdbeff0ca61b56c6582d493193d6",
+    "metamaterial_eval/geometry/manifold/figures.py": "fe5be35c11ddbec1aac59a6892048f3104d8d28c552ef093d2756dc88026ed60",
+    "metamaterial_eval/geometry/manifold/morphology.py": "0020a783d62067bdaf142ecdd2213ddbf03a4201084c81f585c269ec622e43e8",
+    "metamaterial_eval/geometry/manifold/study.py": "e4c53bbd667ec5e079194a9f213077258b0774eb379bda6adba221cc5315fd0e",
+    "metamaterial_eval/geometry/planar.py": "627490833ec66bb6768381d0280e34881c160acc73d32c72882b41da8d578773",
+    "metamaterial_eval/geometry/raster.py": "107f69f6ff60972e94835590f534f8fd9211f3647455c1f2bbb1ae7bf0d9e0f6",
+    "metamaterial_eval/geometry/reporting.py": "ccf84ddb6584dffe5d7fd34444b5a0fdfa52771ebd029541652807805de41bd5",
+    "metamaterial_eval/geometry/sensitivity/__init__.py": "723df0fa7f6a282a39810a4968257316f948cb6041a2ae80928788f7aca078b3",
+    "metamaterial_eval/geometry/sensitivity/analysis.py": "d2fc173a0ec56b07ff8087f9e149d48628e138ae8fede3f405a4e50798ae08ef",
+    "metamaterial_eval/geometry/sensitivity/distance.py": "7dc778a0efc5ecf4d30f06ce46addf0ed164570f837e5043276ee496764f6e47",
+    "metamaterial_eval/geometry/sensitivity/features.py": "6aefe0b8a6dfcf2aa46fc48b666566492e9cb805a3ef15bc568f36a6bf0a4db2",
+    "metamaterial_eval/geometry/sensitivity/metrics.py": "ee0edf3b247235027039eaae829719d3242eeffc49f9535a1b40b6a43cbbad05",
+    "metamaterial_eval/geometry/sensitivity/morphology.py": "cd0345399a97d69f27283699c453bd27b474e8073993a6f8d9cb15e39b58e669",
+    "metamaterial_eval/geometry/sensitivity/records.py": "6ef07bb3c92f7cf2e851c01dfbc3aa217d4c4347eb78286e9495f520321251af",
+    "metamaterial_eval/geometry/sensitivity/reporting.py": "826e0b91f1c50abb0b62c6a4c09139b581ad5e7339e3db0ca9ed338e6eec6e08",
+    "metamaterial_eval/geometry/sensitivity/simplification.py": "6ca35fb863ac9afa5a8daafa973588a0d5d609b33a347bc2c60c77c66380cffb",
+    "metamaterial_eval/geometry/sensitivity/sources.py": "5b9b6f5ad69a046e92a80ddce79c220dec5ea0e2ac2aa6e7fb8a085cb55071b9",
+    "metamaterial_eval/geometry/sensitivity/study.py": "f404dc0808304dfa8091efdbcb4c04711bfcd63b320870abcc8cb4919f586ef7",
+    "metamaterial_eval/geometry/topology.py": "eae475bbae56909c13b063e3c36f5a545bba6b963031e12c0b0835c369895459",
+    "metamaterial_eval/pipeline/evaluator.py": "4552179d72bc2459f0c61c3c607d94504e18d28d3d1e605a646d1f70d93d2df3",
+    "metamaterial_eval/pipeline/resolution_worker.py": "b9c4aa32ef8f9f837e2c4da63619dd8d1ccbbed571bfe9b45f27e9d8a68b0d72",
+    "requirements-v0.5.txt": "799a0404e023acf0f20b0bd0e61f4d00e5ea5e398db68208404bd574ade28c87",
+    "tests/test_simplification_sensitivity.py": "001d433764195ba9fdc0b4c7833edfa859ecb4f9003cbab52565b78ec4b2284a",
+    "validation/evaluators/evaluator_v1_1.py": "5f28ed1f77f95fd23a517cd223bbe6c6b5edc7d5508093f36f523b2d4f85cebb"
+  },
+  "config": {
+    "boundary_query_chunk": 8192,
+    "boundary_sample_spacing": 0.25,
+    "descriptor_cache_entries_per_fixture": 16,
+    "fixture_ids": [
+      "design_000_seed_000",
+      "design_009_seed_001",
+      "design_001_seed_000",
+      "design_002_seed_000",
+      "design_005_seed_000"
+    ],
+    "geos_near_zero_robustness_screen": 1e-06,
+    "material_repair_risk_fraction": 0.1,
+    "natural_neck_cross_section_half_length": 8.0,
+    "natural_neck_probe_count": 3,
+    "natural_neck_probe_separation": 32,
+    "natural_neck_roi_half_width": 4.0,
+    "negative_control": {
+      "fixture": "design_000_seed_000",
+      "preserve_topology": false,
+      "tolerances": [
+        0.35,
+        0.75,
+        1.0
+      ]
+    },
+    "notable_descriptor_drift_screen": {
+      "curve_nrmse": 0.01,
+      "density_absolute": 0.001,
+      "relative_dimensions": 0.01
+    },
+    "numeric_area_allowance": 1e-12,
+    "numeric_length_allowance": 1e-10,
+    "post_hoc_refinement": false,
+    "primary": {
+      "method": "douglas_peucker",
+      "preserve_topology": true,
+      "tolerances": [
+        0,
+        0.05,
+        0.1,
+        0.2,
+        0.35,
+        0.5,
+        0.75,
+        1.0
+      ]
+    },
+    "production_acceptance_defined": false,
+    "protected_simplifier_implemented": false,
+    "repair_roi_margin": 0.75,
+    "repair_solid_anchor_offset": 0.75,
+    "resolution": 1024,
+    "scope": "exploratory_diagnostic_candidates_only",
+    "source_policy": "solid_separate_contacts",
+    "source_study": "experiments/pipeline_v0.5/manifold_qualification/run_001",
+    "stage": "v0.5B1",
+    "units": "native_raster_cell"
+  },
+  "fixture_provenance": [
+    {
+      "canonical_path": "experiments/pipeline_v0.4.1/resolution_validation/design_000/seed_000/1024/microstructure.npy",
+      "canonical_sha256": "5d5bf7b578c659e8c2c66e6154cb1fbcbddbf015d9b4f276b8d008c739a6097d",
+      "coordinates": {
+        "cell_mapping": "(row,column) -> [column,column+1] x [row,row+1]",
+        "center_mapping": "(column+0.5,row+0.5)",
+        "display_transform": [
+          1,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        "domain": [
+          0,
+          1024,
+          0,
+          1024
+        ],
+        "physical_scale": null,
+        "solid": 1,
+        "units": "raster_cell",
+        "void": 0,
+        "x_axis": "right",
+        "y_axis": "down"
+      },
+      "fixture": "design_000_seed_000",
+      "generator_sha256": "dcc4529aab090cb1ff2fe9bfd1b0325ca3b1f00724743aeefe9a9c6aea78239b",
+      "generator_version": "0.4.1",
+      "paths": {
+        "exact": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_000_seed_000/exact_geometry/exact_polygon.wkb",
+        "exact_boundaries": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_000_seed_000/exact_geometry/exact_boundaries.json",
+        "input_manifest": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_000_seed_000/input_manifest.json",
+        "manifold": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_000_seed_000/solid_separate_contacts/manifold_candidate.wkb",
+        "qualification": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_000_seed_000/solid_separate_contacts/qualification.json"
+      },
+      "registered_source_controls": {
+        "pore_scale": 8.405665555093796,
+        "solid_fraction_target": 0.47949869779450194,
+        "strut_scale": 3.8117182167728196
+      },
+      "saved_topology_repair": {
+        "added_area_fraction": 0.0,
+        "added_pixels": 0,
+        "bridge_width_normalized": 0.00784313725490196,
+        "bridges": [],
+        "candidate_index": 0,
+        "components_after": 1,
+        "components_before": 1,
+        "max_added_area_fraction": 0.001,
+        "max_length_normalized": 0.01568627450980392,
+        "policy": "nearest-point normalized capsule; addition only",
+        "raw_pixel_sha256": "6e5a61750b5a7b0f20a8157c15ebec050713dc183fc2100eef9d5f1936d2e68d",
+        "removed_pixels": 0,
+        "repaired_pixel_sha256": "6e5a61750b5a7b0f20a8157c15ebec050713dc183fc2100eef9d5f1936d2e68d"
+      },
+      "sha256": {
+        "exact": "875abdad3c94b557f8f68a455111b13f56f1b0fd8f1b26b5784af2b4433f7ac7",
+        "exact_boundaries": "5f2136317ff32906e70f2f8588bf70a1ab51ebde3af4318a564e7d9a9b7f00ed",
+        "input_manifest": "0ddbe90d0f2aafa5c5122c910d8870089feb532d8f72821d0f7f3ea4a09f11a9",
+        "manifold": "add909c523bf92daca538006aa352c83b4d26bc3f21b09eec7b1defd79d6a15a",
+        "qualification": "bddf88a0916c40bd2d3837f2b16177dc72689d3122958a4b0b56ad8125375670"
+      }
+    },
+    {
+      "canonical_path": "experiments/pipeline_v0.4.1/resolution_validation/design_009/seed_001/1024/microstructure.npy",
+      "canonical_sha256": "e4b28517f4147a9f5eefd045a023f8f7bf2f99c63e950d995ad9ce5bbe68faf8",
+      "coordinates": {
+        "cell_mapping": "(row,column) -> [column,column+1] x [row,row+1]",
+        "center_mapping": "(column+0.5,row+0.5)",
+        "display_transform": [
+          1,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        "domain": [
+          0,
+          1024,
+          0,
+          1024
+        ],
+        "physical_scale": null,
+        "solid": 1,
+        "units": "raster_cell",
+        "void": 0,
+        "x_axis": "right",
+        "y_axis": "down"
+      },
+      "fixture": "design_009_seed_001",
+      "generator_sha256": "dcc4529aab090cb1ff2fe9bfd1b0325ca3b1f00724743aeefe9a9c6aea78239b",
+      "generator_version": "0.4.1",
+      "paths": {
+        "exact": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_009_seed_001/exact_geometry/exact_polygon.wkb",
+        "exact_boundaries": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_009_seed_001/exact_geometry/exact_boundaries.json",
+        "input_manifest": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_009_seed_001/input_manifest.json",
+        "manifold": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_009_seed_001/solid_separate_contacts/manifold_candidate.wkb",
+        "qualification": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_009_seed_001/solid_separate_contacts/qualification.json"
+      },
+      "registered_source_controls": {
+        "pore_scale": 6.148748802851207,
+        "solid_fraction_target": 0.47692251183925727,
+        "strut_scale": 4.340345305340277
+      },
+      "saved_topology_repair": {
+        "added_area_fraction": 1.430511474609375e-05,
+        "added_pixels": 15,
+        "bridge_width_normalized": 0.00784313725490196,
+        "bridges": [
+          {
+            "added_pixels": 15,
+            "centerline_length_normalized": 0.002932551319648094,
+            "end_normalized_yx": [
+              0.0,
+              0.011730205278592375
+            ],
+            "end_yx": [
+              0,
+              12
+            ],
+            "start_normalized_yx": [
+              0.0,
+              0.008797653958944282
+            ],
+            "start_yx": [
+              0,
+              9
+            ]
+          }
+        ],
+        "candidate_index": 0,
+        "components_after": 1,
+        "components_before": 2,
+        "max_added_area_fraction": 0.001,
+        "max_length_normalized": 0.01568627450980392,
+        "policy": "nearest-point normalized capsule; addition only",
+        "raw_pixel_sha256": "b7402470ec587fdc217f83f8429941bcdd1533d50c8d54cd0a6af5179edf5313",
+        "removed_pixels": 0,
+        "repaired_pixel_sha256": "a29ab50312d0181c6bce0aa1fa644da953fdb467f42acd945d79507c3d28d145"
+      },
+      "sha256": {
+        "exact": "4700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1",
+        "exact_boundaries": "a48b74aeffdab897d6b504cebb8f90a827a0b6ed5ad29883a7e0b8a41babb37c",
+        "input_manifest": "23da18e0bd2c8a964a0f2abbf90a09038a1f6c0121e95bb97f00c2b57112c4ca",
+        "manifold": "4700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1",
+        "qualification": "726fec477c4a193290cacc7ea3ad66e2c5c08ee1f8d67ff467352510b3025580"
+      }
+    },
+    {
+      "canonical_path": "experiments/pipeline_v0.4.1/resolution_validation/design_001/seed_000/1024/microstructure.npy",
+      "canonical_sha256": "12f8b607cb9360f1be054111b4b3dba69bbe841bc8b4ad1192872b7f5e12caad",
+      "coordinates": {
+        "cell_mapping": "(row,column) -> [column,column+1] x [row,row+1]",
+        "center_mapping": "(column+0.5,row+0.5)",
+        "display_transform": [
+          1,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        "domain": [
+          0,
+          1024,
+          0,
+          1024
+        ],
+        "physical_scale": null,
+        "solid": 1,
+        "units": "raster_cell",
+        "void": 0,
+        "x_axis": "right",
+        "y_axis": "down"
+      },
+      "fixture": "design_001_seed_000",
+      "generator_sha256": "dcc4529aab090cb1ff2fe9bfd1b0325ca3b1f00724743aeefe9a9c6aea78239b",
+      "generator_version": "0.4.1",
+      "paths": {
+        "exact": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_001_seed_000/exact_geometry/exact_polygon.wkb",
+        "exact_boundaries": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_001_seed_000/exact_geometry/exact_boundaries.json",
+        "input_manifest": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_001_seed_000/input_manifest.json",
+        "manifold": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_001_seed_000/solid_separate_contacts/manifold_candidate.wkb",
+        "qualification": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_001_seed_000/solid_separate_contacts/qualification.json"
+      },
+      "registered_source_controls": {
+        "pore_scale": 6.641245935745653,
+        "solid_fraction_target": 0.432495799544353,
+        "strut_scale": 3.6074895607218114
+      },
+      "saved_topology_repair": {
+        "added_area_fraction": 0.0,
+        "added_pixels": 0,
+        "bridge_width_normalized": 0.00784313725490196,
+        "bridges": [],
+        "candidate_index": 0,
+        "components_after": 1,
+        "components_before": 1,
+        "max_added_area_fraction": 0.001,
+        "max_length_normalized": 0.01568627450980392,
+        "policy": "nearest-point normalized capsule; addition only",
+        "raw_pixel_sha256": "4e8c5fc8b7372de4bdea89ece833d948af1f8b557dc317f29b2b1df17affc80c",
+        "removed_pixels": 0,
+        "repaired_pixel_sha256": "4e8c5fc8b7372de4bdea89ece833d948af1f8b557dc317f29b2b1df17affc80c"
+      },
+      "sha256": {
+        "exact": "01a676b20f1d56ab55b7713aa301a06d531ec77655374fd62dfac1b4c142652a",
+        "exact_boundaries": "07db4a7bd395747cdb5496daf15602aa65e274a7afd4c492aa36979f501a61d9",
+        "input_manifest": "9161c1b30df80ccfe2fe38d9a46617340d11850360f6d6be77d0bdde490813d1",
+        "manifold": "16fc97a2d5a499ae720920b1f1bff35e2fcbeaf72714606a3ac4b2717c221273",
+        "qualification": "619f25ea7413fe20892b29da4ac461cfbf54512704ae4e528131c4759680af89"
+      }
+    },
+    {
+      "canonical_path": "experiments/pipeline_v0.4.1/resolution_validation/design_002/seed_000/1024/microstructure.npy",
+      "canonical_sha256": "8afe46c1523a68dc0ef2250fb3d942cbe4fd5be237871278bb557f56baaf8aaf",
+      "coordinates": {
+        "cell_mapping": "(row,column) -> [column,column+1] x [row,row+1]",
+        "center_mapping": "(column+0.5,row+0.5)",
+        "display_transform": [
+          1,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        "domain": [
+          0,
+          1024,
+          0,
+          1024
+        ],
+        "physical_scale": null,
+        "solid": 1,
+        "units": "raster_cell",
+        "void": 0,
+        "x_axis": "right",
+        "y_axis": "down"
+      },
+      "fixture": "design_002_seed_000",
+      "generator_sha256": "dcc4529aab090cb1ff2fe9bfd1b0325ca3b1f00724743aeefe9a9c6aea78239b",
+      "generator_version": "0.4.1",
+      "paths": {
+        "exact": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_002_seed_000/exact_geometry/exact_polygon.wkb",
+        "exact_boundaries": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_002_seed_000/exact_geometry/exact_boundaries.json",
+        "input_manifest": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_002_seed_000/input_manifest.json",
+        "manifold": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_002_seed_000/solid_separate_contacts/manifold_candidate.wkb",
+        "qualification": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_002_seed_000/solid_separate_contacts/qualification.json"
+      },
+      "registered_source_controls": {
+        "pore_scale": 6.020372521043691,
+        "solid_fraction_target": 0.5178083089302478,
+        "strut_scale": 4.632533891188587
+      },
+      "saved_topology_repair": {
+        "added_area_fraction": 0.0,
+        "added_pixels": 0,
+        "bridge_width_normalized": 0.00784313725490196,
+        "bridges": [],
+        "candidate_index": 0,
+        "components_after": 1,
+        "components_before": 1,
+        "max_added_area_fraction": 0.001,
+        "max_length_normalized": 0.01568627450980392,
+        "policy": "nearest-point normalized capsule; addition only",
+        "raw_pixel_sha256": "fcf52d89a588d32754fbb2debb9bbd05d6a0051eaa7b22b0776606c80ecdfd7b",
+        "removed_pixels": 0,
+        "repaired_pixel_sha256": "fcf52d89a588d32754fbb2debb9bbd05d6a0051eaa7b22b0776606c80ecdfd7b"
+      },
+      "sha256": {
+        "exact": "60e70059f13d900ff064e7777bcef5f93dea6aa80ed16892c391edb6b9bc0a80",
+        "exact_boundaries": "fc2ddd60a0c775770c38bfe0218c7e29ae381b5e78d634a9ccb9aef851ef4dba",
+        "input_manifest": "16cd1e44833adb7fb084e09278ddde635e92427cf7fb51f22471cf2d2995853f",
+        "manifold": "501396817419912bc8dec8298cfccfc3bcdab0eaed22c07a8abfd9180efba161",
+        "qualification": "afa6439474574011e55bb9d31f5f6e25a89a65c0af5162998156845d81f622c8"
+      }
+    },
+    {
+      "canonical_path": "experiments/pipeline_v0.4.1/resolution_validation/design_005/seed_000/1024/microstructure.npy",
+      "canonical_sha256": "a28e79f35b39d1e3d71703d7fac991e9639ce86e14416cbb306067bbb96a0560",
+      "coordinates": {
+        "cell_mapping": "(row,column) -> [column,column+1] x [row,row+1]",
+        "center_mapping": "(column+0.5,row+0.5)",
+        "display_transform": [
+          1,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        "domain": [
+          0,
+          1024,
+          0,
+          1024
+        ],
+        "physical_scale": null,
+        "solid": 1,
+        "units": "raster_cell",
+        "void": 0,
+        "x_axis": "right",
+        "y_axis": "down"
+      },
+      "fixture": "design_005_seed_000",
+      "generator_sha256": "dcc4529aab090cb1ff2fe9bfd1b0325ca3b1f00724743aeefe9a9c6aea78239b",
+      "generator_version": "0.4.1",
+      "paths": {
+        "exact": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_005_seed_000/exact_geometry/exact_polygon.wkb",
+        "exact_boundaries": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_005_seed_000/exact_geometry/exact_boundaries.json",
+        "input_manifest": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_005_seed_000/input_manifest.json",
+        "manifold": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_005_seed_000/solid_separate_contacts/manifold_candidate.wkb",
+        "qualification": "experiments/pipeline_v0.5/manifold_qualification/run_001/design_005_seed_000/solid_separate_contacts/qualification.json"
+      },
+      "registered_source_controls": {
+        "pore_scale": 7.7695830438707745,
+        "solid_fraction_target": 0.5038117343342307,
+        "strut_scale": 4.167578667993826
+      },
+      "saved_topology_repair": {
+        "added_area_fraction": 0.0,
+        "added_pixels": 0,
+        "bridge_width_normalized": 0.00784313725490196,
+        "bridges": [],
+        "candidate_index": 1,
+        "components_after": 1,
+        "components_before": 1,
+        "max_added_area_fraction": 0.001,
+        "max_length_normalized": 0.01568627450980392,
+        "policy": "nearest-point normalized capsule; addition only",
+        "raw_pixel_sha256": "7fb0f88bf458eb6c46f47249b00a8de34f039fec67cfb32bef204bf91de831f6",
+        "removed_pixels": 0,
+        "repaired_pixel_sha256": "7fb0f88bf458eb6c46f47249b00a8de34f039fec67cfb32bef204bf91de831f6"
+      },
+      "sha256": {
+        "exact": "65f83c8e721aa969e6700eabb3ff2b66bd24cc3da837d119f4b1fe68bdcd05eb",
+        "exact_boundaries": "27de1b489b6fce058ff239598ef1915b80499d03aba6e055a7f4550f8b4b8520",
+        "input_manifest": "1f532ffe7e90f7bcb2a38b9cc21f5f7a7372f3acd96ddd9beac32b680407ae47",
+        "manifold": "d82b158ae7f7b0ff0bdd76e80e9fca0504a4afbc5f4775c4128ca5e526d61389",
+        "qualification": "7be13205e0c5fa9c59afb66737a93b6d8daa2dff6ff02b2fe5c3edf680ba384e"
+      }
+    }
+  ],
+  "negative_control_configurations": 3,
+  "primary_configurations": 40,
+  "production_tolerance_selected": false,
+  "protocol_source_sha256": "d70e7cf113e1e15f313fa04ff8d9695ec336cdf82567e3a340d0bb9c113770f0",
+  "registered_utc": "2026-10-20T21:22:10.034051+00:00"
+}

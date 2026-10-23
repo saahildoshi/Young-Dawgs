@@ -1,0 +1,488 @@
+{
+  "algorithm_version": "guarded_dp_v2.0_impact_width",
+  "b2_config": {
+    "algorithm_version": "guarded_dp_v1.1",
+    "b1_config": {
+      "boundary_query_chunk": 8192,
+      "boundary_sample_spacing": 0.25,
+      "descriptor_cache_entries_per_fixture": 16,
+      "fixture_ids": [
+        "design_000_seed_000",
+        "design_009_seed_001",
+        "design_001_seed_000",
+        "design_002_seed_000",
+        "design_005_seed_000"
+      ],
+      "geos_near_zero_robustness_screen": 1e-06,
+      "material_repair_risk_fraction": 0.1,
+      "natural_neck_cross_section_half_length": 8.0,
+      "natural_neck_probe_count": 24,
+      "natural_neck_probe_separation": 32,
+      "natural_neck_roi_half_width": 4.0,
+      "negative_control": {
+        "fixture": "design_000_seed_000",
+        "preserve_topology": false,
+        "tolerances": [
+          0.35,
+          0.75,
+          1.0
+        ]
+      },
+      "notable_descriptor_drift_screen": {
+        "curve_nrmse": 0.01,
+        "density_absolute": 0.001,
+        "relative_dimensions": 0.01
+      },
+      "numeric_area_allowance": 1e-12,
+      "numeric_length_allowance": 1e-10,
+      "post_hoc_refinement": false,
+      "primary": {
+        "method": "douglas_peucker",
+        "preserve_topology": true,
+        "tolerances": [
+          0,
+          0.05,
+          0.1,
+          0.2,
+          0.35,
+          0.5,
+          0.75,
+          1.0
+        ]
+      },
+      "production_acceptance_defined": false,
+      "protected_simplifier_implemented": false,
+      "repair_roi_margin": 0.75,
+      "repair_solid_anchor_offset": 0.75,
+      "resolution": 1024,
+      "scope": "exploratory_diagnostic_candidates_only",
+      "source_policy": "solid_separate_contacts",
+      "source_study": "experiments/pipeline_v0.5/manifold_qualification/run_001",
+      "stage": "v0.5B1",
+      "units": "native_raster_cell"
+    },
+    "budget_scope": "Prospective geometric screening only; broader scientific/physical sufficiency unqualified.",
+    "development": [
+      "design_000_seed_000",
+      "design_009_seed_001",
+      "design_001_seed_000",
+      "design_002_seed_000",
+      "design_005_seed_000"
+    ],
+    "development_arithmetic_correction": "After development run_001, before any holdout preparation: replace two-dimensional matrix projections with explicit component arithmetic. All 3710 checked D0 stress-proposal dot products were finite and exactly matched explicit products; NumPy matmul emitted warnings on two inputs. No guard or acceptance limit changed. Retain run_001 and repeat development in run_002.",
+    "guards": {
+      "influence_margin": 0.5,
+      "junction_degree_min": 3,
+      "max_raster_centers_per_chord": 4096,
+      "narrow_edt_diameter": 8.0,
+      "repair_margin": 0.75,
+      "risk_pair_distance": 2.0,
+      "same_ring_index_separation": 8,
+      "same_ring_opposed_cosine": -0.5
+    },
+    "holdout_selection": "All registered v0.4.1 native-1024 design/seed combinations absent from B1; path-only membership before geometry outcomes.",
+    "holdouts": [
+      "design_000_seed_001",
+      "design_001_seed_001",
+      "design_002_seed_001",
+      "design_005_seed_001",
+      "design_009_seed_000"
+    ],
+    "limits": {
+      "area_allowance": 1e-10,
+      "descriptor_exact": true,
+      "length_allowance": 1e-10,
+      "max_added_fraction": 0.0025,
+      "max_displacement": 0.7071067811865476,
+      "max_pore_area_fraction": 0.005,
+      "max_removed_fraction": 0.0025,
+      "max_repair_clearance_loss": 0.0,
+      "max_symmetric_fraction": 0.005,
+      "max_width_loss": 0.0,
+      "minimum_new_chord_clearance": 0.25,
+      "raster_xor": 0
+    },
+    "post_hoc_threshold_changes": false,
+    "production_policy_selected": false,
+    "schema": "young-dawgs-protected-simplification-v0.5B2",
+    "sources": [
+      {
+        "fixture": "design_000_seed_000",
+        "manifest": "experiments/pipeline_v0.4.1/resolution_validation/design_000/seed_000/1024/manifest.json",
+        "manifest_sha256": "8904fb8cbb1ea6d54a4cbd50e134ecc023c73f2e1482d9af85d8296f11f8970d",
+        "npy_sha256": "5d5bf7b578c659e8c2c66e6154cb1fbcbddbf015d9b4f276b8d008c739a6097d",
+        "role": "development"
+      },
+      {
+        "fixture": "design_000_seed_001",
+        "manifest": "experiments/pipeline_v0.4.1/resolution_validation/design_000/seed_001/1024/manifest.json",
+        "manifest_sha256": "f89d24dd5fccd6035019128356582159d1af97ab95a3c946879f02cc81343157",
+        "npy_sha256": "f4cf59d92239219b87ceb1e53742d1d34bda9bcadf0dc79456ad348d05e572be",
+        "role": "holdout"
+      },
+      {
+        "fixture": "design_001_seed_000",
+        "manifest": "experiments/pipeline_v0.4.1/resolution_validation/design_001/seed_000/1024/manifest.json",
+        "manifest_sha256": "1de3a8811b7dedac0ebfe9c3a76b5706361ad943ada6e72f6863f128064478bf",
+        "npy_sha256": "12f8b607cb9360f1be054111b4b3dba69bbe841bc8b4ad1192872b7f5e12caad",
+        "role": "development"
+      },
+      {
+        "fixture": "design_001_seed_001",
+        "manifest": "experiments/pipeline_v0.4.1/resolution_validation/design_001/seed_001/1024/manifest.json",
+        "manifest_sha256": "6a273e8ed9e1a57967aa8be78d2698b66c11310ecb8dfa3091f1366794487515",
+        "npy_sha256": "f41d3f0c166006e181e5c4e313979c09ed3a46c762ffae58c57648860a9e22fb",
+        "role": "holdout"
+      },
+      {
+        "fixture": "design_002_seed_000",
+        "manifest": "experiments/pipeline_v0.4.1/resolution_validation/design_002/seed_000/1024/manifest.json",
+        "manifest_sha256": "faa0a1ad181ecd5da5728782734ae6e329fa2ca7a26825f8ee98d0fdd0a83b70",
+        "npy_sha256": "8afe46c1523a68dc0ef2250fb3d942cbe4fd5be237871278bb557f56baaf8aaf",
+        "role": "development"
+      },
+      {
+        "fixture": "design_002_seed_001",
+        "manifest": "experiments/pipeline_v0.4.1/resolution_validation/design_002/seed_001/1024/manifest.json",
+        "manifest_sha256": "a39816dc4101017abf860c23290a178df1ff5674cc69ae0610d963469eb8332b",
+        "npy_sha256": "bd25aec1f941e5c1c60a97a996b63d4a116e0e1e026fcbba79449439e95cbca7",
+        "role": "holdout"
+      },
+      {
+        "fixture": "design_005_seed_000",
+        "manifest": "experiments/pipeline_v0.4.1/resolution_validation/design_005/seed_000/1024/manifest.json",
+        "manifest_sha256": "dc92ed366aca682989338cab4011e7a09a03e541a47e336a13443810ab89d9e9",
+        "npy_sha256": "a28e79f35b39d1e3d71703d7fac991e9639ce86e14416cbb306067bbb96a0560",
+        "role": "development"
+      },
+      {
+        "fixture": "design_005_seed_001",
+        "manifest": "experiments/pipeline_v0.4.1/resolution_validation/design_005/seed_001/1024/manifest.json",
+        "manifest_sha256": "c14e470972c7bf677369c1d88425c633042e7c94be80460b4d582cb19145f177",
+        "npy_sha256": "18c621ffd939a8a7a10be035483a0870f443af67d182be871de5d99178046802",
+        "role": "holdout"
+      },
+      {
+        "fixture": "design_009_seed_000",
+        "manifest": "experiments/pipeline_v0.4.1/resolution_validation/design_009/seed_000/1024/manifest.json",
+        "manifest_sha256": "4dbae4db1c80fa584454f135f4e30fa31fa7b216ab629c5b049e8ffb8e5f5f43",
+        "npy_sha256": "6cf648a6cb31971899cca5eabb444e2ce47a427006ab245dce6814b2f27b7a2b",
+        "role": "holdout"
+      },
+      {
+        "fixture": "design_009_seed_001",
+        "manifest": "experiments/pipeline_v0.4.1/resolution_validation/design_009/seed_001/1024/manifest.json",
+        "manifest_sha256": "ec700b9c18001843e178431bd4d33244d2108e329e66587a19885c3fed55a9a5",
+        "npy_sha256": "e4b28517f4147a9f5eefd045a023f8f7bf2f99c63e950d995ad9ce5bbe68faf8",
+        "role": "development"
+      }
+    ],
+    "synthetic_development_amendment": "Before all real B2 outcomes: opposing same-ring sides (cosine<=-0.5, nonadjacent) supplement index>=8 risk detection. A synthetic U-shaped exterior channel demonstrated the missing case. Acceptance budgets and reserved holdouts unchanged.",
+    "tolerances": [
+      0,
+      0.2,
+      0.35,
+      0.5,
+      0.75
+    ]
+  },
+  "cohort": [
+    {
+      "design_id": 100,
+      "fixture": "c1_design_000_seed_12031",
+      "nearest_old_normalized_distance": 0.28141613830106255,
+      "normalized_coordinates": [
+        0.4641474744318143,
+        0.6623507612082108,
+        0.6394913499870472
+      ],
+      "replicate": 0,
+      "requested": {
+        "pore_scale": 7.613457122817572,
+        "solid_fraction_target": 0.4739179243244948,
+        "strut_scale": 4.312930197067614
+      },
+      "sample_id": "c1_design_000_rep_00",
+      "seed": 12031
+    },
+    {
+      "design_id": 100,
+      "fixture": "c1_design_000_seed_12032",
+      "nearest_old_normalized_distance": 0.28141613830106255,
+      "normalized_coordinates": [
+        0.4641474744318143,
+        0.6623507612082108,
+        0.6394913499870472
+      ],
+      "replicate": 1,
+      "requested": {
+        "pore_scale": 7.613457122817572,
+        "solid_fraction_target": 0.4739179243244948,
+        "strut_scale": 4.312930197067614
+      },
+      "sample_id": "c1_design_000_rep_01",
+      "seed": 12032
+    },
+    {
+      "design_id": 101,
+      "fixture": "c1_design_001_seed_12031",
+      "nearest_old_normalized_distance": 0.24770561092083107,
+      "normalized_coordinates": [
+        0.8118496621873287,
+        0.8246521739189538,
+        0.28580138657493276
+      ],
+      "replicate": 0,
+      "requested": {
+        "pore_scale": 6.5932592838580835,
+        "solid_fraction_target": 0.5071124053412055,
+        "strut_scale": 4.513175598246722
+      },
+      "sample_id": "c1_design_001_rep_00",
+      "seed": 12031
+    },
+    {
+      "design_id": 101,
+      "fixture": "c1_design_001_seed_12032",
+      "nearest_old_normalized_distance": 0.24770561092083107,
+      "normalized_coordinates": [
+        0.8118496621873287,
+        0.8246521739189538,
+        0.28580138657493276
+      ],
+      "replicate": 1,
+      "requested": {
+        "pore_scale": 6.5932592838580835,
+        "solid_fraction_target": 0.5071124053412055,
+        "strut_scale": 4.513175598246722
+      },
+      "sample_id": "c1_design_001_rep_01",
+      "seed": 12032
+    },
+    {
+      "design_id": 102,
+      "fixture": "c1_design_002_seed_12031",
+      "nearest_old_normalized_distance": 0.1497322923127623,
+      "normalized_coordinates": [
+        0.5307270300283624,
+        0.3486096591717223,
+        0.796675344856681
+      ],
+      "replicate": 0,
+      "requested": {
+        "pore_scale": 8.066845085365358,
+        "solid_fraction_target": 0.48027415063591694,
+        "strut_scale": 3.9258404496996087
+      },
+      "sample_id": "c1_design_002_rep_00",
+      "seed": 12031
+    },
+    {
+      "design_id": 102,
+      "fixture": "c1_design_002_seed_12032",
+      "nearest_old_normalized_distance": 0.1497322923127623,
+      "normalized_coordinates": [
+        0.5307270300283624,
+        0.3486096591717223,
+        0.796675344856681
+      ],
+      "replicate": 1,
+      "requested": {
+        "pore_scale": 8.066845085365358,
+        "solid_fraction_target": 0.48027415063591694,
+        "strut_scale": 3.9258404496996087
+      },
+      "sample_id": "c1_design_002_rep_01",
+      "seed": 12032
+    },
+    {
+      "design_id": 103,
+      "fixture": "c1_design_003_seed_12031",
+      "nearest_old_normalized_distance": 0.31940680266093774,
+      "normalized_coordinates": [
+        0.04958799296583055,
+        0.2866630024637647,
+        0.051042453962986435
+      ],
+      "replicate": 0,
+      "requested": {
+        "pore_scale": 5.91611098873363,
+        "solid_fraction_target": 0.4343407018553164,
+        "strut_scale": 3.849411459236679
+      },
+      "sample_id": "c1_design_003_rep_00",
+      "seed": 12031
+    },
+    {
+      "design_id": 103,
+      "fixture": "c1_design_003_seed_12032",
+      "nearest_old_normalized_distance": 0.31940680266093774,
+      "normalized_coordinates": [
+        0.04958799296583055,
+        0.2866630024637647,
+        0.051042453962986435
+      ],
+      "replicate": 1,
+      "requested": {
+        "pore_scale": 5.91611098873363,
+        "solid_fraction_target": 0.4343407018553164,
+        "strut_scale": 3.849411459236679
+      },
+      "sample_id": "c1_design_003_rep_01",
+      "seed": 12032
+    },
+    {
+      "design_id": 104,
+      "fixture": "c1_design_004_seed_12031",
+      "nearest_old_normalized_distance": 0.2924470187165011,
+      "normalized_coordinates": [
+        0.2998208196671708,
+        0.04139454220773231,
+        0.4046361737017982
+      ],
+      "replicate": 0,
+      "requested": {
+        "pore_scale": 6.936031218493892,
+        "solid_fraction_target": 0.4582299642994632,
+        "strut_scale": 3.546802379005917
+      },
+      "sample_id": "c1_design_004_rep_00",
+      "seed": 12031
+    },
+    {
+      "design_id": 104,
+      "fixture": "c1_design_004_seed_12032",
+      "nearest_old_normalized_distance": 0.2924470187165011,
+      "normalized_coordinates": [
+        0.2998208196671708,
+        0.04139454220773231,
+        0.4046361737017982
+      ],
+      "replicate": 1,
+      "requested": {
+        "pore_scale": 6.936031218493892,
+        "solid_fraction_target": 0.4582299642994632,
+        "strut_scale": 3.546802379005917
+      },
+      "sample_id": "c1_design_004_rep_01",
+      "seed": 12032
+    },
+    {
+      "design_id": 105,
+      "fixture": "c1_design_005_seed_12031",
+      "nearest_old_normalized_distance": 0.3206447216393022,
+      "normalized_coordinates": [
+        0.9046406983990355,
+        0.8544398992280678,
+        0.9640380816938974
+      ],
+      "replicate": 0,
+      "requested": {
+        "pore_scale": 8.549593028780214,
+        "solid_fraction_target": 0.515970992944388,
+        "strut_scale": 4.54992731164904
+      },
+      "sample_id": "c1_design_005_rep_00",
+      "seed": 12031
+    },
+    {
+      "design_id": 105,
+      "fixture": "c1_design_005_seed_12032",
+      "nearest_old_normalized_distance": 0.3206447216393022,
+      "normalized_coordinates": [
+        0.9046406983990355,
+        0.8544398992280678,
+        0.9640380816938974
+      ],
+      "replicate": 1,
+      "requested": {
+        "pore_scale": 8.549593028780214,
+        "solid_fraction_target": 0.515970992944388,
+        "strut_scale": 4.54992731164904
+      },
+      "sample_id": "c1_design_005_rep_01",
+      "seed": 12032
+    }
+  ],
+  "decision": {
+    "CAD_FEM_manufacturing": "UNQUALIFIED",
+    "continuous": "Same B2 budgets; independent C serialization/topology/raster/distance checks. G1/G2/G3 actual differences separate.",
+    "feature_pass": "All synthetic/regression/independent supported cases pass B2 constraints and all required independent widths defined and no loss>1e-10. Unsupported ingress remains in denominator.",
+    "no_holdout_tuning": true,
+    "overall": "Report feature qualification separately; unresolved cumulative small-pore policy prevents unconditional scientific advancement.",
+    "production": "HOLD_UNQUALIFIED"
+  },
+  "independent_count": 60,
+  "independent_width_settings": {
+    "additional_oblique_probes": 48,
+    "angles_degrees": [
+      22.5,
+      67.5,
+      112.5,
+      157.5
+    ],
+    "old_C_axial_probes_per_phase": 96,
+    "source_selection": "Source-mask run-midpoints with fixed deterministic spread; independently measured GEOS intersections and pure-coordinate confirmation of any loss. No use in proposal acceptance.",
+    "zero_loss_allowance": 1e-10
+  },
+  "regression": "All20 original design positions0..9 \u00d7 seeds0/1, at all5 tolerances =100 configurations. Consumed evidence, never new holdouts.",
+  "sampling": {
+    "bounds": {
+      "pore_scale": [
+        5.768882040742383,
+        8.653323061113573
+      ],
+      "solid_fraction_target": [
+        0.42960662841796876,
+        0.5250747680664063
+      ],
+      "strut_scale": [
+        3.4957303237935213,
+        4.729517496897117
+      ]
+    },
+    "method": "scipy.stats.qmc.LatinHypercube",
+    "original_plan": "experiments/pipeline_v0.3/exploration_test_01/design_plan.json",
+    "original_plan_sha256": "85a19e972b0519628f44073ae76823fc9b7ca00e72de536388b573064bb6b23c",
+    "points": 6,
+    "seed": 20261021,
+    "seeds": [
+      12031,
+      12032
+    ],
+    "selection_not_conditioned_on_geometry": true
+  },
+  "schema": "young-dawgs-v0.5C.1",
+  "small_pore_policy": {
+    "B2_scope": "Per-pore0.005 from G2 to G3 only.",
+    "adopted_amendment": false,
+    "candidate_diagnostic_only": {
+      "absolute_threshold": 0.03125,
+      "rationale": "r\u00b2/2=.03125 is one contact triangle, a mathematical construction scale, not an established fidelity allowance. Never overrides identity/topology.",
+      "relative_threshold": 0.005,
+      "report_AND_and_OR": true
+    },
+    "cumulative_fidelity": "UNQUALIFIED_PENDING_SCIENTIFIC_SCALE_CRITERION",
+    "existing_A1_scope": "Global modification\u22640.0001 occupied G1 area, contact family locality/displacement/clearance, preserved counts; no cumulative per-pore0.5% requirement.",
+    "geometric_envelope": "Each incident pore loses at most m*r\u00b2/2 for m resolved isolated contacts; verify actual change and retain relative error for all sizes."
+  },
+  "tolerances": [
+    0,
+    0.2,
+    0.35,
+    0.5,
+    0.75
+  ],
+  "width_settings": {
+    "ambiguous_affected_chain": "reject_and_restore",
+    "development_revision": "Before all new holdouts: four-direction prototype conservatively rejected every D4 stair edit because diagonal source projections fold. Restrict integrated affine graph screen to native axes; complementary oblique directions remain independent validators. No tolerance/budget change; initial all-noop diagnostic retained.",
+    "directions_degrees": [
+      0,
+      90
+    ],
+    "enlarge_guards": false,
+    "method": "Local source opposing-boundary queries and event-slab affine width-loss checks at source/chord projected breakpoints; solid and bounded void corridors. No mechanical minimum-width claim.",
+    "numeric_allowance": 1e-10,
+    "qualifying_width": 16.0
+  }
+}

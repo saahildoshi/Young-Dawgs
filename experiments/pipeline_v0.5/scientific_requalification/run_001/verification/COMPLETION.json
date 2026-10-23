@@ -1,0 +1,41 @@
+{
+  "all_repeats_byte_identical": true,
+  "completed_utc": "2026-10-21T19:14:54.386848+00:00",
+  "export_implemented": false,
+  "figures": 10,
+  "historical_C_HOLD_unchanged": true,
+  "implementation_complete": true,
+  "independent_holdout_tuning": false,
+  "preservation": {
+    "modified_or_missing": [],
+    "prior_files": 5777,
+    "unchanged": 5777
+  },
+  "regression": {
+    "command": "EVALUATOR_PATH=validation/evaluators/evaluator_v1_1.py .venv-macos/bin/python -m pytest tests validation/test_evaluator.py -q --junitxml=/tmp/yd-c1-full-regression.xml",
+    "errors": 0,
+    "failures": 0,
+    "new_tests": 50,
+    "passed": 457,
+    "platform": "macOS ARM64",
+    "previous_tests": 407,
+    "seconds": 33.248,
+    "tests": 457,
+    "windows_executed": false
+  },
+  "same_platform_epsilon_050_repeats": 32,
+  "statuses": {
+    "A_source_preservation": "PASS_BYTE_IDENTICAL",
+    "B_root_cause": "PASS_REPRODUCED",
+    "C_generalized_correction": "PASS_DOCUMENTED_FAILURE_CLASS",
+    "D_synthetic_controls": "PASS_50_TARGETED_TESTS",
+    "E_regression": "PASS_TESTED_DOMAIN",
+    "F_independent_features": "PASS_TESTED_DOMAIN",
+    "G_continuous_geometry": "PASS_TESTED_BUDGETS",
+    "H_raster_morphology": "PASS_EXACT",
+    "I_small_pore_policy": "UNQUALIFIED_CUMULATIVE_FIDELITY",
+    "J_overall_scientific": "HOLD_SMALL_PORE_POLICY",
+    "K_production": "HOLD_UNQUALIFIED",
+    "L_CAD_manufacturing_FEM": "UNQUALIFIED"
+  }
+}

@@ -1,0 +1,3 @@
+# Retained development arithmetic correction
+
+All 25 development configurations completed with no internal errors. No holdouts were opened or evaluated. NumPy matrix-vector multiplication emitted divide/overflow/invalid warnings for finite, bounded coordinate arrays. An independent check of all 3710 D0 epsilon .75 proposal dot products found finite results exactly matching explicit two-component arithmetic; two emitted warnings. The final implementation uses explicit component operations, without suppressing warnings. Guards, geometric limits and holdout membership remain unchanged. Use run_002 for final repeated development and frozen holdout results. Original run_001 results and source snapshots are retained unchanged.

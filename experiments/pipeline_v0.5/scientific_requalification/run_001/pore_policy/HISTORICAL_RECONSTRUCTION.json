@@ -1,0 +1,209 @@
+{
+  "A1_scope": "Global\u22640.0001*G1 occupied area; supported local diamond r=.25; no removals of solid, valid manifold, same hole count, raster equality, displacement\u2264.25, positive clearance\u2265.25. No G1-based per-pore0.5% gate.",
+  "B2_scope": "Each pore area distortion\u22640.005 uses its G2 area for G2\u2192G3. Historical regularization is separately reported.",
+  "absolute_change": 0.03125,
+  "actual_removed_pore_footprint": [
+    {
+      "polygon": 0,
+      "role": "shell",
+      "xy": [
+        [
+          4.0,
+          551.0
+        ],
+        [
+          3.75,
+          551.0
+        ],
+        [
+          4.0,
+          551.25
+        ],
+        [
+          4.0,
+          551.0
+        ]
+      ]
+    }
+  ],
+  "candidate_perimeter": 3.853553390593274,
+  "candidate_pore_id": 1,
+  "candidate_xy": [
+    {
+      "polygon": 0,
+      "role": "shell",
+      "xy": [
+        [
+          4.0,
+          552.0
+        ],
+        [
+          3.0,
+          552.0
+        ],
+        [
+          3.0,
+          551.0
+        ],
+        [
+          3.75,
+          551.0
+        ],
+        [
+          4.0,
+          551.25
+        ],
+        [
+          4.0,
+          552.0
+        ]
+      ]
+    }
+  ],
+  "contacts": [
+    {
+      "at_domain_corner": false,
+      "blocks_manifold": true,
+      "boundary_link_degree": 4,
+      "contact_id": "contact_0000",
+      "diagonal_solid_cell_contact": true,
+      "diagonal_void_cell_contact": true,
+      "geometric_change_required": true,
+      "incident_polygons": [
+        0
+      ],
+      "incident_ring_roles": [
+        "hole",
+        "hole"
+      ],
+      "incident_rings": [
+        2,
+        3
+      ],
+      "incident_segments": [
+        5210,
+        5211,
+        5212,
+        5213
+      ],
+      "inherent_in_source": true,
+      "kind": "pore_pore_point",
+      "local_cells_NW_NE_SW_SE": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "local_positive_width_solid_connection": false,
+      "local_solid_4_components": 2,
+      "local_void_4_components": 2,
+      "local_void_8_components": 1,
+      "neighbor_solid_cells_share_edge": false,
+      "pinched_exterior_boundary": false,
+      "possible_effects": {
+        "solid_side": "adds a positive-width local solid connection and separates void closures",
+        "void_side": "may merge pores or open an exterior channel; must test topology"
+      },
+      "representation_only_resolution": false,
+      "solid_global_4_labels": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "solid_sectors": 2,
+      "source_walk_repeats_vertex": true,
+      "source_walks": [
+        2
+      ],
+      "void_connects_exterior_8": false,
+      "void_global_4_labels": [
+        0,
+        201,
+        226,
+        0
+      ],
+      "void_global_8_labels": [
+        0,
+        198,
+        198,
+        0
+      ],
+      "void_sectors": 2,
+      "xy": [
+        4.0,
+        551.0
+      ]
+    }
+  ],
+  "disposition": "Existing policy applied correctly within its geometric scope; cumulative scientific pore-fidelity policy remains UNQUALIFIED. No amendment adopted.",
+  "fixture": "design_007_seed_000",
+  "identity": {
+    "boundary_sampled_hausdorff": 0.1767766952966369,
+    "candidate_area": 0.96875,
+    "candidate_covers_source": false,
+    "candidate_ids": [
+      1
+    ],
+    "candidate_perimeter": 3.853553390593274,
+    "intersection_area": 0.96875,
+    "reciprocal_anchors": true,
+    "relative_area_distortion": 0.03125,
+    "source_area": 1.0,
+    "source_covers_candidate": true,
+    "source_id": 1,
+    "source_perimeter": 4.0,
+    "symmetric_area": 0.03125
+  },
+  "manifold_area": 0.96875,
+  "relative_change": 0.03125,
+  "source_area": 1.0,
+  "source_perimeter": 4.0,
+  "source_pore_id": 1,
+  "source_provenance": {
+    "canonical_path": "experiments/pipeline_v0.5/scientific_validation/run_001/parameter_holdouts/design_007_seed_000/native1024/microstructure.npy",
+    "canonical_sha256": "630015a3c86a29678e36784441f3f158cfcb5d1701ff1ef0f0de50306d1b1afb",
+    "paths": {
+      "exact": "experiments/pipeline_v0.5/scientific_validation/run_001/parameter_holdouts/design_007_seed_000/G1.wkb",
+      "exact_boundaries": "experiments/pipeline_v0.5/scientific_validation/run_001/parameter_holdouts/design_007_seed_000/exact_boundaries.json",
+      "input_manifest": "experiments/pipeline_v0.5/scientific_validation/run_001/parameter_holdouts/design_007_seed_000/input_manifest.json",
+      "manifold": "experiments/pipeline_v0.5/scientific_validation/run_001/parameter_holdouts/design_007_seed_000/G2.wkb",
+      "qualification": "experiments/pipeline_v0.5/scientific_validation/run_001/parameter_holdouts/design_007_seed_000/ingress_qualification.json"
+    },
+    "sha256": {
+      "exact": "275c7f28ccb9c7ad062f9921b468bcf9a6097e980a0ecef7f7e49cce6ae9b9ba",
+      "exact_boundaries": "2fddbd9915504996ca34219d3beaa49fa03866547882413aba98198b882ceb86",
+      "input_manifest": "63ab453f26120a6c122db4a7cbbecbb11b12656166e300f10c777ffce6b99245",
+      "manifold": "597ce6f1fd26f6f088763ace3105fbdea52a1d3510532c445ab68b7275cba68b",
+      "qualification": "65ec088ed620f22dbfa0878f2544989830a7e4151fd696a900ee27e1ef6d7e13"
+    }
+  },
+  "source_xy": [
+    {
+      "polygon": 0,
+      "role": "shell",
+      "xy": [
+        [
+          3.0,
+          551.0
+        ],
+        [
+          3.0,
+          552.0
+        ],
+        [
+          4.0,
+          552.0
+        ],
+        [
+          4.0,
+          551.0
+        ],
+        [
+          3.0,
+          551.0
+        ]
+      ]
+    }
+  ]
+}

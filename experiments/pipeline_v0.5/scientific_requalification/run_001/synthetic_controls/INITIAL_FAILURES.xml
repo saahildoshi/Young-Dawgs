@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="45" time="0.932" timestamp="2026-10-21T14:18:52.743659-04:00" hostname="s172-20-95-h6.paws.uga.edu"><testcase classname="tests.test_feature_protection_v2" name="test_generalized_translated_narrowing[origin0]" time="0.005" /><testcase classname="tests.test_feature_protection_v2" name="test_generalized_translated_narrowing[origin1]" time="0.001" /><testcase classname="tests.test_feature_protection_v2" name="test_generalized_translated_narrowing[origin2]" time="0.001" /><testcase classname="tests.test_feature_protection_v2" name="test_wide_safe_proposal_accepted" time="0.001" /><testcase classname="tests.test_feature_protection_v2" name="test_straight_uniform_strut_no_change" time="0.000" /><testcase classname="tests.test_feature_protection_v2" name="test_curved_uniform_corridor_control" time="0.001" /><testcase classname="tests.test_feature_protection_v2" name="test_tapered_strut_narrowing" time="0.001" /><testcase classname="tests.test_feature_protection_v2" name="test_narrow_neck_width_horizon[2.0]" time="0.001" /><testcase classname="tests.test_feature_protection_v2" name="test_narrow_neck_width_horizon[6.0]" time="0.001" /><testcase classname="tests.test_feature_protection_v2" name="test_narrow_neck_width_horizon[10.0]" time="0.001" /><testcase classname="tests.test_feature_protection_v2" name="test_narrow_neck_width_horizon[15.0]" time="0.001" /><testcase classname="tests.test_feature_protection_v2" name="test_wide_neck_not_blanket_frozen" time="0.001" /><testcase classname="tests.test_feature_protection_v2" name="test_angled_corridor_and_nonparallel_boundaries[20.0]" time="0.001"><failure message="StopIteration">angle = 20.0
+
+    @pytest.mark.parametrize('angle',[20.,45.,70.,110.])
+    def test_angled_corridor_and_nonparallel_boundaries(angle):
+        g,c=stair(6.);g=rotate(g,angle,origin=(0,0));rad=math.radians(angle);d=np.array([[math.cos(rad),-math.sin(rad)],[math.sin(rad),math.cos(rad)]]);c=c@d.T
+&gt;       assert not evaluate(g,c)['passed']
+
+tests/test_feature_protection_v2.py:70: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+g = &lt;POLYGON ((0 0, 120.281 43.779, 118.314 49.182, 73.209 32.765, 58.174 27.293...&gt;
+chain = array([[43.05312494, 22.0551226 ],
+       [58.08820687, 27.5274449 ],
+       [58.17371191, 27.29252174],
+       [73.20879384, 32.76484404]])
+settings = {'directions_degrees': [0, 90], 'qualifying_width': 16.0, 'numeric_allowance': 1e-10}
+
+    def evaluate(g,chain,settings=SETTINGS):
+        model=BoundaryModel(g);xy=model.xy[0];ids=[]
+&gt;       for p in chain:ids.append(next(i for i,x in enumerate(xy) if np.array_equal(p,x)))
+E       StopIteration
+
+tests/test_feature_protection_v2.py:29: StopIteration</failure></testcase><testcase classname="tests.test_feature_protection_v2" name="test_angled_corridor_and_nonparallel_boundaries[45.0]" time="0.001" /><testcase classname="tests.test_feature_protection_v2" name="test_angled_corridor_and_nonparallel_boundaries[70.0]" time="0.001" /><testcase classname="tests.test_feature_protection_v2" name="test_angled_corridor_and_nonparallel_boundaries[110.0]" time="0.000"><failure message="StopIteration">angle = 110.0
+
+    @pytest.mark.parametrize('angle',[20.,45.,70.,110.])
+    def test_angled_corridor_and_nonparallel_boundaries(angle):
+        g,c=stair(6.);g=rotate(g,angle,origin=(0,0));rad=math.radians(angle);d=np.array([[math.cos(rad),-math.sin(rad)],[math.sin(rad),math.cos(rad)]]);c=c@d.T
+&gt;       assert not evaluate(g,c)['passed']
+
+tests/test_feature_protection_v2.py:70: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+g = &lt;POLYGON ((0 0, -43.779 120.281, -49.182 118.314, -32.765 73.209, -27.293 58...&gt;
+chain = array([[-22.0551226 ,  43.05312494],
+       [-27.5274449 ,  58.08820687],
+       [-27.29252174,  58.17371191],
+       [-32.76484404,  73.20879384]])
+settings = {'directions_degrees': [0, 90], 'qualifying_width': 16.0, 'numeric_allowance': 1e-10}
+
+    def evaluate(g,chain,settings=SETTINGS):
+        model=BoundaryModel(g);xy=model.xy[0];ids=[]
+&gt;       for p in chain:ids.append(next(i for i,x in enumerate(xy) if np.array_equal(p,x)))
+E       StopIteration
+
+tests/test_feature_protection_v2.py:29: StopIteration</failure></testcase><testcase classname="tests.test_feature_protection_v2" name="test_high_curvature_uncertain_preserved" time="0.001" /><testcase classname="tests.test_feature_protection_v2" name="test_junction_with_multiple_struts" time="0.001" /><testcase classname="tests.test_feature_protection_v2" name="test_void_corridor_narrowing_is_distinct" time="0.001" /><testcase classname="tests.test_feature_protection_v2" name="test_zero_xor_real_subpixel_width_loss" time="0.006" /><testcase classname="tests.test_feature_protection_v2" name="test_global_budget_can_pass_while_local_width_fails" time="0.001" /><testcase classname="tests.test_feature_protection_v2" name="test_topology_pass_does_not_prove_width" time="0.001" /><testcase classname="tests.test_feature_protection_v2" name="test_affine_increase_allowed_unchanged_allowed_loss_rejected" time="0.000" /><testcase classname="tests.test_feature_protection_v2" name="test_adaptive_event_limit_detects_unsampled_end_loss" time="0.000" /><testcase classname="tests.test_feature_protection_v2" name="test_ambiguous_projection_rejects" time="0.000" /><testcase classname="tests.test_feature_protection_v2" name="test_multiple_changes_require_global_validation" time="0.000" /><testcase classname="tests.test_feature_protection_v2" name="test_repeated_gate_deterministic_except_time" time="0.001" /><testcase classname="tests.test_feature_protection_v2" name="test_numeric_allowance_does_not_hide_original_failure" time="0.000" /><testcase classname="tests.test_feature_protection_v2" name="test_same_width_response_not_assumed_monotonic" time="0.000" /><testcase classname="tests.test_feature_protection_v2" name="test_original_failure_saved_coordinates_and_versioned_gate" time="0.034" /><testcase classname="tests.test_feature_protection_v2" name="test_pore_regularization_absolute_relative_scale[1]" time="0.192" /><testcase classname="tests.test_feature_protection_v2" name="test_pore_regularization_absolute_relative_scale[2]" time="0.022" /><testcase classname="tests.test_feature_protection_v2" name="test_pore_regularization_absolute_relative_scale[100]" time="0.022" /><testcase classname="tests.test_feature_protection_v2" name="test_unaffected_pore_zero_change" time="0.000" /><testcase classname="tests.test_feature_protection_v2" name="test_shape_change_equal_area_not_hidden" time="0.000" /><testcase classname="tests.test_feature_protection_v2" name="test_pore_topology_never_overridden_by_area[old0-new0]" time="0.000" /><testcase classname="tests.test_feature_protection_v2" name="test_pore_topology_never_overridden_by_area[old1-new1]" time="0.000" /><testcase classname="tests.test_feature_protection_v2" name="test_pore_topology_never_overridden_by_area[old2-new2]" time="0.000" /><testcase classname="tests.test_feature_protection_v2" name="test_pore_topology_never_overridden_by_area[old3-new3]" time="0.000" /><testcase classname="tests.test_feature_protection_v2" name="test_pore_to_exterior_channel_topology_failure" time="0.000" /><testcase classname="tests.test_feature_protection_v2" name="test_alternative_pore_policy_detection_matrix[0.01-0.001-True-True]" time="0.000" /><testcase classname="tests.test_feature_protection_v2" name="test_alternative_pore_policy_detection_matrix[0.04-0.001-False-True]" time="0.000" /><testcase classname="tests.test_feature_protection_v2" name="test_alternative_pore_policy_detection_matrix[0.01-0.01-True-False]" time="0.000" /><testcase classname="tests.test_feature_protection_v2" name="test_alternative_pore_policy_detection_matrix[0.04-0.01-False-False]" time="0.000" /><testcase classname="tests.test_feature_protection_v2" name="test_small_pore_relative_criterion_not_redefined" time="0.000" /></testsuite></testsuites>

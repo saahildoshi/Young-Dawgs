@@ -1,0 +1,39 @@
+{
+  "completed_utc": "2026-10-21T03:33:16.724223+00:00",
+  "export_implemented": false,
+  "figure_QA": "FIGURE_QA.json",
+  "implementation_complete": true,
+  "preservation": {
+    "modified_or_missing": [],
+    "prior_files": 4657,
+    "scope": "Every pre-C file outside the historical inventory exclusions, including all generators/evaluator/experiments/acceptance documents.",
+    "unchanged": 4657
+  },
+  "regression": {
+    "command": "EVALUATOR_PATH=validation/evaluators/evaluator_v1_1.py .venv-macos/bin/python -m pytest tests validation/test_evaluator.py -q --junitxml=/tmp/yd-v05c-regression.xml",
+    "errors": 0,
+    "failures": 0,
+    "new_C_tests": 44,
+    "passed": 407,
+    "platform": "macOS ARM64",
+    "previous_tests": 363,
+    "seconds": 34.342,
+    "tests": 407,
+    "windows_executed": false
+  },
+  "scientific_acceptance": "HOLD",
+  "statuses": {
+    "A_source_integrity": "PASS_AUTHENTICATED",
+    "B_exact_fidelity": "PASS_TESTED_DOMAIN",
+    "C_manifold_qualification": "PASS_TESTED_DOMAIN",
+    "D_simplification_validity": "PASS_TESTED_DOMAIN",
+    "E_independent_continuous_fidelity": "PASS_TESTED_SCREENING_DOMAIN",
+    "F_raster_morphology": "PASS_EXACT_RECONSTRUCTION",
+    "G_feature_preservation": "HOLD_BROADER_SCREEN_FLAGS",
+    "H_new_parameter_generalization": "HOLD",
+    "I_scientific_advancement": "HOLD",
+    "J_production_policy": "HOLD_UNQUALIFIED",
+    "K_CAD_manufacturing": "UNQUALIFIED"
+  },
+  "supplemental_checks": "SUPPLEMENTAL_CHECKS.json"
+}

@@ -1,0 +1,19 @@
+{
+  "initial_synthetic_run": {
+    "passed_before_stop": 34,
+    "failures_before_maxfail_stop": 5,
+    "issues": [
+      "Missing opposing same-ring boundary risk for short U-shaped exterior channel.",
+      "Qualification test harness used 32-grid masks outside the unchanged native evaluator's supported 256..4096 range."
+    ]
+  },
+  "corrections": [
+    "Added opposing-direction nonadjacent boundary risk before real development or holdout results.",
+    "Padded native-interface qualification tests to 256; did not modify evaluator or old tests."
+  ],
+  "final_synthetic_count": 46,
+  "failed": 0,
+  "terminal_seconds": 1.3,
+  "budgets_unchanged": true,
+  "holdouts_not_consumed": true
+}
