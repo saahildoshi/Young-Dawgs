@@ -1,0 +1,310 @@
+{
+  "contact_count": 0,
+  "contact_detection_classification_profile": {
+    "memory_definition": "Peak tracked Python/NumPy allocations for this stage; untracked GEOS-native memory and prior allocations are excluded.",
+    "peak_traced_bytes": 33849302,
+    "seconds": 0.7450243330094963
+  },
+  "contact_types": {},
+  "exact_profile": {
+    "memory_definition": "Peak tracked Python/NumPy allocations for this stage; untracked GEOS-native memory and prior allocations are excluded.",
+    "peak_traced_bytes": 73961085,
+    "seconds": 2.361819999990985
+  },
+  "exact_uninstrumented_repeat_seconds": 1.0322868750663474,
+  "fixture": "design_009_seed_001",
+  "input_manifest": {
+    "canonical_input_modified": false,
+    "coordinates": {
+      "cell_mapping": "(row,column) -> [column,column+1] x [row,row+1]",
+      "center_mapping": "(column+0.5,row+0.5)",
+      "display_transform": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "domain": [
+        0,
+        1024,
+        0,
+        1024
+      ],
+      "physical_scale": null,
+      "solid": 1,
+      "units": "raster_cell",
+      "void": 0,
+      "x_axis": "right",
+      "y_axis": "down"
+    },
+    "design": 9,
+    "evaluator_sha256": "5f28ed1f77f95fd23a517cd223bbe6c6b5edc7d5508093f36f523b2d4f85cebb",
+    "exact_document_sha256": "a48b74aeffdab897d6b504cebb8f90a827a0b6ed5ad29883a7e0b8a41babb37c",
+    "exact_polygon_sha256": "4700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1",
+    "generator_sha256": "dcc4529aab090cb1ff2fe9bfd1b0325ca3b1f00724743aeefe9a9c6aea78239b",
+    "generator_version": "0.4.1",
+    "historical_exact_reference": {
+      "document": "experiments/pipeline_v0.5/baseline_vectorization/run_003/fixture_B_design009_seed001/exact_boundaries.json",
+      "document_sha256": "a48b74aeffdab897d6b504cebb8f90a827a0b6ed5ad29883a7e0b8a41babb37c",
+      "wkb_sha256": "4700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1"
+    },
+    "input_png_sha256": "5c01b6c4abe74840d0de3516591bfd72b233c8b2816f67e0f51172e9edc057d9",
+    "input_sha256": "e4b28517f4147a9f5eefd045a023f8f7bf2f99c63e950d995ad9ce5bbe68faf8",
+    "manifest_sha256": "ec700b9c18001843e178431bd4d33244d2108e329e66587a19885c3fed55a9a5",
+    "pixel_sha256": "a29ab50312d0181c6bce0aa1fa644da953fdb467f42acd945d79507c3d28d145",
+    "requested": {
+      "pore_scale": 6.148748802851207,
+      "solid_fraction_target": 0.47692251183925727,
+      "strut_scale": 4.340345305340277
+    },
+    "saved_topology_repair": {
+      "added_area_fraction": 1.430511474609375e-05,
+      "added_pixels": 15,
+      "bridge_width_normalized": 0.00784313725490196,
+      "bridges": [
+        {
+          "added_pixels": 15,
+          "centerline_length_normalized": 0.002932551319648094,
+          "end_normalized_yx": [
+            0.0,
+            0.011730205278592375
+          ],
+          "end_yx": [
+            0,
+            12
+          ],
+          "start_normalized_yx": [
+            0.0,
+            0.008797653958944282
+          ],
+          "start_yx": [
+            0,
+            9
+          ]
+        }
+      ],
+      "candidate_index": 0,
+      "components_after": 1,
+      "components_before": 2,
+      "max_added_area_fraction": 0.001,
+      "max_length_normalized": 0.01568627450980392,
+      "policy": "nearest-point normalized capsule; addition only",
+      "raw_pixel_sha256": "b7402470ec587fdc217f83f8429941bcdd1533d50c8d54cd0a6af5179edf5313",
+      "removed_pixels": 0,
+      "repaired_pixel_sha256": "a29ab50312d0181c6bce0aa1fa644da953fdb467f42acd945d79507c3d28d145"
+    },
+    "seed": 1,
+    "selection_reason": "saved repaired-boundary stress fixture; no repair recomputation",
+    "source_directory": "experiments/pipeline_v0.4.1/resolution_validation/design_009/seed_001/1024",
+    "state": "canonical_binary"
+  },
+  "physical_feature_qualification": "UNQUALIFIED",
+  "policies": [
+    {
+      "accepted": true,
+      "contact_classification": "PASS",
+      "exact_fidelity": "PASS",
+      "failed_gates": [],
+      "frozen_morphology_status": "PASS",
+      "geometric_modification_budget": "PASS",
+      "manifold_candidate_validity": "PASS",
+      "metrics": {
+        "absolute_area_difference": 0.0,
+        "added_solid_area": 0.0,
+        "added_solid_regions": 0,
+        "boundary_hausdorff_distance": 0.0,
+        "boundary_outside_supports_unchanged": true,
+        "candidate_area": 500104.0,
+        "changes_confined_to_supports": true,
+        "continuous_boundary_contact_topology_changed": false,
+        "continuous_equivalent": true,
+        "continuous_topology_note": "Solid-side separates touching void closures and replaces a point-only local solid link by positive width; void-side may merge pore interiors. Digital topology is evaluated separately.",
+        "features": [],
+        "geometry_after": {
+          "holes": 412,
+          "solid_polygon_components": 1,
+          "vertices": 47382
+        },
+        "geometry_before": {
+          "holes": 412,
+          "solid_polygon_components": 1,
+          "vertices": 47382
+        },
+        "hausdorff_certified_for_registered_family": true,
+        "hausdorff_method": "Actual local boundary comparisons with densify=0.5, plus isolated V/chamfer analytic maximum and unchanged-boundary check outside supports; no global discrete-distance claim.",
+        "maximum_local_boundary_displacement": 0.0,
+        "modified_contact_neighborhoods": 0,
+        "original_area": 500104.0,
+        "relative_area_difference": 0.0,
+        "removed_solid_area": 0.0,
+        "removed_solid_regions": 0,
+        "signed_area_change": 0.0,
+        "symmetric_difference_area": 0.0,
+        "symmetric_difference_fraction": 0.0
+      },
+      "policy": "preserve_exact",
+      "profiling": {
+        "memory_definition": "Peak tracked Python/NumPy allocations for this stage; untracked GEOS-native memory and prior allocations are excluded.",
+        "peak_traced_bytes": 32100989,
+        "seconds": 1.6775401249760762
+      },
+      "raster_morphology_preservation": "PASS",
+      "status": "exact_manifold"
+    },
+    {
+      "accepted": true,
+      "contact_classification": "PASS",
+      "exact_fidelity": "PASS",
+      "failed_gates": [],
+      "frozen_morphology_status": "PASS",
+      "geometric_modification_budget": "PASS",
+      "manifold_candidate_validity": "PASS",
+      "metrics": {
+        "absolute_area_difference": 0.0,
+        "added_solid_area": 0.0,
+        "added_solid_regions": 0,
+        "boundary_hausdorff_distance": 0.0,
+        "boundary_outside_supports_unchanged": true,
+        "candidate_area": 500104.0,
+        "changes_confined_to_supports": true,
+        "continuous_boundary_contact_topology_changed": false,
+        "continuous_equivalent": true,
+        "continuous_topology_note": "Solid-side separates touching void closures and replaces a point-only local solid link by positive width; void-side may merge pore interiors. Digital topology is evaluated separately.",
+        "features": [],
+        "geometry_after": {
+          "holes": 412,
+          "solid_polygon_components": 1,
+          "vertices": 47382
+        },
+        "geometry_before": {
+          "holes": 412,
+          "solid_polygon_components": 1,
+          "vertices": 47382
+        },
+        "hausdorff_certified_for_registered_family": true,
+        "hausdorff_method": "Actual local boundary comparisons with densify=0.5, plus isolated V/chamfer analytic maximum and unchanged-boundary check outside supports; no global discrete-distance claim.",
+        "maximum_local_boundary_displacement": 0.0,
+        "modified_contact_neighborhoods": 0,
+        "original_area": 500104.0,
+        "relative_area_difference": 0.0,
+        "removed_solid_area": 0.0,
+        "removed_solid_regions": 0,
+        "signed_area_change": 0.0,
+        "symmetric_difference_area": 0.0,
+        "symmetric_difference_fraction": 0.0
+      },
+      "policy": "solid_separate_pores",
+      "profiling": {
+        "memory_definition": "Peak tracked Python/NumPy allocations for this stage; untracked GEOS-native memory and prior allocations are excluded.",
+        "peak_traced_bytes": 32100877,
+        "seconds": 1.6490787910297513
+      },
+      "raster_morphology_preservation": "PASS",
+      "status": "ACCEPT_NOOP"
+    },
+    {
+      "accepted": true,
+      "contact_classification": "PASS",
+      "exact_fidelity": "PASS",
+      "failed_gates": [],
+      "frozen_morphology_status": "PASS",
+      "geometric_modification_budget": "PASS",
+      "manifold_candidate_validity": "PASS",
+      "metrics": {
+        "absolute_area_difference": 0.0,
+        "added_solid_area": 0.0,
+        "added_solid_regions": 0,
+        "boundary_hausdorff_distance": 0.0,
+        "boundary_outside_supports_unchanged": true,
+        "candidate_area": 500104.0,
+        "changes_confined_to_supports": true,
+        "continuous_boundary_contact_topology_changed": false,
+        "continuous_equivalent": true,
+        "continuous_topology_note": "Solid-side separates touching void closures and replaces a point-only local solid link by positive width; void-side may merge pore interiors. Digital topology is evaluated separately.",
+        "features": [],
+        "geometry_after": {
+          "holes": 412,
+          "solid_polygon_components": 1,
+          "vertices": 47382
+        },
+        "geometry_before": {
+          "holes": 412,
+          "solid_polygon_components": 1,
+          "vertices": 47382
+        },
+        "hausdorff_certified_for_registered_family": true,
+        "hausdorff_method": "Actual local boundary comparisons with densify=0.5, plus isolated V/chamfer analytic maximum and unchanged-boundary check outside supports; no global discrete-distance claim.",
+        "maximum_local_boundary_displacement": 0.0,
+        "modified_contact_neighborhoods": 0,
+        "original_area": 500104.0,
+        "relative_area_difference": 0.0,
+        "removed_solid_area": 0.0,
+        "removed_solid_regions": 0,
+        "signed_area_change": 0.0,
+        "symmetric_difference_area": 0.0,
+        "symmetric_difference_fraction": 0.0
+      },
+      "policy": "solid_separate_contacts",
+      "profiling": {
+        "memory_definition": "Peak tracked Python/NumPy allocations for this stage; untracked GEOS-native memory and prior allocations are excluded.",
+        "peak_traced_bytes": 32100989,
+        "seconds": 1.6488070000195876
+      },
+      "raster_morphology_preservation": "PASS",
+      "status": "ACCEPT_NOOP"
+    },
+    {
+      "accepted": true,
+      "contact_classification": "PASS",
+      "exact_fidelity": "PASS",
+      "failed_gates": [],
+      "frozen_morphology_status": "PASS",
+      "geometric_modification_budget": "PASS",
+      "manifold_candidate_validity": "PASS",
+      "metrics": {
+        "absolute_area_difference": 0.0,
+        "added_solid_area": 0.0,
+        "added_solid_regions": 0,
+        "boundary_hausdorff_distance": 0.0,
+        "boundary_outside_supports_unchanged": true,
+        "candidate_area": 500104.0,
+        "changes_confined_to_supports": true,
+        "continuous_boundary_contact_topology_changed": false,
+        "continuous_equivalent": true,
+        "continuous_topology_note": "Solid-side separates touching void closures and replaces a point-only local solid link by positive width; void-side may merge pore interiors. Digital topology is evaluated separately.",
+        "features": [],
+        "geometry_after": {
+          "holes": 412,
+          "solid_polygon_components": 1,
+          "vertices": 47382
+        },
+        "geometry_before": {
+          "holes": 412,
+          "solid_polygon_components": 1,
+          "vertices": 47382
+        },
+        "hausdorff_certified_for_registered_family": true,
+        "hausdorff_method": "Actual local boundary comparisons with densify=0.5, plus isolated V/chamfer analytic maximum and unchanged-boundary check outside supports; no global discrete-distance claim.",
+        "maximum_local_boundary_displacement": 0.0,
+        "modified_contact_neighborhoods": 0,
+        "original_area": 500104.0,
+        "relative_area_difference": 0.0,
+        "removed_solid_area": 0.0,
+        "removed_solid_regions": 0,
+        "signed_area_change": 0.0,
+        "symmetric_difference_area": 0.0,
+        "symmetric_difference_fraction": 0.0
+      },
+      "policy": "void_side_probe",
+      "profiling": {
+        "memory_definition": "Peak tracked Python/NumPy allocations for this stage; untracked GEOS-native memory and prior allocations are excluded.",
+        "peak_traced_bytes": 32100877,
+        "seconds": 1.67434820800554
+      },
+      "raster_morphology_preservation": "PASS",
+      "status": "ACCEPT_NOOP"
+    }
+  ]
+}

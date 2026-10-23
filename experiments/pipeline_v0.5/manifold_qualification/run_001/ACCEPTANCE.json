@@ -1,0 +1,33 @@
+{
+  "status": "AMENDED_PASS_TESTED_DOMAIN_OPTIONAL_CANDIDATE_WORKFLOW",
+  "stage": "v0.5A.1",
+  "selected_policy": "solid_separate_contacts",
+  "required_fixtures": 5,
+  "exact_geometry_fidelity": "PASS",
+  "contact_classification": "PASS",
+  "manifold_candidate_validity": "PASS",
+  "geometric_modification_budget": "PASS",
+  "raster_morphology_preservation": "PASS",
+  "physical_feature_qualification": "UNQUALIFIED",
+  "mesh_quality": "UNQUALIFIED",
+  "mechanical_validation": "UNQUALIFIED",
+  "manufacturability_validation": "UNQUALIFIED",
+  "software_tests": {
+    "tests": 287,
+    "failures": 0,
+    "errors": 0,
+    "seconds": 31.995,
+    "command": "EVALUATOR_PATH=validation/evaluators/evaluator_v1_1.py python -m pytest tests validation/test_evaluator.py -q",
+    "platform": "macOS",
+    "windows_verified": false
+  },
+  "historical_files_preserved": true,
+  "historical_exact_v0_5A": "HOLD_UNCHANGED",
+  "historical_v0_4_2_p10": "FAILED_UNCHANGED",
+  "v0_4_3": "AMENDED_PASS_TESTED_DOMAIN_UNCHANGED",
+  "review_status": "AWAITING_SCIENTIFIC_REVIEW",
+  "v0_5B_started": false,
+  "scope": "Five registered 1024 fixtures; supported same-polygon integer-checkerboard hole-hole and hole-shell contacts only. Continuous geometry is changed explicitly; this is not universal CAD or physical qualification.",
+  "protocol_sha256": "ed7d0c9c28ae347ae2f7fca674c808bab89249b5bbb5397bfa7e795c60dc534f",
+  "source_hash_mismatches": []
+}

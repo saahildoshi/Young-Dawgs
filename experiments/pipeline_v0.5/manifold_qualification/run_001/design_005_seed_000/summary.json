@@ -1,0 +1,645 @@
+{
+  "contact_count": 9,
+  "contact_detection_classification_profile": {
+    "memory_definition": "Peak tracked Python/NumPy allocations for this stage; untracked GEOS-native memory and prior allocations are excluded.",
+    "peak_traced_bytes": 27652600,
+    "seconds": 0.6297151250764728
+  },
+  "contact_types": {
+    "pore_pore_point": 9
+  },
+  "exact_profile": {
+    "memory_definition": "Peak tracked Python/NumPy allocations for this stage; untracked GEOS-native memory and prior allocations are excluded.",
+    "peak_traced_bytes": 60243137,
+    "seconds": 1.9605102089699358
+  },
+  "exact_uninstrumented_repeat_seconds": 0.8728273749584332,
+  "fixture": "design_005_seed_000",
+  "input_manifest": {
+    "canonical_input_modified": false,
+    "coordinates": {
+      "cell_mapping": "(row,column) -> [column,column+1] x [row,row+1]",
+      "center_mapping": "(column+0.5,row+0.5)",
+      "display_transform": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "domain": [
+        0,
+        1024,
+        0,
+        1024
+      ],
+      "physical_scale": null,
+      "solid": 1,
+      "units": "raster_cell",
+      "void": 0,
+      "x_axis": "right",
+      "y_axis": "down"
+    },
+    "design": 5,
+    "evaluator_sha256": "5f28ed1f77f95fd23a517cd223bbe6c6b5edc7d5508093f36f523b2d4f85cebb",
+    "exact_document_sha256": "27de1b489b6fce058ff239598ef1915b80499d03aba6e055a7f4550f8b4b8520",
+    "exact_polygon_sha256": "65f83c8e721aa969e6700eabb3ff2b66bd24cc3da837d119f4b1fe68bdcd05eb",
+    "generator_sha256": "dcc4529aab090cb1ff2fe9bfd1b0325ca3b1f00724743aeefe9a9c6aea78239b",
+    "generator_version": "0.4.1",
+    "historical_exact_reference": null,
+    "input_png_sha256": "9662bd5736397d7730e06c9e592556f3afc4011e0fc7d173b4ca551a0464e5ea",
+    "input_sha256": "a28e79f35b39d1e3d71703d7fac991e9639ce86e14416cbb306067bbb96a0560",
+    "manifest_sha256": "dc92ed366aca682989338cab4011e7a09a03e541a47e336a13443810ab89d9e9",
+    "pixel_sha256": "7fb0f88bf458eb6c46f47249b00a8de34f039fec67cfb32bef204bf91de831f6",
+    "requested": {
+      "pore_scale": 7.7695830438707745,
+      "solid_fraction_target": 0.5038117343342307,
+      "strut_scale": 4.167578667993826
+    },
+    "saved_topology_repair": {
+      "added_area_fraction": 0.0,
+      "added_pixels": 0,
+      "bridge_width_normalized": 0.00784313725490196,
+      "bridges": [],
+      "candidate_index": 1,
+      "components_after": 1,
+      "components_before": 1,
+      "max_added_area_fraction": 0.001,
+      "max_length_normalized": 0.01568627450980392,
+      "policy": "nearest-point normalized capsule; addition only",
+      "raw_pixel_sha256": "7fb0f88bf458eb6c46f47249b00a8de34f039fec67cfb32bef204bf91de831f6",
+      "removed_pixels": 0,
+      "repaired_pixel_sha256": "7fb0f88bf458eb6c46f47249b00a8de34f039fec67cfb32bef204bf91de831f6"
+    },
+    "seed": 0,
+    "selection_reason": "registered envelope-center design from prior convergence studies",
+    "source_directory": "experiments/pipeline_v0.4.1/resolution_validation/design_005/seed_000/1024",
+    "state": "canonical_binary"
+  },
+  "physical_feature_qualification": "UNQUALIFIED",
+  "policies": [
+    {
+      "accepted": false,
+      "contact_classification": "PASS",
+      "exact_fidelity": "PASS",
+      "failed_gates": [
+        "manifold_boundary"
+      ],
+      "frozen_morphology_status": "PASS",
+      "geometric_modification_budget": "PASS",
+      "manifold_candidate_validity": "FAIL",
+      "metrics": {
+        "absolute_area_difference": 0.0,
+        "added_solid_area": 0.0,
+        "added_solid_regions": 0,
+        "boundary_hausdorff_distance": 0.0,
+        "boundary_outside_supports_unchanged": true,
+        "candidate_area": 528285.0,
+        "changes_confined_to_supports": true,
+        "continuous_boundary_contact_topology_changed": false,
+        "continuous_equivalent": true,
+        "continuous_topology_note": "Solid-side separates touching void closures and replaces a point-only local solid link by positive width; void-side may merge pore interiors. Digital topology is evaluated separately.",
+        "features": [],
+        "geometry_after": {
+          "holes": 321,
+          "solid_polygon_components": 1,
+          "vertices": 39524
+        },
+        "geometry_before": {
+          "holes": 321,
+          "solid_polygon_components": 1,
+          "vertices": 39524
+        },
+        "hausdorff_certified_for_registered_family": true,
+        "hausdorff_method": "Actual local boundary comparisons with densify=0.5, plus isolated V/chamfer analytic maximum and unchanged-boundary check outside supports; no global discrete-distance claim.",
+        "maximum_local_boundary_displacement": 0.0,
+        "modified_contact_neighborhoods": 0,
+        "original_area": 528285.0,
+        "relative_area_difference": 0.0,
+        "removed_solid_area": 0.0,
+        "removed_solid_regions": 0,
+        "signed_area_change": 0.0,
+        "symmetric_difference_area": 0.0,
+        "symmetric_difference_fraction": 0.0
+      },
+      "policy": "preserve_exact",
+      "profiling": {
+        "memory_definition": "Peak tracked Python/NumPy allocations for this stage; untracked GEOS-native memory and prior allocations are excluded.",
+        "peak_traced_bytes": 26703872,
+        "seconds": 1.4150529999751598
+      },
+      "raster_morphology_preservation": "PASS",
+      "status": "exact_nonmanifold"
+    },
+    {
+      "accepted": true,
+      "contact_classification": "PASS",
+      "exact_fidelity": "PASS",
+      "failed_gates": [],
+      "frozen_morphology_status": "PASS",
+      "geometric_modification_budget": "PASS",
+      "manifold_candidate_validity": "PASS",
+      "metrics": {
+        "absolute_area_difference": 0.5625,
+        "added_solid_area": 0.5625,
+        "added_solid_regions": 18,
+        "boundary_hausdorff_distance": 0.1767766952966369,
+        "boundary_outside_supports_unchanged": true,
+        "candidate_area": 528285.5625,
+        "changes_confined_to_supports": true,
+        "continuous_boundary_contact_topology_changed": true,
+        "continuous_equivalent": false,
+        "continuous_topology_note": "Solid-side separates touching void closures and replaces a point-only local solid link by positive width; void-side may merge pore interiors. Digital topology is evaluated separately.",
+        "features": [
+          {
+            "contact_id": "contact_0000",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": true,
+            "xy": [
+              67.0,
+              942.0
+            ]
+          },
+          {
+            "contact_id": "contact_0001",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": true,
+            "xy": [
+              194.0,
+              537.0
+            ]
+          },
+          {
+            "contact_id": "contact_0002",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": true,
+            "xy": [
+              244.0,
+              188.0
+            ]
+          },
+          {
+            "contact_id": "contact_0003",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": true,
+            "xy": [
+              354.0,
+              263.0
+            ]
+          },
+          {
+            "contact_id": "contact_0004",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": true,
+            "xy": [
+              445.0,
+              595.0
+            ]
+          },
+          {
+            "contact_id": "contact_0005",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": true,
+            "xy": [
+              564.0,
+              380.0
+            ]
+          },
+          {
+            "contact_id": "contact_0006",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": true,
+            "xy": [
+              836.0,
+              18.0
+            ]
+          },
+          {
+            "contact_id": "contact_0007",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": true,
+            "xy": [
+              931.0,
+              785.0
+            ]
+          },
+          {
+            "contact_id": "contact_0008",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": true,
+            "xy": [
+              995.0,
+              103.0
+            ]
+          }
+        ],
+        "geometry_after": {
+          "holes": 321,
+          "solid_polygon_components": 1,
+          "vertices": 39542
+        },
+        "geometry_before": {
+          "holes": 321,
+          "solid_polygon_components": 1,
+          "vertices": 39524
+        },
+        "hausdorff_certified_for_registered_family": true,
+        "hausdorff_method": "Actual local boundary comparisons with densify=0.5, plus isolated V/chamfer analytic maximum and unchanged-boundary check outside supports; no global discrete-distance claim.",
+        "maximum_local_boundary_displacement": 0.1767766952966369,
+        "modified_contact_neighborhoods": 9,
+        "original_area": 528285.0,
+        "relative_area_difference": 1.0647661773474546e-06,
+        "removed_solid_area": 0.0,
+        "removed_solid_regions": 0,
+        "signed_area_change": 0.5625,
+        "symmetric_difference_area": 0.5625,
+        "symmetric_difference_fraction": 1.0647661773474546e-06
+      },
+      "policy": "solid_separate_pores",
+      "profiling": {
+        "memory_definition": "Peak tracked Python/NumPy allocations for this stage; untracked GEOS-native memory and prior allocations are excluded.",
+        "peak_traced_bytes": 27046593,
+        "seconds": 1.4528158329194412
+      },
+      "raster_morphology_preservation": "PASS",
+      "status": "ACCEPT_GEOMETRIC_CANDIDATE"
+    },
+    {
+      "accepted": true,
+      "contact_classification": "PASS",
+      "exact_fidelity": "PASS",
+      "failed_gates": [],
+      "frozen_morphology_status": "PASS",
+      "geometric_modification_budget": "PASS",
+      "manifold_candidate_validity": "PASS",
+      "metrics": {
+        "absolute_area_difference": 0.5625,
+        "added_solid_area": 0.5625,
+        "added_solid_regions": 18,
+        "boundary_hausdorff_distance": 0.1767766952966369,
+        "boundary_outside_supports_unchanged": true,
+        "candidate_area": 528285.5625,
+        "changes_confined_to_supports": true,
+        "continuous_boundary_contact_topology_changed": true,
+        "continuous_equivalent": false,
+        "continuous_topology_note": "Solid-side separates touching void closures and replaces a point-only local solid link by positive width; void-side may merge pore interiors. Digital topology is evaluated separately.",
+        "features": [
+          {
+            "contact_id": "contact_0000",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": true,
+            "xy": [
+              67.0,
+              942.0
+            ]
+          },
+          {
+            "contact_id": "contact_0001",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": true,
+            "xy": [
+              194.0,
+              537.0
+            ]
+          },
+          {
+            "contact_id": "contact_0002",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": true,
+            "xy": [
+              244.0,
+              188.0
+            ]
+          },
+          {
+            "contact_id": "contact_0003",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": true,
+            "xy": [
+              354.0,
+              263.0
+            ]
+          },
+          {
+            "contact_id": "contact_0004",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": true,
+            "xy": [
+              445.0,
+              595.0
+            ]
+          },
+          {
+            "contact_id": "contact_0005",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": true,
+            "xy": [
+              564.0,
+              380.0
+            ]
+          },
+          {
+            "contact_id": "contact_0006",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": true,
+            "xy": [
+              836.0,
+              18.0
+            ]
+          },
+          {
+            "contact_id": "contact_0007",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": true,
+            "xy": [
+              931.0,
+              785.0
+            ]
+          },
+          {
+            "contact_id": "contact_0008",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": true,
+            "xy": [
+              995.0,
+              103.0
+            ]
+          }
+        ],
+        "geometry_after": {
+          "holes": 321,
+          "solid_polygon_components": 1,
+          "vertices": 39542
+        },
+        "geometry_before": {
+          "holes": 321,
+          "solid_polygon_components": 1,
+          "vertices": 39524
+        },
+        "hausdorff_certified_for_registered_family": true,
+        "hausdorff_method": "Actual local boundary comparisons with densify=0.5, plus isolated V/chamfer analytic maximum and unchanged-boundary check outside supports; no global discrete-distance claim.",
+        "maximum_local_boundary_displacement": 0.1767766952966369,
+        "modified_contact_neighborhoods": 9,
+        "original_area": 528285.0,
+        "relative_area_difference": 1.0647661773474546e-06,
+        "removed_solid_area": 0.0,
+        "removed_solid_regions": 0,
+        "signed_area_change": 0.5625,
+        "symmetric_difference_area": 0.5625,
+        "symmetric_difference_fraction": 1.0647661773474546e-06
+      },
+      "policy": "solid_separate_contacts",
+      "profiling": {
+        "memory_definition": "Peak tracked Python/NumPy allocations for this stage; untracked GEOS-native memory and prior allocations are excluded.",
+        "peak_traced_bytes": 27041681,
+        "seconds": 1.4274421249283478
+      },
+      "raster_morphology_preservation": "PASS",
+      "status": "ACCEPT_GEOMETRIC_CANDIDATE"
+    },
+    {
+      "accepted": false,
+      "contact_classification": "PASS",
+      "exact_fidelity": "PASS",
+      "failed_gates": [
+        "hole_count_preserved"
+      ],
+      "frozen_morphology_status": "PASS",
+      "geometric_modification_budget": "FAIL",
+      "manifold_candidate_validity": "PASS",
+      "metrics": {
+        "absolute_area_difference": 0.5625,
+        "added_solid_area": 0.0,
+        "added_solid_regions": 0,
+        "boundary_hausdorff_distance": 0.1767766952966369,
+        "boundary_outside_supports_unchanged": true,
+        "candidate_area": 528284.4375,
+        "changes_confined_to_supports": true,
+        "continuous_boundary_contact_topology_changed": true,
+        "continuous_equivalent": false,
+        "continuous_topology_note": "Solid-side separates touching void closures and replaces a point-only local solid link by positive width; void-side may merge pore interiors. Digital topology is evaluated separately.",
+        "features": [
+          {
+            "contact_id": "contact_0000",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": false,
+            "xy": [
+              67.0,
+              942.0
+            ]
+          },
+          {
+            "contact_id": "contact_0001",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": false,
+            "xy": [
+              194.0,
+              537.0
+            ]
+          },
+          {
+            "contact_id": "contact_0002",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": false,
+            "xy": [
+              244.0,
+              188.0
+            ]
+          },
+          {
+            "contact_id": "contact_0003",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": false,
+            "xy": [
+              354.0,
+              263.0
+            ]
+          },
+          {
+            "contact_id": "contact_0004",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": false,
+            "xy": [
+              445.0,
+              595.0
+            ]
+          },
+          {
+            "contact_id": "contact_0005",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": false,
+            "xy": [
+              564.0,
+              380.0
+            ]
+          },
+          {
+            "contact_id": "contact_0006",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": false,
+            "xy": [
+              836.0,
+              18.0
+            ]
+          },
+          {
+            "contact_id": "contact_0007",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": false,
+            "xy": [
+              931.0,
+              785.0
+            ]
+          },
+          {
+            "contact_id": "contact_0008",
+            "local_boundary_arc_count": 2,
+            "local_discrete_hausdorff": 0.1767766952966369,
+            "local_minimum_clearance": 0.3535533905932738,
+            "minimum_affected_angle_degrees": 135.0,
+            "minimum_new_edge_length": 0.3535533905932738,
+            "subpixel_feature_introduced": false,
+            "xy": [
+              995.0,
+              103.0
+            ]
+          }
+        ],
+        "geometry_after": {
+          "holes": 312,
+          "solid_polygon_components": 1,
+          "vertices": 39542
+        },
+        "geometry_before": {
+          "holes": 321,
+          "solid_polygon_components": 1,
+          "vertices": 39524
+        },
+        "hausdorff_certified_for_registered_family": true,
+        "hausdorff_method": "Actual local boundary comparisons with densify=0.5, plus isolated V/chamfer analytic maximum and unchanged-boundary check outside supports; no global discrete-distance claim.",
+        "maximum_local_boundary_displacement": 0.1767766952966369,
+        "modified_contact_neighborhoods": 9,
+        "original_area": 528285.0,
+        "relative_area_difference": 1.0647661773474546e-06,
+        "removed_solid_area": 0.5625,
+        "removed_solid_regions": 18,
+        "signed_area_change": -0.5625,
+        "symmetric_difference_area": 0.5625,
+        "symmetric_difference_fraction": 1.0647661773474546e-06
+      },
+      "policy": "void_side_probe",
+      "profiling": {
+        "memory_definition": "Peak tracked Python/NumPy allocations for this stage; untracked GEOS-native memory and prior allocations are excluded.",
+        "peak_traced_bytes": 27036697,
+        "seconds": 1.4683127918979153
+      },
+      "raster_morphology_preservation": "PASS",
+      "status": "REJECT_CANDIDATE"
+    }
+  ]
+}
