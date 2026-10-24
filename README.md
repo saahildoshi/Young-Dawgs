@@ -7,6 +7,15 @@ percolation calculations use 4-connectivity.
 
 ## Start here
 
+Current research priority: [Pipeline v0.6 — actual 2D meshing and contact-enabled
+ANSYS compression](docs/pipeline_v0.6/2D_COMPRESSION_VALIDATION.md). Three-dimensional
+CAD/meshing is deferred. The solver-independent proof of concept preserves all
+412 pores of authenticated Design9/seed1; the final fine mesh fails its registered
+angle gate, and ANSYS is unavailable. **No ANSYS simulation or mechanical result
+has been verified.** Historical scientific HOLD decisions remain unchanged.
+See [Windows execution](docs/pipeline_v0.6/WINDOWS_EXECUTION.md) and the prospective
+protocol under experiments/pipeline_v0.6/protocol/.
+
 The latest validation-only milestone is
 [Pipeline v0.4.3: P10 metric qualification](docs/PIPELINE_V0_4_3_P10_QUALIFICATION.md).
 Its amended decision is **PASS within the tested domain**: 10/10 independent

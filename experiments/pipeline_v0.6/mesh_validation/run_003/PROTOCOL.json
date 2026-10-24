@@ -1,0 +1,20 @@
+{
+  "schema": "young-dawgs-compression-protocol-v0.6",
+  "revision": 1,
+  "status": "FROZEN_BEFORE_MESH_AND_SOLVE",
+  "source": "native1024_design009_seed001_exact_run003",
+  "geometry_changes_permitted": false,
+  "historical_scientific_status": "HOLD_CUMULATIVE_SMALL_PORE_FIDELITY",
+  "scale": {"width_mm": 10.24, "height_mm": 10.24, "pixel_mm": 0.01, "thickness_mm": 1.0, "provisional": true, "transform": "x=c*0.01; y=(1024-r)*0.01"},
+  "material": {"E_MPa": 1000.0, "nu": 0.3, "model": "homogeneous_isotropic_elastic", "assumed_not_measured": true},
+  "formulation": {"dimension": 2, "mode": "plane_stress", "solid": "PLANE183 six-node triangle, KEYOPT(1)=1", "contact": "CONTA172", "target": "TARGE169", "actual_release_verification": "PENDING_NO_ANSYS"},
+  "mesher": {"name": "Gmsh", "version": "4.15.0", "order": 2, "curved_edges": false, "algorithm": 6, "threads": 1, "bulk_size_mm": 0.04, "boundary_sizes_mm": [0.01, 0.005, 0.0033333333333333335], "distance_transition_mm": [0.005, 0.02]},
+  "mesh_gates": {"min_triangle_quality": 0.1, "min_angle_deg": 10.0, "max_aspect_ratio": 20.0, "relative_area_error": 1e-9, "positive_jacobians": true, "components": 1, "all_412_holes": true, "boundary_error_mm": 1e-8, "minimum_elements_across_sampled_solid_chords": 3, "exhaustive_neck_certification": "UNQUALIFIED"},
+  "contact": {"friction_mu": 0.0, "behavior": "separation_allowed_no_bonding", "algorithm": "augmented_Lagrange", "normal_stiffness": "solver_default_pending_actual_release_record", "detection": "Gauss_point_default_pending_review", "initial_gap_mm": 0.0, "sliding": "finite", "upper_target_normal": [0,-1], "lower_target_normal": [0,1], "penetration_limit_mm": 0.001, "internal_self_contact": "UNQUALIFIED_BLOCK_ADVANCED_COMPRESSION"},
+  "loading": {"analysis": "quasi_static_pseudo_time_not_seconds", "displacement_control": true, "large_deformation": true, "engineering_compression_targets": [0.0,0.005,0.01,0.02], "automatic_substeps": [10,100,1], "newton_iterations": 50, "force_residual_relative": 0.005, "stabilization": "NONE", "bottom_pilot": "UX=UY=ROTZ=0", "upper_pilot": "UX=ROTZ=0, UY=-strain*H", "lateral_anchor": "one bottom specimen node UX=0 only; no specimen UY constraints in contact model"},
+  "acceptance": {"rectangle_relative_stiffness_error": 0.02, "force_balance_relative": 0.01, "global_response_refinement_relative": 0.05, "all_requested_stages_converged": true, "platen_contact_engaged": true, "solver_import_verified": true},
+  "metrics": {"strain": "positive achieved top-platen downward displacement / original H", "nominal_stress": "positive upper reaction magnitude / original envelope W*b; plane strain uses unit depth", "stiffness": "through-origin least-squares stress/strain for 0<strain<=0.005", "peak_stress_convergence": "SEPARATE_UNQUALIFIED"},
+  "output_stages": "initial, first converged nonzero, achieved 1%, achieved 2%, last converged; never substitute a failed or merely requested stage",
+  "execution_gate": "rectangle import/material/direct/contact acceptance before microstructure; internal self-contact must engage in a separate benchmark before advanced strain",
+  "limitations": ["no verified physical dimensions or measured material", "no experimental validation", "no failure/yield model", "no 3D or manufacturing qualification", "finite feature screens do not establish mesh independence", "no autonomous LLM optimization"]
+}

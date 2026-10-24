@@ -1,0 +1,70 @@
+{
+  "adjacent_continuum_exclusion": "exclude shared-node faces and the connecting web",
+  "candidate_face_ranges": {
+    "lower": {
+      "x": [
+        0.25,
+        1
+      ],
+      "y": 0.49
+    },
+    "upper": {
+      "x": [
+        0.25,
+        1
+      ],
+      "y": 0.51
+    }
+  },
+  "geometry": "synthetic connected C-channel; 0.02 mm gap, H=1 mm",
+  "initial_gap_mm": 0.02,
+  "internal_contact_elements_created": false,
+  "mesh_quality": {
+    "accepted": true,
+    "boundary_counts": {
+      "bottom": 12,
+      "external": 49,
+      "top": 12
+    },
+    "boundary_error_mm": 0.0,
+    "components": 1,
+    "element_type": "quadratic_TRI6",
+    "elements": 311,
+    "gates": {
+      "angles": true,
+      "area": true,
+      "aspect": true,
+      "boundary": true,
+      "boundary_groups": true,
+      "domain_difference": true,
+      "holes_preserved": true,
+      "one_component": true,
+      "outward_normals": true,
+      "quality": true
+    },
+    "generation_seconds": 0.008901084999934028,
+    "holes": 0,
+    "max_aspect_ratio": 3.2605279594366863,
+    "max_source_segment_length_error_mm": 0.0,
+    "mesh_area_mm2": 0.984,
+    "min_angle_deg": 22.654361803266152,
+    "min_jacobian_det_mm2": 0.0007418765143677482,
+    "min_quality": 0.5907609459791612,
+    "nodes": 696,
+    "order_distribution": {
+      "2": 311
+    },
+    "relative_area_error": 0.0,
+    "symmetric_difference_mm2": 0.0
+  },
+  "mesh_sha256": "149b8a64a1582befabc6bcb0dcaadfb48116506bf0f9233ff21b7e2c7c66fed4",
+  "readiness": "BLOCKED_PENDING_TARGET_RELEASE_REVIEW_AND_SOLVER",
+  "required_evidence": [
+    "nonadjacent-only element inventory",
+    "closing gap",
+    "active contact status",
+    "pressure and penetration",
+    "reaction change vs same model without internal contact"
+  ],
+  "status": "NOT_CONFIGURED_NOT_EXECUTED"
+}
