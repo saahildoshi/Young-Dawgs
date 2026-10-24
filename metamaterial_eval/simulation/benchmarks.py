@@ -28,7 +28,7 @@ def prepare_benchmarks(output):
     # response is compared only at small strain, not asserted equal at 2%.
     import csv
     with (output/'ANALYTICAL_rectangle_reference.csv').open('w',newline='') as stream:
-        writer=csv.writer(stream);writer.writerow(['source','strain','plane_stress_nominal_MPa','plane_stress_force_N','plane_strain_nominal_MPa_per_unit_depth'])
+        writer=csv.writer(stream,lineterminator='\n');writer.writerow(['source','strain','plane_stress_nominal_MPa','plane_stress_force_N','plane_strain_nominal_MPa_per_unit_depth'])
         for strain in [0,.0001,.0005,.001,.005]:
             stress=config.young_modulus*strain
             writer.writerow(['ANALYTICAL_INFINITESIMAL_NOT_ANSYS',strain,stress,stress*config.width*config.thickness,stress/(1-config.poisson_ratio**2)])

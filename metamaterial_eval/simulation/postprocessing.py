@@ -79,7 +79,7 @@ def postprocess(folder,output):
         for name,columns in [('force_displacement.csv',['set','pseudo_time','compression_displacement_mm','upper_rf_y_N','lower_rf_y_N']),
                              ('stress_strain.csv',['set','pseudo_time','engineering_compression_strain','nominal_compression_stress_MPa'])]:
             with (data_output/name).open('w',newline='') as stream:
-                writer=csv.DictWriter(stream,fieldnames=columns);writer.writeheader()
+                writer=csv.DictWriter(stream,fieldnames=columns,lineterminator='\n');writer.writeheader()
                 for i,row in enumerate(rows):
                     data={**row,**{k:float(v[i]) for k,v in m.items() if isinstance(v,np.ndarray)}}
                     writer.writerow({k:data[k] for k in columns})
@@ -99,7 +99,7 @@ def postprocess(folder,output):
             valid_rows=[r for r in values if int(r['set']) in setids]
             if valid_rows:
                 with (data_output/name).open('w',newline='') as stream:
-                    writer=csv.DictWriter(stream,fieldnames=list(valid_rows[0]));writer.writeheader();writer.writerows(valid_rows)
+                    writer=csv.DictWriter(stream,fieldnames=list(valid_rows[0]),lineterminator='\n');writer.writeheader();writer.writerows(valid_rows)
         return report
     except (ValueError,KeyError,FileNotFoundError) as exc:
         report={'status':'QUARANTINED_INVALID_OR_MISSING_SOLVER_OUTPUT','reason':str(exc),
