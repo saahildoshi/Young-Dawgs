@@ -1,0 +1,51 @@
+request_number,topic,answer
+1,Reused components,"Saved native1024 NPY/PNG, exact WKB/loops, topology/manifold/raster/probe helpers and frozen evaluator interfaces"
+2,New code,14 simulation package modules; two test modules; pinned Gmsh requirements; instructions/protocol/diagnostics/Windows/reporting artifacts
+3,Selected geometry,"Design9, seed1, native1024 exact run003"
+4,Selection reason,"Single spanning manifold solid,412 pores, no added subpixel manifold repair; saved15-pixel topology repair disclosed"
+5,Mesher,"Gmsh4.15.0, native2D algorithm6, straight-sided TRI6"
+6,2D element types,Draft PLANE183 six-node triangles; CONTA172/TARGE169 external contact
+7,Plane mode,Provisional plane stress; plane strain exposed with unit depth; neither solved
+8,Material,"Assumed isotropic elastic E1000MPa, nu0.3; not measured"
+9,Units,mm-N-MPa
+10,Dimensions,"Assumed W=H10.24mm, thickness1mm, pixel0.01mm"
+11,Nodes/elements,Coarse604875/263602; medium1178740/516291; fine1839714/814939
+12,Quality,"Fine qmin0.246037, maxaspect7.476381, positive detmin2.96876e-6mm2, anglemin8.275134deg FAIL<10"
+13,Pores,"All412 preserved at all levels, zero domain symmetric difference"
+14,Narrow struts,Finite sampled-chord screen min2/3/8 elements across; coarse fails; exhaustive widths and mechanical adequacy unqualified
+15,ANSYS import,NOT VERIFIED; only local coordinate/connectivity/material/contact record lint
+16,ANSYS version/interface,None installed/executed; prepared MAPDL batch interface; release review pending
+17,External contacts,Upper/lower pairs configured in rectangle drafts; pilot preparation blocked by fine-mesh study failure
+18,Contact force transmission,Not demonstrated
+19,Internal self-contact,Not configured; connected C-channel test candidate meshed and specification retained
+20,Internal contact activation,Not demonstrated
+21,Friction,"mu0 frictionless, separation allowed, no bonding"
+22,Large deformation,"NLGEOM ON in drafts, not executed"
+23,Loading,"Requested0,0.5,1,2% compression; displacement control, pseudo-time"
+24,Converged stages,None; ANSYS not executed
+25,Failed stages,No solver stages attempted; final mesh angle gate failed first
+26,Contact convergence,Unmeasured
+27,Maximum contact penetration,"Unavailable, no result"
+28,Reaction balance,Unverified
+29,Force displacement curve,"None; header-only CSV, zero result rows"
+30,Stress strain curve,"None; header-only CSV, zero result rows"
+31,Effective stiffness,Unmeasured/null
+32,Deformation fields,No actual solver fields
+33,Stress strain fields,No actual solver fields; draft exporter only
+34,Mesh convergence evaluated,Three boundary refinement feasibility levels; mechanical/global/peak-stress convergence not evaluated
+35,Convergence results,Medium feasibility pass; fine27 elements violate10deg gate; no mechanical convergence conclusion
+36,Actually executed ANSYS simulations,Zero
+37,Analytical/synthetic controls,"Explicit infinitesimal rectangle CSV, synthetic geometry tests and numerical metric controls; no synthetic FEM substitute"
+38,Demonstration only,"Assumed dimensions/material, 2D idealization, mesh feasibility, draft solver/contact setup"
+39,Runtime/memory,"Completed study188.067s, process peakRSS1684410368bytes=1.569GiB"
+40,Software tests,"371 passed,0 failed in55.54s with evaluator v1.1;40 new simulation controls"
+41,Historical preservation,3217/3219 old files byte-identical; only README/.gitignore intentional; generators/evaluator/geometry/experiments unchanged
+42,Files changed,verification/changed_files.json; all large generated meshes and solver inputs ignored/reproducible
+43,Git commits,"Instruction/audit commit, implementation commit, final report/validation commit"
+44,Commit hashes/messages,"See final chat handoff and git log; first ee5c3d3, second7e75387"
+45,Uncommitted changes,Final status checked after report commit; ignored generated artifacts retained locally
+46,Exact acceptance,HOLD fine-mesh angle failure plus absent solver; separate A-L statuses in acceptance_states.csv
+47,Paper qualification,"No real contact solve/mechanical evidence, no internal engagement, no response convergence/physical calibration; historical small-pore HOLD"
+48,Before batch FEM,Resolve registered mesh failure; actual rectangle import/material/thickness/platen benchmarks; internal engagement; pilot fields and global convergence
+49,Future LLM feedback,"Parameters/seed/provenance/morphology/mesh validity, actual curves/modulus/energy/fields/contact events/warnings once qualified; current mechanics null and performance ineligible"
+50,Next milestone,"New prospective mesh protocol to fix angle failure, then licensed Windows rectangle direct/contact validation; no3D or autonomous optimization"
