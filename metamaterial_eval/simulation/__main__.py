@@ -95,7 +95,11 @@ def main():
     elif args.command=='solve':
         import json
         from .solver_execution import execute
-        evidence=json.loads(args.benchmark_evidence.read_text()) if args.benchmark_evidence else None
+        evidence=None
+        if args.benchmark_evidence:
+            from .ansys_qualification import evidence_token
+            content=json.loads(args.benchmark_evidence.read_text())
+            evidence=evidence_token(args.benchmark_evidence) if content.get('schema')=='young-dawgs-v0.6.1-qualified-benchmark' else content
         status=execute(args.input,args.output,args.executable,args.timeout,evidence)
         print(status['status'])
         if status['status']!='EXECUTED_PENDING_IMPORT_CONTACT_AND_NUMERIC_VALIDATION':raise SystemExit(2)

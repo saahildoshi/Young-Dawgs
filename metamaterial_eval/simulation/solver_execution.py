@@ -14,6 +14,7 @@ def file_hash(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
 def discover_solver(executable=None):
+    executable=executable or os.environ.get('ANSYS_EXECUTABLE')
     if executable:
         path=Path(executable)
         return path.resolve() if path.is_file() else None
@@ -32,7 +33,7 @@ def discover_solver(executable=None):
 
 def classify_log(text,returncode,has_result,has_history):
     lower=text.lower()
-    if re.search(r'license.*(?:fail|denied|unavailable|not available)|(?:fail|unable).*license|licensed number.*exceeded',lower):
+    if re.search(r'license.*(?:fail|denied|unavailable|not available)|(?:fail|unable).*license|licensed number.*exceeded|ansys license manager error|no licenses? available',lower):
         return 'LICENSE_FAILURE'
     if returncode!=0:return 'SOLVER_PROCESS_FAILURE'
     if re.search(r'\*\*\*\s*(?:error|fatal)\s*\*\*\*|solution.*not converged|unconverged solution|convergence failure',lower):
@@ -54,14 +55,35 @@ def execute(input_folder, output_folder, executable=None, timeout=3600, benchmar
         status.update(status='MISSING_ANSYS_INSTALLATION',license='NOT_TESTED_NO_SOLVER')
         write_json(output/'solver_status.json',status)
         return status
-    if manifest['purpose']=='microstructure_pilot':
-        evidence=benchmark_evidence or {}
-        required=['import_acceptance','material_acceptance','direct_rectangle_acceptance','platen_contact_acceptance']
-        if any(evidence.get(k)!='SOLVER_VERIFIED' for k in required) or not evidence.get('solver_receipt_sha256'):
-            status['status']='BLOCKED_MISSING_RECTANGLE_EVIDENCE'
+    # Contact qualification must follow a real direct benchmark. Strings in an
+    # arbitrary JSON file cannot substitute for receipt-linked solver evidence.
+    from .ansys_qualification import checked_qualification
+    if manifest['purpose']=='rectangle_benchmark' and manifest.get('platen_contact'):
+        try:
+            direct=checked_qualification(benchmark_evidence,'direct',manifest['config'])
+            if direct['config']['strains']!=manifest['config']['strains']:
+                raise ValueError('Direct/contact target strain schedules differ')
+        except (ValueError,KeyError,FileNotFoundError) as exc:
+            status.update(status='BLOCKED_MISSING_DIRECT_BENCHMARK_EVIDENCE',reason=str(exc))
             write_json(output/'solver_status.json',status)
             return status
-    for name in ['compression.inp','input_manifest.json','extract_fields.mac']:
+    if manifest['purpose']=='microstructure_pilot':
+        evidence=benchmark_evidence or {}
+        try:
+            checked_qualification(evidence.get('direct'),'direct',manifest['config'])
+            checked_qualification(evidence.get('contact'),'platen_contact',manifest['config'])
+            protocol=evidence.get('pilot_protocol',{})
+            path=Path(protocol.get('path',''))
+            if not path.is_file() or file_hash(path)!=protocol.get('sha256'):
+                raise ValueError('Missing frozen microstructure pilot protocol')
+            frozen=json.loads(path.read_text())
+            if frozen.get('mesh_sha256')!=manifest['mesh_sha256'] or frozen.get('strains')!=manifest['config']['strains']:
+                raise ValueError('Pilot protocol mesh/loading mismatch')
+        except (ValueError,KeyError,FileNotFoundError) as exc:
+            status.update(status='BLOCKED_MISSING_RECTANGLE_EVIDENCE',reason=str(exc))
+            write_json(output/'solver_status.json',status)
+            return status
+    for name in ['compression.inp','input_manifest.json','extract_fields.mac','mesh.npz']:
         if (source/name).exists():shutil.copy2(source/name,output/name)
     command=[str(solver),'-b','-j','compression','-i','compression.inp','-o','solver.out','-np','1']
     started=time.perf_counter()

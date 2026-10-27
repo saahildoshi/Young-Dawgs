@@ -1,0 +1,79 @@
+{
+  "analytical_modulus_MPa": 1000.0,
+  "config": {
+    "boundary_size": 0.512,
+    "bulk_size": 1.28,
+    "dimensions": "PROVISIONAL",
+    "force_basis": "total_N",
+    "height": 10.24,
+    "large_deformation": true,
+    "material": "ASSUMED_NOT_MEASURED",
+    "mode": "plane_stress",
+    "poisson_ratio": 0.3,
+    "strains": [
+      0.0001,
+      0.0005,
+      0.001,
+      0.005
+    ],
+    "thickness": 1.0,
+    "time_axis": "quasi_static_pseudo_time",
+    "units": "mm-N-MPa",
+    "width": 10.24,
+    "young_modulus": 1000.0
+  },
+  "input_generation_seconds": 0.043057352013420314,
+  "mesh_quality": {
+    "accepted": true,
+    "boundary_counts": {
+      "bottom": 20,
+      "external": 40,
+      "top": 20
+    },
+    "boundary_error_mm": 0.0,
+    "components": 1,
+    "element_type": "quadratic_TRI6",
+    "elements": 268,
+    "gates": {
+      "angles": true,
+      "area": true,
+      "aspect": true,
+      "boundary": true,
+      "boundary_groups": true,
+      "domain_difference": true,
+      "holes_preserved": true,
+      "one_component": true,
+      "outward_normals": true,
+      "quadratic_mapping": true,
+      "quality": true
+    },
+    "generation_seconds": 0.00851925800088793,
+    "holes": 0,
+    "max_aspect_ratio": 3.4641068212255,
+    "max_source_segment_length_error_mm": 0.0,
+    "mesh_area_mm2": 104.8576,
+    "min_angle_deg": 26.513432645636005,
+    "min_jacobian_det_mm2": 0.12939122213305318,
+    "min_quality": 0.5999992786240311,
+    "nodes": 617,
+    "order_distribution": {
+      "2": 268
+    },
+    "quadratic_mapping": {
+      "invalid_or_uncertified": 0,
+      "limitation": "floating point with scaled guard; no formal interval arithmetic; no sampled positivity claim",
+      "maximum_midpoint_error_mm": 1.2560739669470201e-15,
+      "method": "analytic_quadratic_extrema_over_closed_reference_triangle",
+      "minimum_determinant_mm2": 0.12939122213305046
+    },
+    "relative_area_error": 0.0,
+    "symmetric_difference_mm2": 0.0
+  },
+  "requirements": [
+    "actual release review",
+    "licensed direct run and qualification",
+    "licensed platen contact run and qualification"
+  ],
+  "schema": "young-dawgs-v0.6.1-rectangle-package",
+  "solver_execution": "NOT_EXECUTED"
+}
