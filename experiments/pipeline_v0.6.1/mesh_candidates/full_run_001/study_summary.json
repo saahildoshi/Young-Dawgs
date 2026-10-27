@@ -1,0 +1,127 @@
+{
+  "budget_monitor": "Linux /proc VmRSS sampled every0.5s; worker lifetime high-water RSS also reported",
+  "levels": [
+    {
+      "accepted": true,
+      "feature_minimum_elements_across": 7,
+      "feature_validation_seconds": 1.2600670029933099,
+      "features_accepted": true,
+      "generation_seconds_including_authentication": 87.77644560698536,
+      "level": "fine_new",
+      "mesh_npz_bytes": 57541001,
+      "process_peak_rss_bytes": 2415714304,
+      "quality": {
+        "accepted": true,
+        "boundary_counts": {
+          "bottom": 1368,
+          "external": 27828,
+          "pore": 213150,
+          "top": 1230
+        },
+        "boundary_error_mm": 0.0,
+        "components": 1,
+        "element_type": "quadratic_TRI6",
+        "elements": 1261670,
+        "gates": {
+          "angles": true,
+          "area": true,
+          "aspect": true,
+          "boundary": true,
+          "boundary_groups": true,
+          "domain_difference": true,
+          "holes_preserved": true,
+          "one_component": true,
+          "outward_normals": true,
+          "quadratic_mapping": true,
+          "quality": true
+        },
+        "generation_seconds": 85.1287123929942,
+        "holes": 412,
+        "max_aspect_ratio": 5.182422666931361,
+        "max_source_segment_length_error_mm": 0.0,
+        "mesh_area_mm2": 50.010400000000004,
+        "min_angle_deg": 11.404135026440942,
+        "min_jacobian_det_mm2": 2.3976369959923946e-06,
+        "min_quality": 0.335816808901627,
+        "nodes": 2766505,
+        "order_distribution": {
+          "2": 1261670
+        },
+        "quadratic_mapping": {
+          "invalid_or_uncertified": 0,
+          "limitation": "floating point with scaled guard; no formal interval arithmetic; no sampled positivity claim",
+          "maximum_midpoint_error_mm": 1.2560739669470201e-15,
+          "method": "analytic_quadratic_extrema_over_closed_reference_triangle",
+          "minimum_determinant_mm2": 2.3976369959915272e-06
+        },
+        "relative_area_error": 7.246028730776967e-15,
+        "symmetric_difference_mm2": 0.0
+      },
+      "sampled_peak_rss_bytes": 2382495744,
+      "total_seconds": 127.58389270497719,
+      "validation_seconds": 31.56552152999211
+    },
+    {
+      "accepted": false,
+      "feature_minimum_elements_across": 3,
+      "feature_validation_seconds": 0.5611207530018874,
+      "features_accepted": true,
+      "generation_seconds_including_authentication": 49.136393891007174,
+      "level": "coarse_new",
+      "mesh_npz_bytes": 27429756,
+      "process_peak_rss_bytes": 1285341184,
+      "quality": {
+        "accepted": false,
+        "boundary_counts": {
+          "bottom": 912,
+          "external": 18552,
+          "pore": 142100,
+          "top": 820
+        },
+        "boundary_error_mm": 0.0,
+        "components": 1,
+        "element_type": "quadratic_TRI6",
+        "elements": 610630,
+        "gates": {
+          "angles": false,
+          "area": true,
+          "aspect": true,
+          "boundary": true,
+          "boundary_groups": true,
+          "domain_difference": true,
+          "holes_preserved": true,
+          "one_component": true,
+          "outward_normals": true,
+          "quadratic_mapping": true,
+          "quality": true
+        },
+        "generation_seconds": 47.01603431199328,
+        "holes": 412,
+        "max_aspect_ratio": 7.719981102778443,
+        "max_source_segment_length_error_mm": 0.0,
+        "mesh_area_mm2": 50.0104,
+        "min_angle_deg": 8.303164775703934,
+        "min_jacobian_det_mm2": 7.15203396485499e-06,
+        "min_quality": 0.24466751403858297,
+        "nodes": 1383233,
+        "order_distribution": {
+          "2": 610630
+        },
+        "quadratic_mapping": {
+          "invalid_or_uncertified": 0,
+          "limitation": "floating point with scaled guard; no formal interval arithmetic; no sampled positivity claim",
+          "maximum_midpoint_error_mm": 1.2560739669470201e-15,
+          "method": "analytic_quadratic_extrema_over_closed_reference_triangle",
+          "minimum_determinant_mm2": 7.152033964853749e-06
+        },
+        "relative_area_error": 7.388107725498085e-15,
+        "symmetric_difference_mm2": 0.0
+      },
+      "sampled_peak_rss_bytes": 1275617280,
+      "total_seconds": 68.53767362199142,
+      "validation_seconds": 15.187597951007774
+    }
+  ],
+  "local_evidence": "experiments/pipeline_v0.6.1/mesh_candidates/local_run_001/local_trial_summary.json",
+  "mechanical_convergence": "UNQUALIFIED_NO_SOLVER"
+}

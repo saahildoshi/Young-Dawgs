@@ -1,0 +1,22 @@
+{
+  "schema": "young-dawgs-v0.6.1-mesh-study",
+  "revision": 1,
+  "registered_before_candidate_changes": true,
+  "source": "native1024_design009_seed001_exact_run003",
+  "source_changes_allowed": false,
+  "historical_mesh_sha256": "2d28fe9afe9be78b9a0c09cd8b58667e08b11305c4946ff8808f8aafe0faeef1",
+  "historical_gate_definitions": "experiments/pipeline_v0.6/protocol/PROTOCOL.json",
+  "gates": {"minimum_corner_angle_deg": 10.0, "minimum_quality": 0.1, "maximum_aspect_ratio": 20.0, "area_relative_error": 1e-9, "boundary_error_mm": 1e-8, "components": 1, "pores": 412, "minimum_elements_across_sampled_chords": 3, "quadratic_mapping": "whole-reference-triangle determinant polynomial minimum with floating-point guard, no sampled-proof claim", "straight_midsides_required": true},
+  "diagnosis": "all saved failures, full corner/midside/connectivity/one-ring geometry and source feature context; immutable source angles checked before remediation",
+  "candidates": [
+    {"id": "A_saved_layout_relocation", "purpose": "bounded optimization diagnostic on saved local patches", "method": "Gmsh Relocate2D", "iterations": 10, "linearize_before_optimization": true, "boundary_coordinates": "FIXED", "scope": "worst interior and boundary-corner defect patches; never report cropped diagnostic as full specimen", "full_saved_mesh_optimization": "only if patch diagnostic supports it"},
+    {"id": "B_boundary_field_and_relocation", "purpose": "correct distance-field undersampling and boundary size imbalance", "algorithm": 6, "distance_sampling": "bucket curves by power-of-two sample count, target sample spacing<=boundary_size/2", "boundary_point_size": "boundary_size with MeshSizeFromPoints=1; no geometry changes", "relocate2d_iterations": 10, "order": "linear generation, Relocate2D, setOrder(2), SecondOrderLinear=1", "scope": "small local source crops first, full fine candidate only after local all-angle and quadratic validity checks"}
+  ],
+  "selection": "first full candidate passing every unchanged gate; no hidden tuning, threshold relaxation or geometry repair",
+  "new_full_mesh_levels_after_strategy_identified": [{"id":"coarse_new","boundary_size_mm":0.005,"bulk_size_mm":0.06},{"id":"fine_new","boundary_size_mm":0.0033333333333333335,"bulk_size_mm":0.04},{"id":"finer_new","boundary_size_mm":0.0025,"bulk_size_mm":0.03}],
+  "budget": {"maximum_full_mesh_candidates": 3, "maximum_nodes_per_mesh": 4000000, "maximum_elements_per_mesh": 1800000, "rss_limit_GiB": 4.0, "disk_free_required_GiB": 2.0, "record": "per-stage wall time, whole-process peak RSS, disk; enforce worker time/memory limits", "stop": "on unsupported API, source modification, resource limit, or no passing registered strategy"},
+  "solver_assumptions": {"dimensions_mm":[10.24,10.24,1.0],"E_MPa":1000.0,"nu":0.3,"provisional":true,"plane_mode":"plane_stress","strains":[0.0001,0.0005,0.001,0.005],"benchmark_force_relative_tolerance":0.02,"force_balance_relative_tolerance":0.01,"contact_penetration_mm":0.001},
+  "solver_gate": "actual compatible installation, licensed smoke, direct rectangle pass, contact rectangle pass, authentic outputs and full model review before separately frozen microstructure pilot",
+  "mechanical_convergence": "UNQUALIFIED without matched actual solved levels; geometric multi-level pass never implies it",
+  "stop_before": ["batch FEM","autonomous LLM optimization","3D modeling"]
+}
