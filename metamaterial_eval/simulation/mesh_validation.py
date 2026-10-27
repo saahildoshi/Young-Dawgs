@@ -3,6 +3,7 @@ import numpy as np
 import shapely
 from scipy.sparse import coo_matrix
 from scipy.sparse.csgraph import connected_components
+from .element_quality import corner_metrics,quadratic_mapping
 
 
 def validate_mesh(mesh, geometry, config):
@@ -22,12 +23,12 @@ def validate_mesh(mesh, geometry, config):
     midpoints=(points+np.roll(points,-1,axis=1))/2
     if not np.allclose(nodes[tri[:,3:]],midpoints,atol=1e-10,rtol=0):
         raise ValueError('Curved/misordered TRI6 midsides unsupported')
+    mapping=quadratic_mapping(nodes[tri])
+    if not np.all(mapping['positive_over_reference_triangle']):
+        raise ValueError('Nonpositive or uncertified quadratic element Jacobian')
     quality = 2*np.sqrt(3)*determinant/np.sum(lengths**2,axis=1)
     aspect = np.max(lengths,axis=1)**2/determinant
-    angles=[]
-    for k in range(3):
-        x=points[:,(k+1)%3]-points[:,k]; y=points[:,(k+2)%3]-points[:,k]
-        angles.append(np.degrees(np.arccos(np.clip(np.sum(x*y,axis=1)/(np.linalg.norm(x,axis=1)*np.linalg.norm(y,axis=1)),-1,1))))
+    angles=corner_metrics(points)['angles_deg']
     edges=np.concatenate([tri[:,[0,1]],tri[:,[1,2]],tri[:,[2,0]]])
     unique,counts=np.unique(np.sort(edges,axis=1),axis=0,return_counts=True)
     if counts.max()>2:
@@ -101,7 +102,7 @@ def validate_mesh(mesh, geometry, config):
            'boundary':boundary_error<=1e-8 and segment_length_error<=1e-8,'quality':float(quality.min())>=.1,
            'angles':float(np.min(angles))>=10,'aspect':float(aspect.max())<=20,
            'boundary_groups':{'top','bottom'}.issubset(groups) and group_valid,
-           'outward_normals':outward}
+           'outward_normals':outward,'quadratic_mapping':bool(np.all(mapping['positive_over_reference_triangle']))}
     return {'accepted':all(gates.values()),'gates':gates,'nodes':len(nodes),'elements':len(tri),
             'element_type':'quadratic_TRI6','order_distribution':{'2':len(tri)},
             'min_quality':float(quality.min()),'max_aspect_ratio':float(aspect.max()),
@@ -110,6 +111,10 @@ def validate_mesh(mesh, geometry, config):
             'relative_area_error':area_error,'symmetric_difference_mm2':difference,
             'boundary_error_mm':boundary_error,'max_source_segment_length_error_mm':segment_length_error,
             'boundary_counts':{g:int(sum(mesh.boundary_groups==g)) for g in sorted(groups)},
+            'quadratic_mapping':{'method':mapping['method'],'limitation':mapping['limitation'],
+                'minimum_determinant_mm2':float(mapping['determinant_min'].min()),
+                'maximum_midpoint_error_mm':float(mapping['max_midpoint_error'].max()),
+                'invalid_or_uncertified':int(sum(~mapping['positive_over_reference_triangle']))},
             'generation_seconds':mesh.generation_seconds},quality
 
 
