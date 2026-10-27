@@ -123,7 +123,7 @@ unconverged sets excluded; original raw results are retained. Local stress peaks
 at corners are not automatically converged.
 
 The equivalent raw MAPDL call is -b -j compression -i compression.inp
--o solver.out -np1. Use the Python runner for receipts; raw invocation alone
+-o solver.out -np 1. Use the Python runner for receipts; raw invocation alone
 cannot satisfy the qualification chain. If no executable is found, correct
 ANSYS_EXECUTABLE/AWP_ROOT/PATH. If licensing fails, use the organization's
 configured license mechanism; never put keys or secrets in Git. For syntax,

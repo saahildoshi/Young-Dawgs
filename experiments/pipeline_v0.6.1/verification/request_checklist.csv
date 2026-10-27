@@ -1,0 +1,67 @@
+number,topic,answer
+1,Original failure reproduced,"YES, independently8.275134219999737deg from saved original NPZ"
+2,Failing count,"27/814939 original triangles, about0.003313%"
+3,Locations,23 with interior corner vertices;3 actual boundary-edge cases;1 boundary-vertex-only case; all IDs/coordinates/neighbors/distances in diagnosis.json
+4,Cause,Mesh-induced interior layout and boundary sampling/spacing imbalance; immutable solid-side source angles>=90deg; no geometry-forced sub10deg wedge
+5,Independent angles,"YES, atan2(cross,dot), separate from historical arccos"
+6,Quadratic Jacobians,"YES, whole-reference-triangle quadratic determinant extrema plus scaled guard and Bernstein sufficient bounds"
+7,Invalid higher-order elements,Zero original/accepted-fine uncertified maps; synthetic inverted/curved controls correctly fail; no interval-arithmetic claim
+8,Strategies,"A saved discrete Relocate2D rejected for boundary motion; B adaptive curve sampling, boundary point sizing, CAD-backed Relocate2D10, straight TRI6 conversion"
+9,Frozen10deg satisfied,"YES, selected full fine_new minimum11.4041350264deg; separate coarse_new fails8.3031647757deg"
+10,Pores,"All412 preserved by selected mesh, exact source domain and topology checks"
+11,Solid area,"50.0104mm2, relative error7.246e-15, zero domain symmetric difference"
+12,Narrow features,"Registered finite axial screen PASS, minimum7 elements across; exhaustive neck qualification remains UNQUALIFIED"
+13,Final selected counts,"2766505 nodes,1261670 TRI6 elements"
+14,Final minimum angle,11.404135026440942deg
+15,Computational cost,"Fine generation85.129s, validation31.566s, features1.260s, totalworker127.584s, peakRSS2415714304bytes; rejected coarse68.538s"
+16,ANSYS installed,NOT FOUND through inspected paths/configuration; no actual accessible installation
+17,License available,NOT TESTED_NO_SOLVER; no license denial or availability claim
+18,Solver version used,"None, NOT EXECUTED"
+19,Solver interface,"Native MAPDL batch prepared, no actual solver interface executed"
+20,Rectangle imported into ANSYS,NOT EXECUTED; Gmsh rectangle617 nodes/268 TRI6 and local record lint only
+21,Connectivity/material verified,Static transfer checks passed; actual ANSYS model/material/thickness review NOT EXECUTED
+22,Plane mode,Provisional plane stress configured; plane strain option separate; no mode solved
+23,Units/thickness,"Provisional mm-N-MPa, thickness1mm, consistently configured/analytically normalized; actual solver scaling unverified"
+24,Direct compression execute,NOT EXECUTED
+25,Analytical reference,"Infinitesimal free-lateral plane stress sigma=E epsilon,F=sigma Wb; free-lateral plane strain E/(1-nu^2)"
+26,Actual reaction force,"UNAVAILABLE, NOT EXECUTED"
+27,Analytical force,"51.2N at0.5% for W10.24mm,b1mm,E1000MPa; ANALYTICAL_NOT_ANSYS"
+28,Force relative difference,"UNAVAILABLE, no actual solver value"
+29,Equilibrium,"UNVERIFIED, no actual reaction history"
+30,Contact benchmark execute,NOT EXECUTED
+31,Both contacts correct,Draft geometric construction/normal checks only; actual solver definitions unverified
+32,Both contacts transmit force,NOT DEMONSTRATED
+33,Recorded contact status,"None, NOT EXECUTED"
+34,Maximum penetration,"UNAVAILABLE, no actual solver measurement"
+35,Contact reaction balance,UNVERIFIED
+36,Converged increments,"None, ANSYS NOT EXECUTED"
+37,Effective elastic response,"UNMEASURED; base E1000MPa is an assumption, not a measured effective modulus"
+38,Actual stress strain curve,No actual curve; only explicitly labelled analytical reference
+39,Displacement/stress fields,No actual fields; draft exporter and authenticated extraction pathway prepared
+40,Results consistent with assumptions,NOT ASSESSED in a real solver
+41,Internal self contact configured,NOT CONFIGURED
+42,Internal self contact demonstrated,NOT DEMONSTRATED
+43,Microstructure solve ran,"NO, BLOCKED"
+44,Pilot exact prerequisites,"Accessible licensed solver, direct/contact real benchmark qualification, full import/material/output evidence, resource check and separate frozen pilot protocol"
+45,Pilot converged stages,NOT EXECUTED
+46,Mechanical curves obtained,None
+47,Mechanical mesh convergence,"UNQUALIFIED; one new corrected mesh accepted, no solved levels; global and peak-stress convergence separate"
+48,Unqualified solver results,No solver results exist; every prepared solver/contact claim remains unverified
+49,Code modules changed,"New element_quality,mesh_diagnosis,mesh_remediation,remediation_reporting,ansys_qualification; modified mesh_generation,mesh_validation,solver_execution,__main__; new archival replay script and3 test modules"
+50,Reused utilities,"Existing provenance/geometry/topology/raster/probe tools, CompressionConfig, Gmsh mesh container/generator, APDL writer, solver runner, exporter, postprocessor and mechanical metrics"
+51,Generators/evaluator unchanged,"YES, all supplied hashes match baseline"
+52,Geometry artifacts preserved,"YES, all supplied historical experiment/geometry files unchanged; previously absent C/C.1 files remain absent"
+53,Original failed fine mesh retained,YES byte-identical SHA2562d28fe9afe9be78b9a0c09cd8b58667e08b11305c4946ff8808f8aafe0faeef1; original failure reports unchanged
+54,Tests discovered,421 primary unique nodeids;112 overlapping archived snapshot cases reported separately; baseline primary371
+55,Tests executed,Final421 primary;112 archived cases replayed in fixture-complete temporary contexts; prior raw112-case archival attempt also retained
+56,Test outcomes,"Primary421passed,0failed/errors/skipped/deselected; replay112passed; initial raw archive108passed/4missing-fixture failures; no test expectation weakened"
+57,457 vs371,"457 C.1 inventory absent/unverifiable in supplied checkout/history; initial371 matches v0.6 JUnit;40 focused are subset, not additional; v0.6.1 adds50 unique cases for421"
+58,Runtime,Primary suite56.44s; accepted fine worker127.584s; coarse68.538s; stage/window scopes in PERFORMANCE.json
+59,Peak measured memory,Accepted fine worker2415714304bytes about2.25GiB lifetimeRSS; no solver/system-wide memory measurement
+60,Commits created,Four protocol/implementation commits before final reporting commit; complete list in Git and final chat handoff
+61,Commit hashes/messages,First4d15640866a64c01578eefbae3443f7a6f46e4f4;80257e8216e12ef1cea301147e0c3f3037f7a1dc;2bbdba5b76ac818626d8d479d963cf9fd85fa712;10c7fda4983be1bce15679a9ebdd54289c36f4e7; final report commit hash in chat/Git
+62,Uncommitted tracked changes,Final status checked after final reporting commit; raw generated artifacts deliberately ignored
+63,Pushed to GitHub,NO
+64,Precise scientific status,PARTIAL ENGINEERING PASS: selected fine geometry/mapping/feature gates pass; ANSYS_EXECUTION_BLOCKED and RESEARCH_HOLD; independent A-P statuses
+65,Remaining blockers,"Licensed solver, actual model/direct/contact/mechanical output verification, internal contact unqualified, pilot resources/protocol, mechanical convergence and paper/manufacturing readiness"
+66,Next milestone,Execute licensed Windows small direct and platen-contact rectangle benchmarks; after qualification freeze/resource-check a conservative accepted-mesh pilot; no batch/LLM optimization/3D

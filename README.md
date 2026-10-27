@@ -7,7 +7,13 @@ percolation calculations use 4-connectivity.
 
 ## Start here
 
-Current research priority: [Pipeline v0.6 — actual 2D meshing and contact-enabled
+Current milestone: [Pipeline v0.6.1 mesh remediation and ANSYS qualification](docs/pipeline_v0.6.1/V0_6_1_VALIDATION.md).
+A new fine TRI6 mesh passes the unchanged 10° gate at 11.404° and preserves all 412
+pores. **ANSYS_EXECUTION_BLOCKED:** no licensed solve/contact/mechanical result
+exists. See the [Windows benchmark packet](docs/pipeline_v0.6.1/WINDOWS_EXECUTION.md).
+Historical v0.6 and geometry HOLD decisions remain unchanged.
+
+The preceding engineering milestone: [Pipeline v0.6 — actual 2D meshing and contact-enabled
 ANSYS compression](docs/pipeline_v0.6/2D_COMPRESSION_VALIDATION.md). Three-dimensional
 CAD/meshing is deferred. The solver-independent proof of concept preserves all
 412 pores of authenticated Design9/seed1; the final fine mesh fails its registered
