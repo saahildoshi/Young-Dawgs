@@ -61,7 +61,7 @@ def export_macro(mesh, contact):
     return '\n'.join(lines+['ALLSEL,ALL','FINISH'])+'\n'
 
 
-def prepare(output, protocol, *, contact=False, thickness=1.0):
+def prepare(output, protocol, *, contact=False, thickness=1.0, correction=None):
     output,protocol=Path(output),Path(protocol)
     frozen=json.loads(protocol.read_text())
     config=replace(CompressionConfig(),boundary_size=.512,bulk_size=1.28,
@@ -74,6 +74,11 @@ def prepare(output, protocol, *, contact=False, thickness=1.0):
     # /BATCH must be the first line. Explicit MINREF removes an implicit default.
     deck='/BATCH\n'+deck.replace('/BATCH\n','')
     deck=deck.replace('CNVTOL,F,,0.005,2','CNVTOL,F,,0.005,2,0.001')
+    if correction:
+        if not contact:raise ValueError('Contact correction requires a contact model')
+        change=json.loads(Path(correction).read_text())['correction']
+        for real in [2,3]:
+            deck=deck.replace(f'R,{real}\n',f'R,{real},0,0,{change["FKN"]},{change["FTOLN_absolute_mm"]:.16g}\n')
     deck=deck.replace('/OUTPUT,model_inventory,txt','CDWRITE,DB,rectangle,cdb\n/OUTPUT,model_inventory,txt')
     # Export exact solver-side mesh records for independent import comparison.
     inventory=['*CFOPEN,import_nodes,csv','*VWRITE',"('node,x_mm,y_mm,z_mm')",f'*DO,NN,1,{len(mesh.nodes)}',
@@ -91,6 +96,9 @@ def prepare(output, protocol, *, contact=False, thickness=1.0):
     manifest.update(schema='young-dawgs-v0.6.2-input',field_schema='displacement_all_stress_corners',
                     protocol_sha256=file_hash(protocol),reaction_sign_convention='native_ANSYS_support_RF',
                     mesh_quality=quality,documentation='v241 help unavailable; v242 comparison plus actual v241 empirical verification')
+    if correction:
+        manifest['contact_correction_sha256']=file_hash(correction)
+        manifest['contact_numerics']=change
     write_json(output/'input_manifest.json',manifest)
     return manifest
 
@@ -107,7 +115,7 @@ def export_evidence(execution, output):
     execution,output=Path(execution),Path(output)
     output.mkdir(parents=True,exist_ok=False)
     for name in ['solver_status.json','input_manifest.json','compression.inp','extract_fields.mac',
-                 'history.csv','import_nodes.csv','import_elements.csv','compression.mntr']:
+                 'history.csv','import_nodes.csv','import_elements.csv']:
         if (execution/name).exists():shutil.copy2(execution/name,output/name)
     manifest=json.loads((execution/'input_manifest.json').read_text())
     stages=read_numeric_csv(execution/'history.csv',HISTORY)
@@ -118,12 +126,13 @@ def export_evidence(execution, output):
             write_csv(output/name,[r for r in rows if r['set'] in selected])
     # Raw logs and RST hashes remain in the immutable solver receipt. Sanitized
     # logs are explicitly labelled and have their own hashes, never substituted.
-    for name in ['solver.out','model_inventory.txt','compression.err']:
+    for name in ['solver.out','model_inventory.txt','compression.err','compression.mntr']:
         if (execution/name).exists():
             log=(execution/name).read_text(errors='replace')
             log=re.sub(r'\b\d{8}\s+VERSION=', '[site-redacted] VERSION=',log)
             log=log.replace(str(Path.cwd()),'[repository]')
             log=re.sub(r'(?im)^.*(?:license server|license file|USER=|HOST=).*$','[environment line redacted]',log)
+            log='\n'.join(line.rstrip() for line in log.splitlines()).rstrip()+'\n'
             (output/(name+'.sanitized.txt')).write_text(log)
     write_json(output/'evidence_manifest.json',{
         'raw_execution':str(execution.resolve()),'raw_receipt_sha256':file_hash(execution/'solver_status.json'),
@@ -295,11 +304,12 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     sub=parser.add_subparsers(dest='action',required=True)
     p=sub.add_parser('prepare');p.add_argument('--contact',action='store_true');p.add_argument('--protocol',type=Path,required=True)
+    p.add_argument('--correction',type=Path)
     p=sub.add_parser('run');p.add_argument('--source',type=Path,required=True);p.add_argument('--direct',type=Path)
     p=sub.add_parser('analyze');p.add_argument('--execution',type=Path,required=True);p.add_argument('--protocol',type=Path,required=True)
     for p in sub.choices.values():p.add_argument('--output',type=Path,required=True)
     args=parser.parse_args()
-    if args.action=='prepare':result=prepare(args.output,args.protocol,contact=args.contact)
+    if args.action=='prepare':result=prepare(args.output,args.protocol,contact=args.contact,correction=args.correction)
     elif args.action=='run':result=run(args.source,args.output,args.direct)
     else:result=analyze(args.execution,args.output,args.protocol)
     print(json.dumps(result,indent=2))

@@ -1,0 +1,18 @@
+{
+  "schema": "young-dawgs-v0.6.2-prospective-contact-correction",
+  "based_on_failed_attempt": "rectangle_contact/generated/execution_001",
+  "observed": {
+    "default_FKN": 1,
+    "default_FTOLN_factor": 0.1,
+    "bottom_absolute_tolerance_mm": 0.058462,
+    "top_absolute_tolerance_mm": 0.054096,
+    "reaction_at_0_5_percent_N": 48.780826,
+    "analytical_reference_N": 51.2,
+    "max_penetration_at_2_percent_mm": 0.0051743663
+  },
+  "diagnosis": "Default augmented-Lagrange penetration criterion allows interface compliance much larger than the benchmark displacement accuracy. The converged result is not an acceptable mechanical benchmark.",
+  "correction": {"FKN": 1, "FTOLN_absolute_mm": -0.0000001},
+  "rationale": "Retain default stiffness scaling; require absolute penetration <=1e-7 mm, below 0.02% of the smallest requested platen travel when both interfaces are counted. Negative FTOLN requests an absolute tolerance. Verify actual v241 printed settings and achieved penetration, not just deck syntax.",
+  "unchanged": ["mesh", "material", "thickness", "load schedule", "frictionless separation", "force/error acceptance", "maximum allowed penetration"],
+  "sensitivity_status": "single reasoned correction, not a contact sensitivity study"
+}
