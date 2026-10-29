@@ -36,7 +36,8 @@ def installations(environ=None, program_files=None):
     return result
 
 
-def bounded_run(command, directory, *, timeout=180, rss_limit=8*1024**3, prepared=False):
+def bounded_run(command, directory, *, timeout=180, rss_limit=8*1024**3, prepared=False,
+                min_disk_free=0, min_available_ram=0, stop_check=None):
     """Supervise only the new process and descendants; preserve logs on every exit."""
     import psutil
     directory = Path(directory).resolve()
@@ -49,6 +50,7 @@ def bounded_run(command, directory, *, timeout=180, rss_limit=8*1024**3, prepare
     receipt = {'command': list(map(str, command)), 'started_utc': datetime.now(timezone.utc).isoformat(),
                'timeout_seconds': timeout, 'rss_limit_bytes': rss_limit, 'peak_tree_rss_bytes': 0,
                'run_directory': str(directory), 'returncode': None}
+    receipt.update(min_disk_free_bytes=min_disk_free,min_available_ram_bytes=min_available_ram)
     flags = subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
     with (directory/'launcher.log').open('w') as log:
         try:
@@ -67,6 +69,11 @@ def bounded_run(command, directory, *, timeout=180, rss_limit=8*1024**3, prepare
                     state = 'TIMEOUT'
                 if receipt['peak_tree_rss_bytes'] > rss_limit:
                     state = 'MEMORY_BUDGET_EXCEEDED'
+                if min_disk_free and shutil.disk_usage(directory).free<min_disk_free:
+                    state='DISK_RESERVE_EXHAUSTED'
+                if min_available_ram and psutil.virtual_memory().available<min_available_ram:
+                    state='OS_RAM_RESERVE_REACHED'
+                if stop_check and not state:state=stop_check(directory)
                 if state:
                     for child in reversed(owned.children(recursive=True)):
                         try:

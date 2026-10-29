@@ -10,7 +10,12 @@ import time
 from .reporting import write_json
 
 
-def file_hash(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+def file_hash(path):
+    """Hash large solver artifacts without a second file-sized RAM allocation."""
+    digest=hashlib.sha256()
+    with Path(path).open('rb') as stream:
+        for block in iter(lambda:stream.read(8*1024**2),b''):digest.update(block)
+    return digest.hexdigest()
 
 
 def discover_solver(executable=None):
