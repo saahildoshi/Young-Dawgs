@@ -1,0 +1,29 @@
+{
+  "schema": "young-dawgs-v0.6.3-prospective-recovery",
+  "revision": 1,
+  "starting_HEAD": "9af3d404c94293c9fa705552bb41497358ddd63e",
+  "source_geometry_sha256": "4700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1",
+  "historical_mesh_semantic_sha256": "e26863263774cf86c777b1485ac0e639216a91644007c4da272469a7447000bc",
+  "frozen_mesh_protocol": "experiments/pipeline_v0.6.1/protocol/MESH_PROTOCOL.json",
+  "frozen_mesh_protocol_sha256": "e59ce2f041f93281fd0313fb024d607f0822c62a090187ba43171331b48fce77",
+  "reproduction_level": "fine_new",
+  "maximum_regenerations_without_amendment": 1,
+  "geometry_changes_allowed": false,
+  "quality_gates": "reuse all frozen v0.6.1 checks unchanged, including angle >=10 degrees",
+  "generation_budget": {"timeout_seconds": 600, "rss_limit_GiB": 6, "minimum_disk_free_GiB": 20},
+  "import_budget": {"timeout_seconds": 900, "rss_limit_GiB": 12, "minimum_disk_free_GiB": 20, "cores": 1},
+  "contact_sensitivity": {
+    "reference": "authenticated v0.6.2 contact execution_002",
+    "candidates_absolute_FTOLN_mm": [-0.000001, -0.00001],
+    "FKN": 1,
+    "geometry_material_schedule": "same as v0.6.2 six-stage rectangle",
+    "max_small_strain_force_error_relative": 0.02,
+    "max_equilibrium_relative": 0.01,
+    "max_stored_endpoint_penetration_mm": 0.00001,
+    "selection": "largest tolerance passing force, equilibrium, contact and penetration checks; inspect conditioning and repeatability; not minimum penetration alone"
+  },
+  "resource_assessment": {"linear_assembly_only": "WRFULL with sparse direct if compatible; not a nonlinear solve/result", "max_rss_GiB": 20, "timeout_seconds": 600, "minimum_available_RAM_GiB": 12},
+  "pilot": "not yet authorized by a frozen execution protocol; freeze after mesh/import/contact/resource evidence",
+  "suggested_pilot_strains": [0.0001, 0.0005, 0.001],
+  "stop_before": ["batch FEM", "autonomous LLM optimization", "3D workflows"]
+}
