@@ -1,0 +1,7 @@
+SetScriptVersion(Version="24.1.0")
+system = GetTemplate(TemplateName="Static Structural", Solver="ANSYS").CreateSystem()
+model = system.GetContainer(ComponentName="Model")
+model.Edit(Interactive=False)
+model.SendCommand(Language="Python", Command="open('C:\\\\Users\\\\sd22446\\\\OneDrive - University of Georgia\\\\Young-Dawgs-VSCode\\\\experiments\\\\pipeline_v0.6.2\\\\run_001\\\\environment\\\\workbench_probe\\\\mechanical_query.txt', 'w').write(str(ExtAPI.DataModel.Project.Model.Analyses.Count))")
+model.Exit()
+open('C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.6.2\\run_001\\environment\\workbench_probe\\workbench_query.txt', "w").write("JOURNAL_COMPLETED")

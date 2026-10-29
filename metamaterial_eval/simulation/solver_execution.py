@@ -18,11 +18,13 @@ def discover_solver(executable=None):
     if executable:
         path=Path(executable)
         return path.resolve() if path.is_file() else None
-    for name in ['ansys261','ansys252','ansys251','ansys242','mapdl']:
+    releases=sorted({key[8:] for key in os.environ if re.fullmatch(r'AWP_ROOT\d{3}',key)} |
+                    {'261','252','251','242','241'},reverse=True)
+    for name in [*(f'ansys{release}' for release in releases),'mapdl']:
         found=shutil.which(name)
         if found:return Path(found)
     # Read only path selectors, never license server values or credential files.
-    for release in ['261','252','251','242']:
+    for release in releases:
         value=os.environ.get('AWP_ROOT'+release)
         if value:
             for suffix in [f'ansys/bin/winx64/ANSYS{release}.exe',f'ansys/bin/ansys{release}']:
@@ -40,6 +42,12 @@ def classify_log(text,returncode,has_result,has_history):
         return 'SOLVER_ERROR_OR_NONCONVERGENCE'
     if not has_result or not has_history:return 'MISSING_SOLVER_OUTPUT'
     return 'EXECUTED_PENDING_IMPORT_CONTACT_AND_NUMERIC_VALIDATION'
+
+
+def solver_release(text):
+    """Recognize actual banners, never the word release in a deck comment."""
+    match=re.search(r'(?:ANSYS\s+(?:MAPDL\s+)?|RELEASE\s+)(20\d{2}\s+R[12])',text,re.I)
+    return match.group(1).upper() if match else None
 
 
 def execute(input_folder, output_folder, executable=None, timeout=3600, benchmark_evidence=None):
@@ -85,18 +93,19 @@ def execute(input_folder, output_folder, executable=None, timeout=3600, benchmar
             return status
     for name in ['compression.inp','input_manifest.json','extract_fields.mac','mesh.npz']:
         if (source/name).exists():shutil.copy2(source/name,output/name)
-    command=[str(solver),'-b','-j','compression','-i','compression.inp','-o','solver.out','-np','1']
+    command=[str(solver),'-b','-j','compression','-i','compression.inp','-o','solver.out','-np','1','-smp','-m','2048']
     started=time.perf_counter()
     try:
-        with (output/'launcher.log').open('w') as log:
-            result=subprocess.run(command,cwd=output,stdout=log,stderr=subprocess.STDOUT,timeout=timeout,check=False)
+        from .windows_ansys import bounded_run
+        process=bounded_run(command,output,timeout=timeout,prepared=True)
         text=(output/'launcher.log').read_text(errors='replace')
         if (output/'solver.out').exists():text+='\n'+(output/'solver.out').read_text(errors='replace')
-        state=classify_log(text,result.returncode,(output/'compression.rst').is_file(),(output/'history.csv').is_file())
-        version=re.search(r'RELEASE\s+[^\r\n]+',text,re.IGNORECASE)
-        status.update(status=state,returncode=result.returncode,solver_version=version.group(0) if version else None,
+        state=classify_log(text,process['returncode'],(output/'compression.rst').is_file(),(output/'history.csv').is_file())
+        if process['status']!='PROCESS_EXITED':state=process['status']
+        status.update(status=state,returncode=process['returncode'],solver_version=solver_release(text),
                       license='CHECKOUT_FAILED' if state=='LICENSE_FAILURE' else 'NOT_INDEPENDENTLY_VERIFIED',
-                      runtime_seconds=time.perf_counter()-started)
+                      runtime_seconds=time.perf_counter()-started,
+                      started_utc=process['started_utc'],peak_tree_rss_bytes=process['peak_tree_rss_bytes'])
     except subprocess.TimeoutExpired:
         status.update(status='SOLVER_TIMEOUT',runtime_seconds=time.perf_counter()-started)
     except OSError as exc:
