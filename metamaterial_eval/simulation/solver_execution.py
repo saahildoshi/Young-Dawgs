@@ -37,6 +37,10 @@ def classify_log(text,returncode,has_result,has_history):
     lower=text.lower()
     if re.search(r'license.*(?:fail|denied|unavailable|not available)|(?:fail|unable).*license|licensed number.*exceeded|ansys license manager error|no licenses? available',lower):
         return 'LICENSE_FAILURE'
+    if re.search(r'not enough memory|insufficient memory|out of memory|unable to allocate',lower):
+        return 'MEMORY_EXHAUSTION'
+    if re.search(r'element.*(?:highly distorted|excessive distortion)|negative pivot',lower):
+        return 'ELEMENT_DISTORTION_OR_INSTABILITY'
     if returncode!=0:return 'SOLVER_PROCESS_FAILURE'
     if re.search(r'\*\*\*\s*(?:error|fatal)\s*\*\*\*|solution.*not converged|unconverged solution|convergence failure',lower):
         return 'SOLVER_ERROR_OR_NONCONVERGENCE'
@@ -110,6 +114,8 @@ def execute(input_folder, output_folder, executable=None, timeout=3600, benchmar
         status.update(status='SOLVER_TIMEOUT',runtime_seconds=time.perf_counter()-started)
     except OSError as exc:
         status.update(status='SOLVER_LAUNCH_FAILURE',error=str(exc))
+    except ImportError as exc:
+        status.update(status='MISSING_PROCESS_MONITOR_DEPENDENCY',error=str(exc))
     status['outputs']={p.name:file_hash(p) for p in output.iterdir() if p.is_file() and p.name not in ['solver_status.json']}
     status['command']=command
     write_json(output/'solver_status.json',status)

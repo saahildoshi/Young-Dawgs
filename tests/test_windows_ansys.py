@@ -5,6 +5,7 @@ import sys
 import pytest
 from metamaterial_eval.simulation.windows_ansys import installations, bounded_run
 from metamaterial_eval.simulation.solver_execution import discover_solver, solver_release
+from metamaterial_eval.simulation.solver_execution import execute, classify_log
 
 
 def test_release_241_environment_discovery(tmp_path, monkeypatch):
@@ -42,3 +43,24 @@ def test_owned_process_exit_and_timeout(tmp_path):
     assert result['status']=='TIMEOUT' and result['runtime_seconds']<10
     with pytest.raises(FileExistsError):
         bounded_run([sys.executable,'-c','pass'],tmp_path/'ok')
+
+
+def test_missing_monitor_dependency_blocks_before_solver_launch(tmp_path,monkeypatch):
+    import json
+    source=tmp_path/'input';source.mkdir()
+    (source/'compression.inp').write_text('unit control, never executed')
+    (source/'input_manifest.json').write_text(json.dumps({'purpose':'rectangle_benchmark',
+        'mesh_sha256':'unit-control','platen_contact':False}))
+    fake=tmp_path/'not-a-solver.exe';fake.write_text('unit control')
+    def missing(*args,**kwargs):raise ImportError('psutil unit control')
+    monkeypatch.setattr('metamaterial_eval.simulation.windows_ansys.bounded_run',missing)
+    result=execute(source,tmp_path/'output',executable=fake)
+    assert result['status']=='MISSING_PROCESS_MONITOR_DEPENDENCY'
+    assert result['license']=='NOT_CHECKED'
+
+
+@pytest.mark.parametrize('message,state',[
+    ('Insufficient memory','MEMORY_EXHAUSTION'),
+    ('Element 10 is highly distorted','ELEMENT_DISTORTION_OR_INSTABILITY')])
+def test_resource_and_distortion_failures(message,state):
+    assert classify_log(message,1,False,False)==state

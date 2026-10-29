@@ -314,6 +314,64 @@ def run(source,output,direct=None,timeout=180):
     return execute(source,output,timeout=timeout,benchmark_evidence=evidence)
 
 
+def extract_contact_points(execution, output):
+    """Read actual RST endpoint data and total element forces, not ETABLE averages."""
+    from .solver_execution import discover_solver, classify_log
+    from .windows_ansys import bounded_run
+    execution,output=Path(execution).resolve(),Path(output).resolve()
+    output.mkdir(parents=True,exist_ok=False)
+    receipt=json.loads((execution/'solver_status.json').read_text())
+    for name in ['compression.rst','compression.rdb']:
+        if file_hash(execution/name)!=receipt['outputs'][name]:raise ValueError('Altered actual RST/database')
+    generated=output/'generated';generated.mkdir()
+    for name in ['compression.rst','compression.rdb']:shutil.copy2(execution/name,generated/name)
+    columns=['set','pseudo_time','pair','element','pressure_i_MPa','pressure_j_MPa',
+             'signed_gap_i_mm','signed_gap_j_mm','contact_force_y_N']
+    lines=['/BATCH','/CLEAR,START','RESUME,compression,rdb','/POST1','FILE,compression,rst','ALLSEL,ALL',
+           'SET,LAST','*GET,NSETS,ACTIVE,0,SET,NSET','SET,FIRST','*CFOPEN,contact_points,csv',
+           '*VWRITE',"('"+','.join(columns)+"')",'*DO,JJ,1,NSETS','*GET,TNOW,ACTIVE,0,SET,TIME',
+           '*DO,PAIR,1,2','*IF,PAIR,EQ,1,THEN','CMSEL,S,BOTTOM_CONTACT','*ELSE','CMSEL,S,TOP_CONTACT','*ENDIF',
+           '*GET,NC,ELEM,0,COUNT','EID=0','*DO,KK,1,NC','EID=ELNEXT(EID)',
+           '*GET,PI,ELEM,EID,SMISC,1','*GET,PJ,ELEM,EID,SMISC,2',
+           '*GET,GI,ELEM,EID,NMISC,5','*GET,GJ,ELEM,EID,NMISC,6',
+           '*GET,FYV,ELEM,EID,NMISC,22','*VWRITE,JJ,TNOW,PAIR,EID,PI,PJ,GI,GJ,FYV',
+           "(F8.0,',',E16.8,',',F4.0,',',F12.0,5(',',E16.8))",'*ENDDO','ALLSEL,ALL','*ENDDO',
+           '*IF,JJ,LT,NSETS,THEN','SET,NEXT','*ENDIF','*ENDDO','*CFCLOS','FINISH','/EXIT,NOSAVE']
+    (generated/'extract.inp').write_text('\n'.join(lines)+'\n')
+    process=bounded_run([str(discover_solver()),'-b','-smp','-np','1','-j','post',
+                         '-i','extract.inp','-o','post.out'],generated,prepared=True,timeout=120)
+    log=(generated/'post.out').read_text(errors='replace')
+    if process['returncode'] or re.search(r'\*\*\*\s*(?:ERROR|FATAL)\s*\*\*\*|Unknown label|not stored',log,re.I):
+        write_json(output/'QUARANTINE.json',{'status':'POSTPROCESS_FAILED','process':process})
+        return
+    data=read_numeric_csv(generated/'contact_points.csv',columns)
+    history=read_numeric_csv(execution/'history.csv',HISTORY)
+    balance=[]
+    for r in history:
+        for pair,group,key in [(1,'bottom','lower_rf_y_N'),(2,'top','upper_rf_y_N')]:
+            subset=[x for x in data if x['set']==r['set'] and x['pair']==pair]
+            force=sum(x['contact_force_y_N'] for x in subset)
+            balance.append({'set':r['set'],'pseudo_time':r['pseudo_time'],'pair':group,
+                            'sum_contact_force_y_N':force,'native_pilot_RF_y_N':r[key],
+                            'magnitude_relative_difference':abs(abs(force)-abs(r[key]))/max(abs(r[key]),1e-12)})
+    maxpen=max(max(0,r['signed_gap_i_mm'],r['signed_gap_j_mm']) for r in data)
+    maxdiff=max(r['magnitude_relative_difference'] for r in balance)
+    shutil.copy2(generated/'contact_points.csv',output/'contact_points.csv')
+    write_csv(output/'contact_force_balance.csv',balance)
+    write_json(output/'contact_point_validation.json',{
+        'status':'PASS' if maxpen<=.001 and maxdiff<=.01 else 'FAIL',
+        'source_RST_sha256':file_hash(execution/'compression.rst'),
+        'source_solver_receipt_sha256':file_hash(execution/'solver_status.json'),
+        'postprocess_receipt_sha256':file_hash(generated/'process_receipt.json'),
+        'point_csv_sha256':file_hash(output/'contact_points.csv'),
+        'maximum_stored_endpoint_penetration_mm':maxpen,
+        'maximum_contact_force_pilot_magnitude_difference_relative':maxdiff,
+        'scope':'SMISC1/2 pressure; NMISC5/6 stored endpoint penetration/gap; NMISC22 total contact element force',
+        'limitation':'stored contact endpoints are not an exhaustive continuous-surface penetration bound',
+        'old_CONT_ETABLE_values':'element averages, not pointwise extrema; retained as such',
+        'process':process})
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     sub=parser.add_subparsers(dest='action',required=True)
@@ -321,11 +379,13 @@ def main():
     p.add_argument('--correction',type=Path)
     p=sub.add_parser('run');p.add_argument('--source',type=Path,required=True);p.add_argument('--direct',type=Path)
     p=sub.add_parser('analyze');p.add_argument('--execution',type=Path,required=True);p.add_argument('--protocol',type=Path,required=True)
+    p=sub.add_parser('contact-points');p.add_argument('--execution',type=Path,required=True)
     for p in sub.choices.values():p.add_argument('--output',type=Path,required=True)
     args=parser.parse_args()
     if args.action=='prepare':result=prepare(args.output,args.protocol,contact=args.contact,correction=args.correction)
     elif args.action=='run':result=run(args.source,args.output,args.direct)
-    else:result=analyze(args.execution,args.output,args.protocol)
+    elif args.action=='analyze':result=analyze(args.execution,args.output,args.protocol)
+    else:result=extract_contact_points(args.execution,args.output)
     print(json.dumps(result,indent=2))
 
 

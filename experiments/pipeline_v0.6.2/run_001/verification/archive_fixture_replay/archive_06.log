@@ -1,0 +1,42 @@
+...................F.........                                            [100%]
+================================== FAILURES ===================================
+______ test_saved_ordinary_and_regularized_sources_and_historical_hashes ______
+
+    def test_saved_ordinary_and_regularized_sources_and_historical_hashes():
+        for name in ('design_000_seed_000','design_009_seed_001'):
+            f=load_fixture(ROOT,CONFIG,name)
+            before=shapely.to_wkb(f['baseline']);exact=shapely.to_wkb(f['exact'])
+            assert inspect_boundary(f['baseline'])['manifold']
+            _=simplify_diagnostic(f['baseline'],.5)
+            assert shapely.to_wkb(f['baseline'])==before and shapely.to_wkb(f['exact'])==exact
+        p=ROOT/'experiments/pipeline_v0.5/manifold_qualification/run_001/protocol.json'
+        for name,h in json.loads(p.read_text())['source_sha256'].items():
+>           assert hashlib.sha256((ROOT/name).read_bytes()).hexdigest()==h,name
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_simplification_sensitivity.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py:777: in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/sd22446/AppData/Local/Temp/youngdawgs_archive_replay_ygms2op8/tests/test_geometry_exact.py')
+mode = 'rb', buffering = 0, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\sd22446\\AppData\\Local\\Temp\\youngdawgs_archive_replay_ygms2op8\\tests\\test_geometry_exact.py'
+
+..\..\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py:771: FileNotFoundError
+=========================== short test summary info ===========================
+FAILED tests/test_simplification_sensitivity.py::test_saved_ordinary_and_regularized_sources_and_historical_hashes
+1 failed, 28 passed in 2.50s
