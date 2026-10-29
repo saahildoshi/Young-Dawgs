@@ -1,0 +1,76 @@
+{
+  "automation_controller": "NOT_IMPLEMENTED",
+  "limitations": [
+    "provisional material and dimensions",
+    "plane stress",
+    "finite benchmark validation domain",
+    "v241 official help unavailable; empirical release verification with v242 comparison references",
+    "tight FTOLN raises automatically computed contact stiffness; coefficient-ratio warning retained",
+    "no formal contact sensitivity study",
+    "stress/strain available at corners; no invented midside stress",
+    "stored endpoint penetration is not a continuous-surface bound",
+    "prior cumulative small-pore fidelity HOLD",
+    "no experimental calibration",
+    "internal self-contact unqualified",
+    "mechanical mesh convergence unqualified",
+    "no microstructure mechanical data",
+    "no manufacturing qualification",
+    "no autonomous LLM optimization"
+  ],
+  "microstructure": {
+    "achieved_compression_stages": [],
+    "design_id": 9,
+    "effective_stiffness": null,
+    "eligible_for_design_ranking": false,
+    "mesh_authenticated": false,
+    "recorded_mesh_sha256": "e26863263774cf86c777b1485ac0e639216a91644007c4da272469a7447000bc",
+    "resolution": 1024,
+    "seed": 1,
+    "solid_fraction": 0.4769363403320312,
+    "solver_convergence": "NOT_EXECUTED",
+    "source_geometry_sha256": "4700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1",
+    "stress_strain": null,
+    "validity": "MISSING_MESH_INPUT_NOT_PHYSICAL_DESIGN_FAILURE"
+  },
+  "rectangle": {
+    "achieved_engineering_strains": [
+      9.999999999999999e-05,
+      0.0005,
+      0.001,
+      0.005,
+      0.01,
+      0.02
+    ],
+    "contact": "two frictionless rigid platen pairs; internal self-contact not configured",
+    "contact_validation": "contact_validation/point_extraction_001/contact_point_validation.json",
+    "deformation_fields": "rectangle_contact/evidence_002/nodal_fields.csv",
+    "design_id": null,
+    "effective_stiffness": {
+      "method": "least_squares_through_origin",
+      "normalized": 1.0043571163337202,
+      "points": 24,
+      "status": "COMPUTED",
+      "strain_interval": [
+        0,
+        0.005
+      ],
+      "value_MPa": 1004.3571163337202
+    },
+    "eligible_for_microstructure_design_ranking": false,
+    "geometry_sha256": null,
+    "material": {
+      "E_MPa": 1000,
+      "nu": 0.3
+    },
+    "mesh_sha256": "2c63a767bc3dd01702a1f77958658e424a51efc2693558b5a097e915d02e9d31",
+    "plane_stress_thickness_mm": 1,
+    "reaction_history_csv": "rectangle_contact/analysis_002/force_displacement.csv",
+    "solver_warnings": [
+      "Coefficient ratio exceeds 1.0e8 - Check results."
+    ],
+    "specimen_type": "homogeneous_numerical_benchmark",
+    "stress_strain_csv": "rectangle_contact/analysis_002/stress_strain.csv",
+    "validity": "VALID_SOLVER_MEASUREMENTS"
+  },
+  "schema": "young-dawgs-mechanical-feedback-v0.6.2"
+}
