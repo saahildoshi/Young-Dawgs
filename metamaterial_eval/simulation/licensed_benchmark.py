@@ -170,6 +170,19 @@ def verify_import(execution,mesh,manifest):
     if any(token not in inventory for token in required):raise ValueError('Solver model definitions incomplete')
     if not re.search(r'KEYOPT\( 1- 6\)=\s+1\s+0\s+3\s+0\s+0\s+0',inventory):
         raise ValueError('Solver PLANE183 options differ')
+    constants=re.search(r'REAL CONSTANT SET\s+1\s+ITEMS\s+1 TO\s+6\s+([\d.Ee+\-]+)',inventory)
+    if not constants or not np.isclose(float(constants[1]),manifest['config']['thickness']):
+        raise ValueError('Actual specimen thickness differs')
+    if manifest['platen_contact']:
+        # DLIST is actual solver state, before applying the upper pilot travel.
+        constraints=re.findall(r'^\s*(\d+)\s+(UX|UY|ROTZ)\s+([\d.Ee+\-]+)',inventory,re.M)
+        if any(int(n)<=len(mesh.nodes) and dof=='UY' for n,dof,_ in constraints):
+            raise ValueError('Contact bypassed by specimen UY constraints')
+        if any(token not in (execution/'solver.out').read_text() for token in [
+            'Frictionless contact pair is defined','Contact algorithm: Augmented Lagrange method',
+            'CONTACT PAIR HAVING REAL ID =           2 IS INITIALLY CLOSED',
+            'CONTACT PAIR HAVING REAL ID =           3 IS INITIALLY CLOSED']):
+            raise ValueError('Actual initial contact/formulation check missing')
     return {'status':'PASS','nodes':len(nodes),'TRI6':len(elements),'exact_connectivity':True,
             'axes':'global XY','max_coordinate_error_mm':float(np.max(np.abs(np.array([[r['x_mm'],r['y_mm']] for r in nodes])-mesh.nodes))),
             'stress_field_location':'corner_nodes_only; midside displacements retained'}
@@ -277,6 +290,7 @@ def analyze(execution, output, protocol):
                  'maximum_contact_pressure_MPa':max((d['pressure_max_MPa'] for d in diagnostics),default=None),
                  'stress_fields':'actual corner nodal averages; no midside stress fabricated',
                  'reaction_sign':'native ANSYS upper negative/lower positive; compressive stress = -upper_RF/(W*t)',
+                 'solver_warnings':re.findall(r'\*\*\* WARNING \*\*\*[^\n]*\n([^\n]+)',log),
                  'pseudo_time':'load parameter, not seconds','llm_performance_eligible':False}
         write_json(output/'mechanical_summary.json',summary)
         report={'schema':'young-dawgs-v0.6.2-empirical-qualified-benchmark','status':'SOLVER_VERIFIED',

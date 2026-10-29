@@ -14,10 +14,11 @@ ROOT=Path(__file__).resolve().parents[1]/'experiments/pipeline_v0.6.2/run_001'
 @pytest.mark.parametrize('stage',['rectangle_direct','rectangle_contact'])
 def test_actual_solver_receipt_and_reextract(stage,tmp_path):
     base=ROOT/stage
-    report=base/'analysis_001/qualification.json'
+    attempt='001' if stage=='rectangle_direct' else '002'
+    report=base/f'analysis_{attempt}/qualification.json'
     kind='direct' if stage=='rectangle_direct' else 'platen_contact'
     checked_qualification(evidence_token(report),kind)
-    result=analyze(base/'generated/execution_001',tmp_path/'extraction',ROOT/'protocol/BENCHMARK_PROTOCOL.json')
+    result=analyze(base/f'generated/execution_{attempt}',tmp_path/'extraction',ROOT/'protocol/BENCHMARK_PROTOCOL.json')
     assert result['status']=='VALID_SOLVER_MEASUREMENTS'
     assert result['all_requested_stages_achieved']
     assert result['force_balance_max_relative']<.01
