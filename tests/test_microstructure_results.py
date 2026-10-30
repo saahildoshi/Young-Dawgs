@@ -63,3 +63,20 @@ def test_observed_jobname_requires_native_log_and_receipt_hash(tmp_path,correct_
     receipt={'process':{'artifacts':{'compression.rst':{'sha256':file_hash(actual) if correct_hash else 'wrong'}}}}
     path,record=observed_native_result(tmp_path,{'result_jobname':'requested'},receipt,'CURRENT JOBNAME REDEFINED AS compression')
     assert path.name==expected_name and record['deviation']==correct_hash
+
+
+@pytest.mark.parametrize('change,expected_error',[(None,None),('source_RST_sha256','provenance'),('solve','read-only')])
+def test_separate_field_export_requires_original_native_provenance(tmp_path,change,expected_error):
+    import json
+    from metamaterial_eval.simulation.microstructure_results import verified_field_export
+    from metamaterial_eval.simulation.solver_execution import file_hash
+    source=tmp_path/'source';source.mkdir();fields=tmp_path/'fields';fields.mkdir()
+    for name in ['execution_receipt.json','native.rst','checkpoint.db','protocol.json']:(source/name).write_bytes(b'unit authentication control')
+    (fields/'input.inp').write_text('/POST1\n'+('SOLVE\n' if change=='solve' else 'SET,1,1\n'))
+    r={'process':{'returncode':0},'input_sha256':file_hash(fields/'input.inp')}
+    p={'source_execution_receipt_sha256':file_hash(source/'execution_receipt.json'),'source_RST_sha256':file_hash(source/'native.rst'),'source_protocol_sha256':file_hash(source/'protocol.json'),'source_checkpoint_database_sha256':file_hash(source/'checkpoint.db'),'input_sha256':r['input_sha256']}
+    if change=='source_RST_sha256':p[change]='wrong'
+    (fields/'execution_receipt.json').write_text(json.dumps(r));(fields/'provenance.json').write_text(json.dumps(p))
+    if expected_error:
+        with pytest.raises(ValueError,match=expected_error):verified_field_export(source,fields,source/'native.rst',source/'protocol.json')
+    else:assert verified_field_export(source,fields,source/'native.rst',source/'protocol.json')==r

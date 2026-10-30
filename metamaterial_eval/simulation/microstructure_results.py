@@ -77,7 +77,22 @@ def observed_native_result(directory,manifest,receipt,log):
                    'basis':'native current-jobname log plus exact receipt hash; no renamed/fabricated native result'}
 
 
-def postprocess(directory,artifact_manifest,protocol_path,output):
+def verified_field_export(source_directory,field_directory,native_rst,protocol_path):
+    source_directory,field_directory=Path(source_directory),Path(field_directory)
+    receipt=json.loads((field_directory/'execution_receipt.json').read_text())
+    provenance=json.loads((field_directory/'provenance.json').read_text())
+    bindings={'source_execution_receipt_sha256':file_hash(source_directory/'execution_receipt.json'),
+              'source_RST_sha256':file_hash(native_rst),'source_protocol_sha256':file_hash(protocol_path),
+              'source_checkpoint_database_sha256':file_hash(source_directory/'checkpoint.db')}
+    if any(provenance.get(key)!=value for key,value in bindings.items()):raise ValueError('Field-export source provenance mismatch')
+    text=(field_directory/'input.inp').read_text()
+    if re.search(r'^\s*SOLVE\s*$',text,re.I|re.M):raise ValueError('Field exporter is not read-only')
+    if receipt['process']['returncode']!=0 or receipt['input_sha256']!=file_hash(field_directory/'input.inp') or provenance.get('input_sha256')!=receipt['input_sha256']:
+        raise ValueError('Changed or failed field-export input/process')
+    return receipt
+
+
+def postprocess(directory,artifact_manifest,protocol_path,output,*,field_directory=None):
     directory,output,protocol_path=Path(directory),Path(output),Path(protocol_path);output.mkdir(parents=True,exist_ok=False)
     receipt=json.loads((directory/'execution_receipt.json').read_text());manifest=json.loads((directory/'simulation_manifest.json').read_text())
     protocol=json.loads(protocol_path.read_text());mesh,artifact,_=resolve_manifest(artifact_manifest)
@@ -89,6 +104,8 @@ def postprocess(directory,artifact_manifest,protocol_path,output):
     native_rst,native_routing=observed_native_result(directory,manifest,receipt,log)
     if native_rst.exists() and receipt['process']['artifacts'].get(native_rst.name,{}).get('sha256')!=file_hash(native_rst):
         raise ValueError('Changed native result archive')
+    fields_directory=Path(field_directory) if field_directory else directory
+    field_receipt=verified_field_export(directory,fields_directory,native_rst,protocol_path) if field_directory else receipt
     completed=set(map(tuple,receipt['converged_steps']));rows=[];contacts=[];stages=[];failed=None
     corners=np.unique(mesh.triangles[:,:3])+1
     for i,target in enumerate(protocol['strains'],1):
@@ -97,19 +114,19 @@ def postprocess(directory,artifact_manifest,protocol_path,output):
             if not native_rst.exists() or not native_rst.stat().st_size:raise ValueError('No nonempty native result archive')
             names=[prefix+s for s in ['_history.csv','_gate.txt','_displacements.csv','_stress.csv','_contact.csv']]
             for name in names:
-                if receipt['process']['artifacts'].get(name,{}).get('sha256')!=file_hash(directory/name):raise ValueError('Missing/altered actual checkpoint: '+name)
-            gate=(directory/(prefix+'_gate.txt')).read_text().split(',')
+                if field_receipt['process']['artifacts'].get(name,{}).get('sha256')!=file_hash(fields_directory/name):raise ValueError('Missing/altered actual checkpoint: '+name)
+            gate=(fields_directory/(prefix+'_gate.txt')).read_text().split(',')
             if float(gate[0])!=0:raise ValueError('Actual solver checkpoint gate failed')
-            h=numeric(directory/(prefix+'_history.csv'),['pseudo_time','load_step','substep','top_uy_mm','upper_rf_y_N','lower_rf_y_N'])
+            h=numeric(fields_directory/(prefix+'_history.csv'),['pseudo_time','load_step','substep','top_uy_mm','upper_rf_y_N','lower_rf_y_N'])
             if len(h)!=1:raise ValueError('Duplicate checkpoint history')
             t,ls,ss,uy,upper,lower=h[0]
             if ls!=i or ss!=int(ss) or (int(ls),int(ss)) not in completed:raise ValueError('Uncorroborated load-step convergence')
             if not np.isclose(t,target,atol=1e-12,rtol=0) or not np.isclose(uy,-10.24*target,atol=1e-8,rtol=0):raise ValueError('Requested checkpoint not achieved')
             row={'stage':i,'load_step':int(ls),'substep':int(ss),**force_metrics(t,uy,upper,lower)}
-            c=numeric(directory/(prefix+'_contact.csv'),['pair','element','status','pressure_i_MPa','pressure_j_MPa','gap_i_mm','gap_j_mm','contact_force_y_N'])
+            c=numeric(fields_directory/(prefix+'_contact.csv'),['pair','element','status','pressure_i_MPa','pressure_j_MPa','gap_i_mm','gap_j_mm','contact_force_y_N'])
             cm=contact_metrics(c,manifest['model']['contact_elements'],upper,lower)
-            u=numeric(directory/(prefix+'_displacements.csv'),['node','ux_mm','uy_mm'])
-            s=numeric(directory/(prefix+'_stress.csv'),['node','syy_MPa','seqv_MPa','elastic_eyy','elastic_exx'])
+            u=numeric(fields_directory/(prefix+'_displacements.csv'),['node','ux_mm','uy_mm'])
+            s=numeric(fields_directory/(prefix+'_stress.csv'),['node','syy_MPa','seqv_MPa','elastic_eyy','elastic_exx'])
             if not np.array_equal(u[:,0],np.arange(1,len(mesh.nodes)+1)) or not np.array_equal(s[:,0],corners):raise ValueError('Incomplete all-node/corner field inventory')
             deformed=mesh.nodes+u[:,1:3]
             mapping=quadratic_mapping(deformed[mesh.triangles])
@@ -122,7 +139,7 @@ def postprocess(directory,artifact_manifest,protocol_path,output):
                    'stress_location':'supported corner-node averages only; no midside stresses fabricated'}
             rows.append(row);contacts.extend({'stage':i,**item} for item in cm)
             stages.append({'stage':i,'status':'VALID_CONVERGED','fields':field,
-                           'raw_files':{name:receipt['process']['artifacts'][name]['sha256'] for name in names}})
+                           'raw_files':{name:field_receipt['process']['artifacts'][name]['sha256'] for name in names}})
             del u,s,deformed,mapping
         except (ValueError,FileNotFoundError) as exc:
             failed={'stage':i,'reason':str(exc)};break
@@ -138,6 +155,7 @@ def postprocess(directory,artifact_manifest,protocol_path,output):
     dump_csv(output/'stress_strain.csv',[{k:r[k] for k in ['stage','pseudo_time','engineering_compression_strain','nominal_compression_stress_MPa']} for r in rows])
     dump_csv(output/'contact_diagnostics.csv',contacts)
     summary={'schema':'young-dawgs-v0.6.3-mechanical-results','status':status,'actual_valid_stages':rows,'stage_fields':stages,
+             'field_export_directory':str(fields_directory.resolve()),'field_export_receipt_sha256':file_hash(fields_directory/'execution_receipt.json'),
              'solver_reported_converged_substeps':receipt['converged_steps'],
              'logged_converged_substep_times':[(int(a),int(b),float(t)) for a,b,t in re.findall(
                  r'LOAD STEP\s+(\d+)\s+SUBSTEP\s+(\d+)\s+COMPLETED[^\n]*\s*\*+\s*TIME=\s*([\d.Ee+\-]+)',log,re.I)],
