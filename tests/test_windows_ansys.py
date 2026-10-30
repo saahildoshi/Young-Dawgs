@@ -64,3 +64,11 @@ def test_missing_monitor_dependency_blocks_before_solver_launch(tmp_path,monkeyp
     ('Element 10 is highly distorted','ELEMENT_DISTORTION_OR_INSTABILITY')])
 def test_resource_and_distortion_failures(message,state):
     assert classify_log(message,1,False,False)==state
+
+
+@pytest.mark.parametrize('setting,state',[
+    ({'min_disk_free':10**18},'DISK_RESERVE_EXHAUSTED'),
+    ({'min_available_ram':10**18},'OS_RAM_RESERVE_REACHED')])
+def test_owned_job_stops_at_operating_system_reserve(tmp_path,setting,state):
+    result=bounded_run([sys.executable,'-c','import time;time.sleep(10)'],tmp_path/'run',timeout=20,**setting)
+    assert result['status']==state and result['runtime_seconds']<5

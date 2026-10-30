@@ -1,0 +1,71 @@
+{
+  "limitation": "stored contact endpoints are not an exhaustive continuous-surface penetration bound",
+  "maximum_contact_force_pilot_magnitude_difference_relative": 7.808279551114666e-08,
+  "maximum_stored_endpoint_penetration_mm": 1.0101249e-06,
+  "old_CONT_ETABLE_values": "element averages, not pointwise extrema; retained as such",
+  "point_csv_sha256": "f0e8b1e066ead0716eb03577461392a50b99246eff3c8f9d52b002cbfe0728f5",
+  "postprocess_receipt_sha256": "bb830cf51075d4f05b28ca35abdc39f7da9a17f61b06d0450b480160ddc264f6",
+  "process": {
+    "artifacts": {
+      "compression.rdb": {
+        "bytes": 393216,
+        "sha256": "935349c4c806f2134a95755891091c2cdb7714579ac9aa63f80e0d0c4df6e77b"
+      },
+      "compression.rst": {
+        "bytes": 5767168,
+        "sha256": "51a21bfed56391e788ec1b004ed8be9b0f9ca1d429c719ab5102b8dc9402df19"
+      },
+      "contact_points.csv": {
+        "bytes": 187310,
+        "sha256": "f0e8b1e066ead0716eb03577461392a50b99246eff3c8f9d52b002cbfe0728f5"
+      },
+      "extract.inp": {
+        "bytes": 819,
+        "sha256": "2eef8fffe492fff17cecfb640f88c40b8fcc79db98c8d266ab586532ba94cc48"
+      },
+      "launcher.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "post.err": {
+        "bytes": 80,
+        "sha256": "9d40daadf6dc8b53875c5e00a5799898e7010d92c85d4de0362c3c89bef0aabc"
+      },
+      "post.log": {
+        "bytes": 250,
+        "sha256": "f5c498edc5ec13189a37c1879d039b5c1d8a348cd5d4b4f1ae9d608f1085bbd4"
+      },
+      "post.out": {
+        "bytes": 16621,
+        "sha256": "37e1a20ebc3bf2b21514497551ee9acfd544add2762eb39aabee5a1c13acb3b5"
+      }
+    },
+    "command": [
+      "C:\\Program Files\\ANSYS Inc\\v241\\ansys\\bin\\winx64\\ANSYS241.exe",
+      "-b",
+      "-smp",
+      "-np",
+      "1",
+      "-j",
+      "post",
+      "-i",
+      "extract.inp",
+      "-o",
+      "post.out"
+    ],
+    "min_available_ram_bytes": 0,
+    "min_disk_free_bytes": 0,
+    "peak_tree_rss_bytes": 229675008,
+    "returncode": 0,
+    "rss_limit_bytes": 8589934592,
+    "run_directory": "C:\\Users\\sd22446\\OneDrive - University of Georgia\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.6.3\\run_001\\contact_sensitivity\\candidate_002\\contact_points\\generated",
+    "runtime_seconds": 2.821852099848911,
+    "started_utc": "2026-10-29T23:59:56.296050+00:00",
+    "status": "PROCESS_EXITED",
+    "timeout_seconds": 120
+  },
+  "scope": "SMISC1/2 pressure; NMISC5/6 stored endpoint penetration/gap; NMISC22 total contact element force",
+  "source_RST_sha256": "51a21bfed56391e788ec1b004ed8be9b0f9ca1d429c719ab5102b8dc9402df19",
+  "source_solver_receipt_sha256": "37d4be4d55e4ae5fa909b80081cf4e0ee29061341da260acff7d094770e43ee3",
+  "status": "PASS"
+}
