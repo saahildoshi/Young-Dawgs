@@ -1,0 +1,78 @@
+{
+  "TRI6": 3544,
+  "config": {
+    "boundary_size": 0.025,
+    "bulk_size": 0.06,
+    "dimensions": "PROVISIONAL",
+    "force_basis": "total_N",
+    "height": 4,
+    "large_deformation": true,
+    "material": "ASSUMED_NOT_MEASURED",
+    "mode": "plane_stress",
+    "poisson_ratio": 0.3,
+    "strains": [
+      0.005,
+      0.01,
+      0.02
+    ],
+    "thickness": 1.0,
+    "time_axis": "quasi_static_pseudo_time",
+    "units": "mm-N-MPa",
+    "width": 4,
+    "young_modulus": 1000.0
+  },
+  "geometry_sha256": "06452ed428d8d3a449909e5d94c2c9eac701428fa49af86e0fe2bac4d05e52d9",
+  "local_mesh": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v064\\compliant_geometry_001\\mesh.npz",
+  "mesh_semantic_sha256": "e28899a643f1abf9155e1783c96e94011180ee6d19ec4f34fbdffed12dad07f5",
+  "nodes": 8378,
+  "pores": 1,
+  "quality": {
+    "accepted": true,
+    "boundary_counts": {
+      "bottom": 160,
+      "external": 502,
+      "pore": 468,
+      "top": 160
+    },
+    "boundary_error_mm": 3.068499499492507e-16,
+    "components": 1,
+    "element_type": "quadratic_TRI6",
+    "elements": 3544,
+    "gates": {
+      "angles": true,
+      "area": true,
+      "aspect": true,
+      "boundary": true,
+      "boundary_groups": true,
+      "domain_difference": true,
+      "holes_preserved": true,
+      "one_component": true,
+      "outward_normals": true,
+      "quadratic_mapping": true,
+      "quality": true
+    },
+    "generation_seconds": 0.06994719989597797,
+    "holes": 1,
+    "max_aspect_ratio": 3.464124754697151,
+    "max_source_segment_length_error_mm": 4.440892098500626e-16,
+    "mesh_area_mm2": 2.54610062385375,
+    "min_angle_deg": 25.20945260612916,
+    "min_jacobian_det_mm2": 0.00030757311320087,
+    "min_quality": 0.5999724104339588,
+    "nodes": 8378,
+    "order_distribution": {
+      "2": 3544
+    },
+    "quadratic_mapping": {
+      "invalid_or_uncertified": 0,
+      "limitation": "floating point with scaled guard; no formal interval arithmetic; no sampled positivity claim",
+      "maximum_midpoint_error_mm": 3.1401849173675503e-16,
+      "method": "analytic_quadratic_extrema_over_closed_reference_triangle",
+      "minimum_determinant_mm2": 0.0003075731132008591
+    },
+    "relative_area_error": 1.0465160858675596e-15,
+    "symmetric_difference_mm2": 0.0
+  },
+  "scope": "DIAGNOSTIC_ONLY, distinct synthetic geometry; no Design9 response inference",
+  "width_of_bending_struts_mm": 0.12
+}

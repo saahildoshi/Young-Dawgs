@@ -73,7 +73,12 @@ def bounded_run(command, directory, *, timeout=180, rss_limit=8*1024**3, prepare
                     state='DISK_RESERVE_EXHAUSTED'
                 if min_available_ram and psutil.virtual_memory().available<min_available_ram:
                     state='OS_RAM_RESERVE_REACHED'
-                if stop_check and not state:state=stop_check(directory)
+                if stop_check and not state:
+                    try:state=stop_check(directory)
+                    except KeyboardInterrupt:state='CANCELLED'
+                    except Exception as exc:
+                        receipt['monitor_error']=str(exc)
+                        state='MONITOR_FAILURE'
                 if state:
                     for child in reversed(owned.children(recursive=True)):
                         try:

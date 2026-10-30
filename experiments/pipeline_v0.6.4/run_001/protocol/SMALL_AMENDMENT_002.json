@@ -1,0 +1,31 @@
+{
+  "additional_controls": [
+    {
+      "id": "pp_update100",
+      "one_change": "KEYOPT10 1 to 0, FKN100 unchanged; solver recommendation"
+    },
+    {
+      "id": "pp_fkn1",
+      "one_change": "FKN100 to1, fixed KEYOPT10 unchanged; normal stiffness dominates low-force contact residuals; accept only unchanged penetration/equilibrium gates"
+    },
+    {
+      "id": "pp_linearized_monitorfix",
+      "reason": "Exact original linearized control repeated after native ring-file rotation raised monitor stat error. Original receipt misleadingly LAUNCH_FAILURE; native solver actually launched and continued. No active jobs remain; preserve original invalid operational receipt, do not infer successful experiment."
+    }
+  ],
+  "monitor_fix": "Missing stat during native ring rotation ignored; any unexpected monitor exception/cancel terminates owned tree and records MONITOR_FAILURE/CANCELLED.",
+  "not_authorized": "No full retry or further stiffness sweep until these controls reviewed",
+  "observed": {
+    "both_pairs_remain_globally_active": true,
+    "direct_converged": true,
+    "native_chatter_max": [
+      15,
+      12
+    ],
+    "pp_base_no_convergence": true,
+    "residual_peak_region": "TOP/BOTTOM contact boundaries, not demonstrated strut mechanism",
+    "smaller_steps_and_earlier_cutbacks": "failed to resolve"
+  },
+  "purpose": "Contact-induced failure reproduced with native chatter and localized FY residual at platens; causal bounded contact correction controls",
+  "unchanged_physics": "E,nu,t,fixture geometry,frictionless separable contact retained for contact controls"
+}

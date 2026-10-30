@@ -1,0 +1,48 @@
+{
+  "FKN": 100,
+  "FTOLN_absolute_mm": -1e-05,
+  "anchor_UX_node": 16,
+  "config": {
+    "boundary_size": 0.025,
+    "bulk_size": 0.06,
+    "dimensions": "PROVISIONAL",
+    "force_basis": "total_N",
+    "height": 4,
+    "large_deformation": true,
+    "material": "ASSUMED_NOT_MEASURED",
+    "mode": "plane_stress",
+    "poisson_ratio": 0.3,
+    "strains": [
+      0.005,
+      0.01,
+      0.02
+    ],
+    "thickness": 1.0,
+    "time_axis": "quasi_static_pseudo_time",
+    "units": "mm-N-MPa",
+    "width": 4,
+    "young_modulus": 1000.0
+  },
+  "contact_algorithm_keyopt2": 1,
+  "contact_elements": {
+    "bottom": 160,
+    "top": 160
+  },
+  "contact_scope": "PLATEN_CONTACT_ONLY",
+  "contact_stiffness_update_keyopt10": 1,
+  "controls": {
+    "bottom": 8381,
+    "top": 8384
+  },
+  "initial_geometric_gaps_mm": {
+    "bottom": 0,
+    "top": 0
+  },
+  "internal_self_contact": "UNQUALIFIED_NOT_CONFIGURED",
+  "schema": "young-dawgs-v0.6.3-contact-model",
+  "specimen_TRI6": 3544,
+  "specimen_UY_constraints": false,
+  "specimen_nodes": 8378,
+  "user_model_elements": 3868,
+  "user_model_nodes": 8384
+}
