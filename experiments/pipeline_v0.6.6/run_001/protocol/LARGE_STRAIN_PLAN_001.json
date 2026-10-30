@@ -1,0 +1,112 @@
+{
+  "baseline_strain": 5e-05,
+  "compression_work": "Trapezoidal only with adequate actual sampling; report quadrature limitations",
+  "continuation_gate": {
+    "contact_force_opposition_relative_max": 0.01,
+    "curve": "Only validated actual states; scalar-only native history separate; no invented extension",
+    "deformed_TRI6": "Positive every element under registered analytic polynomial floating-point check",
+    "field_completeness": "All-node U/supported native S/EPEL, independent POST1, complete provenance",
+    "last_valid_checkpoint": "Copy immutable parent into new job before restart; never mutate accepted parent",
+    "overlap": "No unexplained nonadjacent crossing/inverted solid loop; near-touch uncertainty classified",
+    "reaction_balance_relative_max": 0.01,
+    "stored_endpoint_penetration_max_mm": 1e-05
+  },
+  "fit_minimum_points": 3,
+  "internal_contact": {
+    "full_selection": "Qualify small first; assess213150pore edges before full GC. Preserve platen model; platen-only exploratory fallback requires overlap screen.",
+    "method_candidates": [
+      "GCGEN/GCDEF general contact",
+      "CONTA172/TARGE169 explicit pairs if necessary"
+    ],
+    "small_fixture": "Initially separated deformable walls; enabled/disabled crossing comparison, normals/exclusions, force/gap/penetration/equilibrium"
+  },
+  "load_control": "Total upper UY=-original_height*engineering_strain; never additive",
+  "mesh_candidate": {
+    "benchmark_relative_force_tolerance": 0.05,
+    "boundary_size_mm": 0.005,
+    "bulk_size_mm": 0.06,
+    "gate": "Frozen10deg and all topology/area/boundary/mapping gates; actual registered >=3 sampled TRI6 chord criterion; explicitly compare fine observed>=7",
+    "maximum_candidates": 1,
+    "mechanical_mesh_convergence": "UNQUALIFIED",
+    "meshing_policy": "Existing POLICY_B, exact WKB",
+    "selection": "Smaller only if original gates pass, matched0.005% force within5%, and materially cheaper; otherwise retain fine. No failed8.303deg reuse."
+  },
+  "no_3D_batch_or_LLM_optimization": true,
+  "nonlinear_controls": {
+    "AUTOTS": "ON",
+    "LNSRCH": "ON",
+    "NEQIT": 24,
+    "NLGEOM": "ON",
+    "NROPT": "FULL",
+    "force_CNVTOL_minref_N": 1e-08,
+    "force_CNVTOL_relative": 0.005,
+    "initial_global_strain_increment_max": 0.0005,
+    "material": "Existing E1000MPa,nu.3,t1,plane stress, linear elasticity; no new plasticity/stabilization/springs",
+    "maximum_global_strain_increment": 0.005,
+    "minimum_global_strain_increment": 1e-06
+  },
+  "overlap_screen": {
+    "broad_phase": "STRtree; never unrestricted all-pairs",
+    "invalid_crossings": "Quarantine even when Newton converged",
+    "quadratic_boundary": "Adaptive subdivision with exact chord-deviation bound, loop identities and shared-original-vertex exclusions",
+    "uncertainty": "Near-touch within approximation error flagged, not silently certified continuous nonpenetration"
+  },
+  "planned_loading_checkpoints": [
+    0.0001,
+    0.001,
+    0.01,
+    0.05,
+    0.1,
+    0.2,
+    0.3,
+    0.4
+  ],
+  "primary_model": "Authenticated fine v065 nonlinear restart if small tests pass; finalize mesh before campaign",
+  "primary_target": 0.3,
+  "registered_initial_fit_interval": [
+    5e-05,
+    0.001
+  ],
+  "resources": {
+    "EFLG_snapshot_count": 2,
+    "NR_snapshot_count": 2,
+    "campaign_wall_seconds": 21600,
+    "concurrent_large_solvers": 1,
+    "diagnostic_bytes_per_job": 2147483648,
+    "disk_reserve_bytes": 42949672960,
+    "no_converged_progress_seconds": 1800,
+    "process_RSS_limit": null,
+    "retained_restart_frames_per_stage": 3,
+    "stage_wall_seconds": 5400,
+    "system_health_policy": {
+      "available_reserve_bytes": 6442450944,
+      "commit_fraction": 0.98,
+      "commit_seconds": 15,
+      "critical_available_bytes": 1073741824,
+      "critical_seconds": 3,
+      "no_output_growth_seconds": 90,
+      "notification_seconds": 10,
+      "page_reads_per_second": 10000,
+      "paging_seconds": 60,
+      "reserve_seconds": 30
+    }
+  },
+  "schema": "young-dawgs-v0.6.6-prospective-plan",
+  "small_restart_tests": {
+    "compare": "Continuous two-load-step versus clean-exit multiframe restart; total targets .0025 then .005",
+    "fixtures": [
+      "accepted rectangle",
+      "compliant nodal fixture"
+    ],
+    "output": "Required fields LAST per distinct load step; enumerate actual sets; reject debug999999/missing states",
+    "relative_response_tolerance": 1e-05
+  },
+  "sources": {
+    "GCDEF": "https://ansyshelp.ansys.com/public/Views/Secured/corp/v242/en/ans_cmd/Hlp_C_GCDEF.html",
+    "GCGEN": "https://ansyshelp.ansys.com/public/Views/Secured/corp/v242/en/ans_cmd/Hlp_C_GCGEN.html",
+    "release_limit": "Public v241 command page inaccessible; adjacent primary docs guide syntax, actual v241 tests establish support",
+    "restart": "https://ansyshelp.ansys.com/public/Views/Secured/corp/v242/en/ans_cmd/Hlp_C_ANTYPE.html"
+  },
+  "stretch_target": 0.4,
+  "target_work_period": "November2-8,2026; current task authorizes actual execution; no scheduled automation"
+}
