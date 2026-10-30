@@ -80,3 +80,37 @@ def test_separate_field_export_requires_original_native_provenance(tmp_path,chan
     if expected_error:
         with pytest.raises(ValueError,match=expected_error):verified_field_export(source,fields,source/'native.rst',source/'protocol.json')
     else:assert verified_field_export(source,fields,source/'native.rst',source/'protocol.json')==r
+
+
+@pytest.mark.parametrize('variant,accepted',[
+    ('valid',True),('no_read_only_export',False),('no_announcement',False),('duplicate_announcement',False),
+    ('debug_substep',False),('wrong_time',False),('multiple_solves',False),('multiple_increments',False),
+    ('no_force_criterion_pass',False),('other_process_failure',False)])
+def test_output_memory_stop_requires_native_equilibrium_and_readable_unique_set(variant,accepted):
+    from metamaterial_eval.simulation.microstructure_results import checkpoint_convergence_evidence
+    r={'converged_steps':[],'status':'MEMORY_BUDGET_EXCEEDED'};source='NSUBST,1,1,1\nSOLVE\n';time=.00005;ss=1
+    force='FORCE CONVERGENCE VALUE = .0004 CRITERION= .00043 <<< CONVERGED\n'
+    announcement='>>> SOLUTION CONVERGED AFTER EQUILIBRIUM ITERATION 7\n';log=force+announcement
+    if variant=='no_announcement':log=force
+    if variant=='duplicate_announcement':log+=announcement
+    if variant=='debug_substep':ss=999999
+    if variant=='wrong_time':time=.0001
+    if variant=='multiple_solves':source+='SOLVE\n'
+    if variant=='multiple_increments':source='NSUBST,2,20,1\nSOLVE\n'
+    if variant=='no_force_criterion_pass':log=announcement
+    if variant=='other_process_failure':r['status']='SOLVER_FAILURE'
+    args=(r,log,source,{'strains':[.00005]},1,ss,time,variant!='no_read_only_export')
+    if accepted:assert checkpoint_convergence_evidence(*args)=='NATIVE_EQUILIBRIUM_AND_READABLE_SET_BEFORE_OUTPUT_MEMORY_STOP'
+    else:
+        with pytest.raises(ValueError):checkpoint_convergence_evidence(*args)
+
+
+@pytest.mark.parametrize('text',[
+    'The requested S data is not available. The *VGET command is ignored.',
+    'The requested EPEL data is not available.',
+    'Item NMIS has not been stored in the database.',
+    'Item SMIS has not been stored in the database.',
+    'Unknown parameter name= FYV. A value of 7.888609052E-31 will be used.'])
+def test_native_missing_results_are_never_accepted_as_zero_fields(text):
+    from metamaterial_eval.simulation.microstructure_results import unsupported_result_queries
+    assert unsupported_result_queries(text)

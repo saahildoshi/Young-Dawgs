@@ -49,18 +49,22 @@ def execute():
 
 def extract():
     source=load(FULL/'execution_receipt.json');p=load(PROTOCOL)
-    assert source['process']['returncode']==0 and source['converged_steps']==[[1,1]]
+    probe=load(RUN/'mechanical_results/output_readability_probe_002.json')
+    assert probe['process']['returncode']==0
+    assert abs(float((BASE/'output_readability_probe_002/native_time.txt').read_text())-.00005)<1e-12
+    assert '>>> SOLUTION CONVERGED AFTER EQUILIBRIUM ITERATION' in (FULL/'solver.out').read_text(errors='replace')
     m=load(FULL/'simulation_manifest.json')['model'];POST.mkdir(exist_ok=False)
     block=stage_block(1,.00005,m,{})
     block=block[block.index('SOLVE')+1:]
-    lines=['/BATCH','/CLEAR,START',database_resume(FULL/'checkpoint.db').strip(),'/FILNAME,v064post002']
+    database=FULL/'checkpoint.db' if (FULL/'checkpoint.db').exists() else FULL/(JOB+'.rdb')
+    lines=['/BATCH','/CLEAR,START',database_resume(database).strip(),'/FILNAME,v064post002']
     for line in block:
         if line=='SET,LAST':lines.extend(["FILE,'"+str((FULL/JOB).resolve()).replace('\\','/')+"',rst",'SET,1,1'])
         elif line=='SAVE,pilot_partial,db':lines.append('/COM,READ_ONLY_CHECKPOINT_GATE_FAILED')
         else:lines.append(line)
     lines+=['/EXIT,NOSAVE'];text='\n'.join(lines)+'\n';assert not re.search(r'^\s*SOLVE\s*$',text,re.M|re.I)
     (POST/'input.inp').write_text(text)
-    write_json(POST/'provenance.json',{'mode':'READ_ONLY_POST1_ZERO_SOLVE_COMMANDS','source_execution_receipt_sha256':file_hash(FULL/'execution_receipt.json'),'source_RST_sha256':file_hash(FULL/(JOB+'.rst')),'source_protocol_sha256':file_hash(PROTOCOL),'source_checkpoint_database_sha256':file_hash(FULL/'checkpoint.db'),'input_sha256':file_hash(POST/'input.inp')})
+    write_json(POST/'provenance.json',{'mode':'READ_ONLY_POST1_ZERO_SOLVE_COMMANDS','source_execution_receipt_sha256':file_hash(FULL/'execution_receipt.json'),'source_RST_sha256':file_hash(FULL/(JOB+'.rst')),'source_protocol_sha256':file_hash(PROTOCOL),'source_checkpoint_database_sha256':file_hash(database),'source_database_filename':database.name,'source_resource_status':source['status'],'native_state_proof':'Unique one-increment solve, native equilibrium announcement and independently readable SET1,1 at0.00005; no ordinary LOADSTEP_COMPLETED marker after output memory stop','input_sha256':file_hash(POST/'input.inp')})
     r=run_input(POST,timeout=300,rss_GiB=8,reserve_GiB=12)
     out=RUN/'mechanical_results/read_only_extraction_002';out.mkdir(exist_ok=False)
     for name in ['input.inp','execution_receipt.json','provenance.json','stage001_gate.txt','stage001_history.csv','stage001_contact.csv']:

@@ -1,0 +1,14 @@
+................F                                                        [100%]
+================================== FAILURES ===================================
+_______________ test_actual_full_mechanical_response_acceptance _______________
+
+    def test_actual_full_mechanical_response_acceptance():
+        m=read(RUN/'mechanical_results/attempt_002/mechanical_summary.json')
+>       assert m['actual_valid_stages'],'Native equilibrium recovered, but missing RF/contact/stress/strain prevents mechanical acceptance'
+E       AssertionError: Native equilibrium recovered, but missing RF/contact/stress/strain prevents mechanical acceptance
+E       assert []
+
+validation\ansys_v064_integration.py:153: AssertionError
+=========================== short test summary info ===========================
+FAILED validation/ansys_v064_integration.py::test_actual_full_mechanical_response_acceptance
+1 failed, 16 passed in 1.68s

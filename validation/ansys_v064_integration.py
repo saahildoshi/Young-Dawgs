@@ -99,3 +99,55 @@ def test_nodal_correction_has_actual_nonzero_force_and_supported_fields():
     u=np.loadtxt(p/'stage001_displacements.csv',delimiter=',',skiprows=1)
     s=np.loadtxt(p/'stage001_stress.csv',delimiter=',',skiprows=1)
     assert len(u)==len(z['nodes']) and len(s)==len(np.unique(z['triangles'][:,:3]))
+
+
+def test_exact_recovery_controls_converge_with_prediction_not_false_cutback():
+    validated_contact('pp_nodal_recovery_controls')
+    t=read(BASE/'pp_nodal_recovery_controls/nonlinear_telemetry.json')
+    assert not t['cutback_events'] and len(t['converged_substeps'])==3
+    assert 'AUTO STEP TIME:  NEXT TIME INC' in (BASE/'pp_nodal_recovery_controls/solver.out').read_text(errors='replace')
+
+
+def test_explicit_native_checkpoint_io_was_verified_on_rectangle():
+    r=read(RUN/'diagnostic_validation/checkpoint_IO_control.json')
+    assert r['readable_result'] and r['one_restart_frame'] and r['actual_receipt']['process']['returncode']==0
+
+
+def test_primary_full_memory_stop_preserves_real_nonzero_history():
+    p=BASE/'full_recovery_001';r=read(p/'execution_receipt.json');t=parse_solver_log((p/'solver.out').read_text(errors='replace'))
+    assert r['status']=='MEMORY_BUDGET_EXCEEDED' and r['converged_steps']==[[1,1]]
+    assert t['converged_substeps'][0]['pseudo_time']==.00005 and len(t['completed_iterations'])==7
+    assert '<COLDATA>' in (p/'compression.nlh').read_text()
+    assert not list(p.glob('compression.r[0-9]*'))
+
+
+def test_conditional_full_repair_repeats_known_increment_and_hits_output_memory():
+    p=BASE/'full_recovery_002';r=read(p/'execution_receipt.json');protocol=read(RUN/'protocol/FULL_RECOVERY_002.json')
+    assert r['status']=='MEMORY_BUDGET_EXCEEDED' and r['input_sha256']==protocol['frozen_input_sha256']==file_hash(p/'input.inp')
+    assert protocol['strains']==[.00005] and protocol['controls']['NSUBST']==[1,1,1]
+    assert r['process']['peak_tree_rss_bytes']>20*1024**3
+    log=(p/'solver.out').read_text(errors='replace')
+    assert '>>> SOLUTION CONVERGED AFTER EQUILIBRIUM ITERATION   7' in log
+    probe=read(RUN/'mechanical_results/output_readability_probe_002.json')
+    assert probe['process']['returncode']==0
+    assert float((BASE/'output_readability_probe_002/native_time.txt').read_text())==.00005
+
+
+def test_native_displacement_is_real_but_missing_stress_is_quarantined():
+    d=read(RUN/'mechanical_results/displacement_only_validation.json')
+    assert d['actual_nodes']==2766505 and d['all_deformed_TRI6_mappings_positive']
+    assert d['displacement_CSV_sha256']==file_hash(BASE/'postprocess_converged_002/stage001_displacements.csv')
+    assert not d['eligibility_for_LLM_performance_ranking']
+    assert 'bulk stress' in d['not_available']
+
+
+def test_incomplete_native_fields_never_produce_mechanical_score():
+    m=read(RUN/'mechanical_results/attempt_002/mechanical_summary.json')
+    assert m['status']=='OUTPUT_INCOMPLETE_RESOURCE_LIMIT' and m['unsupported_output_queries']
+    assert not m['actual_valid_stages'] and not m['eligible_for_design_ranking']
+    assert m['effective_stiffness']['effective_modulus_MPa'] is None
+
+
+def test_actual_full_mechanical_response_acceptance():
+    m=read(RUN/'mechanical_results/attempt_002/mechanical_summary.json')
+    assert m['actual_valid_stages'],'Native equilibrium recovered, but missing RF/contact/stress/strain prevents mechanical acceptance'

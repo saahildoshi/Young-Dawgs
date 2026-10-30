@@ -81,15 +81,35 @@ def verified_field_export(source_directory,field_directory,native_rst,protocol_p
     source_directory,field_directory=Path(source_directory),Path(field_directory)
     receipt=json.loads((field_directory/'execution_receipt.json').read_text())
     provenance=json.loads((field_directory/'provenance.json').read_text())
+    database=provenance.get('source_database_filename','checkpoint.db')
+    if not re.fullmatch(r'[A-Za-z0-9_]+\.(?:db|rdb)',database):raise ValueError('Invalid native database name')
     bindings={'source_execution_receipt_sha256':file_hash(source_directory/'execution_receipt.json'),
               'source_RST_sha256':file_hash(native_rst),'source_protocol_sha256':file_hash(protocol_path),
-              'source_checkpoint_database_sha256':file_hash(source_directory/'checkpoint.db')}
+              'source_checkpoint_database_sha256':file_hash(source_directory/database)}
     if any(provenance.get(key)!=value for key,value in bindings.items()):raise ValueError('Field-export source provenance mismatch')
     text=(field_directory/'input.inp').read_text()
     if re.search(r'^\s*SOLVE\s*$',text,re.I|re.M):raise ValueError('Field exporter is not read-only')
     if receipt['process']['returncode']!=0 or receipt['input_sha256']!=file_hash(field_directory/'input.inp') or provenance.get('input_sha256')!=receipt['input_sha256']:
         raise ValueError('Changed or failed field-export input/process')
     return receipt
+
+
+def checkpoint_convergence_evidence(receipt,log,source_input,protocol,load_step,substep,time,read_only_export):
+    if (int(load_step),int(substep)) in set(map(tuple,receipt['converged_steps'])):return 'NATIVE_LOADSTEP_COMPLETED'
+    # A memory stop can occur AFTER native equilibrium and a readable RST set
+    # but BEFORE the ordinary completed-substep printout. Restrict this path
+    # to the unique one-increment problem and independently exported SET1,1.
+    announcements=re.findall(r'>>>\s*SOLUTION CONVERGED AFTER EQUILIBRIUM ITERATION\s+\d+',log)
+    force=re.findall(r'FORCE CONVERGENCE VALUE\s*=\s*([\d.Ee+\-]+)\s+CRITERION=\s*([\d.Ee+\-]+)[^\n]*<<< CONVERGED',log)
+    force_pass=bool(force) and float(force[-1][0])<=float(force[-1][1]) and float(force[-1][1])>0
+    unique=(len(protocol['strains'])==1 and len(re.findall(r'^\s*SOLVE\s*$',source_input,re.M|re.I))==1 and bool(re.search(r'^NSUBST,1,1,1\s*$',source_input,re.M|re.I)))
+    if read_only_export and receipt['status']=='MEMORY_BUDGET_EXCEEDED' and unique and len(announcements)==1 and force_pass and load_step==substep==1 and np.isclose(time,protocol['strains'][0],rtol=0,atol=1e-12):
+        return 'NATIVE_EQUILIBRIUM_AND_READABLE_SET_BEFORE_OUTPUT_MEMORY_STOP'
+    raise ValueError('Uncorroborated load-step convergence')
+
+
+def unsupported_result_queries(text):
+    return bool(re.search(r'requested[^\n]*data[^\n]*(?:not available|not stored)|item\s+(?:NMIS|SMIS)[^\n]*not been stored|unknown (?:label|parameter name)|undefined parameter',text,re.I))
 
 
 def postprocess(directory,artifact_manifest,protocol_path,output,*,field_directory=None):
@@ -106,12 +126,15 @@ def postprocess(directory,artifact_manifest,protocol_path,output,*,field_directo
         raise ValueError('Changed native result archive')
     fields_directory=Path(field_directory) if field_directory else directory
     field_receipt=verified_field_export(directory,fields_directory,native_rst,protocol_path) if field_directory else receipt
+    field_log=(fields_directory/'solver.out').read_text(errors='replace') if field_directory else ''
+    unsupported=unsupported_result_queries(log+'\n'+field_log)
     completed=set(map(tuple,receipt['converged_steps']));rows=[];contacts=[];stages=[];failed=None
     corners=np.unique(mesh.triangles[:,:3])+1
     for i,target in enumerate(protocol['strains'],1):
         prefix=f'stage{i:03d}'
         try:
             if not native_rst.exists() or not native_rst.stat().st_size:raise ValueError('No nonempty native result archive')
+            if unsupported:raise ValueError('Unsupported native result queries; default/sentinel field exports quarantined')
             names=[prefix+s for s in ['_history.csv','_gate.txt','_displacements.csv','_stress.csv','_contact.csv']]
             for name in names:
                 if field_receipt['process']['artifacts'].get(name,{}).get('sha256')!=file_hash(fields_directory/name):raise ValueError('Missing/altered actual checkpoint: '+name)
@@ -120,9 +143,10 @@ def postprocess(directory,artifact_manifest,protocol_path,output,*,field_directo
             h=numeric(fields_directory/(prefix+'_history.csv'),['pseudo_time','load_step','substep','top_uy_mm','upper_rf_y_N','lower_rf_y_N'])
             if len(h)!=1:raise ValueError('Duplicate checkpoint history')
             t,ls,ss,uy,upper,lower=h[0]
-            if ls!=i or ss!=int(ss) or (int(ls),int(ss)) not in completed:raise ValueError('Uncorroborated load-step convergence')
+            if ls!=i or ss!=int(ss):raise ValueError('Uncorroborated load-step convergence')
+            convergence_proof=checkpoint_convergence_evidence(receipt,log,(directory/'input.inp').read_text(),protocol,ls,ss,t,bool(field_directory))
             if not np.isclose(t,target,atol=1e-12,rtol=0) or not np.isclose(uy,-10.24*target,atol=1e-8,rtol=0):raise ValueError('Requested checkpoint not achieved')
-            row={'stage':i,'load_step':int(ls),'substep':int(ss),**force_metrics(t,uy,upper,lower)}
+            row={'stage':i,'load_step':int(ls),'substep':int(ss),'convergence_evidence':convergence_proof,**force_metrics(t,uy,upper,lower)}
             c=numeric(fields_directory/(prefix+'_contact.csv'),['pair','element','status','pressure_i_MPa','pressure_j_MPa','gap_i_mm','gap_j_mm','contact_force_y_N'])
             cm=contact_metrics(c,manifest['model']['contact_elements'],upper,lower)
             u=numeric(fields_directory/(prefix+'_displacements.csv'),['node','ux_mm','uy_mm'])
@@ -143,24 +167,26 @@ def postprocess(directory,artifact_manifest,protocol_path,output,*,field_directo
             del u,s,deformed,mapping
         except (ValueError,FileNotFoundError) as exc:
             failed={'stage':i,'reason':str(exc)};break
-    warnings=solver_warnings(log)
-    unsupported=bool(re.search(r'Requested data is not stored|Unknown label|Undefined parameter',log,re.I))
+    all_warnings=solver_warnings(log)+solver_warnings(field_log)
+    warnings=list(dict.fromkeys(all_warnings))
     if unsupported:
         status='OUTPUT_INCOMPLETE';eligible=[]
     else:
         eligible=rows
         status=('VALID_WITH_DOCUMENTED_WARNING' if warnings else 'VALID_CONVERGED') if len(rows)==len(protocol['strains']) else ('PARTIALLY_CONVERGED' if rows else 'SOLVER_FAILED')
-    if not rows and receipt['status'] in ['MEMORY_BUDGET_EXCEEDED','OS_RAM_RESERVE_REACHED','DISK_RESERVE_EXHAUSTED','TIMEOUT']:status='RESOURCE_LIMIT'
+        if rows and receipt['status']=='MEMORY_BUDGET_EXCEEDED':status='PARTIALLY_CONVERGED'
+    if not rows and receipt['status'] in ['MEMORY_BUDGET_EXCEEDED','OS_RAM_RESERVE_REACHED','DISK_RESERVE_EXHAUSTED','TIMEOUT']:status='OUTPUT_INCOMPLETE_RESOURCE_LIMIT' if unsupported else 'RESOURCE_LIMIT'
     dump_csv(output/'force_displacement.csv',rows)
     dump_csv(output/'stress_strain.csv',[{k:r[k] for k in ['stage','pseudo_time','engineering_compression_strain','nominal_compression_stress_MPa']} for r in rows])
     dump_csv(output/'contact_diagnostics.csv',contacts)
     summary={'schema':'young-dawgs-v0.6.3-mechanical-results','status':status,'actual_valid_stages':rows,'stage_fields':stages,
              'field_export_directory':str(fields_directory.resolve()),'field_export_receipt_sha256':file_hash(fields_directory/'execution_receipt.json'),
+             'source_process_status':receipt['status'],'native_output_completion':'resource stop may precede ordinary LOADSTEP_COMPLETED marker; per-row proof is explicit',
              'solver_reported_converged_substeps':receipt['converged_steps'],
              'logged_converged_substep_times':[(int(a),int(b),float(t)) for a,b,t in re.findall(
                  r'LOAD STEP\s+(\d+)\s+SUBSTEP\s+(\d+)\s+COMPLETED[^\n]*\s*\*+\s*TIME=\s*([\d.Ee+\-]+)',log,re.I)],
              'first_failed_or_missing_stage':failed,'unsupported_output_queries':unsupported,
-             'effective_stiffness':fit_stiffness(eligible),'warnings':warnings,'execution_receipt_sha256':file_hash(directory/'execution_receipt.json'),
+             'effective_stiffness':fit_stiffness(eligible),'warnings':warnings,'warning_occurrences':len(all_warnings),'execution_receipt_sha256':file_hash(directory/'execution_receipt.json'),
              'result_RST_sha256':file_hash(native_rst) if native_rst.exists() else None,'result_RST_filename':native_rst.name,'native_result_routing':native_routing,
              'protocol_sha256':file_hash(protocol_path),'mesh_semantic_sha256':artifact['semantic_sha256'],
              'source_geometry_sha256':artifact['source_geometry_sha256'],'contact_scope':'PLATEN_CONTACT_ONLY',
