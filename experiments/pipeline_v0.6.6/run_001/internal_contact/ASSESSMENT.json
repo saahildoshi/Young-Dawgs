@@ -1,0 +1,42 @@
+{
+  "actual_definition": true,
+  "criterion_mm": 1e-05,
+  "distortion_observed": true,
+  "fixtures": [
+    {
+      "diagnostic": "/COM,ANSYS RELEASE 2024 R1           BUILD 24.1      UP20231106       19:35:46\n\n *** ERROR ***                           CP =       2.062   TIME= 19:35:49\n Element 1682 (type = 1, PLANE183) (and maybe other elements) has become \n highly distorted.  Excessive distortion of elements is usually a        \n symptom indicating the need for corrective action elsewhere.  Try       \n incrementing the load more slowly (increase the number of substeps or   \n decrease the time step size).  You may need to improve your mesh to     \n obtain elements with better aspect ratios.  Also consider the behavior  \n of materials, contact pairs, and/or constraint equations.  Please rule  \n out other root causes of this failure before attempting rezoning or     \n nonlinear adaptive solutions.  If this message appears in the first     \n iteration of first substep, be sure to perform element shape checking.  \n\n *** ERROR ***                           CP =       2.500   TIME= 19:35:49\n Element 928 (type = 1, PLANE183) (and maybe other elements) has become  \n highly distorted.  Excessive distortion of elements is usually a        \n symptom indicating the need for corrective action elsewhere.  Try       \n incrementing the load more slowly (increase the number of substeps or   \n decrease the time step size).  You may need to improve your mesh to     \n obtain elements with better aspect ratios.  Also consider the behavior  \n of materials, contact pairs, and/or constraint equations.  Please rule  \n out other root causes of this failure before attempting rezoning or     \n nonlinear adaptive solutions.  If this message appears in the first     \n iteration of first substep, be sure to perform element shape checking.  \n\n *** ERROR ***                           CP =       3.047   TIME= 19:35:50\n Element 1424 (type = 1, PLANE183) (and maybe other elements) has become \n highly distorted.  Excessive distortion of elements is usually a        \n symptom indicating the need for corrective action elsewhere.  Try       \n incrementing the load more slowly (increase the number of substeps or   \n decrease the time step size).  You may need to improve your mesh to     \n obtain elements with better aspect ratios.  Also consider the behavior  \n of materials, contact pairs, and/or constraint equations.  Please rule  \n out other root causes of this failure before attempting rezoning or     \n nonlinear adaptive solutions.  If this message appears in the first     \n iteration of first substep, be sure to perform element shape checking.  \n",
+      "job_filename_note": "Import prefix /FILNAME,model means native restart/RST use model.*, not compression.*. No field acceptance claimed.",
+      "label": "internal_fixture_disabled_001",
+      "last_Newton_converged": {
+        "load_step": 1,
+        "pseudo_time": 0.2349,
+        "source_line": 6498,
+        "substep": 8,
+        "time_increment": 0.0049
+      },
+      "receipt_sha256": "b6afd4f99410b6b704336ab64d95c0ce606895918c89b4d8d0af7aa4d9c57f60",
+      "returncode": 15,
+      "status": "NATIVE_SOLVER_ERROR_OR_DISTORTION"
+    },
+    {
+      "diagnostic": "/COM,ANSYS RELEASE 2024 R1           BUILD 24.1      UP20231106       19:35:55\n\n *** WARNING ***                         CP =       1.719   TIME= 19:35:58\n Contact element 1943 (real ID -2) has too much penetration              \n 1.429041818E-03 related to target element 1938.  Please verify the      \n pinball radius, or use KEYO(9)=2, 4, 6 with ramped effect to overcome.  \n\n *** ERROR ***                           CP =       1.781   TIME= 19:35:58\n Element 1422 (type = 1, PLANE183) (and maybe other elements) has become \n highly distorted.  Excessive distortion of elements is usually a        \n symptom indicating the need for corrective action elsewhere.  Try       \n incrementing the load more slowly (increase the number of substeps or   \n decrease the time step size).  You may need to improve your mesh to     \n obtain elements with better aspect ratios.  Also consider the behavior  \n of materials, contact pairs, and/or constraint equations.  Please rule  \n out other root causes of this failure before attempting rezoning or     \n nonlinear adaptive solutions.  If this message appears in the first     \n iteration of first substep, be sure to perform element shape checking.  \n\n *** ERROR ***                           CP =       2.109   TIME= 19:35:58\n Element 63 (type = 1, PLANE183) (and maybe other elements) has become   \n highly distorted.  Excessive distortion of elements is usually a        \n symptom indicating the need for corrective action elsewhere.  Try       \n incrementing the load more slowly (increase the number of substeps or   \n decrease the time step size).  You may need to improve your mesh to     \n obtain elements with better aspect ratios.  Also consider the behavior  \n of materials, contact pairs, and/or constraint equations.  Please rule  \n out other root causes of this failure before attempting rezoning or     \n nonlinear adaptive solutions.  If this message appears in the first     \n iteration of first substep, be sure to perform element shape checking.  \n\n *** ERROR ***                           CP =       2.469   TIME= 19:35:58\n Element 1424 (type = 1, PLANE183) (and maybe other elements) has become \n highly distorted.  Excessive distortion of elements is usually a        \n symptom indicating the need for corrective action elsewhere.  Try       \n incrementing the load more slowly (increase the number of substeps or   \n decrease the time step size).  You may need to improve your mesh to     \n obtain elements with better aspect ratios.  Also consider the behavior  \n of materials, contact pairs, and/or constraint equations.  Please rule  \n out other root causes of this failure before attempting rezoning or     \n nonlinear adaptive solutions.  If this message appears in the first     \n iteration of first substep, be sure to perform element shape checking.  \n",
+      "job_filename_note": "Import prefix /FILNAME,model means native restart/RST use model.*, not compression.*. No field acceptance claimed.",
+      "label": "internal_fixture_enabled_001",
+      "last_Newton_converged": {
+        "load_step": 1,
+        "pseudo_time": 0.23833,
+        "source_line": 6639,
+        "substep": 10,
+        "time_increment": 0.001715
+      },
+      "receipt_sha256": "1fbcdfc1a4be94ca8136277bf922a0cbf5b7dc15eb690f2aabbd13e7fd3c5e42",
+      "returncode": 15,
+      "status": "NATIVE_SOLVER_ERROR_OR_DISTORTION"
+    }
+  ],
+  "full_selection": "Explicit platen-only exploratory fallback with independent deformed-boundary screen. No physical closed-pore response accepted.",
+  "full_self_contact_configured": false,
+  "native_enabled_contact_warning_penetration_mm": 0.001429041818,
+  "small_fixture_validated": false,
+  "status": "HOLD_INTERNAL_CONTACT_NOT_QUALIFIED"
+}

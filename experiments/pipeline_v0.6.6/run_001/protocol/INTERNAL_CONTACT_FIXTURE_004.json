@@ -1,0 +1,10 @@
+{
+  "acceptance": "Actual active general-contact elements, nonzero forces, pressure, native pen<=1e-5, signed support balance<=1%, positive deformed mappings; disabled may cross",
+  "constraints": "Bottom UY0, upper UY-.16mm(total40% height), one bottom-left UX anchor",
+  "enabled_disabled_comparison": true,
+  "fixture": "Connected C-cell, two0.15mm arms separated by0.1mm gap,0.12mm left bridge",
+  "general_contact": "GCGEN NEW,42,0,PART,SELECT; keep only opposed exposed inner arms; GCDEF SYMM ALL SELF",
+  "geometry": "union rectangles [0,0,1,.15], [0,.25,1,.4], [0,0,.12,.4]",
+  "interface": "Frictionless pure penalty, updating default general-contact stiffness, FKN100/FTOLN-1e-5",
+  "scope": "Small diagnostic fixture, not Design9 response"
+}
