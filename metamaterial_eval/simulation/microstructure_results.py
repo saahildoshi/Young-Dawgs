@@ -67,6 +67,16 @@ def native_result_path(directory,manifest):
     return Path(directory)/(jobname+'.rst')
 
 
+def observed_native_result(directory,manifest,receipt,log):
+    expected=native_result_path(directory,manifest);actual=expected
+    observed=re.findall(r'CURRENT JOBNAME REDEFINED AS\s+([A-Za-z0-9_]+)',log)
+    if not expected.exists() and observed:
+        candidate=native_result_path(directory,{'result_jobname':observed[-1]})
+        if candidate.exists() and receipt['process']['artifacts'].get(candidate.name,{}).get('sha256')==file_hash(candidate):actual=candidate
+    return actual,{'declared':expected.name,'observed':actual.name,'deviation':actual!=expected,
+                   'basis':'native current-jobname log plus exact receipt hash; no renamed/fabricated native result'}
+
+
 def postprocess(directory,artifact_manifest,protocol_path,output):
     directory,output,protocol_path=Path(directory),Path(output),Path(protocol_path);output.mkdir(parents=True,exist_ok=False)
     receipt=json.loads((directory/'execution_receipt.json').read_text());manifest=json.loads((directory/'simulation_manifest.json').read_text())
@@ -75,15 +85,16 @@ def postprocess(directory,artifact_manifest,protocol_path,output):
         raise ValueError('Changed protocol/mesh identity')
     if file_hash(directory/'input.inp')!=manifest['input_sha256'] or manifest['input_sha256']!=receipt['input_sha256']:
         raise ValueError('Changed actual solver input')
-    native_rst=native_result_path(directory,manifest)
+    log=(directory/'solver.out').read_text(errors='replace')
+    native_rst,native_routing=observed_native_result(directory,manifest,receipt,log)
     if native_rst.exists() and receipt['process']['artifacts'].get(native_rst.name,{}).get('sha256')!=file_hash(native_rst):
         raise ValueError('Changed native result archive')
-    log=(directory/'solver.out').read_text(errors='replace')
     completed=set(map(tuple,receipt['converged_steps']));rows=[];contacts=[];stages=[];failed=None
     corners=np.unique(mesh.triangles[:,:3])+1
     for i,target in enumerate(protocol['strains'],1):
         prefix=f'stage{i:03d}'
         try:
+            if not native_rst.exists() or not native_rst.stat().st_size:raise ValueError('No nonempty native result archive')
             names=[prefix+s for s in ['_history.csv','_gate.txt','_displacements.csv','_stress.csv','_contact.csv']]
             for name in names:
                 if receipt['process']['artifacts'].get(name,{}).get('sha256')!=file_hash(directory/name):raise ValueError('Missing/altered actual checkpoint: '+name)
@@ -132,7 +143,7 @@ def postprocess(directory,artifact_manifest,protocol_path,output):
                  r'LOAD STEP\s+(\d+)\s+SUBSTEP\s+(\d+)\s+COMPLETED[^\n]*\s*\*+\s*TIME=\s*([\d.Ee+\-]+)',log,re.I)],
              'first_failed_or_missing_stage':failed,'unsupported_output_queries':unsupported,
              'effective_stiffness':fit_stiffness(eligible),'warnings':warnings,'execution_receipt_sha256':file_hash(directory/'execution_receipt.json'),
-             'result_RST_sha256':file_hash(native_rst) if native_rst.exists() else None,'result_RST_filename':native_rst.name,
+             'result_RST_sha256':file_hash(native_rst) if native_rst.exists() else None,'result_RST_filename':native_rst.name,'native_result_routing':native_routing,
              'protocol_sha256':file_hash(protocol_path),'mesh_semantic_sha256':artifact['semantic_sha256'],
              'source_geometry_sha256':artifact['source_geometry_sha256'],'contact_scope':'PLATEN_CONTACT_ONLY',
              'pseudo_time':'load parameter, not physical seconds','sign_convention':'native upper RF negative, lower positive; CNFY is opposite support RF',

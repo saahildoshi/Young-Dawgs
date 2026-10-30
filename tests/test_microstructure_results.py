@@ -53,3 +53,13 @@ def test_unique_native_result_jobname_is_validated(tmp_path):
     assert native_result_path(tmp_path,{'result_jobname':'v064r001'})==tmp_path/'v064r001.rst'
     assert native_result_path(tmp_path,{})==tmp_path/'compression.rst'
     with pytest.raises(ValueError):native_result_path(tmp_path,{'result_jobname':'../outside'})
+
+
+@pytest.mark.parametrize('correct_hash,expected_name',[(True,'compression.rst'),(False,'requested.rst')])
+def test_observed_jobname_requires_native_log_and_receipt_hash(tmp_path,correct_hash,expected_name):
+    from metamaterial_eval.simulation.microstructure_results import observed_native_result
+    from metamaterial_eval.simulation.solver_execution import file_hash
+    actual=tmp_path/'compression.rst';actual.write_bytes(b'unit control only')
+    receipt={'process':{'artifacts':{'compression.rst':{'sha256':file_hash(actual) if correct_hash else 'wrong'}}}}
+    path,record=observed_native_result(tmp_path,{'result_jobname':'requested'},receipt,'CURRENT JOBNAME REDEFINED AS compression')
+    assert path.name==expected_name and record['deviation']==correct_hash

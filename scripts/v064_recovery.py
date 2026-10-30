@@ -44,7 +44,10 @@ def prepare():
     write_json(PROTOCOL,protocol)
     setup=artifact_root()/'solver/v063/contact_setup_002'
     model=prepare_pilot(DIRECTORY,setup,PROTOCOL)
-    commands=['/GOPR','/PREP7',f'/FILNAME,{JOB}','KEYOPT,3,4,2','/OUTPUT,corrected_inventory,txt','ETLIST,ALL','RLIST,ALL','MPLIST,ALL','DLIST,ALL','/OUTPUT','FINISH','/SOLU','NEQIT,24','NSUBST,2,20,1','KBC,0','OUTRES,ALL,LAST']+telemetry_commands(model['controls']['top'])+['/OUTPUT,initial_contact,txt','CNCHECK,DETAIL','/OUTPUT']
+    # Run001's committed deck attempted FILNAME in PREP7; that harmless command
+    # was ignored and native compression.* outputs are bound by observed hashes.
+    # Future preparation must rename at Begin level. Never rewrite frozen input.
+    commands=['/GOPR',f'/FILNAME,{JOB}','/PREP7','KEYOPT,3,4,2','/OUTPUT,corrected_inventory,txt','ETLIST,ALL','RLIST,ALL','MPLIST,ALL','DLIST,ALL','/OUTPUT','FINISH','/SOLU','NEQIT,24','NSUBST,2,20,1','KBC,0','OUTRES,ALL,LAST']+telemetry_commands(model['controls']['top'])+['/OUTPUT,initial_contact,txt','CNCHECK,DETAIL','/OUTPUT']
     p=DIRECTORY/'input.inp';text=p.read_text();text=text.replace('/NOPR','\n'.join(commands),1);p.write_text(text)
     protocol['frozen_input_sha256']=file_hash(p);write_json(PROTOCOL,protocol)
     manifest=load(DIRECTORY/'simulation_manifest.json');manifest['model']['contact_detection_keyopt4']=2
