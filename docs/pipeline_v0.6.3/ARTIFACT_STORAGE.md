@@ -5,6 +5,16 @@ LOCALAPPDATA/YoungDawgs/artifacts; Linux uses XDG_CACHE_HOME/YoungDawgs/artifact
 or ~/.cache/YoungDawgs/artifacts. This is a local cache, not an assumed backup.
 There is no automatic upload, required cloud service or proprietary transfer.
 
+For this completed run, a second copy of the qualified mesh and its manifest
+is retained under `C:/Users/sd22446/YoungDawgs-Artifacts`, outside both the
+application cache and the repository. Its relative path and independent full
+CRC/byte/semantic verification are recorded in
+`experiments/pipeline_v0.6.3/run_001/mesh_reproduction/attempt_002/durable_copy.json`.
+This user-profile copy survives ordinary application-cache removal; it is on
+the same computer and does not establish an off-device backup. Set
+YD_ARTIFACT_ROOT to that directory to retrieve this mesh using the original
+tracked manifest. Raw solver databases remain in the original local cache.
+
 Each mesh resides under meshes/<design>/<version>/mesh.npz with its own
 artifact_manifest.json. Track the same manifest under the experiment directory.
 It records a stable logical ID, artifact-relative path, source/config/Gmsh
@@ -22,6 +32,9 @@ to the same relative path under the destination's chosen artifact root. Set
 YD_ARTIFACT_ROOT there, then run verify. Registry discovery verifies filenames
 and manifests only; it never establishes content acceptance. Verify reads all
 archive members/CRC and authenticates both byte and semantic hashes.
+The resolver normalizes Windows backslashes in recorded relative paths before
+joining them on any platform. Absolute/drive/UNC paths and escaping traversal
+are rejected; portable manifests never require a hard-coded artifact root.
 
 OneDrive may be chosen explicitly as an artifact root. After copying, use its
 normal client controls to keep the mesh folder available on this device, wait

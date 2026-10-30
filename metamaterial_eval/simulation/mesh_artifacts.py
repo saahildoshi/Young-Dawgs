@@ -6,7 +6,7 @@ import hashlib
 import importlib.metadata
 import json
 import os
-from pathlib import Path
+from pathlib import Path,PureWindowsPath
 import time
 import zipfile
 import numpy as np
@@ -31,6 +31,8 @@ def artifact_root():
 
 
 def contained_path(root,relative):
+    relative=str(relative).replace('\\','/')
+    if PureWindowsPath(relative).drive or Path(relative).is_absolute():raise ValueError('Artifact path must be relative to configured root')
     root=Path(root).resolve();path=(root/relative).resolve()
     if not path.is_relative_to(root):raise ValueError('Artifact path escapes configured root')
     return path

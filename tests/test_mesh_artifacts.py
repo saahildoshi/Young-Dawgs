@@ -104,3 +104,10 @@ def test_recorded_root_handles_windows_app_virtualized_cache(archive,tmp_path,mo
     monkeypatch.setattr('metamaterial_eval.simulation.mesh_artifacts.artifact_root',lambda:tmp_path/'other-app-cache')
     _,_,actual=resolve_manifest(manifest)
     assert actual==path
+
+
+def test_windows_manifest_paths_are_portable_and_contained(tmp_path):
+    from metamaterial_eval.simulation.mesh_artifacts import contained_path
+    assert contained_path(tmp_path,r'meshes\design\mesh.npz')==tmp_path/'meshes/design/mesh.npz'
+    for path in [r'..\escape.npz',r'C:\outside\mesh.npz',r'\\server\share\mesh.npz']:
+        with pytest.raises(ValueError):contained_path(tmp_path,path)
