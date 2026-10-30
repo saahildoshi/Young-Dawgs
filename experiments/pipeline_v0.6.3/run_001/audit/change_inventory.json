@@ -1,0 +1,950 @@
+{
+  "base_commit": "9af3d404c94293c9fa705552bb41497358ddd63e",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "status": "M"
+    },
+    {
+      "path": ".gitignore",
+      "status": "M"
+    },
+    {
+      "path": "docs/pipeline_v0.6.3/ARTIFACT_STORAGE.md",
+      "status": "A"
+    },
+    {
+      "path": "docs/pipeline_v0.6.3/AUDIT_AND_PLAN.md",
+      "status": "A"
+    },
+    {
+      "path": "docs/pipeline_v0.6.3/WINDOWS_EXECUTION.md",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/V0_6_3_ANSYS_IMPORT.md",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/V0_6_3_CONTACT_SENSITIVITY.md",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/V0_6_3_HANDOFF.md",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/V0_6_3_MESH_RECOVERY.md",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/V0_6_3_MICROSTRUCTURE_PILOT.md",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/V0_6_3_RESOURCE_FEASIBILITY.md",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/V0_6_3_VALIDATION.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/V0_6_3_VALIDATION.md",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/acceptance_status.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/ansys_environment/environment.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/audit/additional_recovery_checks.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/audit/change_inventory.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/audit/recovery_search.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/audit/source_authentication.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/analysis/contact_diagnostics.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/analysis/force_displacement.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/analysis/mechanical_summary.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/analysis/qualification.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/analysis/reaction_balance.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/analysis/requested_stages.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/analysis/stress_strain.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/contact_points/contact_force_balance.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/contact_points/contact_point_validation.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/contact_points/contact_points.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/evidence/compression.err.sanitized.txt",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/evidence/compression.inp",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/evidence/compression.mntr.sanitized.txt",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/evidence/contact_fields.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/evidence/evidence_manifest.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/evidence/extract_fields.mac",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/evidence/history.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/evidence/import_elements.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/evidence/import_nodes.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/evidence/input_manifest.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/evidence/model_inventory.txt.sanitized.txt",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/evidence/nodal_fields.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/evidence/solver.out.sanitized.txt",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/evidence/solver_status.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_001/evidence/stress_fields.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/analysis/contact_diagnostics.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/analysis/force_displacement.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/analysis/mechanical_summary.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/analysis/qualification.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/analysis/reaction_balance.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/analysis/requested_stages.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/analysis/stress_strain.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/contact_points/contact_force_balance.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/contact_points/contact_point_validation.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/contact_points/contact_points.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/evidence/compression.err.sanitized.txt",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/evidence/compression.inp",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/evidence/compression.mntr.sanitized.txt",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/evidence/contact_fields.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/evidence/evidence_manifest.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/evidence/extract_fields.mac",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/evidence/history.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/evidence/import_elements.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/evidence/import_nodes.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/evidence/input_manifest.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/evidence/model_inventory.txt.sanitized.txt",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/evidence/nodal_fields.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/evidence/solver.out.sanitized.txt",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/evidence/solver_status.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/evidence/stress_fields.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/repeat_analysis/contact_diagnostics.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/repeat_analysis/force_displacement.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/repeat_analysis/mechanical_summary.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/repeat_analysis/qualification.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/repeat_analysis/reaction_balance.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/repeat_analysis/requested_stages.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_002/repeat_analysis/stress_strain.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_003/V063_ACCEPTANCE.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_003/analysis/contact_diagnostics.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_003/analysis/force_displacement.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_003/analysis/mechanical_summary.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_003/analysis/qualification.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_003/analysis/reaction_balance.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_003/analysis/requested_stages.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_003/analysis/stress_strain.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_003/contact_points/contact_force_balance.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_003/contact_points/contact_point_validation.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_003/contact_points/contact_points.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_004/V063_ACCEPTANCE.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_004/analysis/contact_diagnostics.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_004/analysis/force_displacement.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_004/analysis/mechanical_summary.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_004/analysis/qualification.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_004/analysis/reaction_balance.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_004/analysis/requested_stages.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_004/analysis/stress_strain.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_004/contact_points/contact_force_balance.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_004/contact_points/contact_point_validation.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_004/contact_points/contact_points.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_004/repeat_analysis/contact_diagnostics.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_004/repeat_analysis/force_displacement.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_004/repeat_analysis/mechanical_summary.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_004/repeat_analysis/qualification.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_004/repeat_analysis/reaction_balance.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_004/repeat_analysis/requested_stages.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/candidate_004/repeat_analysis/stress_strain.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/contact_sensitivity/sensitivity_summary.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/figures/contact_sensitivity.png",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/figures/figure_manifest.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/figures/geometry_and_import.png",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/figures/mesh_quality_and_provenance.png",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/figures/pilot_convergence_diagnostics.png",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/figures/platen_setup.png",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/import_only/attempt_001/evidence/import_receipt.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/import_only/attempt_001/evidence/inventory.txt",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/import_only/attempt_001/evidence/provenance.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/import_only/attempt_001/evidence/solver_log_excerpt.txt",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/import_only/attempt_001/import_execution.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/import_only/attempt_001/validation/import_validation.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/mechanical_feedback.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/mechanical_results/attempt_001/mechanical_summary.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/mechanical_results/attempt_002/mechanical_summary.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/mesh_reproduction/FAILED_LAUNCH_001.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/mesh_reproduction/attempt_002/artifact_manifest.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/mesh_reproduction/attempt_002/durable_copy.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/mesh_reproduction/attempt_002/feature_resolution.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/mesh_reproduction/attempt_002/generation_configuration.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/mesh_reproduction/attempt_002/mesh_quality.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/mesh_reproduction/attempt_002/protocol_authentication.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/attempt_001_failure/NUMERICAL_DIAGNOSIS_STOP.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/attempt_001_failure/execution_receipt.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/attempt_001_failure/input.inp",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/attempt_001_failure/simulation_manifest.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/attempt_001_failure/solver_log.txt",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/attempt_002_timeout/compression.err",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/attempt_002_timeout/compression.mntr",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/attempt_002_timeout/execution_receipt.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/attempt_002_timeout/input.inp",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/attempt_002_timeout/simulation_manifest.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/attempt_002_timeout/solver.out",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/execution_001.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/execution_002.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/setup/contact_setup_validation.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/setup/execution_receipt.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/setup/initial_contact.txt.txt",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/setup/input.inp",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/setup/model_inventory.txt.txt",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/setup/model_manifest.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/setup/solver.out.txt",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/setup_002/contact_setup_validation.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/setup_002/execution_receipt.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/setup_002/initial_contact.txt",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/setup_002/model_inventory.txt",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/microstructure_pilot/setup_002/model_manifest.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/protocol/CONTACT_AMENDMENT_002.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/protocol/CONTACT_AMENDMENT_003.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/protocol/CONTACT_SENSITIVITY_001.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/protocol/CONTACT_SENSITIVITY_002.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/protocol/PILOT_PROTOCOL_001.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/protocol/PILOT_PROTOCOL_002.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/protocol/RECOVERY_AND_GATES.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/protocol/SELECTED_CONTACT_FREEZE.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/protocol/WINDOWS_PROTOCOL_AUTHENTICATION.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/resource_assessment/execution_receipt.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/resource_assessment/import_supervision_001_receipt.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/resource_assessment/input.inp",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/resource_assessment/regeneration_supervision_002_receipt.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/resource_assessment/resource_assessment.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/resource_assessment/solver.out.txt",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/ansys_v062_recheck.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/ansys_v062_recheck.xml",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/ansys_v063_foundation.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/ansys_v063_foundation.xml",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/ansys_v063_integration.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/ansys_v063_integration.xml",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/archive_replay/archive_00.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/archive_replay/archive_00.xml",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/archive_replay/archive_01.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/archive_replay/archive_01.xml",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/archive_replay/archive_02.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/archive_replay/archive_02.xml",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/archive_replay/archive_03.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/archive_replay/archive_03.xml",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/archive_replay/archive_04.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/archive_replay/archive_04.xml",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/archive_replay/archive_05.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/archive_replay/archive_05.xml",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/archive_replay/archive_06.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/archive_replay/archive_06.xml",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/archive_replay/archive_07.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/archive_replay/archive_07.xml",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/archive_replay/archive_08.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/archive_replay/archive_08.xml",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/archive_replay/replay_manifest.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/collection.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/collection_active_release.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/collection_final.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/collection_release.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/collection_release_all.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/default_collection_context_failure.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/default_collection_context_failure.xml",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/default_evaluator_v1_0_failure.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/default_evaluator_v1_0_failure.xml",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/pilot_driver_controls/control_summary.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/pilot_driver_controls/execution_receipt.json",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/pilot_driver_controls/input.inp",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/pilot_driver_controls/stage001_gate.txt",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/pilot_driver_controls/stage001_history.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/pilot_driver_controls/stage002_gate.txt",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/pilot_driver_controls/stage002_history.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/pilot_driver_controls/stage003_gate.txt",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/pilot_driver_controls/stage003_history.csv",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/regression.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/regression.xml",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/regression_final.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/regression_final.xml",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/regression_portability.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/regression_portability.xml",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/regression_release.log",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/regression_release.xml",
+      "status": "A"
+    },
+    {
+      "path": "experiments/pipeline_v0.6.3/run_001/verification/report_consistency.json",
+      "status": "A"
+    },
+    {
+      "path": "metamaterial_eval/simulation/licensed_benchmark.py",
+      "status": "M"
+    },
+    {
+      "path": "metamaterial_eval/simulation/mesh_artifacts.py",
+      "status": "A"
+    },
+    {
+      "path": "metamaterial_eval/simulation/microstructure_import.py",
+      "status": "A"
+    },
+    {
+      "path": "metamaterial_eval/simulation/microstructure_pilot.py",
+      "status": "A"
+    },
+    {
+      "path": "metamaterial_eval/simulation/microstructure_results.py",
+      "status": "A"
+    },
+    {
+      "path": "metamaterial_eval/simulation/solver_execution.py",
+      "status": "M"
+    },
+    {
+      "path": "metamaterial_eval/simulation/windows_ansys.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/report_v063.py",
+      "status": "A"
+    },
+    {
+      "path": "tests/test_mesh_artifacts.py",
+      "status": "A"
+    },
+    {
+      "path": "tests/test_microstructure_import.py",
+      "status": "A"
+    },
+    {
+      "path": "tests/test_microstructure_pilot.py",
+      "status": "A"
+    },
+    {
+      "path": "tests/test_microstructure_results.py",
+      "status": "A"
+    },
+    {
+      "path": "tests/test_windows_ansys.py",
+      "status": "M"
+    },
+    {
+      "path": "validation/ansys_v063_integration.py",
+      "status": "A"
+    }
+  ],
+  "meaning": "A new in v063, M existing modified; ignored local solver binaries excluded",
+  "modified_existing_files": [
+    ".gitattributes",
+    ".gitignore",
+    "metamaterial_eval/simulation/licensed_benchmark.py",
+    "metamaterial_eval/simulation/solver_execution.py",
+    "metamaterial_eval/simulation/windows_ansys.py",
+    "tests/test_windows_ansys.py"
+  ]
+}

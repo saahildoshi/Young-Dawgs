@@ -1,0 +1,51 @@
+{
+  "actual_checkpoints": [],
+  "contact_algorithm": "fixed-initial-stiffness pure penalty FKN100; original AL attempt nonconverged and retained",
+  "contact_scope": "PLATEN_CONTACT_ONLY",
+  "design_id": 9,
+  "effective_stiffness": {
+    "effective_modulus_MPa": null,
+    "secant_modulus_MPa": null,
+    "status": "INSUFFICIENT_POINTS"
+  },
+  "eligible_for_design_ranking": false,
+  "failure_interpretation": "numerical/contact/resource failure is not physical design performance",
+  "geometry_sha256": "4700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1",
+  "limitations": [
+    "single mesh; mechanical convergence unqualified",
+    "internal self-contact not configured",
+    "provisional material/scale and plane stress",
+    "prior geometry HOLDs unchanged",
+    "fixed contact stiffness recommendation retained",
+    "no paper or manufacturing qualification"
+  ],
+  "material": {
+    "E_MPa": 1000,
+    "model": "homogeneous isotropic linear elastic, uncalibrated",
+    "nu": 0.3
+  },
+  "mesh_sha256": "e26863263774cf86c777b1485ac0e639216a91644007c4da272469a7447000bc",
+  "optimization_controller": "NOT_IMPLEMENTED",
+  "parameters": {
+    "pore_scale": 6.148748802851207,
+    "solid_fraction_target": 0.47692251183925727,
+    "strut_scale": 4.340345305340277
+  },
+  "raw_field_root": "YD_ARTIFACT_ROOT/solver/v063/pilot_002",
+  "resolution": 1024,
+  "scale": {
+    "height_mm": 10.24,
+    "initial_thickness_mm": 1,
+    "status": "PROVISIONAL",
+    "width_mm": 10.24
+  },
+  "schema": "young-dawgs-mechanical-feedback-v0.6.3",
+  "seed": 1,
+  "solid_fraction": 0.4769363403320312,
+  "stress_location": "corner nodes; no fabricated midside stress",
+  "stress_strain": null,
+  "validity": "RESOURCE_LIMIT",
+  "warnings": [
+    "It is highly recommended to set KEYOPT(10)=0 (update contact stiffness"
+  ]
+}

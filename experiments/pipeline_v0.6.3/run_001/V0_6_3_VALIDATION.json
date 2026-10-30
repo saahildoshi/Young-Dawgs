@@ -1,0 +1,1789 @@
+{
+  "acceptance": {
+    "ANSYS_IMPORT": "PASS_EXHAUSTIVE_FULL_MESH",
+    "CONTACT_SENSITIVITY": "BOUNDED_TESTS_AND_DOCUMENTED_ALGORITHM_AMENDMENT",
+    "CONTACT_SENSITIVITY_REVIEWED": "PASS_BOUNDED_SCOPE_WITH_WARNINGS",
+    "GEOMETRIC_MESH_QUALIFICATION": "PASS_UNCHANGED_GATES",
+    "HISTORICAL_MESH_IDENTITY_VERIFIED": "PASS_EXACT_SEMANTIC_REPRODUCTION",
+    "HISTORICAL_MESH_RECOVERED": "ORIGINAL_NPZ_NOT_FOUND",
+    "INTERNAL_SELF_CONTACT": "UNQUALIFIED_NOT_CONFIGURED",
+    "LLM_FEEDBACK_LOOP": "NOT_IMPLEMENTED",
+    "LLM_OPTIMIZATION": "NOT_IMPLEMENTED",
+    "MANUFACTURING": "UNQUALIFIED",
+    "MAPDL_IMPORT_PASS": "PASS",
+    "MECHANICAL_MESH_CONVERGENCE": "UNQUALIFIED",
+    "MICROSTRUCTURE_CONTACT_FORCE_PASS": "CONFIGURED_NOT_DEMONSTRATED",
+    "MICROSTRUCTURE_MECHANICAL_RESULTS_PASS": "NOT_AVAILABLE_NO_VALID_CHECKPOINT",
+    "MICROSTRUCTURE_PILOT": "RESOURCE_LIMIT",
+    "MICROSTRUCTURE_PLATEN_CONTACT_CONFIGURED": "PASS_INITIAL_SOLVER_CHECKS",
+    "MICROSTRUCTURE_SOLVER_PASS": "FAIL_NO_CONVERGED_CHECKPOINT",
+    "MODEL_RESOURCE_ASSESSMENT_PASS": "PASS_BOUNDED_ASSEMBLY_AND_ACTUAL_FACTORIZATION_SCOPE_ONLY",
+    "PAPER_READINESS": "RESEARCH_HOLD",
+    "REGENERATED_MESH_QUALIFIED": "PASS_EXACT_HISTORICAL_IDENTITY",
+    "RESOURCE_FEASIBILITY": "ACTUAL_ASSEMBLY_AND_FACTORIZATION_EVIDENCE_WITH_REGISTERED_LIMITS",
+    "SOURCE_GEOMETRY_AUTHENTICATED": "PASS"
+  },
+  "assembly_resource": {
+    "converged_steps": [],
+    "factorization_memory": "NOT_ESTABLISHED_BY_WRFULL",
+    "input_sha256": "148435efeb37e0dd780ceb56711d55cfaedc7db5dbd8bbe636acad846293b810",
+    "matrix_file_bytes": 1093337088,
+    "memory_lines": [
+      "SHARED MEMORY PARALLEL REQUESTED",
+      "MEMORY REQUESTED (MB)        = 4096",
+      "Memory resident data base increased from      1024 MB to      2048 MB.",
+      "USE SPARSE MATRIX DIRECT SOLVER",
+      "BCSOPTION: USE DEFAULT MEMORY ALLOCATION LOGIC FOR SPARSE DIRECT SOLVER",
+      "EQUATION SOLVER OPTION. . . . . . . . . . . . .SPARSE",
+      "GLOBALLY ASSEMBLED MATRIX . . . . . . . . . . .SYMMETRIC",
+      "The initial memory allocation (-m) has been exceeded.",
+      "Supplemental memory allocations are being used.",
+      "memoryReuse                  -1",
+      "mpcMemoryReuse                0",
+      "Updated memoryReuse key = -1",
+      "Range of element maximum matrix coefficients in global coordinates",
+      "*** ELEMENT MATRIX FORMULATION TIMES",
+      "Time at end of element matrix formulation CP = 28.96875.",
+      "ANSYS largest memory block available     1007278204 :   960.62 Mbytes",
+      "ANSYS memory in use      2145413824 :  6142.03 Mbytes",
+      "ANSYS max memory used      3527246912 :  7459.84 Mbytes",
+      "ZeroThreshold value for dropping near-zero values when writing matrix has been adjusted to:  1.0000000000E-14",
+      "ANSYS largest memory block available     1162270268 :  1108.43 Mbytes",
+      "ANSYS memory in use      1617717056 :  5638.78 Mbytes",
+      "ANSYS max memory in use      4116337792 :  8021.65 Mbytes",
+      "reached and the FULL file has been written.  Skipping equation",
+      "1042.688 MB WRITTEN ON ASSEMBLED MATRIX FILE: compression.full",
+      "Total number of cores requested         :    1 (Shared Memory Parallel)",
+      "Equation solver used                              :            Sparse (symmetric)",
+      "Sum of memory used on all processes               :     7858.0 MB",
+      "Sum of memory allocated on all processes          :    12160.0 MB",
+      "Physical memory available                         :         64 GB",
+      "|  Database Requested(-db)  1024 MB     Scratch Memory Requested      3008 MB |",
+      "|  Maximum Database Used    1948 MB     Maximum Scratch Memory Used   5910 MB |"
+    ],
+    "process": {
+      "artifacts": {
+        "compression.err": {
+          "bytes": 80,
+          "sha256": "b4e8267723424b4733bca84a6426195ceda0877238f90bebab636f44800152d1"
+        },
+        "compression.esav": {
+          "bytes": 259588096,
+          "sha256": "e0f70c36ca9580a7aebea241c59d52efcb67f797d76ba77ae2c1e1c27d6f0d30"
+        },
+        "compression.full": {
+          "bytes": 1093337088,
+          "sha256": "0c624c42d21b3b50d23a7394da15b2d069686fa05a66b4b811e6e62bc22cf4bf"
+        },
+        "compression.log": {
+          "bytes": 250,
+          "sha256": "0cefcd35889c6159835ec6a6b7f65969fac9ccb9da16564265bdca4eb5b52baa"
+        },
+        "compression.mntr": {
+          "bytes": 707,
+          "sha256": "a351cc74adffb59808e6a2552084970f1d56ee801b907a744e4b2a1a7453fc41"
+        },
+        "input.inp": {
+          "bytes": 441,
+          "sha256": "148435efeb37e0dd780ceb56711d55cfaedc7db5dbd8bbe636acad846293b810"
+        },
+        "launcher.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "solver.out": {
+          "bytes": 21705,
+          "sha256": "7c00587f24bb451a780d3ed6c659efefc7e0748b3e05a06523554c4bbe835a02"
+        }
+      },
+      "command": [
+        "C:\\Program Files\\ANSYS Inc\\v241\\ansys\\bin\\winx64\\ANSYS241.exe",
+        "-b",
+        "-smp",
+        "-np",
+        "1",
+        "-m",
+        "4096",
+        "-j",
+        "compression",
+        "-i",
+        "input.inp",
+        "-o",
+        "solver.out"
+      ],
+      "min_available_ram_bytes": 12884901888,
+      "min_disk_free_bytes": 21474836480,
+      "peak_tree_rss_bytes": 10981822464,
+      "returncode": 0,
+      "rss_limit_bytes": 21474836480,
+      "run_directory": "C:\\Users\\sd22446\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\YoungDawgs\\artifacts\\solver\\v063\\assembly_001",
+      "runtime_seconds": 36.80667489999905,
+      "started_utc": "2026-10-30T00:08:10.617850+00:00",
+      "status": "PROCESS_EXITED",
+      "timeout_seconds": 600
+    },
+    "reported_equations": [],
+    "scope": "linear no-contact assembly only; no equation solution, factorization or mechanical result",
+    "solver_version": "2024 R1",
+    "status": "ASSEMBLY_ONLY_COMPLETE_NOT_SOLVED",
+    "warnings": []
+  },
+  "client_date": "2026-10-29 America/New_York",
+  "commits_before_final_reporting": [
+    "00c194a04ae6e945f7c610992b3c60d97cb06dc0 docs(fem): register v0.6.3 mesh recovery and bounded pilot gates",
+    "6be0a434eee45100235bc8053f02349d1a69ba62 feat(mesh): authenticate portable mesh archives and frozen Windows reproduction",
+    "4548f7d4c6d2c8ad354ede98d64d150c0b63bc87 feat(mesh): reproduce and qualify historical native-1024 mesh identity",
+    "9a45102a72fa0147716e7c1738e5f2ec2f128915 feat(ansys): verify full TRI6 microstructure import and contact sensitivity",
+    "8672c8482547cbbf21b4afd99a555547cce2aab8 feat(ansys): freeze resource-bounded staged microstructure contact pilot",
+    "0dd458813569f0671bc7eb9d390d6d311a189ffd feat(fem): validate microstructure checkpoints and exclude invalid numerical feedback",
+    "71bf347e6817c4bb82fb405c6cbb28a322033095 fix(ansys): register fixed-penalty correction after microstructure residual plateau",
+    "7cb9411e3f844fe8c471cf5ad987ca9149ac350a test(fem): verify native import evidence and portable artifact retrieval",
+    "362d67fbc3df24915edf8c028dd5534237943edd fix(ansys): preserve solver warnings and record bounded pilot nonconvergence",
+    "f2feed53e84e439d74e95fb901eb229a84521e8d fix(mesh): normalize portable artifact paths and verify durable local recovery"
+  ],
+  "corrected_pilot_execution": {
+    "converged_steps": [],
+    "input_sha256": "f0a14b17a323fa2a275154096cadac83711052dfae195a75a19159a931f9fed5",
+    "process": {
+      "artifacts": {
+        "compression.DSPmatK": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "compression.DSPstack": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "compression.DSPsymb": {
+          "bytes": 505151488,
+          "sha256": "b025712c7ace5f71fad335dd49f27b30e25e95936e4341266494b8b3636c4cc1"
+        },
+        "compression.DSPtri": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "compression.DSPtriU": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "compression.bat": {
+          "bytes": 9618,
+          "sha256": "8f0cd38f38c9c90ff7a0bc667736d2229013f4e492990d0d25bd6332634eae56"
+        },
+        "compression.err": {
+          "bytes": 308,
+          "sha256": "d545c865b431fa68c65eed3e8fd4cddf939bff8bf764f27cfa9043cfaf3bd33c"
+        },
+        "compression.esav": {
+          "bytes": 2867462144,
+          "sha256": "17591b7d389b16054b8c92e3100b13881d2e910028e0adcc5af94ef497fcd2ab"
+        },
+        "compression.full": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "compression.ldhi": {
+          "bytes": 992,
+          "sha256": "0ed404216899fc337b3aed6413a9d5a491414fc204261bc2ae6d5b39790cd97f"
+        },
+        "compression.lock": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "compression.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "compression.mntr": {
+          "bytes": 707,
+          "sha256": "5c0551a45f4f5f6a6bbbbb3dcedd32e28208c68a867c1973f56f179aa0d85626"
+        },
+        "compression.osav": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "compression.page": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "compression.rdb": {
+          "bytes": 1409548288,
+          "sha256": "d001060ed12d481835c2e84c6b13f759f6237b540031643bc296ce2cd265822f"
+        },
+        "compression.rst": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "compression.stat": {
+          "bytes": 160,
+          "sha256": "9171c65b335c3b866ba45b962a632d9ae50681eb1ce7e077c21960c0306a4c12"
+        },
+        "input.inp": {
+          "bytes": 8978,
+          "sha256": "f0a14b17a323fa2a275154096cadac83711052dfae195a75a19159a931f9fed5"
+        },
+        "launcher.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "simulation_manifest.json": {
+          "bytes": 2020,
+          "sha256": "6ad49edbadb0f5ec100c17fa882b21e1623f07b8d7ad4e28379e0b101572081b"
+        },
+        "solver.out": {
+          "bytes": 154796,
+          "sha256": "abfa5878bde25eb23b16d69e778afa4b63347fdc24ac06ebe3ddfe415b2199ef"
+        }
+      },
+      "command": [
+        "C:\\Program Files\\ANSYS Inc\\v241\\ansys\\bin\\winx64\\ANSYS241.exe",
+        "-b",
+        "-smp",
+        "-np",
+        "1",
+        "-m",
+        "4096",
+        "-j",
+        "compression",
+        "-i",
+        "input.inp",
+        "-o",
+        "solver.out"
+      ],
+      "min_available_ram_bytes": 12884901888,
+      "min_disk_free_bytes": 21474836480,
+      "peak_tree_rss_bytes": 18193420288,
+      "returncode": 15,
+      "rss_limit_bytes": 21474836480,
+      "run_directory": "C:\\Users\\sd22446\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\YoungDawgs\\artifacts\\solver\\v063\\pilot_002",
+      "runtime_seconds": 1200.1023130998947,
+      "started_utc": "2026-10-30T00:32:58.161870+00:00",
+      "status": "TIMEOUT",
+      "timeout_seconds": 1200
+    },
+    "solver_version": "2024 R1",
+    "status": "TIMEOUT",
+    "warnings": [
+      " It is highly recommended to set KEYOPT(10)=0 (update contact stiffness  "
+    ]
+  },
+  "final_reporting_commit": "commit containing this report; exact hash in final response and Git history",
+  "historical_preservation": {
+    "changed_protected_paths": [],
+    "status": "PASS"
+  },
+  "import": {
+    "actual_PLANE183_TRI6": 1261670,
+    "actual_feature_validation": {
+      "accepted": true,
+      "criterion": "at least 3 distinct TRI6 elements across each sampled solid axial chord",
+      "exhaustive_neck_certification": "UNQUALIFIED",
+      "minimum_elements_across": 7,
+      "records": [
+        {
+          "axis": 1,
+          "chord_mm": 0.010000000000000675,
+          "covered_mm": 0.009999999999999787,
+          "elements_across": 8,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 1,
+          "xy": [
+            174.5,
+            638.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.009999999999999787,
+          "covered_mm": 0.009999999999999787,
+          "elements_across": 8,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 1,
+          "xy": [
+            232.5,
+            448.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.010000000000000009,
+          "covered_mm": 0.010000000000000009,
+          "elements_across": 7,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 1,
+          "xy": [
+            160.5,
+            335.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.009999999999999787,
+          "covered_mm": 0.009999999999999787,
+          "elements_across": 8,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 1,
+          "xy": [
+            340.5,
+            556.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.009999999999999787,
+          "covered_mm": 0.009999999999999787,
+          "elements_across": 8,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 1,
+          "xy": [
+            345.5,
+            578.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.009999999999999787,
+          "covered_mm": 0.009999999999999787,
+          "elements_across": 8,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 1,
+          "xy": [
+            228.5,
+            356.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.010000000000000009,
+          "covered_mm": 0.010000000000000009,
+          "elements_across": 8,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 1,
+          "xy": [
+            182.5,
+            417.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.009999999999999787,
+          "covered_mm": 0.009999999999999787,
+          "elements_across": 8,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 1,
+          "xy": [
+            430.5,
+            179.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.009999999999999787,
+          "covered_mm": 0.009999999999999787,
+          "elements_across": 8,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 1,
+          "xy": [
+            470.5,
+            234.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.009999999999999787,
+          "covered_mm": 0.009999999999999787,
+          "elements_across": 8,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 1,
+          "xy": [
+            481.5,
+            182.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.010000000000000675,
+          "covered_mm": 0.009999999999999787,
+          "elements_across": 7,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 1,
+          "xy": [
+            480.5,
+            522.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.009999999999999787,
+          "covered_mm": 0.009999999999999787,
+          "elements_across": 8,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 1,
+          "xy": [
+            574.5,
+            97.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.009999999999999787,
+          "covered_mm": 0.009999999999999787,
+          "elements_across": 8,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 1,
+          "xy": [
+            776.5,
+            571.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.009999999999999787,
+          "covered_mm": 0.009999999999999787,
+          "elements_across": 7,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 1,
+          "xy": [
+            843.5,
+            213.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.009999999999999787,
+          "covered_mm": 0.009999999999999787,
+          "elements_across": 8,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 1,
+          "xy": [
+            859.5,
+            247.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.009999999999999787,
+          "covered_mm": 0.009999999999999787,
+          "elements_across": 8,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 1,
+          "xy": [
+            631.5,
+            864.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.010000000000000231,
+          "covered_mm": 0.010000000000000231,
+          "elements_across": 8,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 1,
+          "xy": [
+            344.5,
+            888.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.019999999999999574,
+          "covered_mm": 0.019999999999999574,
+          "elements_across": 13,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            579.0,
+            40.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.02000000000000135,
+          "covered_mm": 0.020000000000000018,
+          "elements_across": 14,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            100.5,
+            928.0
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.01999999999999999,
+          "covered_mm": 0.01999999999999999,
+          "elements_across": 14,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            15.0,
+            124.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.020000000000000018,
+          "covered_mm": 0.020000000000000018,
+          "elements_across": 13,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            79.0,
+            136.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.02000000000000135,
+          "covered_mm": 0.019999999999999574,
+          "elements_across": 13,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            1019.0,
+            153.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.019999999999999574,
+          "covered_mm": 0.019999999999999574,
+          "elements_across": 13,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            259.5,
+            216.0
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.02000000000000135,
+          "covered_mm": 0.02000000000000135,
+          "elements_across": 15,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            275.5,
+            79.0
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.020000000000000462,
+          "covered_mm": 0.020000000000000462,
+          "elements_across": 16,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            527.0,
+            299.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.019999999999999574,
+          "covered_mm": 0.019999999999999574,
+          "elements_across": 13,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            395.5,
+            316.0
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.020000000000000462,
+          "covered_mm": 0.019999999999999574,
+          "elements_across": 15,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            468.5,
+            378.0
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.019999999999999574,
+          "covered_mm": 0.019999999999999574,
+          "elements_across": 13,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            497.5,
+            324.0
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.020000000000000018,
+          "covered_mm": 0.020000000000000018,
+          "elements_across": 13,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            150.0,
+            520.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.019999999999999574,
+          "covered_mm": 0.019999999999999574,
+          "elements_across": 16,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            533.5,
+            356.0
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.019999999999999574,
+          "covered_mm": 0.019999999999999574,
+          "elements_across": 12,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            806.0,
+            617.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.020000000000000462,
+          "covered_mm": 0.019999999999999574,
+          "elements_across": 15,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            551.0,
+            626.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.020000000000000018,
+          "covered_mm": 0.020000000000000018,
+          "elements_across": 13,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            369.0,
+            664.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.020000000000000462,
+          "covered_mm": 0.020000000000000462,
+          "elements_across": 17,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            514.0,
+            681.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.020000000000000004,
+          "covered_mm": 0.020000000000000004,
+          "elements_across": 13,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            4.0,
+            692.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.019999999999999574,
+          "covered_mm": 0.019999999999999574,
+          "elements_across": 17,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            705.5,
+            325.0
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.019999999999999574,
+          "covered_mm": 0.019999999999999574,
+          "elements_across": 13,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            1018.0,
+            731.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.020000000000000462,
+          "covered_mm": 0.020000000000000462,
+          "elements_across": 13,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            523.0,
+            761.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.020000000000000462,
+          "covered_mm": 0.020000000000000018,
+          "elements_across": 16,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            820.5,
+            760.0
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.020000000000000018,
+          "covered_mm": 0.020000000000000018,
+          "elements_across": 16,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            370.0,
+            899.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.019999999999999574,
+          "covered_mm": 0.019999999999999574,
+          "elements_across": 13,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            993.0,
+            915.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.020000000000000462,
+          "covered_mm": 0.019999999999999574,
+          "elements_across": 14,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            916.5,
+            253.0
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.019999999999999574,
+          "covered_mm": 0.019999999999999574,
+          "elements_across": 13,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            461.0,
+            976.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.019999999999999574,
+          "covered_mm": 0.019999999999999574,
+          "elements_across": 12,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            990.5,
+            47.0
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.020000000000000462,
+          "covered_mm": 0.020000000000000462,
+          "elements_across": 13,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            623.0,
+            1003.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.02000000000000135,
+          "covered_mm": 0.02000000000000135,
+          "elements_across": 13,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 2,
+          "xy": [
+            1006.5,
+            78.0
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.03000000000000025,
+          "covered_mm": 0.03000000000000025,
+          "elements_across": 19,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            23.5,
+            543.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.03000000000000025,
+          "covered_mm": 0.02999999999999936,
+          "elements_across": 21,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            80.5,
+            598.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.03000000000000025,
+          "covered_mm": 0.029999999999999805,
+          "elements_across": 19,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            87.5,
+            708.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.02999999999999936,
+          "covered_mm": 0.02999999999999936,
+          "elements_across": 20,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            140.5,
+            801.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.03000000000000025,
+          "covered_mm": 0.03000000000000025,
+          "elements_across": 17,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            144.5,
+            235.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.030000000000001137,
+          "covered_mm": 0.030000000000001137,
+          "elements_across": 18,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            837.5,
+            144.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.03,
+          "covered_mm": 0.03,
+          "elements_across": 17,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            11.5,
+            190.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.02999999999999936,
+          "covered_mm": 0.02999999999999936,
+          "elements_across": 20,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            915.5,
+            190.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.03000000000000025,
+          "covered_mm": 0.03000000000000025,
+          "elements_across": 21,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            476.5,
+            228.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.02999999999999936,
+          "covered_mm": 0.02999999999999936,
+          "elements_across": 20,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            761.5,
+            290.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.03000000000000025,
+          "covered_mm": 0.02999999999999936,
+          "elements_across": 20,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            708.5,
+            296.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.030000000000001137,
+          "covered_mm": 0.02999999999999936,
+          "elements_across": 18,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            313.5,
+            88.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.029999999999999916,
+          "covered_mm": 0.029999999999999916,
+          "elements_across": 21,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            58.5,
+            321.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.02999999999999936,
+          "covered_mm": 0.02999999999999936,
+          "elements_across": 17,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            949.5,
+            353.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.030000000000001137,
+          "covered_mm": 0.030000000000001137,
+          "elements_across": 22,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            413.5,
+            62.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.03000000000000025,
+          "covered_mm": 0.03000000000000025,
+          "elements_across": 20,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            364.5,
+            438.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.02999999999999936,
+          "covered_mm": 0.02999999999999936,
+          "elements_across": 22,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            442.5,
+            808.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.02999999999999936,
+          "covered_mm": 0.02999999999999936,
+          "elements_across": 22,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            915.5,
+            463.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.02999999999999936,
+          "covered_mm": 0.02999999999999936,
+          "elements_across": 17,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            832.5,
+            518.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.03000000000000025,
+          "covered_mm": 0.03000000000000025,
+          "elements_across": 19,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            533.5,
+            346.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.03000000000000025,
+          "covered_mm": 0.03000000000000025,
+          "elements_across": 20,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            610.5,
+            385.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.02999999999999936,
+          "covered_mm": 0.02999999999999936,
+          "elements_across": 19,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            938.5,
+            734.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.03000000000000025,
+          "covered_mm": 0.03000000000000025,
+          "elements_across": 19,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            752.5,
+            505.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.03000000000000025,
+          "covered_mm": 0.03000000000000025,
+          "elements_across": 18,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 3,
+          "xy": [
+            849.5,
+            538.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.04000000000000001,
+          "covered_mm": 0.04000000000000001,
+          "elements_across": 22,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 4,
+          "xy": [
+            11.0,
+            4.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.040000000000000924,
+          "covered_mm": 0.040000000000000924,
+          "elements_across": 22,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 4,
+          "xy": [
+            63.5,
+            4.0
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.040000000000000036,
+          "covered_mm": 0.040000000000000036,
+          "elements_across": 21,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 4,
+          "xy": [
+            124.5,
+            276.0
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.040000000000000036,
+          "covered_mm": 0.040000000000000036,
+          "elements_across": 22,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 4,
+          "xy": [
+            442.0,
+            223.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.03999999999999915,
+          "covered_mm": 0.03999999999999915,
+          "elements_across": 25,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 4,
+          "xy": [
+            265.5,
+            242.0
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.040000000000000036,
+          "covered_mm": 0.040000000000000036,
+          "elements_across": 25,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 4,
+          "xy": [
+            268.0,
+            340.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.040000000000000036,
+          "covered_mm": 0.040000000000000036,
+          "elements_across": 25,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 4,
+          "xy": [
+            247.0,
+            515.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.039999999999999925,
+          "covered_mm": 0.039999999999999925,
+          "elements_across": 27,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 4,
+          "xy": [
+            83.0,
+            557.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.040000000000000036,
+          "covered_mm": 0.03999999999999915,
+          "elements_across": 27,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 4,
+          "xy": [
+            612.0,
+            562.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.040000000000000036,
+          "covered_mm": 0.040000000000000036,
+          "elements_across": 24,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 4,
+          "xy": [
+            759.0,
+            585.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.040000000000000924,
+          "covered_mm": 0.040000000000000036,
+          "elements_across": 23,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 4,
+          "xy": [
+            606.5,
+            287.0
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.040000000000000036,
+          "covered_mm": 0.03999999999999959,
+          "elements_across": 22,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 4,
+          "xy": [
+            615.5,
+            654.0
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.040000000000000036,
+          "covered_mm": 0.040000000000000036,
+          "elements_across": 22,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 4,
+          "xy": [
+            51.0,
+            663.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.040000000000000036,
+          "covered_mm": 0.040000000000000036,
+          "elements_across": 22,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 4,
+          "xy": [
+            663.5,
+            431.0
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.040000000000000036,
+          "covered_mm": 0.03999999999999959,
+          "elements_across": 22,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 4,
+          "xy": [
+            664.5,
+            724.0
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.040000000000000036,
+          "covered_mm": 0.040000000000000036,
+          "elements_across": 22,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 4,
+          "xy": [
+            673.5,
+            796.0
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.040000000000000036,
+          "covered_mm": 0.040000000000000036,
+          "elements_across": 25,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 4,
+          "xy": [
+            897.5,
+            351.0
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.040000000000000036,
+          "covered_mm": 0.040000000000000036,
+          "elements_across": 26,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 4,
+          "xy": [
+            406.0,
+            910.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.05000000000000071,
+          "covered_mm": 0.05000000000000071,
+          "elements_across": 28,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 5,
+          "xy": [
+            23.5,
+            37.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.04999999999999982,
+          "covered_mm": 0.04999999999999982,
+          "elements_across": 27,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 5,
+          "xy": [
+            144.5,
+            248.5
+          ]
+        },
+        {
+          "axis": 0,
+          "chord_mm": 0.049999999999998934,
+          "covered_mm": 0.049999999999998934,
+          "elements_across": 30,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 5,
+          "xy": [
+            825.5,
+            214.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.05000000000000071,
+          "covered_mm": 0.05000000000000071,
+          "elements_across": 29,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 5,
+          "xy": [
+            242.5,
+            96.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.04999999999999982,
+          "covered_mm": 0.04999999999999982,
+          "elements_across": 30,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 5,
+          "xy": [
+            287.5,
+            230.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.04999999999999982,
+          "covered_mm": 0.04999999999999982,
+          "elements_across": 29,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 5,
+          "xy": [
+            360.5,
+            779.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.05000000000000071,
+          "covered_mm": 0.04999999999999982,
+          "elements_across": 29,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 5,
+          "xy": [
+            563.5,
+            329.5
+          ]
+        },
+        {
+          "axis": 1,
+          "chord_mm": 0.05000000000000071,
+          "covered_mm": 0.04999999999999993,
+          "elements_across": 27,
+          "passed": true,
+          "phase": "solid",
+          "source_pixel_run": 5,
+          "xy": [
+            593.5,
+            959.5
+          ]
+        }
+      ]
+    },
+    "actual_mesh_validation": {
+      "accepted": true,
+      "boundary_counts": {
+        "bottom": 1368,
+        "external": 27828,
+        "pore": 213150,
+        "top": 1230
+      },
+      "boundary_error_mm": 2.5121479338940403e-15,
+      "components": 1,
+      "element_type": "quadratic_TRI6",
+      "elements": 1261670,
+      "gates": {
+        "angles": true,
+        "area": true,
+        "aspect": true,
+        "boundary": true,
+        "boundary_groups": true,
+        "domain_difference": true,
+        "holes_preserved": true,
+        "one_component": true,
+        "outward_normals": true,
+        "quadratic_mapping": true,
+        "quality": true
+      },
+      "generation_seconds": 0.0,
+      "holes": 412,
+      "max_aspect_ratio": 5.18242266701477,
+      "max_source_segment_length_error_mm": 1.7763568394002505e-15,
+      "mesh_area_mm2": 50.010400000000004,
+      "min_angle_deg": 11.40413502641728,
+      "min_jacobian_det_mm2": 2.3976369960184133e-06,
+      "min_quality": 0.33581680890096477,
+      "nodes": 2766505,
+      "order_distribution": {
+        "2": 1261670
+      },
+      "quadratic_mapping": {
+        "invalid_or_uncertified": 0,
+        "limitation": "floating point with scaled guard; no formal interval arithmetic; no sampled positivity claim",
+        "maximum_midpoint_error_mm": 8.195004297996457e-13,
+        "method": "analytic_quadratic_extrema_over_closed_reference_triangle",
+        "minimum_determinant_mm2": 2.39763699601639e-06
+      },
+      "relative_area_error": 7.246028730776967e-15,
+      "symmetric_difference_mm2": 1.3864481376478703e-13
+    },
+    "actual_nodes": 2766505,
+    "attributes": "EXHAUSTIVE_ALL_TYPE_MAT_REAL_EQUAL_1",
+    "bbox_mm": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        10.24,
+        10.24
+      ]
+    ],
+    "components": "EXHAUSTIVE_ALL_NODE_AND_SPECIMEN_MEMBERSHIPS_EQUAL",
+    "components_from_imported_connectivity": 1,
+    "connectivity": "EXHAUSTIVE_ALL_SIX_NODE_IDS_EQUAL",
+    "coordinate_max_error_mm": 5.044853423896711e-13,
+    "import_receipt_sha256": "82b80ffc3672d11b01cbe695a53f1f025fffb924deb69bcdb466a560794f482e",
+    "pores_from_imported_connectivity": 412,
+    "scientific_scope": "import-only; no force or deformation result",
+    "solver_archive_sha256": "6072a7fbcfa71eb2975ec907c6256836fc27f04f0803af20e2a0243c25a1acfc",
+    "solver_database_sha256": "b2f3bc964daddff43e6ac2dabd1e3eb430bacee604a1ed1ebeb53b9200558c36",
+    "status": "ANSYS_IMPORT_PASS"
+  },
+  "mechanical_results": {
+    "actual_valid_stages": [],
+    "contact_scope": "PLATEN_CONTACT_ONLY",
+    "effective_stiffness": {
+      "effective_modulus_MPa": null,
+      "secant_modulus_MPa": null,
+      "status": "INSUFFICIENT_POINTS"
+    },
+    "eligible_for_design_ranking": false,
+    "execution_receipt_sha256": "95e45ceb9b0a557b815dbdd6539b12634e0d421dd492cfe6a014f782a5d3a2d9",
+    "first_failed_or_missing_stage": {
+      "reason": "[Errno 2] No such file or directory: 'C:\\\\Users\\\\sd22446\\\\AppData\\\\Local\\\\Packages\\\\OpenAI.Codex_2p2nqsd0c76g0\\\\LocalCache\\\\Local\\\\YoungDawgs\\\\artifacts\\\\solver\\\\v063\\\\pilot_002\\\\stage001_history.csv'",
+      "stage": 1
+    },
+    "internal_self_contact": "UNQUALIFIED_NOT_CONFIGURED",
+    "logged_converged_substep_times": [],
+    "mechanical_mesh_convergence": "UNQUALIFIED",
+    "mesh_semantic_sha256": "e26863263774cf86c777b1485ac0e639216a91644007c4da272469a7447000bc",
+    "protocol_sha256": "8535e57f8d75e2b92ae15903e5af84fdd6eedf6694a947fa3ef9563dac6dcaf0",
+    "pseudo_time": "load parameter, not physical seconds",
+    "result_RST_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "schema": "young-dawgs-v0.6.3-mechanical-results",
+    "scientific_status": "PRELIMINARY_SINGLE_MESH_RESEARCH_HOLD",
+    "sign_convention": "native upper RF negative, lower positive; CNFY is opposite support RF",
+    "solver_reported_converged_substeps": [],
+    "source_geometry_sha256": "4700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1",
+    "stage_fields": [],
+    "status": "RESOURCE_LIMIT",
+    "unsupported_output_queries": false,
+    "warnings": [
+      "It is highly recommended to set KEYOPT(10)=0 (update contact stiffness"
+    ]
+  },
+  "mesh": {
+    "TRI6": 1261670,
+    "archive_bytes_read_and_CRC_verified": true,
+    "artifact_relative_path": "meshes\\design009_seed001_native1024\\v063_regen_001\\mesh.npz",
+    "artifact_root_selector": "YD_ARTIFACT_ROOT or per-user local cache",
+    "byte_sha256": "f316c32f5feb5c8419ff5d910e89b887e3087eabdba3b4f4ab549f46111e94d9",
+    "bytes": 57656163,
+    "feature_seconds": 1.615678200032562,
+    "file_attributes_before_read": 32,
+    "generation_configuration_sha256": "afb7f58ec560845304d8cf0c4a86dcc8b99f5705d8958a2de74925438e90562e",
+    "generation_seconds": 61.14034630008973,
+    "geometry_qualification": "PASS",
+    "historical_counts": {
+      "TRI6": 1261670,
+      "nodes": 2766505
+    },
+    "historical_semantic_sha256": "e26863263774cf86c777b1485ac0e639216a91644007c4da272469a7447000bc",
+    "identity_status": "HISTORICAL_MESH_IDENTITY_VERIFIED",
+    "known_storage_root": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts",
+    "logical_artifact_id": "design009-seed001-native1024-v063-regen001",
+    "mechanical_mesh_convergence": "UNQUALIFIED",
+    "nodes": 2766505,
+    "reproduction_command": "python -m metamaterial_eval.simulation.mesh_artifacts reproduce --output NEW_EVIDENCE_PATH",
+    "schema": "young-dawgs-mesh-artifact-v1",
+    "scientific_status": "HOLD_CUMULATIVE_SMALL_PORE_FIDELITY",
+    "semantic_sha256": "e26863263774cf86c777b1485ac0e639216a91644007c4da272469a7447000bc",
+    "settings": {
+      "config": {
+        "boundary_size": 0.0033333333333333335,
+        "bulk_size": 0.04,
+        "dimensions": "PROVISIONAL",
+        "force_basis": "total_N",
+        "height": 10.24,
+        "large_deformation": true,
+        "material": "ASSUMED_NOT_MEASURED",
+        "mode": "plane_stress",
+        "poisson_ratio": 0.3,
+        "strains": [
+          0.005,
+          0.01,
+          0.02
+        ],
+        "thickness": 1.0,
+        "time_axis": "quasi_static_pseudo_time",
+        "units": "mm-N-MPa",
+        "width": 10.24,
+        "young_modulus": 1000.0
+      },
+      "frozen_protocol_LF_sha256": "e59ce2f041f93281fd0313fb024d607f0822c62a090187ba43171331b48fce77",
+      "gmsh": "4.15.0",
+      "meshing_policy": {
+        "adaptive_curve_sampling": true,
+        "boundary_point_size": true,
+        "relocate_iterations": 10
+      }
+    },
+    "source_geometry_sha256": "4700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1",
+    "total_seconds": 99.56580480001867,
+    "validation_seconds": 34.07134720007889
+  },
+  "schema": "young-dawgs-v0.6.3-validation",
+  "tests": {
+    "active": {
+      "errors": 0.0,
+      "failures": 0.0,
+      "skipped": 0.0,
+      "tests": 676.0,
+      "time": 67.935
+    },
+    "active_command": "EVALUATOR_PATH=validation/evaluators/evaluator_v1_1.py python -m pytest tests validation/test_evaluator.py -q",
+    "archived_replay": [
+      {
+        "errors": 0.0,
+        "failures": 0.0,
+        "skipped": 0.0,
+        "tests": 37.0,
+        "time": 5.869
+      },
+      {
+        "errors": 0.0,
+        "failures": 0.0,
+        "skipped": 0.0,
+        "tests": 75.0,
+        "time": 15.129
+      },
+      {
+        "errors": 0.0,
+        "failures": 0.0,
+        "skipped": 0.0,
+        "tests": 46.0,
+        "time": 2.384
+      },
+      {
+        "errors": 0.0,
+        "failures": 0.0,
+        "skipped": 0.0,
+        "tests": 47.0,
+        "time": 2.425
+      },
+      {
+        "errors": 0.0,
+        "failures": 0.0,
+        "skipped": 0.0,
+        "tests": 50.0,
+        "time": 1.773
+      },
+      {
+        "errors": 0.0,
+        "failures": 0.0,
+        "skipped": 0.0,
+        "tests": 91.0,
+        "time": 2.519
+      },
+      {
+        "errors": 0.0,
+        "failures": 0.0,
+        "skipped": 0.0,
+        "tests": 28.0,
+        "time": 2.558
+      },
+      {
+        "errors": 0.0,
+        "failures": 0.0,
+        "skipped": 0.0,
+        "tests": 29.0,
+        "time": 2.354
+      },
+      {
+        "errors": 0.0,
+        "failures": 0.0,
+        "skipped": 0.0,
+        "tests": 72.0,
+        "time": 2.935
+      }
+    ],
+    "default_unscoped_collection": "11 preserved historical snapshot/module-name collection errors; not active-suite failures",
+    "default_v1_0_evaluator_run": "20 failed / 655 passed against default legacy v1.0; retained separately; release selects unchanged frozen v1.1",
+    "licensed_v062_recheck": {
+      "errors": 0.0,
+      "failures": 0.0,
+      "skipped": 0.0,
+      "tests": 5.0,
+      "time": 2.327
+    },
+    "licensed_v063": {
+      "errors": 0.0,
+      "failures": 1.0,
+      "skipped": 0.0,
+      "tests": 7.0,
+      "time": 10.642
+    },
+    "overlap_warning": "do not sum primary, archive and evidence-check counts"
+  }
+}
