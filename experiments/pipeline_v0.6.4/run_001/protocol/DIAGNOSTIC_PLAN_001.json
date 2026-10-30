@@ -1,0 +1,149 @@
+{
+  "contact_baseline": {
+    "FKN": 100,
+    "FTOLN": -1e-05,
+    "algorithm": 1,
+    "friction": 0,
+    "normal_interpretation": "verify printed v241 computed stiffness; FTOLN is penetration tolerance, not a prescribed penalty stiffness",
+    "stiffness_update": 1
+  },
+  "early_stop_design": "register thresholds after small telemetry; do not stop solely on first large residual; ensure cutback observation before trend stop",
+  "excluded": [
+    "original geometry/mesh edits",
+    "arbitrary restraints/stabilization",
+    "blind FKN sweep",
+    "full reimport project",
+    "3D",
+    "batch design FEM",
+    "autonomous LLM optimization"
+  ],
+  "frozen_before_new_solver_jobs": true,
+  "full_primary_attempts_max": 1,
+  "full_retry": "NOT_AUTHORIZED_UNTIL_SEPARATE_COMMITTED_EVIDENCE_BASED_PROTOCOL",
+  "geometry_immutable": "4700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1",
+  "mesh_immutable": "e26863263774cf86c777b1485ac0e639216a91644007c4da272469a7447000bc",
+  "primary_small_models": [
+    "accepted_rectangle_with_and_without_telemetry",
+    "deterministic_compliant_two_zigzag_strut_fixture"
+  ],
+  "resource": {
+    "concurrent_jobs": 1,
+    "full_rss_GiB": 20,
+    "full_timeout_seconds": 1200,
+    "minimum_available_RAM_GiB": 12,
+    "minimum_disk_free_GiB": 20,
+    "small_rss_GiB": 8,
+    "small_timeout_seconds": 180
+  },
+  "retention": {
+    "element_flag_ring_files": 2,
+    "full_diagnostic_bytes_cap": 2147483648,
+    "full_native_nr_nd_file_count_cap": 4,
+    "native_rotation": "ANSYS ring overwrite within unique new job only; preserve final survivors, never overwrite historical runs",
+    "residual_ring_files": 2,
+    "small_diagnostic_bytes_cap": 268435456,
+    "spatial_export": "only final surviving snapshots after verification; no full nodal dump every iteration"
+  },
+  "schema": "young-dawgs-v0.6.4-diagnostic-plan",
+  "small_controlled_variants": [
+    {
+      "NEQIT": 30,
+      "NLGEOM": true,
+      "NSUBST": [
+        2,
+        64,
+        1
+      ],
+      "contact": true,
+      "id": "pp_base",
+      "strain": 0.005
+    },
+    {
+      "NEQIT": 30,
+      "NLGEOM": true,
+      "NSUBST": [
+        2,
+        64,
+        1
+      ],
+      "contact": false,
+      "id": "direct",
+      "strain": 0.005
+    },
+    {
+      "NEQIT": 30,
+      "NLGEOM": false,
+      "NSUBST": [
+        2,
+        64,
+        1
+      ],
+      "contact": true,
+      "id": "pp_linearized",
+      "strain": 0.005
+    },
+    {
+      "NEQIT": 6,
+      "NLGEOM": true,
+      "NSUBST": [
+        2,
+        64,
+        1
+      ],
+      "contact": true,
+      "id": "pp_early_cutback",
+      "strain": 0.005
+    },
+    {
+      "NEQIT": 6,
+      "NLGEOM": true,
+      "NSUBST": [
+        8,
+        64,
+        1
+      ],
+      "contact": true,
+      "id": "pp_initial8",
+      "strain": 0.005
+    },
+    {
+      "NEQIT": 2,
+      "NLGEOM": true,
+      "NSUBST": [
+        2,
+        64,
+        1
+      ],
+      "contact": true,
+      "id": "forced_cutback_control",
+      "strain": 0.03
+    }
+  ],
+  "small_parallel_probe": {
+    "cores": [
+      1,
+      2
+    ],
+    "scope": "same accepted rectangle; capability limited to actual successful probe, no all-core/HPC entitlement inference"
+  },
+  "sources": {
+    "NLDIAG_v242": "https://ansyshelp.ansys.com/public/Views/Secured/corp/v242/en/ans_cmd/Hlp_C_NLDIAG.html",
+    "NLHIST_v252": "https://ansyshelp.ansys.com/public/Views/Secured/corp/v252/en/ans_cmd/Hlp_C_NLHIST.html",
+    "installed_v241_help": "local help lacked command pages; v241 public NLDIAG URL inaccessible; compatibility requires actual small licensed tests"
+  },
+  "telemetry_candidate_commands": [
+    "NLDIAG,CONT,ITER",
+    "NLDIAG,NRRE,ON,2",
+    "NLDIAG,EFLG,ON,2",
+    "NLHIST,NSOL,UYTOP,U,Y,TOP_PILOT",
+    "NLHIST,NSOL,RFUP,F,Y,TOP_PILOT"
+  ],
+  "validity": {
+    "contact_force_balance_relative": 0.01,
+    "force_CNVTOL_relative": 0.005,
+    "force_balance_relative": 0.01,
+    "minimum_reaction_N": 1e-08,
+    "no_unconverged_LLM_scores": true,
+    "stored_endpoint_penetration_mm": 1e-05
+  }
+}
