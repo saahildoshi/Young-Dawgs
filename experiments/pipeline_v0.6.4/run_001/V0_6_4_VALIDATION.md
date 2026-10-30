@@ -152,6 +152,7 @@ No push or history rewrite.
 - `4cc81c8cf49b8c49f7b131d2e354a07c425719e8` — fix(ansys): register conditional repair for converged-state retention and memory stop
 - `31e6d760d7131c5ddc199e32708c50e075b3f0c5` — feat(ansys): authenticate separate read-only field exports and preserve primary recovery evidence
 - `e97434ccc91e87ea3ef577b557d8347047f10db6` — fix(ansys): quarantine incomplete native outputs after equilibrium and memory stop
+- `5fa147dd0ced84cf5bb09f4e953916b42bf21c48` — docs(fem): report recovered equilibrium and native-output resource hold
 
 The final reporting commit contains this document; its exact hash is in the
 final response/Git history, avoiding self-reference.

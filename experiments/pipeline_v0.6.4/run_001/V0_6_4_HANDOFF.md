@@ -58,7 +58,7 @@ All values are actual evidence or explicitly unavailable.
 | 52 | Native CND shows both nonzero pair forces; independent support-RF/endpoint checks remain incomplete. |
 | 53 | Primary NLHIST upperRF−0.06043442N available; independently verified lowerRF unavailable. RST zero defaults quarantined. |
 | 54 | Independent support-reaction balance UNAVAILABLE; native contact-pair force imbalance0.5104% is diagnostic only. |
-| 55 | Native iteration7 penetration1.320076e−9mm; qualified RST endpoint penetration UNAVAILABLE. |
+| 55 | Maximum recorded CND penetration1.320076e−9mm at iteration2; iteration7 maximum5.440885e−10mm. Qualified RST endpoint penetration UNAVAILABLE. |
 | 56 | Actual displacement-only diagnostic has positive mapping for every TRI6; full mechanical validation remains incomplete. |
 | 57 | Actual all-node displacement recovered/checked, explicitly diagnostic-only; no fully qualified mechanical checkpoint. |
 | 58 | UNAVAILABLE — no accepted converged checkpoint |

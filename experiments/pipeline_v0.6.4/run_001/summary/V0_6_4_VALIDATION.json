@@ -50,7 +50,8 @@
     "0cafe526431e89ddbebfbe35fde6cb07ff39d9a6 fix(ansys): bind observed native jobname without altering frozen recovery input",
     "4cc81c8cf49b8c49f7b131d2e354a07c425719e8 fix(ansys): register conditional repair for converged-state retention and memory stop",
     "31e6d760d7131c5ddc199e32708c50e075b3f0c5 feat(ansys): authenticate separate read-only field exports and preserve primary recovery evidence",
-    "e97434ccc91e87ea3ef577b557d8347047f10db6 fix(ansys): quarantine incomplete native outputs after equilibrium and memory stop"
+    "e97434ccc91e87ea3ef577b557d8347047f10db6 fix(ansys): quarantine incomplete native outputs after equilibrium and memory stop",
+    "5fa147dd0ced84cf5bb09f4e953916b42bf21c48 docs(fem): report recovered equilibrium and native-output resource hold"
   ],
   "displacement_only_diagnostic": {
     "UX_range_mm": [
@@ -2367,10 +2368,13 @@
     "active_top_elements": 657,
     "bottom_contact_internal_y_N": -0.06074446,
     "eligible_for_LLM_ranking": false,
+    "equilibrium_iteration7_max_penetration_mm": 5.440885e-10,
     "independent_pilot_RF_check": "UNAVAILABLE",
-    "max_iteration_penetration_mm": 1.320076e-09,
+    "max_recorded_iteration_penetration_mm": 1.320076e-09,
+    "maximum_recorded_penetration_iteration": 2,
     "native_time": 5e-05,
     "pair_force_imbalance_relative": 0.005104004546258169,
+    "penetration_scope": "Maximum over recorded iteration history is distinct from iteration7 and from unavailable qualified RST endpoint results.",
     "qualified_RST_endpoint_penetration_mm": null,
     "scope": "NATIVE_ITERATION7_CONTACT_PAIR_FORCE_EVIDENCE_ONLY; NOT_ACCEPTED_MECHANICAL_CHECKPOINT",
     "source_CND_sha256": "1fbaa5238d3e9480d25c033f5c7af4d9bc81844169c76e2c5064fef318964436",

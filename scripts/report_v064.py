@@ -614,7 +614,7 @@ batch FEM, autonomous optimization,3D or manufacturing workflow was implemented.
         'Yes, accepted checkpoint contact-element forces oppose actual support reactions.' if valid else 'Native CND shows both nonzero pair forces; independent support-RF/endpoint checks remain incomplete.',
         str([last.get('upper_rf_y_N'),last.get('lower_rf_y_N')]) if valid else 'Primary NLHIST upperRF−0.06043442N available; independently verified lowerRF unavailable. RST zero defaults quarantined.',
         'Independent support-reaction balance UNAVAILABLE; native contact-pair force imbalance0.5104% is diagnostic only.' if not valid else value('reaction_balance_relative')+' normalized reaction imbalance.',
-        str(maximum_pen)+'mm accepted stored-endpoint maximum; no continuous-surface bound claimed.' if valid else 'Native iteration7 penetration1.320076e−9mm; qualified RST endpoint penetration UNAVAILABLE.',
+        str(maximum_pen)+'mm accepted stored-endpoint maximum; no continuous-surface bound claimed.' if valid else 'Maximum recorded CND penetration1.320076e−9mm at iteration2; iteration7 maximum5.440885e−10mm. Qualified RST endpoint penetration UNAVAILABLE.',
         'Every deformed TRI6 mapping positive under analytic floating-point check.' if valid else 'Actual displacement-only diagnostic has positive mapping for every TRI6; full mechanical validation remains incomplete.',
         'Yes, complete all-node UX/UY.' if valid else 'Actual all-node displacement recovered/checked, explicitly diagnostic-only; no fully qualified mechanical checkpoint.',
         'Yes, supported corner-node averages; no fabricated midside stress.' if valid else unavailable,
