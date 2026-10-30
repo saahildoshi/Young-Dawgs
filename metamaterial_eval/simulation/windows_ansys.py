@@ -10,6 +10,7 @@ import re
 import shutil
 import subprocess
 import time
+from dataclasses import asdict
 
 from .reporting import write_json
 from .solver_execution import file_hash
@@ -37,7 +38,8 @@ def installations(environ=None, program_files=None):
 
 
 def bounded_run(command, directory, *, timeout=180, rss_limit=8*1024**3, prepared=False,
-                min_disk_free=0, min_available_ram=0, stop_check=None,resource_sample_seconds=0):
+                min_disk_free=0, min_available_ram=0, stop_check=None,resource_sample_seconds=0,
+                health_policy=None):
     """Supervise only the new process and descendants; preserve logs on every exit."""
     import psutil
     directory = Path(directory).resolve()
@@ -51,6 +53,14 @@ def bounded_run(command, directory, *, timeout=180, rss_limit=8*1024**3, prepare
                'timeout_seconds': timeout, 'rss_limit_bytes': rss_limit, 'peak_tree_rss_bytes': 0,
                'run_directory': str(directory), 'returncode': None}
     receipt.update(min_disk_free_bytes=min_disk_free,min_available_ram_bytes=min_available_ram)
+    sampler=guard=None
+    if health_policy is not None:
+        from .system_health import SystemSampler,HealthGuard
+        sampler=SystemSampler(directory);guard=HealthGuard(health_policy)
+        receipt.update(system_health_policy=asdict(health_policy),system_before=sampler.sample(0),
+                       native_signal_availability=sampler.native.errors,
+                       paging_interpretation='Page Reads/sec is system hard-fault disk-read proxy, not pagefile-only or per-process hard faults')
+        resource_sample_seconds=resource_sample_seconds or 1
     flags = subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
     with (directory/'launcher.log').open('w') as log:
         try:
@@ -61,7 +71,7 @@ def bounded_run(command, directory, *, timeout=180, rss_limit=8*1024**3, prepare
             last_sample=-1e30
             if resource_sample_seconds:receipt['resource_samples']=[]
             while process.poll() is None:
-                rss=None
+                rss=None;tree=[]
                 try:
                     tree = [owned, *owned.children(recursive=True)]
                     rss = sum(p.memory_info().rss for p in tree if p.is_running())
@@ -70,11 +80,13 @@ def bounded_run(command, directory, *, timeout=180, rss_limit=8*1024**3, prepare
                     pass
                 elapsed=time.perf_counter()-started
                 if resource_sample_seconds and elapsed-last_sample>=resource_sample_seconds:
-                    receipt['resource_samples'].append({'elapsed_seconds':elapsed,'tree_rss_bytes':rss,'available_RAM_bytes':psutil.virtual_memory().available,'disk_free_bytes':shutil.disk_usage(directory).free})
+                    sample=sampler.sample(elapsed,rss,tree) if sampler else {'elapsed_seconds':elapsed,'tree_rss_bytes':rss,'available_RAM_bytes':psutil.virtual_memory().available,'disk_free_bytes':shutil.disk_usage(directory).free}
+                    receipt['resource_samples'].append(sample)
+                    if guard:state=guard.evaluate(sample)
                     last_sample=elapsed
                 if time.perf_counter()-started > timeout:
                     state = 'TIMEOUT'
-                if receipt['peak_tree_rss_bytes'] > rss_limit:
+                if rss_limit is not None and receipt['peak_tree_rss_bytes'] > rss_limit:
                     state = 'MEMORY_BUDGET_EXCEEDED'
                 if min_disk_free and shutil.disk_usage(directory).free<min_disk_free:
                     state='DISK_RESERVE_EXHAUSTED'
@@ -100,7 +112,23 @@ def bounded_run(command, directory, *, timeout=180, rss_limit=8*1024**3, prepare
                 time.sleep(.1)
             receipt.update(returncode=process.wait(), status=state or 'PROCESS_EXITED')
         except OSError as exc:
-            receipt.update(status='LAUNCH_FAILURE', error=str(exc))
+            receipt.update(status='MONITOR_FAILURE' if 'process' in locals() else 'LAUNCH_FAILURE', error=str(exc))
+        except KeyboardInterrupt:
+            receipt.update(status='CANCELLED')
+        except Exception as exc:
+            receipt.update(status='MONITOR_FAILURE',monitor_error=str(exc))
+        finally:
+            if 'process' in locals() and process.poll() is None:
+                try:
+                    for child in reversed(psutil.Process(process.pid).children(recursive=True)):
+                        try:child.kill()
+                        except psutil.NoSuchProcess:pass
+                    process.kill();process.wait()
+                except psutil.NoSuchProcess:pass
+            if sampler:
+                try:receipt['system_after']=sampler.sample(time.perf_counter()-started)
+                finally:sampler.close()
+            if 'process' in locals():receipt['returncode']=process.returncode
     receipt['runtime_seconds'] = time.perf_counter()-started
     receipt['artifacts'] = {p.name: {'bytes': p.stat().st_size, 'sha256': file_hash(p)}
                             for p in directory.iterdir() if p.is_file()}
