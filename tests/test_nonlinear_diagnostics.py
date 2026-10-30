@@ -187,3 +187,15 @@ def test_real_resource_samples_are_bounded_and_explicit(tmp_path):
     r=bounded_run([sys.executable,'-c','import time; time.sleep(.25)'],tmp_path/'samples',resource_sample_seconds=.1)
     assert 1<=len(r['resource_samples'])<=5
     assert all(s['available_RAM_bytes']>0 and s['elapsed_seconds']>=0 for s in r['resource_samples'])
+
+
+def test_native_increment_is_distinct_from_accumulated_time():
+    s='*** BEGIN BISECTION NUMBER 1 NEW TIME INCREMENT= .000025\n*** LOAD STEP 1 SUBSTEP 2 COMPLETED\n*** TIME = .000075 TIME INC = .000025'
+    r=parse_solver_log(s)
+    assert r['cutback_events'][0]['new_time_increment']==.000025
+    assert r['converged_substeps'][0]['time_increment']==.000025 and r['converged_substeps'][0]['pseudo_time']==.000075
+
+
+def test_native_checkpoint_disk_cap_is_separate_from_diagnostics(tmp_path):
+    (tmp_path/'test.r001').write_bytes(b'1234')
+    assert diagnostic_stop(tmp_path,DiagnosticBudget(checkpoint_bytes_cap=3))=='CHECKPOINT_DISK_BUDGET'

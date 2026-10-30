@@ -62,10 +62,16 @@ def parse_solver_log(text):
         if m:search.append({'source_line':lineno,'factor':finite(m[1]),'trial_sequence':trial,'iteration':last_iter})
         # Explicit native bisection events only: ignore descriptive option lines.
         if re.search(r'BISECTION NUMBER|BISECTING|BISected|CUTBACK.*(?:DUE|REASON)',line,re.I):
-            trial+=1;last_iter=0;cuts.append({'source_line':lineno,'text':line.strip(),'trial_sequence':trial})
+            trial+=1;last_iter=0;event={'source_line':lineno,'text':line.strip(),'trial_sequence':trial}
+            inc=re.search(r'NEW TIME INCREMENT\s*=\s*('+NUMBER+r')',line,re.I)
+            if inc:event['new_time_increment']=finite(inc[1])
+            cuts.append(event)
         m=re.search(r'LOAD STEP\s+(\d+)\s+SUBSTEP\s+(\d+)\s+COMPLETED',line)
         if m:
             step,sub=map(int,m.groups());converged.append({'source_line':lineno,'load_step':step,'substep':sub});last_iter=0
+        m=re.search(r'^\s*\*+\s*TIME\s*=\s*('+NUMBER+r')\s+TIME INC\s*=\s*('+NUMBER+r')',line)
+        if m and converged:
+            converged[-1].update(pseudo_time=finite(m[1]),time_increment=finite(m[2]))
         m=re.search(r'# of negative pivots\s*=\s*(\d+)',line,re.I)
         if m:pivots.append(int(m[1]))
     ratios=[r['ratio'] for r in force]
@@ -155,6 +161,7 @@ class DiagnosticBudget:
     stop_stagnation:bool=False
     minimum_iterations_before_stagnation:int=24
     minimum_cutbacks_before_stagnation:int=1
+    checkpoint_bytes_cap:int=0
 
 
 def telemetry_commands(top):
@@ -170,6 +177,13 @@ def diagnostic_stop(directory,budget):
         except FileNotFoundError:pass  # Native ring rotation can remove/recreate.
     if sum(sizes)>budget.bytes_cap:return 'DIAGNOSTIC_DISK_BUDGET'
     if len([p for p in files if re.search(r'\.(?:nr|nd)\d+$',p.name)])>budget.native_snapshot_cap:return 'DIAGNOSTIC_FILE_COUNT_LIMIT'
+    if budget.checkpoint_bytes_cap:
+        checkpoint_files=[p for p in directory.iterdir() if re.search(r'\.(?:rst|r\d{3})$',p.name,re.I)]
+        total=0
+        for p in checkpoint_files:
+            try:total+=p.stat().st_size
+            except FileNotFoundError:pass
+        if total>budget.checkpoint_bytes_cap:return 'CHECKPOINT_DISK_BUDGET'
     log=directory/'solver.out'
     if not log.exists():return None
     text=log.read_text(errors='replace');parsed=parse_solver_log(text)
@@ -189,10 +203,12 @@ def run_diagnostic(directory,*,cores=1,timeout=180,rss_GiB=8,budget=None,jobname
     process=bounded_run([str(discover_solver()),'-b','-smp','-np',str(cores),'-m','4096','-j',jobname,'-i','input.inp','-o','solver.out'],directory,prepared=True,timeout=timeout,rss_limit=rss_GiB*1024**3,min_disk_free=20*1024**3,min_available_ram=12*1024**3,stop_check=lambda p:diagnostic_stop(p,budget),resource_sample_seconds=1)
     text=(directory/'solver.out').read_text(errors='replace') if (directory/'solver.out').exists() else ''
     parsed=parse_solver_log(text)
-    receipt={'status':process['status'],'process':process,'solver_version':solver_release(text),'input_sha256':file_hash(directory/'input.inp'),'native_jobname':jobname,'converged_steps':[(r['load_step'],r['substep']) for r in parsed['converged_substeps']],'warnings':solver_warnings(text),'diagnostic_only':True}
+    observed=re.findall(r'CURRENT JOBNAME REDEFINED AS\s+([A-Za-z0-9_]+)',text)
+    native=observed[-1] if observed else jobname
+    receipt={'status':process['status'],'process':process,'solver_version':solver_release(text),'input_sha256':file_hash(directory/'input.inp'),'native_jobname_requested':jobname,'native_jobname':native,'converged_steps':[(r['load_step'],r['substep']) for r in parsed['converged_substeps']],'warnings':solver_warnings(text),'diagnostic_only':True}
     write_json(directory/'execution_receipt.json',receipt)
     write_json(directory/'nonlinear_telemetry.json',parsed)
-    contact_path=directory/(jobname+'.cnd')
+    contact_path=directory/(native+'.cnd')
     contact=parse_contact(contact_path.read_text(errors='replace')) if contact_path.exists() else {'records':[],'issues':['MISSING_FILE']}
     write_json(directory/'contact_telemetry.json',contact);write_json(directory/'contact_summary.json',contact_summary(contact['records']))
     return receipt
