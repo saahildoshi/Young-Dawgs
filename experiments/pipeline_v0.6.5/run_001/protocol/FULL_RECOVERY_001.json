@@ -1,0 +1,95 @@
+{
+  "TRI6": 1261670,
+  "acceptance": {
+    "all_native_fields": "required; ignore-zero/sentinel exports quarantined",
+    "contact_vs_reaction_relative_max": 0.01,
+    "deformed_TRI6": "positive every element",
+    "endpoint_penetration_max_mm": 1e-05,
+    "force_criterion": "unchanged CNVTOL F .005 norm2 minimum1e-8",
+    "internal_self_contact": "UNQUALIFIED_NOT_CONFIGURED",
+    "mechanical_mesh_convergence": "UNQUALIFIED",
+    "modulus_fit": "NOT_JUSTIFIED_BY_ONE_POINT",
+    "reaction_balance_relative_max": 0.01
+  },
+  "additional_strain_targets": "NOT_PLANNED; stop after one accepted point",
+  "conditional_local_technical_repair_max": 1,
+  "contact": {
+    "FKN": 100,
+    "FTOLN": -1e-05,
+    "KEYOPT10": 1,
+    "KEYOPT2": 1,
+    "KEYOPT4": 2,
+    "friction": "FRICTIONLESS_SEPARABLE",
+    "scope": "PLATEN_CONTACT_ONLY"
+  },
+  "cores": 2,
+  "disk_reserve_bytes": 21474836480,
+  "frozen_input_sha256": "bad607c1d0fee99944fdd77a96331c0fd9271e1b6597f60427c03e9884ce5d13",
+  "mesh_semantic_sha256": "e26863263774cf86c777b1485ac0e639216a91644007c4da272469a7447000bc",
+  "no_geometry_mesh_or_physical_model_change": true,
+  "nodes": 2766505,
+  "nonlinear_controls": {
+    "AUTOTS": "ON",
+    "CNVTOL_F_minref_N": 1e-08,
+    "CNVTOL_F_relative": 0.005,
+    "LNSRCH": "ON",
+    "NEQIT": 24,
+    "NLGEOM": "ON",
+    "NROPT": "FULL",
+    "NSUBST": [
+      1,
+      1,
+      1
+    ]
+  },
+  "output_auxiliary": [
+    "OUTPR,ALL,NONE",
+    "OSRESULT,ERASE",
+    "RESCONTROL,DEFINE,ALL,LAST,1",
+    "OUTRES,STAT",
+    "RESCONTROL,STATUS"
+  ],
+  "pores": 412,
+  "post_timeout_seconds": 600,
+  "primary_runs_max": 1,
+  "process_RSS_limit_bytes": null,
+  "read_only_export": "Fresh process, MODEL-only checkpoint.db, native SET1,1, bounded APDL250000-node vectors; streamed Python/memmap arrays,20000-element mapping chunks",
+  "resource_at_freeze": {
+    "available_RAM_bytes": 43424964608,
+    "disk_free_bytes": 1426371022848,
+    "physical_RAM_bytes": 68403589120
+  },
+  "schema": "young-dawgs-v0.6.5-full-output-recovery",
+  "selected_output": [
+    "OUTRES,ERASE",
+    "OUTRES,ALL,NONE",
+    "OUTRES,NSOL,LAST",
+    "OUTRES,RSOL,LAST",
+    "OUTRES,STRS,LAST",
+    "OUTRES,EPEL,LAST",
+    "OUTRES,CONT,LAST",
+    "OUTRES,MISC,LAST"
+  ],
+  "small_output_validation_sha256": "ce6757ae38be3acc85223522482d4835ef10c5f35156e0e5df42a482c81cb597",
+  "solver_memory_mode": "Retain inherited EQSLV SPARSE /BCSOPTION DEFAULT; no forced INCORE change",
+  "source_contact_database_sha256": "34a17675246a77f243ca5c001963fdcd1016f970a9b600036aa5f89d57e3c3d8",
+  "source_geometry_sha256": "4700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1",
+  "source_mesh_bytes_sha256": "f316c32f5feb5c8419ff5d910e89b887e3087eabdba3b4f4ab549f46111e94d9",
+  "strains": [
+    5e-05
+  ],
+  "system_health_policy": {
+    "available_reserve_bytes": 6442450944,
+    "commit_fraction": 0.98,
+    "commit_seconds": 15,
+    "critical_available_bytes": 1073741824,
+    "critical_seconds": 3,
+    "no_output_growth_seconds": 90,
+    "notification_seconds": 10,
+    "page_reads_per_second": 10000,
+    "paging_seconds": 60,
+    "reserve_seconds": 30
+  },
+  "target_travel_mm": 0.000512,
+  "timeout_seconds": 1800
+}
