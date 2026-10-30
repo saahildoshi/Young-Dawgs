@@ -1,0 +1,92 @@
+{
+  "distinctions": {
+    "arrays": "Eight full-length MAPDL export arrays would allocate ~169MiB for 2.77M nodes; primary export never reached, conditional export ran separately. Not evidence those arrays caused source-solve stop.",
+    "causality": "External cap termination observed; exact command-specific allocation cause UNRESOLVED. No evidence of actual system exhaustion.",
+    "conditional": "OUTRES ALL ALL + restart request; native log stopped after equilibrium during result phase/database growth. RST partially readable but essential fields missing.",
+    "primary": "OUTRES ALL LAST did not retain first intermediate substep; native log reached next factorization at memory stop.",
+    "writing_progress": "Historical samples do not include file-growth timeline; bytes at stop prove writing began, not exact last-write activity."
+  },
+  "observations": [
+    {
+      "artifacts": {
+        "compression.rdb": {
+          "bytes": 1409810432,
+          "matches_historical_receipt": true,
+          "sha256": "ba83199022b18849a1a7a784e9354c6faaa356faa2a84490a810bb1cef2b5f1e"
+        },
+        "compression.rst": {
+          "bytes": 316014592,
+          "matches_historical_receipt": true,
+          "sha256": "c2547c3b80d41a137b8bd3463c709396c5d792a57a5aa70c6c3651c0c4bfba42"
+        },
+        "input.inp": {
+          "bytes": 3490,
+          "matches_historical_receipt": true,
+          "sha256": "7d3f1c90467b96f916e7e5293b3f3d65a1f13b60de53d33615eb3ebd3427aa45"
+        },
+        "solver.out": {
+          "bytes": 97157,
+          "matches_historical_receipt": true,
+          "sha256": "0e9876a91b8fabdf0c578930b46095d32325836ef274594d1f7a7e1cd99df3e4"
+        }
+      },
+      "converged_steps": [
+        [
+          1,
+          1
+        ]
+      ],
+      "equilibrium_announcement": true,
+      "memory_database_growth": [
+        "Memory resident data base increased from      1024 MB to      2048 MB.",
+        "Memory resident data base increased from      2048 MB to      4096 MB."
+      ],
+      "restart_frames": [],
+      "run": "full_recovery_001",
+      "solver_memory_mode": "AUTO selected INCORE: native logged ~6.07GB in-core factor storage, ~3.83GB out-of-core estimate; configuration DEFAULT retained",
+      "source": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v064\\full_recovery_001",
+      "status": "MEMORY_BUDGET_EXCEEDED"
+    },
+    {
+      "artifacts": {
+        "input.inp": {
+          "bytes": 685,
+          "matches_historical_receipt": true,
+          "sha256": "d888ed58099f10c1d0f0807d922cc22ec3286e0b3e847072ef986997eec72777"
+        },
+        "solver.out": {
+          "bytes": 86812,
+          "matches_historical_receipt": true,
+          "sha256": "2817ebef5e6cb11b180e524bb559609786db903d5a5b9d4d37374f2da059a7eb"
+        },
+        "v064r002.rdb": {
+          "bytes": 1409810432,
+          "matches_historical_receipt": true,
+          "sha256": "9dbb92baaf5c301fea1389b8bf8a192f728f12d6aed0caaaf0414b7830136af3"
+        },
+        "v064r002.rst": {
+          "bytes": 910098432,
+          "matches_historical_receipt": true,
+          "sha256": "79385c4ea6a5ed59c8de06f78fe9635a0204c8a89b3f1a5165fe4ba9c15db44a"
+        }
+      },
+      "converged_steps": [],
+      "equilibrium_announcement": true,
+      "memory_database_growth": [
+        "Memory resident data base increased from      1024 MB to      2048 MB.",
+        "Memory resident data base increased from      2048 MB to      4096 MB."
+      ],
+      "restart_frames": [],
+      "run": "full_recovery_002",
+      "solver_memory_mode": "AUTO selected INCORE: native logged ~6.07GB in-core factor storage, ~3.83GB out-of-core estimate; configuration DEFAULT retained",
+      "source": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v064\\full_recovery_002",
+      "status": "MEMORY_BUDGET_EXCEEDED"
+    },
+    {
+      "actual_returncode": 0,
+      "availability": "Readable SET1,1 displacement only; RF, S, EPEL, SMISC/NMISC absent. Existing read-only exports authenticated, not relabeled accepted. No restart frame exists. No complete checkpoint recoverable without new solve.",
+      "historical_read_only_export": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v064\\postprocess_converged_002",
+      "native_warning_occurrences": 28582
+    }
+  ]
+}
