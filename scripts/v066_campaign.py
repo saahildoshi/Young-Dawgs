@@ -15,6 +15,10 @@ PROTOCOL=RUN/'protocol/FINE_PROGRESSIVE_005.json'
 def prepare(label,parent,load_step,substep,previous,targets):
     parent=Path(parent);directory=BASE/label
     assert load(RUN/'restart_validation/RESTART_VALIDATION.json')['status']=='PASS_ACTUAL_LICENSED_NATIVE_RESTART'
+    first=BASE/'fine_stage01_001/execution_receipt.json'
+    if first.exists():
+        started=datetime.fromisoformat(load(first)['process']['started_utc'].replace('Z','+00:00'))
+        if (datetime.now(timezone.utc)-started).total_seconds()>21600:raise RuntimeError('Registered six-hour campaign budget exhausted')
     manifest=authenticated_restart_copy(parent,directory,expected_mesh=HISTORICAL)
     text=continuation_input(load_step,substep,targets,previous,manifest['model'],all_fields=True)
     (directory/'input.inp').write_text(text,encoding='utf-8')
@@ -26,6 +30,14 @@ def prepare(label,parent,load_step,substep,previous,targets):
     write_json(directory/'simulation_manifest.json',manifest)
     compact(directory,RUN/'progressive_compression'/('prepared_'+label))
     return directory
+
+
+def prepare_next(label,parent_label,targets):
+    q=load(RUN/'mechanical_results'/(parent_label+'_qualification001.json'))
+    if not q['last_state_accepted']:raise ValueError('Last parent state did not pass continuation gates')
+    state=q['states'][-1]
+    if Path(q['source']).resolve()!=(BASE/parent_label).resolve():raise ValueError('Parent qualification identity mismatch')
+    return prepare(label,BASE/parent_label,state['load_step'],state['substep'],state['time'],targets)
 
 
 def freeze():
@@ -47,9 +59,13 @@ def freeze():
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('action',choices=['prepare-first','run']);p.add_argument('--label',default='fine_stage01_001');a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('action',choices=['prepare-first','prepare-next','run']);p.add_argument('--label',default='fine_stage01_001')
+    p.add_argument('--parent');p.add_argument('--targets',type=float,nargs='+');a=p.parse_args()
     if a.action=='prepare-first':
         freeze();d=prepare(a.label,artifact_root()/'solver/v065/full_recovery_001',1,1,.00005,[.0001,.001]);print(d,flush=True)
+    elif a.action=='prepare-next':
+        if not a.parent or not a.targets:p.error('prepare-next requires --parent and --targets')
+        print(prepare_next(a.label,a.parent,a.targets),flush=True)
     else:
         committed(PROTOCOL);committed(RUN/'progressive_compression'/('prepared_'+a.label)/'input.inp')
         d=BASE/a.label;r=run_progressive(d,timeout=5400,no_progress_seconds=1800)

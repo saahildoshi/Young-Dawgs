@@ -1,0 +1,189 @@
+{
+  "absolute_elastic_components_percentiles": [
+    [
+      9.275274532799101e-05,
+      9.553061920008308e-05
+    ],
+    [
+      0.000956618322081442,
+      0.0006160698077265145
+    ],
+    [
+      0.0016220847647255073,
+      0.001065631645133452
+    ],
+    [
+      0.007094999352355569,
+      0.00459798338012155
+    ]
+  ],
+  "accepted": true,
+  "actual_TRI6": 1261670,
+  "actual_history": [
+    0.001,
+    3.0,
+    2.0,
+    -0.01024,
+    -1.199313799677024,
+    1.197284239933984
+  ],
+  "actual_native_corner_nodes": 752212,
+  "actual_nodes": 2766505,
+  "boundary_screen_summary": {
+    "boundary_loops": 413,
+    "edges_exceeding_requested_tolerance": 0,
+    "examples": [],
+    "limitation": "Conservative spatial-index polygonal screen with exact quadratic chord-deviation bounds; uncertain near-contact points need separate native-contact/exact-curve verification.",
+    "maximum_exact_chord_error_bound_mm": 9.999823648604522e-07,
+    "minimum_area_ratio": 0.9963835043080101,
+    "minimum_near_sampled_distance_mm": null,
+    "minimum_separation_scope": "Only near pairs inside twice chord-error tolerance are queried; no exhaustive opposing-wall minimum claimed",
+    "orientation_inverted_loops": [],
+    "original_edges": 243576,
+    "passed": true,
+    "pore_loops": 412,
+    "status": "PASS_BOUNDED_QUADRATIC_BOUNDARY_SCREEN",
+    "subdivided_segments": 250769,
+    "suspicious_pair_count": 0,
+    "tolerance_mm": 1e-06
+  },
+  "contact_scope": "PLATEN_ONLY_EXPLORATORY",
+  "contacts": [
+    {
+      "closed_elements": 769,
+      "contact_element_force_y_N": -1.19728423674784,
+      "max_stored_endpoint_penetration_mm": 1.1298425e-08,
+      "max_stored_endpoint_pressure_MPa": 6.7926536,
+      "minimum_signed_gap_mm": -0.0015071671,
+      "pair": "bottom",
+      "pilot_reaction_y_N": 1.197284239933984,
+      "signed_opposition_residual_relative": 2.6611425332582083e-09,
+      "total_elements": 1368
+    },
+    {
+      "closed_elements": 638,
+      "contact_element_force_y_N": 1.1993138002267,
+      "max_stored_endpoint_penetration_mm": 5.7150924e-09,
+      "max_stored_endpoint_pressure_MPa": 3.4157915,
+      "minimum_signed_gap_mm": -0.0010936469,
+      "pair": "top",
+      "pilot_reaction_y_N": -1.199313799677024,
+      "signed_opposition_residual_relative": 4.583254879387251e-10,
+      "total_elements": 1230
+    }
+  ],
+  "corner_field_columns": [
+    "SYY_MPa",
+    "SEQV_MPa",
+    "elastic_EYY",
+    "elastic_EXX"
+  ],
+  "corner_field_percentiles": [
+    [
+      -8.792902847949392,
+      1.749735370377511e-12,
+      -0.007094999352355569,
+      -0.00459798338012155
+    ],
+    [
+      -1.703467310473114,
+      0.00010421005030150768,
+      -0.0016213264354853084,
+      -0.000651067693095269
+    ],
+    [
+      -0.014590696075607524,
+      0.27097377079566115,
+      -4.808549235003575e-05,
+      2.2317016939356862e-05
+    ],
+    [
+      0.17927006988747074,
+      1.2266160396623682,
+      0.00014398256603996104,
+      0.0005441805883738118
+    ],
+    [
+      0.47245833980798607,
+      1.9134411767906776,
+      0.00036911752738564776,
+      0.0010031906151812026
+    ],
+    [
+      3.324545126497417,
+      9.948856573269115,
+      0.00251787198435113,
+      0.004172684749913487
+    ]
+  ],
+  "displacement_ranges_mm": [
+    [
+      -0.005102522329701854,
+      -0.01133364689937082,
+      1.129842559334306e-08
+    ],
+    [
+      0.002397943226289678,
+      0.001507167066841137,
+      0.011534855212846315
+    ]
+  ],
+  "eligible_for_LLM_performance_ranking": false,
+  "export": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v066\\fine_stage01_001_post001",
+  "failures": [],
+  "field_locations": "U at every native node; SYY/SEQV/EPEL Y/X native corner-node averages, no invented midside stress",
+  "internal_self_contact": "UNQUALIFIED_NOT_CONFIGURED",
+  "invalid_deformed_mappings": 0,
+  "large_field_artifacts": {
+    "corner_node_ids.npy": {
+      "bytes": 6017824,
+      "sha256": "9305e0758ca8542f19da13d582ddeaacba2904f2d0390ae83f7882edbc152056"
+    },
+    "native_corner_stress_strain.npy": {
+      "bytes": 24070912,
+      "sha256": "4586ac044031a77e75b35d9e5b5dbf2f670e2ddc35f82dd5ff88af192a49b053"
+    },
+    "native_displacement.npy": {
+      "bytes": 110660328,
+      "sha256": "5fc5ec28535eae57056d6dc31dc63121731f420fb1a3cf81c301479ddf03edad"
+    }
+  },
+  "measurement": {
+    "compression_displacement_mm": 0.01024,
+    "engineering_compression_strain": 0.001,
+    "lower_rf_y_N": 1.197284239933984,
+    "nominal_compression_stress_MPa": 0.11712048824970937,
+    "pseudo_time": 0.001,
+    "reaction_balance_relative": 0.0016922674812768258,
+    "upper_rf_y_N": -1.199313799677024
+  },
+  "mechanical_mesh_convergence": "UNQUALIFIED",
+  "minimum_deformed_determinant_mm2": 2.3976547468435786e-06,
+  "native_RST_sha256": "61c767d0d1410e38571921f6b20206618f7a5a6c01a9849e4a4f8243bdacabfe",
+  "percentile_levels": [
+    0,
+    1,
+    50,
+    95,
+    99,
+    100
+  ],
+  "raw_native_field_hashes": {
+    "stage003_contact.csv": "1bf99378dd8667842b44be9d4c67a4de0c2da0db7bfd9f7072e7d81398cdb3f6",
+    "stage003_displacements.csv": "f27545d8563064169407e51ea93454bd215fae0ba4042ea5198036486222bf11",
+    "stage003_gate.txt": "c78adaca1fa2a2db24972925cbdb22f07a2622e60976750ff59e42daeb5e882f",
+    "stage003_history.csv": "8207c65880b9768b36f041dc2d72b1b6ecc86067f6585ab98e89c4a65fb0dfa5",
+    "stage003_stress.csv": "e5b5a4690816d217bcdc979de8787070dadb4b3516e84645eb8f85f78334976d"
+  },
+  "read_only_receipt_sha256": "96040a3b16273c821dc63df45381011008e7b769aa481408514dcd64fb73175b",
+  "schema": "young-dawgs-v0.6.6-actual-native-state",
+  "source": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v066\\fine_stage01_001",
+  "source_process_status": "PROCESS_EXITED",
+  "source_receipt_sha256": "8e29b79f430744ddd875abd25c7761632c6917a4c777200b8549e12232ba4591",
+  "state": {
+    "load_step": 3,
+    "substep": 2,
+    "time": 0.001
+  },
+  "status": "MECHANICALLY_ACCEPTED_SINGLE_MESH_EXPLORATORY"
+}

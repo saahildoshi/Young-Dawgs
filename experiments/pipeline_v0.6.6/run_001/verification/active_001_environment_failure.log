@@ -1,0 +1,77 @@
+........................................................................ [  9%]
+........................................................................ [ 19%]
+........................................................................ [ 28%]
+........................................................................ [ 38%]
+........................................................................ [ 47%]
+......................F.F.F............................................. [ 57%]
+........................................................................ [ 66%]
+........................................................................ [ 76%]
+........................................................................ [ 85%]
+........................................................................ [ 95%]
+...................................                                      [100%]
+================================== FAILURES ===================================
+__________ test_default_workflow_detects_clones_and_ignored_controls __________
+
+tmp_path = WindowsPath('C:/Users/sd22446/AppData/Local/Temp/pytest-of-sd22446/pytest-92/test_default_workflow_detects_0')
+
+    def test_default_workflow_detects_clones_and_ignored_controls(tmp_path):
+        run = prepare(tmp_path)
+        m = resume_exploration(run)
+        assert m["status"] == "WAITING_FOR_LLM"
+        (run / "response.txt").write_bytes(("\ufeff```python\r\n" + CONSTANT_GENERATOR.replace('\n', '\r\n') + "```\r\n").encode('utf-8'))
+        with pytest.raises(ValueError, match="NOT sandboxed"):
+            resume_exploration(run)
+        m = resume_exploration(run, execute=True)
+>       assert m["status"] == "COMPLETE"
+E       AssertionError: assert 'FAILED' == 'COMPLETE'
+E
+E         - COMPLETE
+E         + FAILED
+
+tests\test_pipeline_exploration.py:66: AssertionError
+____________________ test_islands_are_measured_not_removed ____________________
+
+tmp_path = WindowsPath('C:/Users/sd22446/AppData/Local/Temp/pytest-of-sd22446/pytest-92/test_islands_are_measured_not_0')
+
+    def test_islands_are_measured_not_removed(tmp_path):
+        run = prepare(tmp_path, designs=2, replicates=1)
+        (run / "response.txt").write_text(CONSTANT_GENERATOR.replace('return a', 'a[7, 7] = 1\n    return a'))
+        m = resume_exploration(run, execute=True)
+        report = read_json(run / m["latest_attempt"] / "exploration_report.json")
+>       assert m["status"] == "COMPLETE" and report["engineering_valid_count"] == 0
+E       AssertionError: assert ('FAILED' == 'COMPLETE'
+E
+E         - COMPLETE
+E         + FAILED)
+
+tests\test_pipeline_exploration.py:105: AssertionError
+____________ test_parameterized_generator_moves_measured_geometry _____________
+
+tmp_path = WindowsPath('C:/Users/sd22446/AppData/Local/Temp/pytest-of-sd22446/pytest-92/test_parameterized_generator_m0')
+
+    def test_parameterized_generator_moves_measured_geometry(tmp_path):
+        bounds = {"solid_fraction_target": [.2, .5], "strut_scale": [1, 6], "pore_scale": [8, 24]}
+        run = prepare(tmp_path, designs=4, replicates=2, bounds=bounds)
+        source = '''import numpy as np
+    def generate_microstructure(seed, solid_fraction_target, strut_scale, pore_scale):
+        rng = np.random.default_rng(seed)
+        width = max(1, int(round(strut_scale + 3 * solid_fraction_target)))
+        pitch = max(width + 2, int(round(pore_scale + width)))
+        y, x = np.indices((256, 256))
+        dx, dy = rng.integers(0, pitch, size=2)
+        return (((x + dx) % pitch < width) | ((y + dy) % pitch < width)).astype(np.uint8)
+    '''
+        (run / "response.txt").write_text(source)
+        m = resume_exploration(run, execute=True)
+>       assert m["status"] == "COMPLETE"
+E       AssertionError: assert 'FAILED' == 'COMPLETE'
+E
+E         - COMPLETE
+E         + FAILED
+
+tests\test_pipeline_exploration.py:133: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_pipeline_exploration.py::test_default_workflow_detects_clones_and_ignored_controls
+FAILED tests/test_pipeline_exploration.py::test_islands_are_measured_not_removed
+FAILED tests/test_pipeline_exploration.py::test_parameterized_generator_moves_measured_geometry
+3 failed, 752 passed in 63.55s (0:01:03)

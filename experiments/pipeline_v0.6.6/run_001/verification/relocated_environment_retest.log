@@ -14,7 +14,7 @@ tmp_path = WindowsPath('C:/Users/sd22446/AppData/Local/Temp/pytest-of-sd22446/py
         m = resume_exploration(run, execute=True)
 >       assert m["status"] == "COMPLETE"
 E       AssertionError: assert 'FAILED' == 'COMPLETE'
-E         
+E
 E         - COMPLETE
 E         + FAILED
 
@@ -30,7 +30,7 @@ tmp_path = WindowsPath('C:/Users/sd22446/AppData/Local/Temp/pytest-of-sd22446/py
         report = read_json(run / m["latest_attempt"] / "exploration_report.json")
 >       assert m["status"] == "COMPLETE" and report["engineering_valid_count"] == 0
 E       AssertionError: assert ('FAILED' == 'COMPLETE'
-E         
+E
 E         - COMPLETE
 E         + FAILED)
 
@@ -55,7 +55,7 @@ tmp_path = WindowsPath('C:/Users/sd22446/AppData/Local/Temp/pytest-of-sd22446/py
         m = resume_exploration(run, execute=True)
 >       assert m["status"] == "COMPLETE"
 E       AssertionError: assert 'FAILED' == 'COMPLETE'
-E         
+E
 E         - COMPLETE
 E         + FAILED
 
