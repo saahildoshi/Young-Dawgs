@@ -1,0 +1,68 @@
+{
+  "input_sha256": "bad607c1d0fee99944fdd77a96331c0fd9271e1b6597f60427c03e9884ce5d13",
+  "mesh_semantic_sha256": "e26863263774cf86c777b1485ac0e639216a91644007c4da272469a7447000bc",
+  "model": {
+    "FKN": 100,
+    "FTOLN_absolute_mm": -1e-05,
+    "anchor_UX_node": 1172,
+    "config": {
+      "boundary_size": 0.0033333333333333335,
+      "bulk_size": 0.04,
+      "dimensions": "PROVISIONAL",
+      "force_basis": "total_N",
+      "height": 10.24,
+      "large_deformation": true,
+      "material": "ASSUMED_NOT_MEASURED",
+      "mode": "plane_stress",
+      "poisson_ratio": 0.3,
+      "strains": [
+        0.005,
+        0.01,
+        0.02
+      ],
+      "thickness": 1.0,
+      "time_axis": "quasi_static_pseudo_time",
+      "units": "mm-N-MPa",
+      "width": 10.24,
+      "young_modulus": 1000.0
+    },
+    "contact_algorithm_keyopt2": 1,
+    "contact_detection_keyopt4": 2,
+    "contact_elements": {
+      "bottom": 1368,
+      "top": 1230
+    },
+    "contact_scope": "PLATEN_CONTACT_ONLY",
+    "contact_stiffness_update_keyopt10": 1,
+    "controls": {
+      "bottom": 2766508,
+      "top": 2766511
+    },
+    "initial_geometric_gaps_mm": {
+      "bottom": 0,
+      "top": 0
+    },
+    "internal_self_contact": "UNQUALIFIED_NOT_CONFIGURED",
+    "schema": "young-dawgs-v0.6.3-contact-model",
+    "specimen_TRI6": 1261670,
+    "specimen_UY_constraints": false,
+    "specimen_nodes": 2766505,
+    "user_model_elements": 1264272,
+    "user_model_nodes": 2766511
+  },
+  "omitted_required_category_negative_control": null,
+  "output_selection": [
+    "OUTRES,ERASE",
+    "OUTRES,ALL,NONE",
+    "OUTRES,NSOL,LAST",
+    "OUTRES,RSOL,LAST",
+    "OUTRES,STRS,LAST",
+    "OUTRES,EPEL,LAST",
+    "OUTRES,CONT,LAST",
+    "OUTRES,MISC,LAST"
+  ],
+  "protocol_sha256": "fffec5a880737d0192cff260a892d1f259bc1552ffb209e3bf563cf153bcea51",
+  "source_contact_database_sha256": "34a17675246a77f243ca5c001963fdcd1016f970a9b600036aa5f89d57e3c3d8",
+  "source_geometry_sha256": "4700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1",
+  "target_strain": 5e-05
+}
