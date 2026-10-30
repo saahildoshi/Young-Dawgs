@@ -1,0 +1,84 @@
+
+ LIST ELEMENT TYPES FROM        1 TO        3 BY        1
+
+ *** MAPDL - ENGINEERING ANALYSIS SYSTEM  RELEASE 2024 R1          24.1     ***
+ Ansys Mechanical Enterprise Academic Research
+ 00446375  VERSION=WINDOWS x64   11:17:01  OCT 30, 2026 CP=      0.156
+
+
+
+
+
+ ELEMENT TYPE        1 IS PLANE183     2-D 6-NODE PLANE STRS SOLID
+  KEYOPT( 1- 6)=        1      0      3        0      0      0
+  KEYOPT( 7-12)=        0      0      0        0      0      0
+  KEYOPT(13-18)=        0      0      0        0      0      0
+
+ ELEMENT TYPE        2 IS TARGE169     2-D TARGET SEGMENT
+  KEYOPT( 1- 6)=        0      1      0        0      0      0
+  KEYOPT( 7-12)=        0      0      0        0      0      0
+  KEYOPT(13-18)=        0      0      0        0      0      0
+
+ ELEMENT TYPE        3 IS CONTA172     2D 3-NODE SURF-SURF CONTACT
+  KEYOPT( 1- 6)=        0      1      0        2      0      0
+  KEYOPT( 7-12)=        0      0      0        1      0      0
+  KEYOPT(13-18)=        0      0      0        0      0      0
+
+ CURRENT NODAL DOF SET IS  UX    UY    ROTZ
+  TWO-DIMENSIONAL MODEL
+
+ *** MAPDL - ENGINEERING ANALYSIS SYSTEM  RELEASE 2024 R1          24.1     ***
+ Ansys Mechanical Enterprise Academic Research
+ 00446375  VERSION=WINDOWS x64   11:17:01  OCT 30, 2026 CP=      0.156
+
+
+
+
+
+ LIST REAL SETS        1 TO        3 BY        1
+
+ REAL CONSTANT SET        1  ITEMS   1 TO   6
+    1.0000       0.0000       0.0000       0.0000       0.0000       0.0000
+
+ REAL CONSTANT SET        2  ITEMS   1 TO   6
+    0.0000       0.0000       100.00     -0.10000E-04   0.0000       0.0000
+
+ REAL CONSTANT SET        3  ITEMS   1 TO   6
+    0.0000       0.0000       100.00     -0.10000E-04   0.0000       0.0000
+
+ LIST MATERIALS        1 TO        1 BY        1
+  PROPERTY= ALL
+
+ MATERIAL NUMBER        1
+
+      TEMP        EX
+                1000.000
+
+      TEMP        NUXY
+               0.3000000
+
+      TEMP        MU
+                0.000000
+
+      TEMP        PRXY
+               0.3000000
+
+ LIST CONSTRAINTS FOR SELECTED NODES         1 TO     8384 BY        1
+ CURRENTLY SELECTED DOF SET= UX   UY   ROTZ
+
+ *** MAPDL - ENGINEERING ANALYSIS SYSTEM  RELEASE 2024 R1          24.1     ***
+ Ansys Mechanical Enterprise Academic Research
+ 00446375  VERSION=WINDOWS x64   11:17:01  OCT 30, 2026 CP=      0.156
+
+
+
+
+
+     NODE  LABEL     REAL           IMAG
+        16  UX     0.00000000      0.00000000
+      8381  UX     0.00000000      0.00000000
+      8381  UY     0.00000000      0.00000000
+      8381  ROTZ   0.00000000      0.00000000
+      8384  UX     0.00000000      0.00000000
+      8384  UY     0.00000000      0.00000000
+      8384  ROTZ   0.00000000      0.00000000

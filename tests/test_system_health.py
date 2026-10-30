@@ -58,6 +58,10 @@ def test_sampler_records_native_health_file_growth_and_recovers(tmp_path):
         assert growing['output_file_bytes']['native.rst']==25
         assert growing['seconds_without_output_growth']==0 and stalled['seconds_without_output_growth']==4
         assert 'commit_limit_bytes' in growing and 'windows_low_memory' in growing
+        (tmp_path/'solver.out').write_text(' >>> SOLUTION CONVERGED AFTER EQUILIBRIUM ITERATION   7\n')
+        marked=sampler.sample(6)
+        assert marked['native_markers_first_observed_seconds']=={'equilibrium':6}
+        assert sampler.sample(8)['native_markers_first_observed_seconds']=={'equilibrium':6}
     finally:sampler.close()
 
 

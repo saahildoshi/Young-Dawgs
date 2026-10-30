@@ -119,7 +119,67 @@ def small_study():
         copy_compact(post,RUN/'small_licensed'/(name+'_selective_001_repeat'))
 
 
+def prepare_full():
+    from metamaterial_eval.simulation.mesh_artifacts import resolve_manifest
+    committed(RUN/'small_licensed/OUTPUT_PROTOCOL_VALIDATION.json')
+    assert load(RUN/'small_licensed/OUTPUT_PROTOCOL_VALIDATION.json')['full_model_launch_eligible']
+    prior=load(REPO/'experiments/pipeline_v0.6.4/run_001/audit/initial.json')
+    mesh,artifact,_=resolve_manifest(REPO/'experiments/pipeline_v0.6.3/run_001/mesh_reproduction/attempt_002/artifact_manifest.json',root=Path.home()/'YoungDawgs-Artifacts')
+    assert artifact['semantic_sha256']==prior['mesh_semantic_sha256']
+    geometry=REPO/'experiments/pipeline_v0.5/baseline_vectorization/run_003/fixture_B_design009_seed001/polygon_candidate.wkb'
+    assert file_hash(geometry)==prior['source_geometry_sha256']
+    assert (len(mesh.nodes),len(mesh.triangles))==(2766505,1261670)
+    del mesh
+    setup=artifact_root()/'solver/v063/contact_setup_002';m=load(setup/'model_manifest.json')
+    accepted=load(setup/'contact_setup_validation.json')
+    assert accepted['status']=='CONTACT_SETUP_PASS' and file_hash(setup/'contact_model.db')==accepted['process']['artifacts']['contact_model.db']['sha256']
+    assert m['FKN']==100 and m['contact_algorithm_keyopt2']==1 and m['contact_stiffness_update_keyopt10']==1
+    assert m['FTOLN_absolute_mm']==-1e-5 and m['config']['mode']=='plane_stress'
+    protocol={'schema':'young-dawgs-v0.6.5-full-output-recovery','strains':[.00005],'target_travel_mm':.000512,
+        'source_geometry_sha256':prior['source_geometry_sha256'],'mesh_semantic_sha256':prior['mesh_semantic_sha256'],
+        'source_mesh_bytes_sha256':prior['mesh_bytes_sha256'],'nodes':2766505,'TRI6':1261670,'pores':412,
+        'source_contact_database_sha256':file_hash(setup/'contact_model.db'),
+        'selected_output':SELECTIVE_OUTPUT,'output_auxiliary':OUTPUT_AUXILIARY,
+        'read_only_export':'Fresh process, MODEL-only checkpoint.db, native SET1,1, bounded APDL250000-node vectors; streamed Python/memmap arrays,20000-element mapping chunks',
+        'system_health_policy':asdict(HealthPolicy()),'process_RSS_limit_bytes':None,'timeout_seconds':1800,'post_timeout_seconds':600,
+        'disk_reserve_bytes':20*1024**3,'cores':2,'solver_memory_mode':'Retain inherited EQSLV SPARSE /BCSOPTION DEFAULT; no forced INCORE change',
+        'nonlinear_controls':{'NSUBST':[1,1,1],'NEQIT':24,'NLGEOM':'ON','AUTOTS':'ON','NROPT':'FULL','LNSRCH':'ON','CNVTOL_F_relative':.005,'CNVTOL_F_minref_N':1e-8},
+        'contact':{'KEYOPT2':1,'KEYOPT4':2,'KEYOPT10':1,'FKN':100,'FTOLN':-1e-5,'friction':'FRICTIONLESS_SEPARABLE','scope':'PLATEN_CONTACT_ONLY'},
+        'acceptance':load(RUN/'protocol/RECOVERY_PLAN_001.json')['acceptance'],
+        'small_output_validation_sha256':file_hash(RUN/'small_licensed/OUTPUT_PROTOCOL_VALIDATION.json'),
+        'resource_at_freeze':{'available_RAM_bytes':psutil.virtual_memory().available,'physical_RAM_bytes':psutil.virtual_memory().total,'disk_free_bytes':shutil.disk_usage(BASE).free},
+        'primary_runs_max':1,'conditional_local_technical_repair_max':1,'additional_strain_targets':'NOT_PLANNED; stop after one accepted point',
+        'no_geometry_mesh_or_physical_model_change':True,'frozen_input_sha256':None}
+    write_json(FULL_PROTOCOL,protocol)
+    prepare_job(FULL,setup,m,protocol=FULL_PROTOCOL)
+    protocol['frozen_input_sha256']=file_hash(FULL/'input.inp');write_json(FULL_PROTOCOL,protocol)
+    manifest=load(FULL/'simulation_manifest.json');manifest.update(protocol_sha256=file_hash(FULL_PROTOCOL),
+        source_geometry_sha256=prior['source_geometry_sha256'],mesh_semantic_sha256=prior['mesh_semantic_sha256'])
+    write_json(FULL/'simulation_manifest.json',manifest)
+    copy_compact(FULL,RUN/'full_recovery/prepared_001')
+    print('Full input frozen',protocol['frozen_input_sha256'],'available GiB',protocol['resource_at_freeze']['available_RAM_bytes']/1024**3)
+
+
+def execute_full():
+    committed(FULL_PROTOCOL)
+    p=load(FULL_PROTOCOL)
+    assert file_hash(FULL/'input.inp')==p['frozen_input_sha256']
+    assert psutil.virtual_memory().available>p['system_health_policy']['available_reserve_bytes']
+    assert shutil.disk_usage(BASE).free>p['disk_reserve_bytes']
+    write_json(RUN/'performance/prelaunch.json',{'available_RAM_bytes':psutil.virtual_memory().available,
+        'physical_RAM_bytes':psutil.virtual_memory().total,'disk_free_bytes':shutil.disk_usage(BASE).free,
+        'process_RSS_limit_bytes':None,'system_health_policy':p['system_health_policy']})
+    r=run_job(FULL,timeout=p['timeout_seconds'],cores=p['cores'])
+    copy_compact(FULL,RUN/'full_recovery/actual_001')
+    print('Full recovery',r['status'],r['process']['returncode'],r['converged_steps'],flush=True)
+
+
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('action',choices=['small'])
+    parser=argparse.ArgumentParser();parser.add_argument('action',choices=['small','prepare-full','execute-full','extract-full'])
     args=parser.parse_args()
     if args.action=='small':small_study()
+    elif args.action=='prepare-full':prepare_full()
+    elif args.action=='execute-full':execute_full()
+    else:
+        p=extract(FULL,'full_recovery_001_post')
+        copy_compact(p,RUN/'mechanical_results/read_only_001')

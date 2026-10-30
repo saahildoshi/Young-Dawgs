@@ -3,6 +3,7 @@ from dataclasses import dataclass
 import ctypes
 from ctypes import wintypes
 import os
+import re
 from pathlib import Path
 import shutil
 
@@ -135,6 +136,7 @@ class SystemSampler:
         self.native = WindowsSignals()
         self.previous_sizes = {}
         self.last_growth = 0
+        self.markers = {}
 
     def sample(self, elapsed, rss=None, tree=()):
         import psutil
@@ -146,6 +148,16 @@ class SystemSampler:
             except FileNotFoundError:pass
         if any(size > self.previous_sizes.get(name,0) for name,size in sizes.items()):self.last_growth = elapsed
         self.previous_sizes = sizes
+        log=self.directory/'solver.out'
+        if log.exists():
+            with log.open('rb') as stream:
+                stream.seek(max(0,log.stat().st_size-32768));tail=stream.read().decode(errors='replace')
+            for label,pattern in [('sparse_factorization',r'^\s*SPARSE MATRIX DIRECT SOLVER\.'),
+                ('equilibrium',r'^\s*>>> SOLUTION CONVERGED AFTER EQUILIBRIUM ITERATION'),
+                ('substep_completed',r'^\s*\*\*\* LOAD STEP\s+1\s+SUBSTEP\s+1\s+COMPLETED'),
+                ('result_write_reported',r'^\s*[\d.]+ MB WRITTEN ON RESULTS FILE'),
+                ('solution_finished',r'^\s*FINISH SOLUTION PROCESSING'),('model_save',r'^\s*SAVE ALL MODEL DATA')]:
+                if label not in self.markers and re.search(pattern,tail,re.M):self.markers[label]=elapsed
         children = []
         for process in tree:
             try:children.append({'pid':process.pid,'name':process.name(),'status':process.status()})
@@ -154,6 +166,7 @@ class SystemSampler:
                 'available_RAM_bytes':vm.available,'system_memory_percent':vm.percent,
                 'disk_free_bytes':shutil.disk_usage(self.directory).free,
                 'output_file_bytes':sizes,'seconds_without_output_growth':elapsed-self.last_growth,
+                'native_markers_first_observed_seconds':dict(self.markers),
                 'owned_processes':children,**self.native.sample()}
 
     def close(self):self.native.close()
