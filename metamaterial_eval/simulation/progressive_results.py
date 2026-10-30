@@ -79,6 +79,7 @@ def qualify_state(source,export,mesh,index,state,output):
             if offset+n>len(corners) or not np.array_equal(v[:,0],corners[offset:offset+n]):raise ValueError('Missing/duplicate native corner field inventory')
             stress[offset:offset+n]=v[:,1:];offset+=n
         if offset!=len(corners):raise ValueError('Incomplete native continuum fields')
+        if not np.any(stress[:,:2]) or not np.any(stress[:,2:]):raise ValueError('Absent continuum stress/strain under nonzero load')
         stress.flush();minimum=np.inf;invalid=0
         for i in range(0,len(mesh.triangles),20000):
             tri=mesh.triangles[i:i+20000];q=quadratic_mapping(mesh.nodes[tri]+u[tri,:2]);invalid+=int(np.sum(~q['positive_over_reference_triangle']));minimum=min(minimum,float(q['determinant_min'].min()))

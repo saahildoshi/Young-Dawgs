@@ -8,7 +8,7 @@ from metamaterial_eval.simulation.reporting import mesh_hash
 from metamaterial_eval.simulation.solver_execution import file_hash
 
 
-@pytest.mark.parametrize('variant',['valid_partial_job','unconverged','debug_set','wrong_displacement','partial_nodes','inverted_map','overlap','imbalance','missing_strain','stale_rst','mutating_post','wrong_mesh'])
+@pytest.mark.parametrize('variant',['valid_partial_job','unconverged','debug_set','wrong_displacement','partial_nodes','inverted_map','overlap','imbalance','missing_strain','zero_strain','stale_rst','mutating_post','wrong_mesh'])
 def test_state_evidence_gates(tmp_path,variant):
     source=tmp_path/'source';post=tmp_path/'post';source.mkdir();post.mkdir()
     mesh=SimpleNamespace(nodes=np.array([[0.,0.],[1,0],[0,1],[.5,0],[.5,.5],[0,.5]]),triangles=np.array([[0,1,2,3,4,5]]),
@@ -34,6 +34,8 @@ def test_state_evidence_gates(tmp_path,variant):
     (post/'stage001_contact.csv').write_text('pair,element,status,pressure_i_MPa,pressure_j_MPa,gap_i_mm,gap_j_mm,contact_force_y_N\n1,2,2,1,1,1e-7,1e-7,-1\n2,3,2,1,1,1e-7,1e-7,1\n')
     (post/'stage001_displacements.csv').write_text('node,ux_mm,uy_mm\n'+''.join(f'{i},{-2 if variant=="inverted_map" and i==2 else 0},-.0001\n' for i in range(1,6 if variant=='partial_nodes' else 7)))
     (post/'stage001_stress.csv').write_text('node,syy_MPa,seqv_MPa,elastic_eyy,elastic_exx\n'+''.join(f'{i},-1,1,-.001,.0003\n' for i in [1,2,3]))
+    if variant=='zero_strain':
+        p=post/'stage001_stress.csv';p.write_text(p.read_text().replace('-.001,.0003','0,0'))
     prov={'source_execution_receipt_sha256':file_hash(source/'execution_receipt.json'),'source_RST_sha256':file_hash(source/'compression.rst'),
         'source_database_filename':'compression.rdb','source_database_sha256':file_hash(source/'compression.rdb'),
         'source_manifest_sha256':file_hash(source/'simulation_manifest.json'),'input_sha256':file_hash(post/'input.inp'),'states':[state]}
