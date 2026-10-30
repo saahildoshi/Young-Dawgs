@@ -24,7 +24,7 @@ from .mesh_validation import validate_mesh
 from .mechanical_metrics import compression_metrics, effective_stiffness
 from .postprocessing import read_numeric_csv
 from .reporting import write_json, mesh_hash
-from .solver_execution import execute, file_hash
+from .solver_execution import execute, file_hash, solver_warnings
 
 HISTORY=['set','pseudo_time','load_step','substep','top_uy_mm','upper_rf_y_N','lower_rf_y_N']
 NODAL=['set','pseudo_time','node','ux_mm','uy_mm']
@@ -294,7 +294,7 @@ def analyze(execution, output, protocol):
                  'maximum_contact_pressure_MPa':max((d['pressure_max_MPa'] for d in diagnostics),default=None),
                  'stress_fields':'actual corner nodal averages; no midside stress fabricated',
                  'reaction_sign':'native ANSYS upper negative/lower positive; compressive stress = -upper_RF/(W*t)',
-                 'solver_warnings':re.findall(r'\*\*\* WARNING \*\*\*[^\n]*\n([^\n]+)',log),
+                 'solver_warnings':solver_warnings(log),
                  'pseudo_time':'load parameter, not seconds','llm_performance_eligible':False}
         write_json(output/'mechanical_summary.json',summary)
         report={'schema':'young-dawgs-v0.6.2-empirical-qualified-benchmark','status':'SOLVER_VERIFIED',

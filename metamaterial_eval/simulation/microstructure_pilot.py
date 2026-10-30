@@ -9,7 +9,7 @@ from .config import CompressionConfig
 from .mesh_artifacts import artifact_root,resolve_manifest
 from .microstructure_import import component
 from .reporting import write_json
-from .solver_execution import discover_solver,file_hash,solver_release,has_negative_pivots
+from .solver_execution import discover_solver,file_hash,solver_release,has_negative_pivots,solver_warnings
 from .windows_ansys import bounded_run
 
 
@@ -37,7 +37,7 @@ def run_input(directory,*,timeout=600,rss_GiB=20,reserve_GiB=12):
     log=(directory/'solver.out').read_text(errors='replace') if (directory/'solver.out').exists() else ''
     result={'status':receipt['status'],'solver_version':solver_release(log),'process':receipt,
             'input_sha256':file_hash(directory/'input.inp'),
-            'warnings':re.findall(r'\*\*\* WARNING \*\*\*[^\n]*\n([^\n]+)',log),
+            'warnings':solver_warnings(log),
             'converged_steps':[(int(a),int(b)) for a,b in re.findall(r'LOAD STEP\s+(\d+)\s+SUBSTEP\s+(\d+)\s+COMPLETED',log,re.I)]}
     write_json(directory/'execution_receipt.json',result)
     return result

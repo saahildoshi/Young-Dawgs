@@ -44,6 +44,11 @@ def has_negative_pivots(text):
     return any(int(n)>0 for n in counts) or bool(re.search(r'\b(?:a|an) negative pivot (?:value|was|has|at)',text,re.I))
 
 
+def solver_warnings(text):
+    """Windows solver logs can contain blank lines between header and message."""
+    return [s.strip() for s in re.findall(r'\*\*\*\s*WARNING\s*\*\*\*[^\n]*\n\s*([^\n]+)',text,re.I)]
+
+
 def classify_log(text,returncode,has_result,has_history):
     lower=text.lower()
     if re.search(r'license.*(?:fail|denied|unavailable|not available)|(?:fail|unable).*license|licensed number.*exceeded|ansys license manager error|no licenses? available',lower):

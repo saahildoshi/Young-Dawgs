@@ -8,7 +8,7 @@ import numpy as np
 from .mesh_artifacts import resolve_manifest,artifact_root
 from .element_quality import quadratic_mapping
 from .reporting import write_json
-from .solver_execution import file_hash
+from .solver_execution import file_hash,solver_warnings
 
 
 def numeric(path,columns):
@@ -104,7 +104,7 @@ def postprocess(directory,artifact_manifest,protocol_path,output):
             del u,s,deformed,mapping
         except (ValueError,FileNotFoundError) as exc:
             failed={'stage':i,'reason':str(exc)};break
-    warnings=receipt.get('warnings',[])
+    warnings=solver_warnings(log)
     unsupported=bool(re.search(r'Requested data is not stored|Unknown label|Undefined parameter',log,re.I))
     if unsupported:
         status='OUTPUT_INCOMPLETE';eligible=[]

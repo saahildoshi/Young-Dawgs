@@ -1,0 +1,14 @@
+......F                                                                  [100%]
+================================== FAILURES ===================================
+__________ test_actual_microstructure_converged_response_and_fields ___________
+
+    def test_actual_microstructure_converged_response_and_fields():
+        report=json.loads((RUN/'mechanical_results/attempt_002/mechanical_summary.json').read_text())
+>       assert report['actual_valid_stages'],'No microstructure checkpoint converged; genuine physics acceptance check fails'
+E       AssertionError: No microstructure checkpoint converged; genuine physics acceptance check fails
+E       assert []
+
+validation\ansys_v063_integration.py:68: AssertionError
+=========================== short test summary info ===========================
+FAILED validation/ansys_v063_integration.py::test_actual_microstructure_converged_response_and_fields
+1 failed, 6 passed in 10.64s

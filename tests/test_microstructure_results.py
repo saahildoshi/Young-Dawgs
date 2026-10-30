@@ -41,3 +41,8 @@ def test_single_point_does_not_establish_fitted_modulus():
 def test_missing_stress_component_is_not_filled(tmp_path):
     p=tmp_path/'field.csv';p.write_text('node,uy_mm\n1,0\n')
     with pytest.raises(ValueError,match='schema'):numeric(p,['node','syy_MPa'])
+
+
+def test_windows_blank_lines_do_not_hide_solver_warning():
+    from metamaterial_eval.simulation.solver_execution import solver_warnings
+    assert solver_warnings('*** WARNING *** CP = 1\n\n It is highly recommended to update stiffness\n')==['It is highly recommended to update stiffness']
