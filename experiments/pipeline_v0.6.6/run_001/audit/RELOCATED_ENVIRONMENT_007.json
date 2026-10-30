@@ -1,0 +1,7 @@
+{
+  "attempt001": "--no-build-isolation failed because setuptools.build_meta was not installed in this venv. No repository code changed.",
+  "correction": "Reinstalled same local project editable with --no-deps and normal build isolation. Only environment metadata/build dependency setup changed.",
+  "focused_verification": "18 exploration tests passed after correction; full suite rerun required.",
+  "problem": "Editable installation still mapped package to former OneDrive checkout after repository moved to Projects. Three subprocess exploration tests failed.",
+  "scientific_effect": "No generator/evaluator/canonical geometry/model change."
+}
