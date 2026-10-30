@@ -116,6 +116,9 @@ def postprocess(directory,artifact_manifest,protocol_path,output):
     dump_csv(output/'stress_strain.csv',[{k:r[k] for k in ['stage','pseudo_time','engineering_compression_strain','nominal_compression_stress_MPa']} for r in rows])
     dump_csv(output/'contact_diagnostics.csv',contacts)
     summary={'schema':'young-dawgs-v0.6.3-mechanical-results','status':status,'actual_valid_stages':rows,'stage_fields':stages,
+             'solver_reported_converged_substeps':receipt['converged_steps'],
+             'logged_converged_substep_times':[(int(a),int(b),float(t)) for a,b,t in re.findall(
+                 r'LOAD STEP\s+(\d+)\s+SUBSTEP\s+(\d+)\s+COMPLETED[^\n]*\s*\*+\s*TIME=\s*([\d.Ee+\-]+)',log,re.I)],
              'first_failed_or_missing_stage':failed,'unsupported_output_queries':unsupported,
              'effective_stiffness':fit_stiffness(eligible),'warnings':warnings,'execution_receipt_sha256':file_hash(directory/'execution_receipt.json'),
              'result_RST_sha256':file_hash(directory/'compression.rst') if (directory/'compression.rst').exists() else None,
@@ -130,8 +133,9 @@ def postprocess(directory,artifact_manifest,protocol_path,output):
 
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--manifest',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
-    a=p.parse_args();protocol=Path(__file__).resolve().parents[2]/'experiments/pipeline_v0.6.3/run_001/protocol/PILOT_PROTOCOL_001.json'
-    result=postprocess(artifact_root()/'solver/v063/pilot_001',a.manifest,protocol,a.output)
+    p.add_argument('--execution',type=Path);p.add_argument('--protocol',type=Path)
+    a=p.parse_args();protocol=a.protocol or Path(__file__).resolve().parents[2]/'experiments/pipeline_v0.6.3/run_001/protocol/PILOT_PROTOCOL_001.json'
+    result=postprocess(a.execution or artifact_root()/'solver/v063/pilot_001',a.manifest,protocol,a.output)
     print(result['status'],result['actual_valid_stages'],flush=True)
 
 

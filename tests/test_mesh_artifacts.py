@@ -91,3 +91,16 @@ def test_registry_discovery_is_not_byte_acceptance(tmp_path):
     records=discover_artifacts(tmp_path,'known')
     assert len(records)==1 and not records[0]['bytes_available']
     assert discover_artifacts(tmp_path,'missing')==[]
+
+
+def test_recorded_root_handles_windows_app_virtualized_cache(archive,tmp_path,monkeypatch):
+    import json
+    from metamaterial_eval.simulation.mesh_artifacts import resolve_manifest
+    path,mesh=archive
+    manifest=tmp_path/'manifest.json'
+    manifest.write_text(json.dumps({'geometry_qualification':'PASS','known_storage_root':str(tmp_path),
+        'artifact_relative_path':path.name,'source_geometry_sha256':SOURCE,'semantic_sha256':mesh_hash(mesh),'byte_sha256':file_hash(path)}))
+    monkeypatch.delenv('YD_ARTIFACT_ROOT',raising=False)
+    monkeypatch.setattr('metamaterial_eval.simulation.mesh_artifacts.artifact_root',lambda:tmp_path/'other-app-cache')
+    _,_,actual=resolve_manifest(manifest)
+    assert actual==path

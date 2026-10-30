@@ -131,6 +131,11 @@ def resolve_manifest(path,root=None):
     manifest=json.loads(Path(path).read_text())
     if manifest['geometry_qualification']!='PASS':raise ValueError('Artifact is not geometrically qualified')
     location=contained_path(root or artifact_root(),manifest['artifact_relative_path'])
+    # Packaged Windows apps may virtualize LOCALAPPDATA. A normal terminal can
+    # use the recorded existing root when no explicit selector was supplied.
+    if not location.is_file() and root is None and not os.environ.get('YD_ARTIFACT_ROOT') and manifest.get('known_storage_root'):
+        recorded=contained_path(manifest['known_storage_root'],manifest['artifact_relative_path'])
+        if recorded.is_file():location=recorded
     mesh,record=load_archive(location,source_hash=manifest['source_geometry_sha256'],
                              expected_semantic=manifest['semantic_sha256'],expected_bytes=manifest['byte_sha256'])
     return mesh,manifest,location
