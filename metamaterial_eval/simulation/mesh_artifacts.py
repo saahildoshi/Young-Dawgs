@@ -136,13 +136,28 @@ def resolve_manifest(path,root=None):
     return mesh,manifest,location
 
 
+def discover_artifacts(root=None,logical_id=None):
+    """Search only the configured mesh registry, not arbitrary user directories."""
+    root=Path(root or artifact_root()).resolve();found=[]
+    for path in sorted((root/'meshes').glob('**/artifact_manifest.json')):
+        manifest=json.loads(path.read_text())
+        if manifest.get('schema')!='young-dawgs-mesh-artifact-v1':continue
+        if logical_id and manifest.get('logical_artifact_id')!=logical_id:continue
+        location=contained_path(root,manifest['artifact_relative_path'])
+        found.append({'manifest':str(path),'logical_artifact_id':manifest['logical_artifact_id'],
+                      'path':str(location),'bytes_available':location.is_file(),
+                      'identity_check':'MANIFEST_ONLY_CALL_VERIFY_BEFORE_USE'})
+    return found
+
+
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('action',choices=['reproduce','verify'])
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('action',choices=['reproduce','verify','discover'])
     p.add_argument('--output',type=Path);p.add_argument('--manifest',type=Path);p.add_argument('--root',type=Path)
     a=p.parse_args()
     if a.action=='reproduce':reproduce(a.output,a.root or artifact_root())
-    else:
+    elif a.action=='verify':
         _,m,location=resolve_manifest(a.manifest,a.root);print(m['identity_status'],location)
+    else:print(json.dumps(discover_artifacts(a.root),indent=2))
 
 
 if __name__=='__main__':main()

@@ -80,3 +80,14 @@ def test_portable_root_and_no_escape(tmp_path,monkeypatch):
     monkeypatch.setenv('YD_ARTIFACT_ROOT',str(tmp_path))
     assert artifact_root()==tmp_path.resolve()
     with pytest.raises(ValueError):contained_path(tmp_path,'../outside')
+
+
+def test_registry_discovery_is_not_byte_acceptance(tmp_path):
+    import json
+    from metamaterial_eval.simulation.mesh_artifacts import discover_artifacts
+    directory=tmp_path/'meshes/known';directory.mkdir(parents=True)
+    (directory/'artifact_manifest.json').write_text(json.dumps({'schema':'young-dawgs-mesh-artifact-v1',
+        'logical_artifact_id':'known','artifact_relative_path':'meshes/known/mesh.npz'}))
+    records=discover_artifacts(tmp_path,'known')
+    assert len(records)==1 and not records[0]['bytes_available']
+    assert discover_artifacts(tmp_path,'missing')==[]
