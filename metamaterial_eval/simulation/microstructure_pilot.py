@@ -64,18 +64,18 @@ def assembly_check(database,mesh,directory):
     return result
 
 
-def setup_contact(database,mesh,directory,config,ftoln):
+def setup_contact(database,mesh,directory,config,ftoln,algorithm=0,stiffness_update=0,fkn=1):
     directory=Path(directory);directory.mkdir(parents=True,exist_ok=False)
     plan=platen_plan(mesh,config);count=len(mesh.nodes);eid=len(mesh.triangles);controls={}
     bottom=np.asarray(plan['bottom']['nodes']);anchor=int(bottom[np.argmin(mesh.nodes[bottom,0])])+1
     with (directory/'input.inp').open('w') as f:
         f.write('/BATCH\n/CLEAR,START\n'+database_resume(database)+'/PREP7\n/NOPR\n')
         component(f,'CORNERS',np.unique(mesh.triangles[:,:3])+1)
-        f.write('ET,2,TARGE169\nKEYOPT,2,2,1\nET,3,CONTA172\nKEYOPT,3,2,0\nKEYOPT,3,4,0\nKEYOPT,3,5,0\nKEYOPT,3,12,0\n')
+        f.write(f'ET,2,TARGE169\nKEYOPT,2,2,1\nET,3,CONTA172\nKEYOPT,3,2,{algorithm}\nKEYOPT,3,10,{stiffness_update}\nKEYOPT,3,4,0\nKEYOPT,3,5,0\nKEYOPT,3,12,0\n')
         for offset,group in enumerate(['bottom','top']):
             real=offset+2;y=0 if group=='bottom' else config.height
             left,right,pilot=count+3*offset+1,count+3*offset+2,count+3*offset+3;controls[group]=pilot
-            f.write(f'R,{real},0,0,1,{ftoln:.17g}\nN,{left},{-config.width*.05:.17g},{y:.17g},0\n'
+            f.write(f'R,{real},0,0,{fkn:.17g},{ftoln:.17g}\nN,{left},{-config.width*.05:.17g},{y:.17g},0\n'
                     f'N,{right},{config.width*1.05:.17g},{y:.17g},0\nN,{pilot},{config.width/2:.17g},{y:.17g},0\n'
                     f'TYPE,2\nREAL,{real}\nTSHAP,LINE\n')
             a,b=(right,left) if group=='bottom' else (left,right);eid+=1;f.write(f'EN,{eid},{a},{b}\n')
@@ -93,7 +93,8 @@ def setup_contact(database,mesh,directory,config,ftoln):
     manifest={'schema':'young-dawgs-v0.6.3-contact-model','specimen_nodes':len(mesh.nodes),'specimen_TRI6':len(mesh.triangles),
               'user_model_nodes':len(mesh.nodes)+6,'user_model_elements':eid,'controls':controls,
               'contact_elements':{g:len(plan[g]['edges']) for g in ['top','bottom']},'config':config.manifest(),
-              'FKN':1,'FTOLN_absolute_mm':ftoln,'internal_self_contact':'UNQUALIFIED_NOT_CONFIGURED',
+              'FKN':fkn,'FTOLN_absolute_mm':ftoln,'contact_algorithm_keyopt2':algorithm,
+              'contact_stiffness_update_keyopt10':stiffness_update,'internal_self_contact':'UNQUALIFIED_NOT_CONFIGURED',
               'contact_scope':'PLATEN_CONTACT_ONLY','specimen_UY_constraints':False,'anchor_UX_node':anchor,
               'initial_geometric_gaps_mm':{'top':0,'bottom':0}}
     write_json(directory/'model_manifest.json',manifest)
@@ -169,6 +170,8 @@ def prepare_pilot(directory,setup,protocol_path):
     if file_hash(setup/'contact_model.db')!=setup_result['process']['artifacts']['contact_model.db']['sha256']:
         raise ValueError('Contact database changed')
     if protocol['FTOLN_absolute_mm']!=model['FTOLN_absolute_mm']:raise ValueError('Frozen contact protocol differs')
+    if protocol.get('contact_algorithm_keyopt2',0)!=model.get('contact_algorithm_keyopt2',0):raise ValueError('Frozen contact algorithm differs')
+    if protocol['FKN']!=model['FKN']:raise ValueError('Frozen normal stiffness factor differs')
     directory.mkdir(parents=True,exist_ok=False)
     lines=['/BATCH','/CLEAR,START',database_resume(setup/'contact_model.db').strip(),'/NOPR']
     for i,strain in enumerate(protocol['strains'],1):lines+=stage_block(i,strain,model,protocol)

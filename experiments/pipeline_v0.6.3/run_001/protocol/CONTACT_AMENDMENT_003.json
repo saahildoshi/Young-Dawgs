@@ -1,0 +1,14 @@
+{
+  "schema": "young-dawgs-v0.6.3-prospective-contact-amendment",
+  "revision": 3,
+  "new_full_model_attempt_count_remaining": 1,
+  "candidate_003_result": "Pure penalty FKN=1 passed the legacy rectangle numeric screen but failed the stricter v0.6.3 endpoint penetration gate: 0.00058725016 mm > 0.00001 mm. It is rejected for the pilot.",
+  "installed_solver_observation": "For pure penalty, FTOLN did not produce the augmented-Lagrange initial stiffness. Printed rectangle stiffness was 34210/36972, not 2e8. Do not equate the same FTOLN/FKN with the same absolute stiffness across algorithms.",
+  "correction": {"FKN": 100, "FTOLN_absolute_mm": -0.00001},
+  "change": {"contact_algorithm_keyopt2": 1, "contact_stiffness_update_keyopt10": 1, "FKN": 100},
+  "rationale": "Observed endpoint penetration exceeds the existing gate by a factor of about 58.7. A prospectively selected 100x normal penalty factor tests the required scale while retaining fixed initial stiffness and all physical/acceptance settings. Verify force, pressure, endpoint penetration, equilibrium, warnings and repeatability before use.",
+  "acceptance_limits_changed": false,
+  "not_a_microstructure_parameter_search": true,
+  "stop_after_one_corrected_full_model_attempt": true,
+  "frozen_before_candidate_004_execution": true
+}

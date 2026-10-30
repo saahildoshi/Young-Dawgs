@@ -1,0 +1,15 @@
+{
+  "schema": "young-dawgs-v0.6.3-prospective-contact-amendment",
+  "revision": 2,
+  "supersedes_for_new_attempt_only": "PILOT_PROTOCOL_001.json contact algorithm",
+  "original_attempt": "solver/v063/pilot_001",
+  "observed_problem": "No converged substep after eight Newton iterations; force residual oscillates around 0.0031-0.0048 N against about 0.00052 N criterion. No negative pivots or memory limit. Original run is stopped for numerical diagnosis before timeout; it remains unqualified.",
+  "diagnosis_scope": "Observed nonlinear residual plateau. Contact multiplier/stiffness-update chatter is a hypothesis to isolate, not a proven root cause or a measured poor physical design.",
+  "change": {"contact_algorithm_keyopt2": 1, "contact_stiffness_update_keyopt10": 1, "FKN": 1, "FTOLN_absolute_mm": -0.00001},
+  "rationale": "Pure penalty with fixed initial normal stiffness removes augmented-Lagrange multiplier corrections and iteration-dependent stiffness updates while retaining frictionless unilateral contact. Verify small-rectangle force, penetration, signed contact force, equilibrium and repeatability before any new full-model solve.",
+  "unchanged": ["source geometry", "mesh", "material", "dimensions", "load schedule", "force convergence criterion", "reaction/contact equilibrium limits", "penetration acceptance", "resource reserves", "no stabilization"],
+  "maximum_additional_full_model_attempts": 1,
+  "stop_after_second_failure": true,
+  "correction": {"FKN": 1, "FTOLN_absolute_mm": -0.00001},
+  "frozen_before_corrected_contact_execution": true
+}

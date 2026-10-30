@@ -1,0 +1,94 @@
+{
+  "FKN": 100,
+  "FTOLN_absolute_mm": -1e-05,
+  "NLGEOM": true,
+  "achieved_UY_absolute_tolerance_mm": 1e-08,
+  "amendment_sha256": "41c2d9775d21756210ae1199e0481956277dba0bd3b0f1758f354511213033f6",
+  "assembly_assessment_sha256": "7cf3d9405bcc3cd77059c0d0cec551fff102e31b6b7a1a1ce4509fd290756b41",
+  "available_RAM_at_freeze_bytes": 37050511360,
+  "contact_algorithm_keyopt2": 1,
+  "contact_force_balance_relative_limit": 0.01,
+  "contact_scope": "PLATEN_CONTACT_ONLY",
+  "contact_sensitivity_freeze_sha256": "9b66cca0d6d603e2302dfbf886505a7699ebbf5c1443b7b22d705eff94dcac91",
+  "contact_setup_sha256": "182d93b660505bfec27166384d14ab744d521c5410eca4eba6f7a599f32787cd",
+  "contact_stiffness_update_keyopt10": 1,
+  "controls": {
+    "AUTOTS": true,
+    "LNSRCH": true,
+    "NEQIT": 30,
+    "NROPT": "FULL",
+    "NSUBST": [
+      2,
+      20,
+      1
+    ],
+    "force_CNVTOL_minref_N": 1e-08,
+    "force_CNVTOL_relative": 0.005
+  },
+  "corrected_rectangle_acceptance_sha256": "b4d179d8d38aa2535b071f5135fdffdb6bd1c7c7fec5f4b4e0f02e5b84440bca",
+  "dimensions_mm": [
+    10.24,
+    10.24,
+    1
+  ],
+  "fields": "all-node UX/UY and masked corner stresses/elastic strains at each converged registered checkpoint; no midside stress invented",
+  "force_balance_relative_limit": 0.01,
+  "formulation": "PLANE183 six-node plane stress explicit initial thickness 1 mm",
+  "friction": 0,
+  "frozen_before_microstructure_compression": true,
+  "import_validation_sha256": "5140b197a97eb31c5bbef55d53fc8e9e1f52f1211a4dbaccd0dfe723bcc2b99d",
+  "initial_contact": "both real pairs initially closed; zero/3.55e-15 mm penetration",
+  "limitations": [
+    "mechanical mesh convergence unqualified",
+    "internal self-contact not configured",
+    "prior cumulative small-pore fidelity and production simplification HOLD",
+    "no experimental calibration",
+    "preliminary single-mesh pilot only"
+  ],
+  "material": {
+    "E_MPa": 1000,
+    "nu": 0.3,
+    "status": "PROVISIONAL_UNCALIBRATED"
+  },
+  "max_additional_full_model_attempts": 1,
+  "mesh_identity": "HISTORICAL_MESH_IDENTITY_VERIFIED_BY_REPRODUCTION",
+  "mesh_semantic_sha256": "e26863263774cf86c777b1485ac0e639216a91644007c4da272469a7447000bc",
+  "output": "OUTRES ALL LAST per load step; no full-field export at every substep",
+  "penetration_limit_mm": 1e-05,
+  "previous_attempt": "pilot_001 stopped with no converged substep after observed residual plateau; not a valid physical response",
+  "reaction_force_minimum_N": 1e-08,
+  "resource": {
+    "cores": 1,
+    "minimum_available_RAM_GiB": 12,
+    "minimum_disk_free_GiB": 20,
+    "rss_limit_GiB": 20,
+    "timeout_seconds": 1200
+  },
+  "resource_gate": "CONDITIONAL_BOUNDED_FIRST_STAGE: actual linear assembly succeeded; factorization/contact memory not proved in advance; enforce hard process/OS reserves and stop on resource excess",
+  "revision": 2,
+  "schema": "young-dawgs-v0.6.3-pilot-protocol",
+  "scope_of_change": "fixed initial pure penalty contact; all physical/loading/acceptance/resource limits retained",
+  "separation_permitted": true,
+  "solver": "symmetric sparse direct, default memory allocation with PERFORMANCE; one SMP core",
+  "source_geometry_sha256": "4700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1",
+  "stabilization": "none; no weak springs",
+  "stage_advancement": "actual LAST result time/displacement, nonnegligible signed reactions, <=1% normalized equilibrium, each pair closed+positive pressure, <=1e-5 mm endpoint penetration and <=1% signed contact-force/reaction residual; stop after first failed gate",
+  "stage_continuation": "after each POST1 checkpoint, subsequent stages use verified ANTYPE,STATIC,REST,,,CONTINUE; require increasing actual load-step IDs and preserve checkpoint RST sets",
+  "stiffness_fit": "through-origin least squares on valid achieved checkpoints with 0 < epsilon <=0.001, >=2 nonzero points; otherwise no fitted modulus",
+  "stop_conditions": [
+    "timeout",
+    "RSS or OS RAM reserve",
+    "disk reserve",
+    "negative pivot count >0",
+    "solver errors/distortion",
+    "failed stage/contact gate"
+  ],
+  "strains": [
+    0.0001,
+    0.0005,
+    0.001
+  ],
+  "supports": "lower pilot UX/UY/ROTZ fixed; upper UX/ROTZ fixed and UY prescribed; one bottom specimen UX anchor; no specimen UY constraints",
+  "units": "mm-N-MPa",
+  "warning_policy": "retain recommendation to update stiffness; fixed stiffness is deliberate diagnostic choice validated on rectangle; no formal contact-policy convergence claim"
+}

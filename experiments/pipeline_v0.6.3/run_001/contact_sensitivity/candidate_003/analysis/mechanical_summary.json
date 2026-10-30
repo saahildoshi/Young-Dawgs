@@ -1,0 +1,130 @@
+{
+  "all_requested_stages_achieved": true,
+  "completed_sets": 36,
+  "effective_stiffness": {
+    "method": "least_squares_through_origin",
+    "normalized": 0.9988328739227553,
+    "points": 24,
+    "status": "COMPUTED",
+    "strain_interval": [
+      0,
+      0.005
+    ],
+    "value_MPa": 998.8328739227553
+  },
+  "force_balance_max_relative": 0.0,
+  "llm_performance_eligible": false,
+  "max_relative_analytical_error_small_strain": 0.005455078124999901,
+  "maximum_contact_penetration_mm": 0.00058725016,
+  "maximum_contact_pressure_MPa": 20.09004,
+  "mesh_import": {
+    "TRI6": 268,
+    "axes": "global XY",
+    "exact_connectivity": true,
+    "max_coordinate_error_mm": 5.329070518200751e-15,
+    "nodes": 617,
+    "status": "PASS",
+    "stress_field_location": "corner_nodes_only; midside displacements retained"
+  },
+  "pseudo_time": "load parameter, not seconds",
+  "reaction_sign": "native ANSYS upper negative/lower positive; compressive stress = -upper_RF/(W*t)",
+  "requested_stages": [
+    {
+      "analytical_acceptance_domain": true,
+      "analytical_reference_N": 1.024,
+      "engineering_compression_strain": 9.999999999999999e-05,
+      "load_step": 1.0,
+      "lower_rf_y_N": 1.018514,
+      "nominal_compression_stress_MPa": 0.09946425781249998,
+      "pseudo_time": 0.0001,
+      "relative_error": 0.0053574218750000995,
+      "set": 6.0,
+      "substep": 6.0,
+      "top_uy_mm": -0.001024,
+      "upper_rf_y_N": -1.018514
+    },
+    {
+      "analytical_acceptance_domain": true,
+      "analytical_reference_N": 5.12,
+      "engineering_compression_strain": 0.0005,
+      "load_step": 2.0,
+      "lower_rf_y_N": 5.0947942,
+      "nominal_compression_stress_MPa": 0.49753849609375,
+      "pseudo_time": 0.0005,
+      "relative_error": 0.004923007812500033,
+      "set": 12.0,
+      "substep": 6.0,
+      "top_uy_mm": -0.00512,
+      "upper_rf_y_N": -5.0947942
+    },
+    {
+      "analytical_acceptance_domain": true,
+      "analytical_reference_N": 10.24,
+      "engineering_compression_strain": 0.001,
+      "load_step": 3.0,
+      "lower_rf_y_N": 10.195154,
+      "nominal_compression_stress_MPa": 0.9956205078125,
+      "pseudo_time": 0.001,
+      "relative_error": 0.004379492187499973,
+      "set": 18.0,
+      "substep": 6.0,
+      "top_uy_mm": -0.01024,
+      "upper_rf_y_N": -10.195154
+    },
+    {
+      "analytical_acceptance_domain": true,
+      "analytical_reference_N": 51.2,
+      "engineering_compression_strain": 0.005,
+      "load_step": 4.0,
+      "lower_rf_y_N": 51.199378,
+      "nominal_compression_stress_MPa": 4.999939257812501,
+      "pseudo_time": 0.005,
+      "relative_error": 1.2148437499998055e-05,
+      "set": 24.0,
+      "substep": 6.0,
+      "top_uy_mm": -0.0512,
+      "upper_rf_y_N": -51.199378
+    },
+    {
+      "analytical_acceptance_domain": false,
+      "analytical_reference_N": 102.4,
+      "engineering_compression_strain": 0.01,
+      "load_step": 5.0,
+      "lower_rf_y_N": 102.96288,
+      "nominal_compression_stress_MPa": 10.05496875,
+      "pseudo_time": 0.01,
+      "relative_error": 0.005496874999999929,
+      "set": 30.0,
+      "substep": 6.0,
+      "top_uy_mm": -0.1024,
+      "upper_rf_y_N": -102.96288
+    },
+    {
+      "analytical_acceptance_domain": false,
+      "analytical_reference_N": 204.8,
+      "engineering_compression_strain": 0.02,
+      "load_step": 6.0,
+      "lower_rf_y_N": 208.21679,
+      "nominal_compression_stress_MPa": 20.3336708984375,
+      "pseudo_time": 0.02,
+      "relative_error": 0.01668354492187496,
+      "set": 36.0,
+      "substep": 6.0,
+      "top_uy_mm": -0.2048,
+      "upper_rf_y_N": -208.21679
+    }
+  ],
+  "solver_receipt_sha256": "e4bc835d1e0c2a144c58685403f2b50191481dacf9fd21965042d6f7dd93f3e6",
+  "solver_warnings": [
+    " It is highly recommended to set KEYOPT(10)=0 (update contact stiffness  ",
+    " It is highly recommended to set KEYOPT(10)=0 (update contact stiffness  ",
+    " Contact element 271 (real ID 2) has too much penetration                ",
+    " Contact element 271 (real ID 2) has too much penetration                ",
+    " Contact element 271 (real ID 2) has too much penetration                ",
+    " Contact element 271 (real ID 2) has too much penetration                ",
+    " Contact element 271 (real ID 2) has too much penetration                ",
+    " Contact element 271 (real ID 2) has too much penetration                "
+  ],
+  "status": "VALID_SOLVER_MEASUREMENTS",
+  "stress_fields": "actual corner nodal averages; no midside stress fabricated"
+}

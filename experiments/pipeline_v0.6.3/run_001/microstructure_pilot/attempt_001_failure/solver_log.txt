@@ -1,0 +1,2670 @@
+
+ Ansys Mechanical Enterprise Academic Research
+
+
+ *------------------------------------------------------------------*
+ |                                                                  |
+ |   W E L C O M E   T O   T H E   A N S Y S (R)  P R O G R A M     |
+ |                                                                  |
+ *------------------------------------------------------------------*
+
+
+
+
+ ***************************************************************
+ *         ANSYS MAPDL 2024 R1          LEGAL NOTICES          *
+ ***************************************************************
+ *                                                             *
+ * Copyright 1971-2024 Ansys, Inc.  All rights reserved.       *
+ * Unauthorized use, distribution or duplication is            *
+ * prohibited.                                                 *
+ *                                                             *
+ * Ansys is a registered trademark of Ansys, Inc. or its       *
+ * subsidiaries in the United States or other countries.       *
+ * See the Ansys, Inc. online documentation or the Ansys, Inc. *
+ * documentation CD or online help for the complete Legal      *
+ * Notice.                                                     *
+ *                                                             *
+ ***************************************************************
+ *                                                             *
+ * THIS ANSYS SOFTWARE PRODUCT AND PROGRAM DOCUMENTATION       *
+ * INCLUDE TRADE SECRETS AND CONFIDENTIAL AND PROPRIETARY      *
+ * PRODUCTS OF ANSYS, INC., ITS SUBSIDIARIES, OR LICENSORS.    *
+ * The software products and documentation are furnished by    *
+ * Ansys, Inc. or its subsidiaries under a software license    *
+ * agreement that contains provisions concerning               *
+ * non-disclosure, copying, length and nature of use,          *
+ * compliance with exporting laws, warranties, disclaimers,    *
+ * limitations of liability, and remedies, and other           *
+ * provisions.  The software products and documentation may be *
+ * used, disclosed, transferred, or copied only in accordance  *
+ * with the terms and conditions of that software license      *
+ * agreement.                                                  *
+ *                                                             *
+ * Ansys, Inc. is a UL registered                              *
+ * ISO 9001:2015 company.                                      *
+ *                                                             *
+ ***************************************************************
+ *                                                             *
+ * This product is subject to U.S. laws governing export and   *
+ * re-export.                                                  *
+ *                                                             *
+ * For U.S. Government users, except as specifically granted   *
+ * by the Ansys, Inc. software license agreement, the use,     *
+ * duplication, or disclosure by the United States Government  *
+ * is subject to restrictions stated in the Ansys, Inc.        *
+ * software license agreement and FAR 12.212 (for non-DOD      *
+ * licenses).                                                  *
+ *                                                             *
+ ***************************************************************
+
+ 2024 R1
+
+ Point Releases and Patches installed:
+
+ Ansys, Inc. License Manager 2024 R1
+ Viewer 2024 R1
+ Discovery 2024 R1
+ SpaceClaim 2024 R1
+ Fluids 2024 R1
+ CFD-Post only 2024 R1
+ CFX (includes CFD-Post) 2024 R1
+ Chemkin 2024 R1
+ FENSAP-ICE 2024 R1
+ Fluent (includes CFD-Post) 2024 R1
+ Polyflow (includes CFD-Post) 2024 R1
+ Forte (includes EnSight) 2024 R1
+ ICEM CFD 2024 R1
+ TurboGrid 2024 R1
+ ACIS Geometry Interface 2024 R1
+ AutoCAD Geometry Interface 2024 R1
+ Catia, Version 4 Geometry Interface 2024 R1
+ Catia, Version 5 Geometry Interface 2024 R1
+ Catia, Version 6 Geometry Interface 2024 R1
+ Creo Elements/Direct Modeling Geometry Interface 2024 R1
+ Creo Parametric Geometry Interface 2024 R1
+ Inventor Geometry Interface 2024 R1
+ JTOpen Geometry Interface 2024 R1
+ NX Geometry Interface 2024 R1
+ Parasolid Geometry Interface  2024 R1
+ Solid Edge Geometry Interface 2024 R1
+ SOLIDWORKS Geometry Interface 2024 R1
+ Speos HPC 2024 R1
+ optiSLang 2024 R1
+ Remote Solve Manager Standalone Services 2024 R1
+ Additive 2024 R1
+ Aqwa 2024 R1
+ Autodyn 2024 R1
+ LS-DYNA 2024 R1
+ Motion 2024 R1
+ Sherlock 2024 R1
+ Sound - SAS 2024 R1
+
+
+          *****  MAPDL COMMAND LINE ARGUMENTS  *****
+  INITIAL JOBNAME              = compression
+  BATCH MODE REQUESTED (-b)    = LIST
+  INPUT FILE COPY MODE (-c)    = COPY
+  SHARED MEMORY PARALLEL REQUESTED
+    SINGLE PROCESS WITH SINGLE THREAD REQUESTED
+    TOTAL OF     1 CORES REQUESTED
+  INPUT FILE NAME              = C:\Users\sd22446\AppData\Local\Packages\OpenAI.Codex_2p2nqsd0c76g0\LocalCache\Local\YoungDawgs\artifacts\solver\v063\pilot_001\input.inp
+  OUTPUT FILE NAME             = C:\Users\sd22446\AppData\Local\Packages\OpenAI.Codex_2p2nqsd0c76g0\LocalCache\Local\YoungDawgs\artifacts\solver\v063\pilot_001\solver.out
+  MEMORY REQUESTED (MB)        = 4096
+
+ RELEASE= 2024 R1              BUILD= 24.1      UP20231106   VERSION=WINDOWS x64
+ CURRENT JOBNAME=compression  20:17:20  OCT 29, 2026 CP=      0.047
+
+     1  /BATCH
+     2  /CLEAR,START
+     3  RESUME,'C:/Users/sd22446/AppData/Local/Packages/OpenAI.Codex_2p2nqsd0c76g0/LocalCache/Local/YoungDawgs/artifacts/solver/v063/contact_setup_001/contact_model',db
+     4  /FILNAME,compression
+     5  /NOPR
+     6  /SOLU
+     7  TIME,0.0001
+     8  D,2766511,UY,-0.0010240000000000002
+     9  SOLVE
+    10  FINISH
+    11  /POST1
+    12  ALLSEL,ALL
+    13  SET,LAST
+    14  *GET,TNOW,ACTIVE,0,SET,TIME
+    15  *GET,LSV,ACTIVE,0,SET,LSTP
+    16  *GET,SSV,ACTIVE,0,SET,SBST
+    17  *GET,UYTOP,NODE,2766511,U,Y
+    18  *GET,RFTOP,NODE,2766511,RF,FY
+    19  *GET,RFBOT,NODE,2766508,RF,FY
+    20  *CFOPEN,stage001_history,csv
+    21  *VWRITE
+    22  ('pseudo_time,load_step,substep,top_uy_mm,upper_rf_y_N,lower_rf_y_N')
+    23  *VWRITE,TNOW,LSV,SSV,UYTOP,RFTOP,RFBOT
+    24  (E24.16,2(',',F10.0),3(',',E24.16))
+    25  *CFCLOS
+    26  FAILG=0
+    27  *IF,ABS(TNOW-0.0001),GT,1e-12,THEN
+    28  FAILG=1
+    29  *ENDIF
+    30  *IF,ABS(UYTOP-(-0.0010240000000000002)),GT,1e-8,THEN
+    31  FAILG=1
+    32  *ENDIF
+    33  *IF,RFTOP,GE,-1e-8,THEN
+    34  FAILG=1
+    35  *ENDIF
+    36  *IF,RFBOT,LE,1e-8,THEN
+    37  FAILG=1
+    38  *ENDIF
+    39  BAL=ABS(RFTOP+RFBOT)/MAX(ABS(RFTOP),ABS(RFBOT),1e-12)
+    40  *IF,BAL,GT,0.01,THEN
+    41  FAILG=1
+    42  *ENDIF
+    43  *CFOPEN,stage001_contact,csv
+    44  *VWRITE
+    45  ('pair,element,status,pressure_i_MPa,pressure_j_MPa,gap_i_mm,gap_j_mm,contact_force_y_N')
+    46  *DO,PAIR,1,2
+    47  *IF,PAIR,EQ,1,THEN
+    48  CMSEL,S,BOTTOM_CONTACT
+    49  EXPECT=RFBOT
+    50  *ELSE
+    51  CMSEL,S,TOP_CONTACT
+    52  EXPECT=RFTOP
+    53  *ENDIF
+    54  *GET,NC,ELEM,0,COUNT
+    55  EID=0
+    56  FYTOTAL=0
+    57  CLOSED=0
+    58  MAXPEN=0
+    59  MAXPRES=0
+    60  *DO,KK,1,NC
+    61  EID=ELNEXT(EID)
+    62  *GET,STV,ELEM,EID,NMISC,19
+    63  *GET,PI,ELEM,EID,SMISC,1
+    64  *GET,PJ,ELEM,EID,SMISC,2
+    65  *GET,GI,ELEM,EID,NMISC,5
+    66  *GET,GJ,ELEM,EID,NMISC,6
+    67  *GET,FYV,ELEM,EID,NMISC,22
+    68  FYTOTAL=FYTOTAL+FYV
+    69  MAXPEN=MAX(MAXPEN,GI,GJ)
+    70  MAXPRES=MAX(MAXPRES,PI,PJ)
+    71  *IF,STV,GE,2,THEN
+    72  CLOSED=CLOSED+1
+    73  *ENDIF
+    74  *VWRITE,PAIR,EID,STV,PI,PJ,GI,GJ,FYV
+    75  (F4.0,',',F12.0,',',F4.0,5(',',E16.8))
+    76  *ENDDO
+    77  *IF,CLOSED,LT,1,THEN
+    78  FAILG=1
+    79  *ENDIF
+    80  *IF,MAXPRES,LE,0,THEN
+    81  FAILG=1
+    82  *ENDIF
+    83  *IF,MAXPEN,GT,1e-5,THEN
+    84  FAILG=1
+    85  *ENDIF
+    86  CBAL=ABS(FYTOTAL+EXPECT)/MAX(ABS(EXPECT),1e-12)
+    87  *IF,CBAL,GT,0.01,THEN
+    88  FAILG=1
+    89  *ENDIF
+    90  ALLSEL,ALL
+    91  *ENDDO
+    92  *CFCLOS
+    93  *CFOPEN,stage001_gate,txt
+    94  *VWRITE,FAILG,BAL
+    95  (F4.0,',',E24.16)
+    96  *CFCLOS
+    97  ALLSEL,ALL
+    98  *DIM,IDS,ARRAY,2766505
+    99  *DIM,UXV,ARRAY,2766505
+   100  *DIM,UYV,ARRAY,2766505
+   101  *DIM,MASKV,ARRAY,2766505
+   102  *DIM,SYV,ARRAY,2766505
+   103  *DIM,SEQV,ARRAY,2766505
+   104  *DIM,EYV,ARRAY,2766505
+   105  *DIM,EXV,ARRAY,2766505
+   106  *VFILL,IDS(1),RAMP,1,1
+   107  *VGET,UXV(1),NODE,1,U,X
+   108  *VGET,UYV(1),NODE,1,U,Y
+   109  *CFOPEN,stage001_displacements,csv
+   110  *VWRITE
+   111  ('node,ux_mm,uy_mm')
+   112  *VWRITE,IDS(1),UXV(1),UYV(1)
+   113  (F12.0,2(',',E24.16))
+   114  *CFCLOS
+   115  CMSEL,S,CORNERS
+   116  *VGET,MASKV(1),NODE,1,NSEL
+   117  ALLSEL,ALL
+   118  ESEL,S,TYPE,,1
+   119  *VMASK,MASKV(1)
+   120  *VGET,SYV(1),NODE,1,S,Y
+   121  *VMASK,MASKV(1)
+   122  *VGET,SEQV(1),NODE,1,S,EQV
+   123  *VMASK,MASKV(1)
+   124  *VGET,EYV(1),NODE,1,EPEL,Y
+   125  *VMASK,MASKV(1)
+   126  *VGET,EXV(1),NODE,1,EPEL,X
+   127  *CFOPEN,stage001_stress,csv
+   128  *VWRITE
+   129  ('node,syy_MPa,seqv_MPa,elastic_eyy,elastic_exx')
+   130  *VMASK,MASKV(1)
+   131  *VWRITE,IDS(1),SYV(1),SEQV(1),EYV(1),EXV(1)
+   132  (F12.0,4(',',E24.16))
+   133  *CFCLOS
+   134  ALLSEL,ALL
+   135  *DEL,IDS
+   136  *DEL,UXV
+   137  *DEL,UYV
+   138  *DEL,MASKV
+   139  *DEL,SYV
+   140  *DEL,SEQV
+   141  *DEL,EYV
+   142  *DEL,EXV
+   143  *IF,FAILG,NE,0,THEN
+   144  /COM,PILOT_STAGE_GATE_FAILED_NO_ADVANCEMENT
+   145  FINISH
+   146  SAVE,pilot_partial,db
+   147  /EXIT,NOSAVE
+   148  *ENDIF
+   149  FINISH
+   150  /SOLU
+   151  ANTYPE,STATIC,REST,,,CONTINUE
+   152  TIME,0.00050000000000000001
+   153  D,2766511,UY,-0.0051200000000000004
+   154  SOLVE
+   155  FINISH
+   156  /POST1
+   157  ALLSEL,ALL
+   158  SET,LAST
+   159  *GET,TNOW,ACTIVE,0,SET,TIME
+   160  *GET,LSV,ACTIVE,0,SET,LSTP
+   161  *GET,SSV,ACTIVE,0,SET,SBST
+   162  *GET,UYTOP,NODE,2766511,U,Y
+   163  *GET,RFTOP,NODE,2766511,RF,FY
+   164  *GET,RFBOT,NODE,2766508,RF,FY
+   165  *CFOPEN,stage002_history,csv
+   166  *VWRITE
+   167  ('pseudo_time,load_step,substep,top_uy_mm,upper_rf_y_N,lower_rf_y_N')
+   168  *VWRITE,TNOW,LSV,SSV,UYTOP,RFTOP,RFBOT
+   169  (E24.16,2(',',F10.0),3(',',E24.16))
+   170  *CFCLOS
+   171  FAILG=0
+   172  *IF,ABS(TNOW-0.00050000000000000001),GT,1e-12,THEN
+   173  FAILG=1
+   174  *ENDIF
+   175  *IF,ABS(UYTOP-(-0.0051200000000000004)),GT,1e-8,THEN
+   176  FAILG=1
+   177  *ENDIF
+   178  *IF,RFTOP,GE,-1e-8,THEN
+   179  FAILG=1
+   180  *ENDIF
+   181  *IF,RFBOT,LE,1e-8,THEN
+   182  FAILG=1
+   183  *ENDIF
+   184  BAL=ABS(RFTOP+RFBOT)/MAX(ABS(RFTOP),ABS(RFBOT),1e-12)
+   185  *IF,BAL,GT,0.01,THEN
+   186  FAILG=1
+   187  *ENDIF
+   188  *CFOPEN,stage002_contact,csv
+   189  *VWRITE
+   190  ('pair,element,status,pressure_i_MPa,pressure_j_MPa,gap_i_mm,gap_j_mm,contact_force_y_N')
+   191  *DO,PAIR,1,2
+   192  *IF,PAIR,EQ,1,THEN
+   193  CMSEL,S,BOTTOM_CONTACT
+   194  EXPECT=RFBOT
+   195  *ELSE
+   196  CMSEL,S,TOP_CONTACT
+   197  EXPECT=RFTOP
+   198  *ENDIF
+   199  *GET,NC,ELEM,0,COUNT
+   200  EID=0
+   201  FYTOTAL=0
+   202  CLOSED=0
+   203  MAXPEN=0
+   204  MAXPRES=0
+   205  *DO,KK,1,NC
+   206  EID=ELNEXT(EID)
+   207  *GET,STV,ELEM,EID,NMISC,19
+   208  *GET,PI,ELEM,EID,SMISC,1
+   209  *GET,PJ,ELEM,EID,SMISC,2
+   210  *GET,GI,ELEM,EID,NMISC,5
+   211  *GET,GJ,ELEM,EID,NMISC,6
+   212  *GET,FYV,ELEM,EID,NMISC,22
+   213  FYTOTAL=FYTOTAL+FYV
+   214  MAXPEN=MAX(MAXPEN,GI,GJ)
+   215  MAXPRES=MAX(MAXPRES,PI,PJ)
+   216  *IF,STV,GE,2,THEN
+   217  CLOSED=CLOSED+1
+   218  *ENDIF
+   219  *VWRITE,PAIR,EID,STV,PI,PJ,GI,GJ,FYV
+   220  (F4.0,',',F12.0,',',F4.0,5(',',E16.8))
+   221  *ENDDO
+   222  *IF,CLOSED,LT,1,THEN
+   223  FAILG=1
+   224  *ENDIF
+   225  *IF,MAXPRES,LE,0,THEN
+   226  FAILG=1
+   227  *ENDIF
+   228  *IF,MAXPEN,GT,1e-5,THEN
+   229  FAILG=1
+   230  *ENDIF
+   231  CBAL=ABS(FYTOTAL+EXPECT)/MAX(ABS(EXPECT),1e-12)
+   232  *IF,CBAL,GT,0.01,THEN
+   233  FAILG=1
+   234  *ENDIF
+   235  ALLSEL,ALL
+   236  *ENDDO
+   237  *CFCLOS
+   238  *CFOPEN,stage002_gate,txt
+   239  *VWRITE,FAILG,BAL
+   240  (F4.0,',',E24.16)
+   241  *CFCLOS
+   242  ALLSEL,ALL
+   243  *DIM,IDS,ARRAY,2766505
+   244  *DIM,UXV,ARRAY,2766505
+   245  *DIM,UYV,ARRAY,2766505
+   246  *DIM,MASKV,ARRAY,2766505
+   247  *DIM,SYV,ARRAY,2766505
+   248  *DIM,SEQV,ARRAY,2766505
+   249  *DIM,EYV,ARRAY,2766505
+   250  *DIM,EXV,ARRAY,2766505
+   251  *VFILL,IDS(1),RAMP,1,1
+   252  *VGET,UXV(1),NODE,1,U,X
+   253  *VGET,UYV(1),NODE,1,U,Y
+   254  *CFOPEN,stage002_displacements,csv
+   255  *VWRITE
+   256  ('node,ux_mm,uy_mm')
+   257  *VWRITE,IDS(1),UXV(1),UYV(1)
+   258  (F12.0,2(',',E24.16))
+   259  *CFCLOS
+   260  CMSEL,S,CORNERS
+   261  *VGET,MASKV(1),NODE,1,NSEL
+   262  ALLSEL,ALL
+   263  ESEL,S,TYPE,,1
+   264  *VMASK,MASKV(1)
+   265  *VGET,SYV(1),NODE,1,S,Y
+   266  *VMASK,MASKV(1)
+   267  *VGET,SEQV(1),NODE,1,S,EQV
+   268  *VMASK,MASKV(1)
+   269  *VGET,EYV(1),NODE,1,EPEL,Y
+   270  *VMASK,MASKV(1)
+   271  *VGET,EXV(1),NODE,1,EPEL,X
+   272  *CFOPEN,stage002_stress,csv
+   273  *VWRITE
+   274  ('node,syy_MPa,seqv_MPa,elastic_eyy,elastic_exx')
+   275  *VMASK,MASKV(1)
+   276  *VWRITE,IDS(1),SYV(1),SEQV(1),EYV(1),EXV(1)
+   277  (F12.0,4(',',E24.16))
+   278  *CFCLOS
+   279  ALLSEL,ALL
+   280  *DEL,IDS
+   281  *DEL,UXV
+   282  *DEL,UYV
+   283  *DEL,MASKV
+   284  *DEL,SYV
+   285  *DEL,SEQV
+   286  *DEL,EYV
+   287  *DEL,EXV
+   288  *IF,FAILG,NE,0,THEN
+   289  /COM,PILOT_STAGE_GATE_FAILED_NO_ADVANCEMENT
+   290  FINISH
+   291  SAVE,pilot_partial,db
+   292  /EXIT,NOSAVE
+   293  *ENDIF
+   294  FINISH
+   295  /SOLU
+   296  ANTYPE,STATIC,REST,,,CONTINUE
+   297  TIME,0.001
+   298  D,2766511,UY,-0.010240000000000001
+   299  SOLVE
+   300  FINISH
+   301  /POST1
+   302  ALLSEL,ALL
+   303  SET,LAST
+   304  *GET,TNOW,ACTIVE,0,SET,TIME
+   305  *GET,LSV,ACTIVE,0,SET,LSTP
+   306  *GET,SSV,ACTIVE,0,SET,SBST
+   307  *GET,UYTOP,NODE,2766511,U,Y
+   308  *GET,RFTOP,NODE,2766511,RF,FY
+   309  *GET,RFBOT,NODE,2766508,RF,FY
+   310  *CFOPEN,stage003_history,csv
+   311  *VWRITE
+   312  ('pseudo_time,load_step,substep,top_uy_mm,upper_rf_y_N,lower_rf_y_N')
+   313  *VWRITE,TNOW,LSV,SSV,UYTOP,RFTOP,RFBOT
+   314  (E24.16,2(',',F10.0),3(',',E24.16))
+   315  *CFCLOS
+   316  FAILG=0
+   317  *IF,ABS(TNOW-0.001),GT,1e-12,THEN
+   318  FAILG=1
+   319  *ENDIF
+   320  *IF,ABS(UYTOP-(-0.010240000000000001)),GT,1e-8,THEN
+   321  FAILG=1
+   322  *ENDIF
+   323  *IF,RFTOP,GE,-1e-8,THEN
+   324  FAILG=1
+   325  *ENDIF
+   326  *IF,RFBOT,LE,1e-8,THEN
+   327  FAILG=1
+   328  *ENDIF
+   329  BAL=ABS(RFTOP+RFBOT)/MAX(ABS(RFTOP),ABS(RFBOT),1e-12)
+   330  *IF,BAL,GT,0.01,THEN
+   331  FAILG=1
+   332  *ENDIF
+   333  *CFOPEN,stage003_contact,csv
+   334  *VWRITE
+   335  ('pair,element,status,pressure_i_MPa,pressure_j_MPa,gap_i_mm,gap_j_mm,contact_force_y_N')
+   336  *DO,PAIR,1,2
+   337  *IF,PAIR,EQ,1,THEN
+   338  CMSEL,S,BOTTOM_CONTACT
+   339  EXPECT=RFBOT
+   340  *ELSE
+   341  CMSEL,S,TOP_CONTACT
+   342  EXPECT=RFTOP
+   343  *ENDIF
+   344  *GET,NC,ELEM,0,COUNT
+   345  EID=0
+   346  FYTOTAL=0
+   347  CLOSED=0
+   348  MAXPEN=0
+   349  MAXPRES=0
+   350  *DO,KK,1,NC
+   351  EID=ELNEXT(EID)
+   352  *GET,STV,ELEM,EID,NMISC,19
+   353  *GET,PI,ELEM,EID,SMISC,1
+   354  *GET,PJ,ELEM,EID,SMISC,2
+   355  *GET,GI,ELEM,EID,NMISC,5
+   356  *GET,GJ,ELEM,EID,NMISC,6
+   357  *GET,FYV,ELEM,EID,NMISC,22
+   358  FYTOTAL=FYTOTAL+FYV
+   359  MAXPEN=MAX(MAXPEN,GI,GJ)
+   360  MAXPRES=MAX(MAXPRES,PI,PJ)
+   361  *IF,STV,GE,2,THEN
+   362  CLOSED=CLOSED+1
+   363  *ENDIF
+   364  *VWRITE,PAIR,EID,STV,PI,PJ,GI,GJ,FYV
+   365  (F4.0,',',F12.0,',',F4.0,5(',',E16.8))
+   366  *ENDDO
+   367  *IF,CLOSED,LT,1,THEN
+   368  FAILG=1
+   369  *ENDIF
+   370  *IF,MAXPRES,LE,0,THEN
+   371  FAILG=1
+   372  *ENDIF
+   373  *IF,MAXPEN,GT,1e-5,THEN
+   374  FAILG=1
+   375  *ENDIF
+   376  CBAL=ABS(FYTOTAL+EXPECT)/MAX(ABS(EXPECT),1e-12)
+   377  *IF,CBAL,GT,0.01,THEN
+   378  FAILG=1
+   379  *ENDIF
+   380  ALLSEL,ALL
+   381  *ENDDO
+   382  *CFCLOS
+   383  *CFOPEN,stage003_gate,txt
+   384  *VWRITE,FAILG,BAL
+   385  (F4.0,',',E24.16)
+   386  *CFCLOS
+   387  ALLSEL,ALL
+   388  *DIM,IDS,ARRAY,2766505
+   389  *DIM,UXV,ARRAY,2766505
+   390  *DIM,UYV,ARRAY,2766505
+   391  *DIM,MASKV,ARRAY,2766505
+   392  *DIM,SYV,ARRAY,2766505
+   393  *DIM,SEQV,ARRAY,2766505
+   394  *DIM,EYV,ARRAY,2766505
+   395  *DIM,EXV,ARRAY,2766505
+   396  *VFILL,IDS(1),RAMP,1,1
+   397  *VGET,UXV(1),NODE,1,U,X
+   398  *VGET,UYV(1),NODE,1,U,Y
+   399  *CFOPEN,stage003_displacements,csv
+   400  *VWRITE
+   401  ('node,ux_mm,uy_mm')
+   402  *VWRITE,IDS(1),UXV(1),UYV(1)
+   403  (F12.0,2(',',E24.16))
+   404  *CFCLOS
+   405  CMSEL,S,CORNERS
+   406  *VGET,MASKV(1),NODE,1,NSEL
+   407  ALLSEL,ALL
+   408  ESEL,S,TYPE,,1
+   409  *VMASK,MASKV(1)
+   410  *VGET,SYV(1),NODE,1,S,Y
+   411  *VMASK,MASKV(1)
+   412  *VGET,SEQV(1),NODE,1,S,EQV
+   413  *VMASK,MASKV(1)
+   414  *VGET,EYV(1),NODE,1,EPEL,Y
+   415  *VMASK,MASKV(1)
+   416  *VGET,EXV(1),NODE,1,EPEL,X
+   417  *CFOPEN,stage003_stress,csv
+   418  *VWRITE
+   419  ('node,syy_MPa,seqv_MPa,elastic_eyy,elastic_exx')
+   420  *VMASK,MASKV(1)
+   421  *VWRITE,IDS(1),SYV(1),SEQV(1),EYV(1),EXV(1)
+   422  (F12.0,4(',',E24.16))
+   423  *CFCLOS
+   424  ALLSEL,ALL
+   425  *DEL,IDS
+   426  *DEL,UXV
+   427  *DEL,UYV
+   428  *DEL,MASKV
+   429  *DEL,SYV
+   430  *DEL,SEQV
+   431  *DEL,EYV
+   432  *DEL,EXV
+   433  *IF,FAILG,NE,0,THEN
+   434  /COM,PILOT_STAGE_GATE_FAILED_NO_ADVANCEMENT
+   435  FINISH
+   436  SAVE,pilot_partial,db
+   437  /EXIT,NOSAVE
+   438  *ENDIF
+   439  FINISH
+   440  SAVE,pilot_final,db
+   441  /EXIT,NOSAVE
+
+ RUN SETUP PROCEDURE FROM FILE= C:\Program Files\ANSYS Inc\v241\ANSYS\apdl\start.ans
+
+ /INPUT FILE= C:\Program Files\ANSYS Inc\v241\ANSYS\apdl\start.ans  LINE=       0
+
+ CLEAR DATABASE AND RERUN START.ANS
+
+ RUN SETUP PROCEDURE FROM FILE= C:\Program Files\ANSYS Inc\v241\ANSYS\apdl\start.ans
+
+ Ansys Mechanical Enterprise Academic Research
+
+ /INPUT FILE= C:\Program Files\ANSYS Inc\v241\ANSYS\apdl\start.ans  LINE=       0
+
+ RESUME ANSYS DATA FROM FILE NAME=C:/Users/sd22446/AppData/Local/Packages/OpenAI.Codex_2p2nqsd0c76g0/LocalCache/Local/YoungDawgs/artifacts/solver/v063/contact_setup_001/contact_model.db
+
+ Memory resident data base increased from      1024 MB to      2048 MB.
+
+ *** MAPDL GLOBAL STATUS ***
+
+ TITLE =
+ ANALYSIS TYPE =  STATIC (STEADY-STATE)
+         3 ELEM TYPES DEFINED    MAX ELEM TYPE NUMBER =             3
+   1264272 ELEMENTS DEFINED      MAX ELEMENT NUMBER =         1264272
+   2766511 NODES DEFINED         MAX NODE NUMBER =            2766511
+         1 MATERIALS DEFINED     MAX MATERIAL NUMBER =              1
+         3 REAL CONSTS DEFINED   MAX REAL CONST NUMBER =            3
+         0 SECTIONS DEFINED      MAX SECTION NUMBER =               0
+         0 COORD SYS DEFINED     MAX COORD SYS NUMBER =             0
+
+ ACTIVE COORDINATE SYSTEM             =          0  (CARTESIAN)
+ NUMBER OF DEFINED NODAL CONSTRAINTS  =          7
+ NUMBER OF DEFINED NODAL LOADS        =          0
+ NUMBER OF DEFINED COMPONENTS         =          8
+ NUMBER OF DEFINED ELEM SURFACE LOADS =          0
+ NUMBER OF DEFINED ELEM BODY LOADS    =          0
+ NUMBER OF DEFINED NODE BODY FORCES   =          0
+
+ INITIAL JOBNAME = compression
+ CURRENT JOBNAME = compression
+
+ CURRENT JOBNAME REDEFINED AS compression
+
+ *****  MAPDL SOLUTION ROUTINE  *****
+
+ *****  MAPDL SOLVE    COMMAND  *****
+
+ *** SELECTION OF ELEMENT TECHNOLOGIES FOR APPLICABLE ELEMENTS ***
+                ---GIVE SUGGESTIONS ONLY---
+
+ ELEMENT TYPE         1 IS PLANE183 WITH PLANE STRESS OPTION. NO SUGGESTION IS
+ AVAILABLE.
+
+
+
+ *** MAPDL - ENGINEERING ANALYSIS SYSTEM  RELEASE 2024 R1          24.1     ***
+ Ansys Mechanical Enterprise Academic Research
+ 00446375  VERSION=WINDOWS x64   20:17:26  OCT 29, 2026 CP=      6.016
+
+
+
+
+
+ SOLUTION MONITORING INFO IS WRITTEN TO FILE= compression.mntr
+
+ *** NOTE ***                            CP =      21.000   TIME= 20:17:41
+ Rigid-deformable contact pair identified by real constant set 2 and
+ contact element type 3 has been set up.  The degrees of freedom of the
+ rigid surface are driven by the pilot node 2766508.
+ Boundary conditions can be applied on any target node.
+ Contact algorithm: Augmented Lagrange method
+ Contact detection at: Gauss integration point
+ Contact stiffness factor FKN                  1.0000
+ The resulting initial contact stiffness      0.20000E+09
+ User defined penetration tolerance FTOLN     0.10000E-04
+ Frictionless contact pair is defined
+ Update contact stiffness at each iteration
+ Average contact surface length               0.33333E-02
+ Average contact pair depth                   0.33267E-02
+ Average target surface length                 11.264
+ Default pinball region factor PINB            2.0000
+ The resulting pinball region                 0.66533E-02
+ *WARNING*: Initial penetration is included.
+
+ *** NOTE ***                            CP =      21.000   TIME= 20:17:41
+ Max.  Initial penetration 0 was detected between contact element
+ 1261673 and target element 1261671.
+ ****************************************
+
+
+ *** NOTE ***                            CP =      21.000   TIME= 20:17:41
+ Rigid-deformable contact pair identified by real constant set 3 and
+ contact element type 3 has been set up.  The degrees of freedom of the
+ rigid surface are driven by the pilot node 2766511.
+ Boundary conditions can be applied on any target node.
+ Contact algorithm: Augmented Lagrange method
+ Contact detection at: Gauss integration point
+ Contact stiffness factor FKN                  1.0000
+ The resulting initial contact stiffness      0.20000E+09
+ User defined penetration tolerance FTOLN     0.10000E-04
+ Frictionless contact pair is defined
+ Update contact stiffness at each iteration
+ Average contact surface length               0.33333E-02
+ Average contact pair depth                   0.33463E-02
+ Average target surface length                 11.264
+ Default pinball region factor PINB            2.0000
+ The resulting pinball region                 0.66926E-02
+ *WARNING*: Initial penetration is included.
+
+ *** NOTE ***                            CP =      21.000   TIME= 20:17:41
+ Max.  Initial penetration 3.552713679E-15 was detected between contact
+ element 1263985 and target element 1263041.
+ ****************************************
+
+
+
+
+
+         Dump symbolic assembly keys:
+  accOn                         0
+  accSP                         0
+  accDbg                        0
+  accMinSz           0.000000E+00
+  accMaxSz           0.000000E+00
+  accMinOps          0.000000E+00
+  myNumAccDev                   1
+  kThermType                    0
+  kThermOld                     0
+  timint                        0
+  frdsup                        1
+  nrkey                         1
+  memoryReuse                  -1
+  diagtraleigh                  0
+  cin(1)             0.000000E+00
+  cin(2)             0.000000E+00
+  tintpr(4)          0.100000E+01
+  newCElogic                   -1
+  mpcMemoryReuse                4
+  pcgopts(1)                    0
+  pcgopts(2)                    0
+  pcgopts(3)                   -2
+  pcgopts(4)                    0
+  pcgopts(5)                    0
+  pcgopts(6)                    0
+  pcgopts(7)                    0
+  pcgopts(8)                   13
+  pcgopts2(1)                   0
+  pcgopts2(2)                   0
+  GenericSolve                  3
+  SvElemMult                    0
+  key_unsym                     0
+  lumplocal                     0
+  analysistype                  0
+  cadoe_analysisty             -1
+  cadoe_pass                    0
+  overCheck                     0
+  overMethod                    0
+  imgPrs                        0
+  debuglvl                      0
+  LevDifficult                  0
+  DScompare                     0
+  FullFileReq                   0
+  DistFullFile                  0
+  OutOfCoreAssmKey              0
+  modext                        0
+  CycNumSectorsL                0
+  scaleMass                     0
+  ASMdbg                        2
+  TrackInquire(2)               0
+  localNonlKey                  0
+  new_arckey                    0
+  inrlf                         0
+  asmContKey                    1
+  twoStepMethUsed               0
+  trnopt                        0
+  actSymbFlag                   0
+  partialAssemb                 0
+  cadoe_frqswp_vt               0
+  rbflag                        0
+  blrOptions(1)                 0
+  blrOptions(2)                 0
+  blrOptions(3)                 0
+  blrOptions(4)                 0
+  blrOptions(5)                 0
+  hrmopt                        0
+  morStage                      0
+  HUGE               0.126765E+31
+  extrng(1)          0.000000E+00
+  extrng(2)          0.000000E+00
+  pccgThresh         0.100000E-07
+  vtomeg2            0.000000E+00
+  blrToler(1)        0.000000E+00
+  blrToler(2)        0.000000E+00
+  blrToler(3)        0.000000E+00
+  blrToler(4)        0.000000E+00
+
+  Updated memoryReuse key = -1
+
+ NUMBER OF SMP THREADS USED       =     1
+ ELEMENT FORMULATION CP TIME      =    33.281
+ ELEMENT FORMULATION ELAPSED TIME =    33.548
+
+ Range of element maximum matrix coefficients in global coordinates
+ Maximum = 17464891.6 at element 1264272.
+ Minimum = 1713.01741 at element 248667.
+
+   *** ELEMENT MATRIX FORMULATION TIMES
+     TYPE    NUMBER   ENAME      TOTAL CP  AVE CP
+
+        1   1261670  PLANE183     32.609   0.000026
+        2         4  TARGE169      0.000   0.000000
+        3      2598  CONTA172      0.094   0.000036
+ Time at end of element matrix formulation CP = 57.984375.
+
+ ALL CURRENT MAPDL DATA WRITTEN TO FILE NAME= compression.rdb
+  FOR POSSIBLE RESUME FROM THIS POINT
+     FORCE CONVERGENCE VALUE  =   8915.      CRITERION=   44.57
+
+ ZeroThreshold value for dropping near-zero values is set to:  0.1000000000E-13
+
+ MultiSolution: Sparse Assembly Option .... Call No. 1
+     ANSYS largest memory block available     1250233980 :  1192.32 Mbytes
+                     ANSYS memory in use      3319883392 :  7262.09 Mbytes
+                   ANSYS max memory used       423351744 :  8595.74 Mbytes
+
+ ZeroThreshold value for dropping near-zero values when writing matrix has been adjusted to:  1.0000000000E-14
+
+  End of PcgEnd
+     ANSYS largest memory block available     1162270460 :  1108.43 Mbytes
+                     ANSYS memory in use      2737642496 :  6706.82 Mbytes
+                 ANSYS max memory in use      1040105536 :  9183.92 Mbytes
+  Total Time (sec) for Sparse Assembly      3.64 cpu     3.66 wall
+
+ SPARSE MATRIX DIRECT SOLVER.
+  Number of equations =     5533009,    Maximum wavefront =    105
+ ncoefKL/neqn =   10.7
+
+ Distributed Sparse solver memory mode has been set to optimal out-of-core mode
+
+
+ Memory needed to get past mf3Order:     1.286 GB
+
+ Memory needed to get past mf3Sym:     1.941 GB
+
+ after mf2Sym on process   0
+ Currently using      =       63142330
+ Needs for next phase =      260556426
+
+ Estimates of speedups
+  FctSpeedup  SlvSpeedup  VctSpeedup
+    Infinity       0.000       0.000
+
+ Call to mf2LOps
+            my_Lnz            my_ops           ttl_Lnz           ttl_ops
+        248328977.      22544451405.        248328977.      22544451405.
+
+           min Lnz           max Lnz   ratio
+ -------------------------------------------
+    0.24832898E+09    0.24832898E+09  1.0000
+
+           min ops           max ops   ratio
+ -------------------------------------------
+    0.22544451E+11    0.22544451E+11  1.0000
+  Memory allocated for solver              =  6058.781 MB
+  Memory required for in-core solution     =  5844.921 MB
+  Memory required for out-of-core solution =  3679.468 MB
+
+ *** NOTE ***                            CP =      93.516   TIME= 20:18:54
+ The Sparse Matrix Solver is currently running in the in-core memory
+ mode.  This memory mode uses the most amount of memory in order to
+ avoid using the hard drive as much as possible, which most often
+ results in the fastest solution time.  This mode is recommended if
+ enough physical memory is present to accommodate all of the solver
+ data.
+ adjust near zero pivots tolerance =   6.072822892313324E-014
+ # of positive pivots  =       5533009
+ # of negative pivots  =             0
+ # of near zero pivots =             0
+ Maximum pivot         =    0.2994E+06
+ Minimum pivot         =    0.2580E+01
+
+ # of 1x1 pivots       =             0
+ # of 2x2 pivots       =             0
+ # of delayed pivots   =             0
+ # of defered pivots   =             0
+ Sparse solver maximum pivot= 299355.116 at node 87651 UY.
+ Sparse solver minimum pivot= 2.57959991 at node 424 UX.
+ Sparse solver minimum pivot in absolute value= 2.57959991 at node 424
+ UX.
+ F No I/O reqrd     0.213 sec
+ F No I/O reqrd     0.661 sec
+
+ ===========================
+ = multifrontal statistics =
+ ===========================
+
+     number of equations                     =         5533009
+     no. of nonzeroes in lower triangle of a =        62751093
+     no. of nonzeroes in the factor l        =       294559232
+     ratio of nonzeroes in factor (min/max)  =          1.0000
+     number of super nodes                   =          369891
+     maximum order of a front matrix         =            1450
+     maximum size of a front matrix          =         1051975
+     maximum size of a front trapezoid       =          933661
+     no. of floating point ops for factor    =      2.2544D+10
+     no. of floating point ops for solve     =      0.0000D+00
+     ratio of flops for factor (min/max)     =          1.0000
+     ratio of allocated memory (max/min)     =          1.0000
+     near zero pivot monitoring activated
+     number of pivots adjusted               =               0
+     negative pivot monitoring activated
+     number of negative pivots encountered   =               0
+     factorization panel size                =             128
+     number of processes used                =               1
+     number of threads per process used      =               1
+     number of cores used                    =               1
+     time (cpu & wall) for structure input   =        0.328125        0.320075
+     time (cpu & wall) for ordering          =       19.953125       20.146954
+     time (cpu & wall) for other matrix prep =        3.593750        3.651921
+     time (cpu & wall) for value input       =        0.718750        0.719166
+     time (cpu & wall) for matrix distrib.   =        4.046875        4.107386
+     time (cpu & wall) for numeric factor    =        3.046875        3.088867
+     computational rate (gflops) for factor  =        7.399205        7.298615
+     time (cpu & wall) for numeric solve     =        0.718750        0.728642
+     computational rate (gflops) for solve   =        0.000000        0.000000
+     effective I/O rate (GB/sec) for solve   =        0.000000        0.000000
+
+     i/o stats: unit-Core          file length             amount transferred
+                                 words       mbytes          words       mbytes
+                   ----     ----------     --------     ----------     --------
+                95-   0      63143936.      482. MB      63142330.      482. MB
+
+                -------     ----------     --------     ----------     --------
+                Totals:      63143936.      482. MB      63142330.      482. MB
+
+
+  Total Solver Memory allocated              =     6058.781 MB
+
+  Sparse Matrix Solver      CPU Time (sec) =         33.359
+  Sparse Matrix Solver  ELAPSED Time (sec) =         33.779
+  Sparse Matrix Solver   Memory Used ( MB) =       6058.781
+
+     DISP CONVERGENCE VALUE   =  0.5315E-03  CRITERION=  0.2658E-04
+    EQUIL ITER   1 COMPLETED.  NEW TRIANG MATRIX.  MAX DOF INC= -0.5315E-03
+
+ NUMBER OF SMP THREADS USED       =     1
+ ELEMENT FORMULATION CP TIME      =    22.422
+ ELEMENT FORMULATION ELAPSED TIME =    22.585
+     DISP CONVERGENCE VALUE   =  0.5315E-03  CRITERION=  0.2658E-04
+     LINE SEARCH PARAMETER =   1.000     SCALED MAX DOF INC = -0.5315E-03
+
+         Dump symbolic assembly keys:
+  accOn                         0
+  accSP                         0
+  accDbg                        0
+  accMinSz           0.000000E+00
+  accMaxSz           0.000000E+00
+  accMinOps          0.000000E+00
+  myNumAccDev                   1
+  kThermType                    0
+  kThermOld                     0
+  timint                        0
+  frdsup                        0
+  nrkey                         1
+  memoryReuse                   2
+  diagtraleigh                  0
+  cin(1)             0.000000E+00
+  cin(2)             0.000000E+00
+  tintpr(4)          0.100000E+01
+  newCElogic                   -1
+  mpcMemoryReuse                4
+  pcgopts(1)                    0
+  pcgopts(2)                    0
+  pcgopts(3)                   -2
+  pcgopts(4)                    0
+  pcgopts(5)                    0
+  pcgopts(6)                    0
+  pcgopts(7)                    0
+  pcgopts(8)                   13
+  pcgopts2(1)                   0
+  pcgopts2(2)                   0
+  GenericSolve                  3
+  SvElemMult                    0
+  key_unsym                     0
+  lumplocal                     0
+  analysistype                  0
+  cadoe_analysisty             -1
+  cadoe_pass                    0
+  overCheck                     0
+  overMethod                    0
+  imgPrs                        0
+  debuglvl                      0
+  LevDifficult                  0
+  DScompare                     0
+  FullFileReq                   0
+  DistFullFile                  0
+  OutOfCoreAssmKey              0
+  modext                        0
+  CycNumSectorsL                0
+  scaleMass                     0
+  ASMdbg                        2
+  TrackInquire(2)               0
+  localNonlKey                  0
+  new_arckey                    0
+  inrlf                         0
+  asmContKey                    1
+  twoStepMethUsed               0
+  trnopt                        0
+  actSymbFlag                   0
+  partialAssemb                 0
+  cadoe_frqswp_vt               0
+  rbflag                        0
+  blrOptions(1)                 0
+  blrOptions(2)                 0
+  blrOptions(3)                 0
+  blrOptions(4)                 0
+  blrOptions(5)                 0
+  hrmopt                        0
+  morStage                      0
+  HUGE               0.126765E+31
+  extrng(1)          0.000000E+00
+  extrng(2)          0.000000E+00
+  pccgThresh         0.100000E-07
+  vtomeg2            0.000000E+00
+  blrToler(1)        0.000000E+00
+  blrToler(2)        0.000000E+00
+  blrToler(3)        0.000000E+00
+  blrToler(4)        0.000000E+00
+
+  Updated memoryReuse key = 2
+
+ NUMBER OF SMP THREADS USED       =     1
+ ELEMENT FORMULATION CP TIME      =    30.641
+ ELEMENT FORMULATION ELAPSED TIME =    30.849
+     FORCE CONVERGENCE VALUE  =  0.2872E-02  CRITERION=  0.4700E-04
+
+ ZeroThreshold value for dropping near-zero values is set to:  0.1000000000E-13
+
+ MultiSolution: Sparse Assembly Option .... Call No. 2
+     ANSYS largest memory block available     1162270460 :  1108.43 Mbytes
+                     ANSYS memory in use      1266842624 :  9400.16 Mbytes
+                   ANSYS max memory used       578263872 : 12839.48 Mbytes
+
+ ZeroThreshold value for dropping near-zero values when writing matrix has been adjusted to:  1.0000000000E-14
+
+  End of PcgEnd
+     ANSYS largest memory block available     1162794876 :  1108.93 Mbytes
+                     ANSYS memory in use      3946941440 :  7860.10 Mbytes
+                 ANSYS max memory in use       578263872 : 12839.48 Mbytes
+  Total Time (sec) for Sparse Assembly      2.53 cpu     2.58 wall
+
+ SPARSE MATRIX DIRECT SOLVER.
+  Number of equations =     5533009,    Maximum wavefront =    105
+ ncoefKL/neqn =   11.3
+
+ after mf2Sym on process   0
+ Currently using      =       63142330
+ Needs for next phase =       63142330
+
+ Call to mf2LOps
+            my_Lnz            my_ops           ttl_Lnz           ttl_ops
+        248328977.      22544451405.        248328977.      22544451405.
+
+           min Lnz           max Lnz   ratio
+ -------------------------------------------
+    0.24832898E+09    0.24832898E+09  1.0000
+
+           min ops           max ops   ratio
+ -------------------------------------------
+    0.22544451E+11    0.22544451E+11  1.0000
+  Memory allocated for solver              =  6058.781 MB
+  Memory required for in-core solution     =  5844.921 MB
+  Memory required for out-of-core solution =  3679.468 MB
+
+ *** NOTE ***                            CP =     162.531   TIME= 20:20:04
+ The Sparse Matrix Solver is currently running in the in-core memory
+ mode.  This memory mode uses the most amount of memory in order to
+ avoid using the hard drive as much as possible, which most often
+ results in the fastest solution time.  This mode is recommended if
+ enough physical memory is present to accommodate all of the solver
+ data.
+ adjust near zero pivots tolerance =   6.072654318581082E-014
+ # of positive pivots  =       5533009
+ # of negative pivots  =             0
+ # of near zero pivots =             0
+ Maximum pivot         =    0.3267E+05
+ Minimum pivot         =    0.1975E+01
+
+ # of 1x1 pivots       =             0
+ # of 2x2 pivots       =             0
+ # of delayed pivots   =             0
+ # of defered pivots   =             0
+ Sparse solver maximum pivot= 32668.8923 at node 94123 UY.
+ Sparse solver minimum pivot= 1.97460551 at node 424 UX.
+ Sparse solver minimum pivot in absolute value= 1.97460551 at node 424
+ UX.
+
+ ===========================
+ = multifrontal statistics =
+ ===========================
+
+     number of equations                     =         5533009
+     no. of nonzeroes in lower triangle of a =        62751093
+     no. of nonzeroes in the factor l        =       294559232
+     ratio of nonzeroes in factor (min/max)  =          1.0000
+     number of super nodes                   =          369891
+     maximum order of a front matrix         =            1450
+     maximum size of a front matrix          =         1051975
+     maximum size of a front trapezoid       =          933661
+     no. of floating point ops for factor    =      2.2544D+10
+     no. of floating point ops for solve     =      0.0000D+00
+     ratio of flops for factor (min/max)     =          1.0000
+     ratio of allocated memory (max/min)     =          1.0000
+     near zero pivot monitoring activated
+     number of pivots adjusted               =               0
+     negative pivot monitoring activated
+     number of negative pivots encountered   =               0
+     factorization panel size                =             128
+     number of processes used                =               1
+     number of threads per process used      =               1
+     number of cores used                    =               1
+     time (cpu & wall) for structure input   =        0.000000        0.000000
+     time (cpu & wall) for ordering          =        0.000000        0.000000
+     time (cpu & wall) for other matrix prep =        0.000000        0.000000
+     time (cpu & wall) for value input       =        0.578125        0.585530
+     time (cpu & wall) for matrix distrib.   =        3.937500        4.007729
+     time (cpu & wall) for numeric factor    =        3.296875        3.341514
+     computational rate (gflops) for factor  =        6.838127        6.746777
+     time (cpu & wall) for numeric solve     =        0.859375        0.850335
+     computational rate (gflops) for solve   =        0.000000        0.000000
+     effective I/O rate (GB/sec) for solve   =        0.000000        0.000000
+
+     i/o stats: unit-Core          file length             amount transferred
+                                 words       mbytes          words       mbytes
+                   ----     ----------     --------     ----------     --------
+                95-   0      63143936.      482. MB      63142330.      482. MB
+
+                -------     ----------     --------     ----------     --------
+                Totals:      63143936.      482. MB      63142330.      482. MB
+
+
+  Total Solver Memory allocated              =     6058.781 MB
+
+  Sparse Matrix Solver      CPU Time (sec) =          9.578
+  Sparse Matrix Solver  ELAPSED Time (sec) =          9.693
+  Sparse Matrix Solver   Memory Used ( MB) =       6058.781
+
+    EQUIL ITER   2 COMPLETED.  NEW TRIANG MATRIX.  MAX DOF INC= -0.4569E-04
+
+ NUMBER OF SMP THREADS USED       =     1
+ ELEMENT FORMULATION CP TIME      =    21.828
+ ELEMENT FORMULATION ELAPSED TIME =    21.949
+     DISP CONVERGENCE VALUE   =  0.4569E-04  CRITERION=  0.2658E-04
+     LINE SEARCH PARAMETER =   1.000     SCALED MAX DOF INC = -0.4569E-04
+
+         Dump symbolic assembly keys:
+  accOn                         0
+  accSP                         0
+  accDbg                        0
+  accMinSz           0.000000E+00
+  accMaxSz           0.000000E+00
+  accMinOps          0.000000E+00
+  myNumAccDev                   1
+  kThermType                    0
+  kThermOld                     0
+  timint                        0
+  frdsup                        0
+  nrkey                         1
+  memoryReuse                   2
+  diagtraleigh                  0
+  cin(1)             0.000000E+00
+  cin(2)             0.000000E+00
+  tintpr(4)          0.100000E+01
+  newCElogic                   -1
+  mpcMemoryReuse                4
+  pcgopts(1)                    0
+  pcgopts(2)                    0
+  pcgopts(3)                   -2
+  pcgopts(4)                    0
+  pcgopts(5)                    0
+  pcgopts(6)                    0
+  pcgopts(7)                    0
+  pcgopts(8)                   13
+  pcgopts2(1)                   0
+  pcgopts2(2)                   0
+  GenericSolve                  3
+  SvElemMult                    0
+  key_unsym                     0
+  lumplocal                     0
+  analysistype                  0
+  cadoe_analysisty             -1
+  cadoe_pass                    0
+  overCheck                     0
+  overMethod                    0
+  imgPrs                        0
+  debuglvl                      0
+  LevDifficult                  0
+  DScompare                     0
+  FullFileReq                   0
+  DistFullFile                  0
+  OutOfCoreAssmKey              0
+  modext                        0
+  CycNumSectorsL                0
+  scaleMass                     0
+  ASMdbg                        2
+  TrackInquire(2)               0
+  localNonlKey                  0
+  new_arckey                    0
+  inrlf                         0
+  asmContKey                    1
+  twoStepMethUsed               0
+  trnopt                        0
+  actSymbFlag                   0
+  partialAssemb                 0
+  cadoe_frqswp_vt               0
+  rbflag                        0
+  blrOptions(1)                 0
+  blrOptions(2)                 0
+  blrOptions(3)                 0
+  blrOptions(4)                 0
+  blrOptions(5)                 0
+  hrmopt                        0
+  morStage                      0
+  HUGE               0.126765E+31
+  extrng(1)          0.000000E+00
+  extrng(2)          0.000000E+00
+  pccgThresh         0.100000E-07
+  vtomeg2            0.000000E+00
+  blrToler(1)        0.000000E+00
+  blrToler(2)        0.000000E+00
+  blrToler(3)        0.000000E+00
+  blrToler(4)        0.000000E+00
+
+  Updated memoryReuse key = 2
+
+ NUMBER OF SMP THREADS USED       =     1
+ ELEMENT FORMULATION CP TIME      =    30.750
+ ELEMENT FORMULATION ELAPSED TIME =    30.982
+     FORCE CONVERGENCE VALUE  =  0.1713E-02  CRITERION=  0.4819E-03
+
+ ZeroThreshold value for dropping near-zero values is set to:  0.1000000000E-13
+
+ MultiSolution: Sparse Assembly Option .... Call No. 3
+     ANSYS largest memory block available     1122895292 :  1070.88 Mbytes
+                     ANSYS memory in use      1312152960 :  9443.37 Mbytes
+                   ANSYS max memory used       623574144 : 12882.69 Mbytes
+
+ ZeroThreshold value for dropping near-zero values when writing matrix has been adjusted to:  1.0000000000E-14
+
+  End of PcgEnd
+     ANSYS largest memory block available     1162794876 :  1108.93 Mbytes
+                     ANSYS memory in use      3946941440 :  7860.10 Mbytes
+                 ANSYS max memory in use       623574144 : 12882.69 Mbytes
+  Total Time (sec) for Sparse Assembly      2.38 cpu     2.38 wall
+
+ SPARSE MATRIX DIRECT SOLVER.
+  Number of equations =     5533009,    Maximum wavefront =    105
+ ncoefKL/neqn =   11.3
+
+ after mf2Sym on process   0
+ Currently using      =       63142330
+ Needs for next phase =       63142330
+
+ Call to mf2LOps
+            my_Lnz            my_ops           ttl_Lnz           ttl_ops
+        248328977.      22544451405.        248328977.      22544451405.
+
+           min Lnz           max Lnz   ratio
+ -------------------------------------------
+    0.24832898E+09    0.24832898E+09  1.0000
+
+           min ops           max ops   ratio
+ -------------------------------------------
+    0.22544451E+11    0.22544451E+11  1.0000
+  Memory allocated for solver              =  6058.781 MB
+  Memory required for in-core solution     =  5844.921 MB
+  Memory required for out-of-core solution =  3679.468 MB
+
+ *** NOTE ***                            CP =     231.016   TIME= 20:21:13
+ The Sparse Matrix Solver is currently running in the in-core memory
+ mode.  This memory mode uses the most amount of memory in order to
+ avoid using the hard drive as much as possible, which most often
+ results in the fastest solution time.  This mode is recommended if
+ enough physical memory is present to accommodate all of the solver
+ data.
+ adjust near zero pivots tolerance =   6.072654026764035E-014
+ # of positive pivots  =       5533009
+ # of negative pivots  =             0
+ # of near zero pivots =             0
+ Maximum pivot         =    0.3267E+05
+ Minimum pivot         =    0.1938E+01
+
+ # of 1x1 pivots       =             0
+ # of 2x2 pivots       =             0
+ # of delayed pivots   =             0
+ # of defered pivots   =             0
+ Sparse solver maximum pivot= 32668.9817 at node 94123 UY.
+ Sparse solver minimum pivot= 1.9376979 at node 424 UX.
+ Sparse solver minimum pivot in absolute value= 1.9376979 at node 424
+ UX.
+
+ ===========================
+ = multifrontal statistics =
+ ===========================
+
+     number of equations                     =         5533009
+     no. of nonzeroes in lower triangle of a =        62751093
+     no. of nonzeroes in the factor l        =       294559232
+     ratio of nonzeroes in factor (min/max)  =          1.0000
+     number of super nodes                   =          369891
+     maximum order of a front matrix         =            1450
+     maximum size of a front matrix          =         1051975
+     maximum size of a front trapezoid       =          933661
+     no. of floating point ops for factor    =      2.2544D+10
+     no. of floating point ops for solve     =      0.0000D+00
+     ratio of flops for factor (min/max)     =          1.0000
+     ratio of allocated memory (max/min)     =          1.0000
+     near zero pivot monitoring activated
+     number of pivots adjusted               =               0
+     negative pivot monitoring activated
+     number of negative pivots encountered   =               0
+     factorization panel size                =             128
+     number of processes used                =               1
+     number of threads per process used      =               1
+     number of cores used                    =               1
+     time (cpu & wall) for structure input   =        0.000000        0.000000
+     time (cpu & wall) for ordering          =        0.000000        0.000000
+     time (cpu & wall) for other matrix prep =        0.000000        0.000000
+     time (cpu & wall) for value input       =        0.562500        0.571512
+     time (cpu & wall) for matrix distrib.   =        4.000000        4.066988
+     time (cpu & wall) for numeric factor    =        3.140625        3.194554
+     computational rate (gflops) for factor  =        7.178333        7.057152
+     time (cpu & wall) for numeric solve     =        0.859375        0.903406
+     computational rate (gflops) for solve   =        0.000000        0.000000
+     effective I/O rate (GB/sec) for solve   =        0.000000        0.000000
+
+     i/o stats: unit-Core          file length             amount transferred
+                                 words       mbytes          words       mbytes
+                   ----     ----------     --------     ----------     --------
+                95-   0      63143936.      482. MB      63142330.      482. MB
+
+                -------     ----------     --------     ----------     --------
+                Totals:      63143936.      482. MB      63142330.      482. MB
+
+
+  Total Solver Memory allocated              =     6058.781 MB
+
+  Sparse Matrix Solver      CPU Time (sec) =          9.312
+  Sparse Matrix Solver  ELAPSED Time (sec) =          9.501
+  Sparse Matrix Solver   Memory Used ( MB) =       6058.781
+
+    EQUIL ITER   3 COMPLETED.  NEW TRIANG MATRIX.  MAX DOF INC= -0.7966E-05
+
+ NUMBER OF SMP THREADS USED       =     1
+ ELEMENT FORMULATION CP TIME      =    21.281
+ ELEMENT FORMULATION ELAPSED TIME =    21.471
+     DISP CONVERGENCE VALUE   =  0.7314E-05  CRITERION=  0.2658E-04 <<< CONVERGED
+     LINE SEARCH PARAMETER =  0.9181     SCALED MAX DOF INC = -0.7314E-05
+
+         Dump symbolic assembly keys:
+  accOn                         0
+  accSP                         0
+  accDbg                        0
+  accMinSz           0.000000E+00
+  accMaxSz           0.000000E+00
+  accMinOps          0.000000E+00
+  myNumAccDev                   1
+  kThermType                    0
+  kThermOld                     0
+  timint                        0
+  frdsup                        0
+  nrkey                         1
+  memoryReuse                   2
+  diagtraleigh                  0
+  cin(1)             0.000000E+00
+  cin(2)             0.000000E+00
+  tintpr(4)          0.100000E+01
+  newCElogic                   -1
+  mpcMemoryReuse                4
+  pcgopts(1)                    0
+  pcgopts(2)                    0
+  pcgopts(3)                   -2
+  pcgopts(4)                    0
+  pcgopts(5)                    0
+  pcgopts(6)                    0
+  pcgopts(7)                    0
+  pcgopts(8)                   13
+  pcgopts2(1)                   0
+  pcgopts2(2)                   0
+  GenericSolve                  3
+  SvElemMult                    0
+  key_unsym                     0
+  lumplocal                     0
+  analysistype                  0
+  cadoe_analysisty             -1
+  cadoe_pass                    0
+  overCheck                     0
+  overMethod                    0
+  imgPrs                        0
+  debuglvl                      0
+  LevDifficult                  0
+  DScompare                     0
+  FullFileReq                   0
+  DistFullFile                  0
+  OutOfCoreAssmKey              0
+  modext                        0
+  CycNumSectorsL                0
+  scaleMass                     0
+  ASMdbg                        2
+  TrackInquire(2)               0
+  localNonlKey                  0
+  new_arckey                    0
+  inrlf                         0
+  asmContKey                    1
+  twoStepMethUsed               0
+  trnopt                        0
+  actSymbFlag                   0
+  partialAssemb                 0
+  cadoe_frqswp_vt               0
+  rbflag                        0
+  blrOptions(1)                 0
+  blrOptions(2)                 0
+  blrOptions(3)                 0
+  blrOptions(4)                 0
+  blrOptions(5)                 0
+  hrmopt                        0
+  morStage                      0
+  HUGE               0.126765E+31
+  extrng(1)          0.000000E+00
+  extrng(2)          0.000000E+00
+  pccgThresh         0.100000E-07
+  vtomeg2            0.000000E+00
+  blrToler(1)        0.000000E+00
+  blrToler(2)        0.000000E+00
+  blrToler(3)        0.000000E+00
+  blrToler(4)        0.000000E+00
+
+  Updated memoryReuse key = 2
+
+ NUMBER OF SMP THREADS USED       =     1
+ ELEMENT FORMULATION CP TIME      =    28.203
+ ELEMENT FORMULATION ELAPSED TIME =    28.539
+     FORCE CONVERGENCE VALUE  =  0.3844E-02  CRITERION=  0.5235E-03
+
+ ZeroThreshold value for dropping near-zero values is set to:  0.1000000000E-13
+
+ MultiSolution: Sparse Assembly Option .... Call No. 4
+     ANSYS largest memory block available     1061956412 :  1012.76 Mbytes
+                     ANSYS memory in use      1312152896 :  9443.37 Mbytes
+                   ANSYS max memory used       623574208 : 12882.69 Mbytes
+
+ ZeroThreshold value for dropping near-zero values when writing matrix has been adjusted to:  1.0000000000E-14
+
+  End of PcgEnd
+     ANSYS largest memory block available     1162794876 :  1108.93 Mbytes
+                     ANSYS memory in use      3946941376 :  7860.10 Mbytes
+                 ANSYS max memory in use       623574208 : 12882.69 Mbytes
+  Total Time (sec) for Sparse Assembly      1.92 cpu     1.94 wall
+
+ SPARSE MATRIX DIRECT SOLVER.
+  Number of equations =     5533009,    Maximum wavefront =    105
+ ncoefKL/neqn =   11.3
+
+ after mf2Sym on process   0
+ Currently using      =       63142330
+ Needs for next phase =       63142330
+
+ Call to mf2LOps
+            my_Lnz            my_ops           ttl_Lnz           ttl_ops
+        248328977.      22544451405.        248328977.      22544451405.
+
+           min Lnz           max Lnz   ratio
+ -------------------------------------------
+    0.24832898E+09    0.24832898E+09  1.0000
+
+           min ops           max ops   ratio
+ -------------------------------------------
+    0.22544451E+11    0.22544451E+11  1.0000
+  Memory allocated for solver              =  6058.781 MB
+  Memory required for in-core solution     =  5844.921 MB
+  Memory required for out-of-core solution =  3679.468 MB
+
+ *** NOTE ***                            CP =     295.875   TIME= 20:22:18
+ The Sparse Matrix Solver is currently running in the in-core memory
+ mode.  This memory mode uses the most amount of memory in order to
+ avoid using the hard drive as much as possible, which most often
+ results in the fastest solution time.  This mode is recommended if
+ enough physical memory is present to accommodate all of the solver
+ data.
+ adjust near zero pivots tolerance =   6.072653962175729E-014
+ # of positive pivots  =       5533009
+ # of negative pivots  =             0
+ # of near zero pivots =             0
+ Maximum pivot         =    0.3267E+05
+ Minimum pivot         =    0.1886E+01
+
+ # of 1x1 pivots       =             0
+ # of 2x2 pivots       =             0
+ # of delayed pivots   =             0
+ # of defered pivots   =             0
+ Sparse solver maximum pivot= 32669.063 at node 94123 UY.
+ Sparse solver minimum pivot= 1.8862755 at node 424 UX.
+ Sparse solver minimum pivot in absolute value= 1.8862755 at node 424
+ UX.
+
+ ===========================
+ = multifrontal statistics =
+ ===========================
+
+     number of equations                     =         5533009
+     no. of nonzeroes in lower triangle of a =        62751093
+     no. of nonzeroes in the factor l        =       294559232
+     ratio of nonzeroes in factor (min/max)  =          1.0000
+     number of super nodes                   =          369891
+     maximum order of a front matrix         =            1450
+     maximum size of a front matrix          =         1051975
+     maximum size of a front trapezoid       =          933661
+     no. of floating point ops for factor    =      2.2544D+10
+     no. of floating point ops for solve     =      0.0000D+00
+     ratio of flops for factor (min/max)     =          1.0000
+     ratio of allocated memory (max/min)     =          1.0000
+     near zero pivot monitoring activated
+     number of pivots adjusted               =               0
+     negative pivot monitoring activated
+     number of negative pivots encountered   =               0
+     factorization panel size                =             128
+     number of processes used                =               1
+     number of threads per process used      =               1
+     number of cores used                    =               1
+     time (cpu & wall) for structure input   =        0.000000        0.000000
+     time (cpu & wall) for ordering          =        0.000000        0.000000
+     time (cpu & wall) for other matrix prep =        0.000000        0.000000
+     time (cpu & wall) for value input       =        0.515625        0.523129
+     time (cpu & wall) for matrix distrib.   =        3.328125        3.361326
+     time (cpu & wall) for numeric factor    =        2.687500        2.716940
+     computational rate (gflops) for factor  =        8.388633        8.297735
+     time (cpu & wall) for numeric solve     =        0.593750        0.597423
+     computational rate (gflops) for solve   =        0.000000        0.000000
+     effective I/O rate (GB/sec) for solve   =        0.000000        0.000000
+
+     i/o stats: unit-Core          file length             amount transferred
+                                 words       mbytes          words       mbytes
+                   ----     ----------     --------     ----------     --------
+                95-   0      63143936.      482. MB      63142330.      482. MB
+
+                -------     ----------     --------     ----------     --------
+                Totals:      63143936.      482. MB      63142330.      482. MB
+
+
+  Total Solver Memory allocated              =     6058.781 MB
+
+  Sparse Matrix Solver      CPU Time (sec) =          7.766
+  Sparse Matrix Solver  ELAPSED Time (sec) =          7.840
+  Sparse Matrix Solver   Memory Used ( MB) =       6058.781
+
+    EQUIL ITER   4 COMPLETED.  NEW TRIANG MATRIX.  MAX DOF INC= -0.1002E-04
+
+ NUMBER OF SMP THREADS USED       =     1
+ ELEMENT FORMULATION CP TIME      =    19.844
+ ELEMENT FORMULATION ELAPSED TIME =    20.076
+     DISP CONVERGENCE VALUE   =  0.9307E-05  CRITERION=  0.2658E-04 <<< CONVERGED
+     LINE SEARCH PARAMETER =  0.9291     SCALED MAX DOF INC = -0.9307E-05
+
+         Dump symbolic assembly keys:
+  accOn                         0
+  accSP                         0
+  accDbg                        0
+  accMinSz           0.000000E+00
+  accMaxSz           0.000000E+00
+  accMinOps          0.000000E+00
+  myNumAccDev                   1
+  kThermType                    0
+  kThermOld                     0
+  timint                        0
+  frdsup                        0
+  nrkey                         1
+  memoryReuse                   2
+  diagtraleigh                  0
+  cin(1)             0.000000E+00
+  cin(2)             0.000000E+00
+  tintpr(4)          0.100000E+01
+  newCElogic                   -1
+  mpcMemoryReuse                4
+  pcgopts(1)                    0
+  pcgopts(2)                    0
+  pcgopts(3)                   -2
+  pcgopts(4)                    0
+  pcgopts(5)                    0
+  pcgopts(6)                    0
+  pcgopts(7)                    0
+  pcgopts(8)                   13
+  pcgopts2(1)                   0
+  pcgopts2(2)                   0
+  GenericSolve                  3
+  SvElemMult                    0
+  key_unsym                     0
+  lumplocal                     0
+  analysistype                  0
+  cadoe_analysisty             -1
+  cadoe_pass                    0
+  overCheck                     0
+  overMethod                    0
+  imgPrs                        0
+  debuglvl                      0
+  LevDifficult                  0
+  DScompare                     0
+  FullFileReq                   0
+  DistFullFile                  0
+  OutOfCoreAssmKey              0
+  modext                        0
+  CycNumSectorsL                0
+  scaleMass                     0
+  ASMdbg                        2
+  TrackInquire(2)               0
+  localNonlKey                  0
+  new_arckey                    0
+  inrlf                         0
+  asmContKey                    1
+  twoStepMethUsed               0
+  trnopt                        0
+  actSymbFlag                   0
+  partialAssemb                 0
+  cadoe_frqswp_vt               0
+  rbflag                        0
+  blrOptions(1)                 0
+  blrOptions(2)                 0
+  blrOptions(3)                 0
+  blrOptions(4)                 0
+  blrOptions(5)                 0
+  hrmopt                        0
+  morStage                      0
+  HUGE               0.126765E+31
+  extrng(1)          0.000000E+00
+  extrng(2)          0.000000E+00
+  pccgThresh         0.100000E-07
+  vtomeg2            0.000000E+00
+  blrToler(1)        0.000000E+00
+  blrToler(2)        0.000000E+00
+  blrToler(3)        0.000000E+00
+  blrToler(4)        0.000000E+00
+
+  Updated memoryReuse key = 2
+
+ NUMBER OF SMP THREADS USED       =     1
+ ELEMENT FORMULATION CP TIME      =    30.469
+ ELEMENT FORMULATION ELAPSED TIME =    30.635
+     FORCE CONVERGENCE VALUE  =  0.4761E-02  CRITERION=  0.5309E-03
+
+ ZeroThreshold value for dropping near-zero values is set to:  0.1000000000E-13
+
+ MultiSolution: Sparse Assembly Option .... Call No. 5
+     ANSYS largest memory block available     1061956348 :  1012.76 Mbytes
+                     ANSYS memory in use      1312152960 :  9443.37 Mbytes
+                   ANSYS max memory used       623574208 : 12882.69 Mbytes
+
+ ZeroThreshold value for dropping near-zero values when writing matrix has been adjusted to:  1.0000000000E-14
+
+  End of PcgEnd
+     ANSYS largest memory block available     1621319228 :  1546.21 Mbytes
+                     ANSYS memory in use      3946941440 :  7860.10 Mbytes
+                 ANSYS max memory in use       623574208 : 12882.69 Mbytes
+  Total Time (sec) for Sparse Assembly      2.41 cpu     2.43 wall
+
+ SPARSE MATRIX DIRECT SOLVER.
+  Number of equations =     5533009,    Maximum wavefront =    105
+ ncoefKL/neqn =   11.3
+
+ after mf2Sym on process   0
+ Currently using      =       63142330
+ Needs for next phase =       63142330
+
+ Call to mf2LOps
+            my_Lnz            my_ops           ttl_Lnz           ttl_ops
+        248328977.      22544451405.        248328977.      22544451405.
+
+           min Lnz           max Lnz   ratio
+ -------------------------------------------
+    0.24832898E+09    0.24832898E+09  1.0000
+
+           min ops           max ops   ratio
+ -------------------------------------------
+    0.22544451E+11    0.22544451E+11  1.0000
+  Memory allocated for solver              =  6058.781 MB
+  Memory required for in-core solution     =  5844.921 MB
+  Memory required for out-of-core solution =  3679.468 MB
+
+ *** NOTE ***                            CP =     360.500   TIME= 20:23:24
+ The Sparse Matrix Solver is currently running in the in-core memory
+ mode.  This memory mode uses the most amount of memory in order to
+ avoid using the hard drive as much as possible, which most often
+ results in the fastest solution time.  This mode is recommended if
+ enough physical memory is present to accommodate all of the solver
+ data.
+ adjust near zero pivots tolerance =   6.072653963073024E-014
+ # of positive pivots  =       5533009
+ # of negative pivots  =             0
+ # of near zero pivots =             0
+ Maximum pivot         =    0.3267E+05
+ Minimum pivot         =    0.1811E+01
+
+ # of 1x1 pivots       =             0
+ # of 2x2 pivots       =             0
+ # of delayed pivots   =             0
+ # of defered pivots   =             0
+ Sparse solver maximum pivot= 32669.0748 at node 94123 UY.
+ Sparse solver minimum pivot= 1.81139202 at node 424 UX.
+ Sparse solver minimum pivot in absolute value= 1.81139202 at node 424
+ UX.
+
+ ===========================
+ = multifrontal statistics =
+ ===========================
+
+     number of equations                     =         5533009
+     no. of nonzeroes in lower triangle of a =        62751093
+     no. of nonzeroes in the factor l        =       294559232
+     ratio of nonzeroes in factor (min/max)  =          1.0000
+     number of super nodes                   =          369891
+     maximum order of a front matrix         =            1450
+     maximum size of a front matrix          =         1051975
+     maximum size of a front trapezoid       =          933661
+     no. of floating point ops for factor    =      2.2544D+10
+     no. of floating point ops for solve     =      0.0000D+00
+     ratio of flops for factor (min/max)     =          1.0000
+     ratio of allocated memory (max/min)     =          1.0000
+     near zero pivot monitoring activated
+     number of pivots adjusted               =               0
+     negative pivot monitoring activated
+     number of negative pivots encountered   =               0
+     factorization panel size                =             128
+     number of processes used                =               1
+     number of threads per process used      =               1
+     number of cores used                    =               1
+     time (cpu & wall) for structure input   =        0.000000        0.000000
+     time (cpu & wall) for ordering          =        0.000000        0.000000
+     time (cpu & wall) for other matrix prep =        0.000000        0.000000
+     time (cpu & wall) for value input       =        0.593750        0.601495
+     time (cpu & wall) for matrix distrib.   =        3.718750        3.707834
+     time (cpu & wall) for numeric factor    =        3.015625        3.039947
+     computational rate (gflops) for factor  =        7.475880        7.416068
+     time (cpu & wall) for numeric solve     =        0.718750        0.731771
+     computational rate (gflops) for solve   =        0.000000        0.000000
+     effective I/O rate (GB/sec) for solve   =        0.000000        0.000000
+
+     i/o stats: unit-Core          file length             amount transferred
+                                 words       mbytes          words       mbytes
+                   ----     ----------     --------     ----------     --------
+                95-   0      63143936.      482. MB      63142330.      482. MB
+
+                -------     ----------     --------     ----------     --------
+                Totals:      63143936.      482. MB      63142330.      482. MB
+
+
+  Total Solver Memory allocated              =     6058.781 MB
+
+  Sparse Matrix Solver      CPU Time (sec) =          8.750
+  Sparse Matrix Solver  ELAPSED Time (sec) =          8.782
+  Sparse Matrix Solver   Memory Used ( MB) =       6058.781
+
+    EQUIL ITER   5 COMPLETED.  NEW TRIANG MATRIX.  MAX DOF INC=  0.7044E-05
+
+ NUMBER OF SMP THREADS USED       =     1
+ ELEMENT FORMULATION CP TIME      =    22.703
+ ELEMENT FORMULATION ELAPSED TIME =    22.919
+     DISP CONVERGENCE VALUE   =  0.7044E-05  CRITERION=  0.2658E-04 <<< CONVERGED
+     LINE SEARCH PARAMETER =   1.000     SCALED MAX DOF INC =  0.7044E-05
+
+         Dump symbolic assembly keys:
+  accOn                         0
+  accSP                         0
+  accDbg                        0
+  accMinSz           0.000000E+00
+  accMaxSz           0.000000E+00
+  accMinOps          0.000000E+00
+  myNumAccDev                   1
+  kThermType                    0
+  kThermOld                     0
+  timint                        0
+  frdsup                        0
+  nrkey                         1
+  memoryReuse                   2
+  diagtraleigh                  0
+  cin(1)             0.000000E+00
+  cin(2)             0.000000E+00
+  tintpr(4)          0.100000E+01
+  newCElogic                   -1
+  mpcMemoryReuse                4
+  pcgopts(1)                    0
+  pcgopts(2)                    0
+  pcgopts(3)                   -2
+  pcgopts(4)                    0
+  pcgopts(5)                    0
+  pcgopts(6)                    0
+  pcgopts(7)                    0
+  pcgopts(8)                   13
+  pcgopts2(1)                   0
+  pcgopts2(2)                   0
+  GenericSolve                  3
+  SvElemMult                    0
+  key_unsym                     0
+  lumplocal                     0
+  analysistype                  0
+  cadoe_analysisty             -1
+  cadoe_pass                    0
+  overCheck                     0
+  overMethod                    0
+  imgPrs                        0
+  debuglvl                      0
+  LevDifficult                  0
+  DScompare                     0
+  FullFileReq                   0
+  DistFullFile                  0
+  OutOfCoreAssmKey              0
+  modext                        0
+  CycNumSectorsL                0
+  scaleMass                     0
+  ASMdbg                        2
+  TrackInquire(2)               0
+  localNonlKey                  0
+  new_arckey                    0
+  inrlf                         0
+  asmContKey                    1
+  twoStepMethUsed               0
+  trnopt                        0
+  actSymbFlag                   0
+  partialAssemb                 0
+  cadoe_frqswp_vt               0
+  rbflag                        0
+  blrOptions(1)                 0
+  blrOptions(2)                 0
+  blrOptions(3)                 0
+  blrOptions(4)                 0
+  blrOptions(5)                 0
+  hrmopt                        0
+  morStage                      0
+  HUGE               0.126765E+31
+  extrng(1)          0.000000E+00
+  extrng(2)          0.000000E+00
+  pccgThresh         0.100000E-07
+  vtomeg2            0.000000E+00
+  blrToler(1)        0.000000E+00
+  blrToler(2)        0.000000E+00
+  blrToler(3)        0.000000E+00
+  blrToler(4)        0.000000E+00
+
+  Updated memoryReuse key = 2
+
+ NUMBER OF SMP THREADS USED       =     1
+ ELEMENT FORMULATION CP TIME      =    31.234
+ ELEMENT FORMULATION ELAPSED TIME =    31.398
+     FORCE CONVERGENCE VALUE  =  0.3142E-02  CRITERION=  0.5031E-03
+
+ ZeroThreshold value for dropping near-zero values is set to:  0.1000000000E-13
+
+ MultiSolution: Sparse Assembly Option .... Call No. 6
+     ANSYS largest memory block available     1161551420 :  1107.74 Mbytes
+                     ANSYS memory in use      1312152960 :  9443.37 Mbytes
+                   ANSYS max memory used       623574208 : 12882.69 Mbytes
+
+ ZeroThreshold value for dropping near-zero values when writing matrix has been adjusted to:  1.0000000000E-14
+
+  End of PcgEnd
+     ANSYS largest memory block available     1162794876 :  1108.93 Mbytes
+                     ANSYS memory in use      3946941440 :  7860.10 Mbytes
+                 ANSYS max memory in use       623574208 : 12882.69 Mbytes
+  Total Time (sec) for Sparse Assembly      2.17 cpu     2.23 wall
+
+ SPARSE MATRIX DIRECT SOLVER.
+  Number of equations =     5533009,    Maximum wavefront =    105
+ ncoefKL/neqn =   11.3
+
+ after mf2Sym on process   0
+ Currently using      =       63142330
+ Needs for next phase =       63142330
+
+ Call to mf2LOps
+            my_Lnz            my_ops           ttl_Lnz           ttl_ops
+        248328977.      22544451405.        248328977.      22544451405.
+
+           min Lnz           max Lnz   ratio
+ -------------------------------------------
+    0.24832898E+09    0.24832898E+09  1.0000
+
+           min ops           max ops   ratio
+ -------------------------------------------
+    0.22544451E+11    0.22544451E+11  1.0000
+  Memory allocated for solver              =  6058.781 MB
+  Memory required for in-core solution     =  5844.921 MB
+  Memory required for out-of-core solution =  3679.468 MB
+
+ *** NOTE ***                            CP =     429.594   TIME= 20:24:33
+ The Sparse Matrix Solver is currently running in the in-core memory
+ mode.  This memory mode uses the most amount of memory in order to
+ avoid using the hard drive as much as possible, which most often
+ results in the fastest solution time.  This mode is recommended if
+ enough physical memory is present to accommodate all of the solver
+ data.
+ adjust near zero pivots tolerance =   6.072653937569950E-014
+ # of positive pivots  =       5533009
+ # of negative pivots  =             0
+ # of near zero pivots =             0
+ Maximum pivot         =    0.3267E+05
+ Minimum pivot         =    0.1386E+01
+
+ # of 1x1 pivots       =             0
+ # of 2x2 pivots       =             0
+ # of delayed pivots   =             0
+ # of defered pivots   =             0
+ Sparse solver maximum pivot= 32669.0843 at node 94123 UY.
+ Sparse solver minimum pivot= 1.38641171 at node 424 UX.
+ Sparse solver minimum pivot in absolute value= 1.38641171 at node 424
+ UX.
+
+ ===========================
+ = multifrontal statistics =
+ ===========================
+
+     number of equations                     =         5533009
+     no. of nonzeroes in lower triangle of a =        62751093
+     no. of nonzeroes in the factor l        =       294559232
+     ratio of nonzeroes in factor (min/max)  =          1.0000
+     number of super nodes                   =          369891
+     maximum order of a front matrix         =            1450
+     maximum size of a front matrix          =         1051975
+     maximum size of a front trapezoid       =          933661
+     no. of floating point ops for factor    =      2.2544D+10
+     no. of floating point ops for solve     =      0.0000D+00
+     ratio of flops for factor (min/max)     =          1.0000
+     ratio of allocated memory (max/min)     =          1.0000
+     near zero pivot monitoring activated
+     number of pivots adjusted               =               0
+     negative pivot monitoring activated
+     number of negative pivots encountered   =               0
+     factorization panel size                =             128
+     number of processes used                =               1
+     number of threads per process used      =               1
+     number of cores used                    =               1
+     time (cpu & wall) for structure input   =        0.000000        0.000000
+     time (cpu & wall) for ordering          =        0.000000        0.000000
+     time (cpu & wall) for other matrix prep =        0.000000        0.000000
+     time (cpu & wall) for value input       =        0.468750        0.474992
+     time (cpu & wall) for matrix distrib.   =        3.921875        3.946267
+     time (cpu & wall) for numeric factor    =        2.671875        2.674436
+     computational rate (gflops) for factor  =        8.437689        8.429610
+     time (cpu & wall) for numeric solve     =        0.812500        0.800968
+     computational rate (gflops) for solve   =        0.000000        0.000000
+     effective I/O rate (GB/sec) for solve   =        0.000000        0.000000
+
+     i/o stats: unit-Core          file length             amount transferred
+                                 words       mbytes          words       mbytes
+                   ----     ----------     --------     ----------     --------
+                95-   0      63143936.      482. MB      63142330.      482. MB
+
+                -------     ----------     --------     ----------     --------
+                Totals:      63143936.      482. MB      63142330.      482. MB
+
+
+  Total Solver Memory allocated              =     6058.781 MB
+
+  Sparse Matrix Solver      CPU Time (sec) =          8.562
+  Sparse Matrix Solver  ELAPSED Time (sec) =          8.593
+  Sparse Matrix Solver   Memory Used ( MB) =       6058.781
+
+    EQUIL ITER   6 COMPLETED.  NEW TRIANG MATRIX.  MAX DOF INC= -0.5085E-04
+
+ NUMBER OF SMP THREADS USED       =     1
+ ELEMENT FORMULATION CP TIME      =    20.719
+ ELEMENT FORMULATION ELAPSED TIME =    20.879
+     DISP CONVERGENCE VALUE   =  0.5014E-04  CRITERION=  0.2658E-04
+     LINE SEARCH PARAMETER =  0.9860     SCALED MAX DOF INC = -0.5014E-04
+
+         Dump symbolic assembly keys:
+  accOn                         0
+  accSP                         0
+  accDbg                        0
+  accMinSz           0.000000E+00
+  accMaxSz           0.000000E+00
+  accMinOps          0.000000E+00
+  myNumAccDev                   1
+  kThermType                    0
+  kThermOld                     0
+  timint                        0
+  frdsup                        0
+  nrkey                         1
+  memoryReuse                   2
+  diagtraleigh                  0
+  cin(1)             0.000000E+00
+  cin(2)             0.000000E+00
+  tintpr(4)          0.100000E+01
+  newCElogic                   -1
+  mpcMemoryReuse                4
+  pcgopts(1)                    0
+  pcgopts(2)                    0
+  pcgopts(3)                   -2
+  pcgopts(4)                    0
+  pcgopts(5)                    0
+  pcgopts(6)                    0
+  pcgopts(7)                    0
+  pcgopts(8)                   13
+  pcgopts2(1)                   0
+  pcgopts2(2)                   0
+  GenericSolve                  3
+  SvElemMult                    0
+  key_unsym                     0
+  lumplocal                     0
+  analysistype                  0
+  cadoe_analysisty             -1
+  cadoe_pass                    0
+  overCheck                     0
+  overMethod                    0
+  imgPrs                        0
+  debuglvl                      0
+  LevDifficult                  0
+  DScompare                     0
+  FullFileReq                   0
+  DistFullFile                  0
+  OutOfCoreAssmKey              0
+  modext                        0
+  CycNumSectorsL                0
+  scaleMass                     0
+  ASMdbg                        2
+  TrackInquire(2)               0
+  localNonlKey                  0
+  new_arckey                    0
+  inrlf                         0
+  asmContKey                    1
+  twoStepMethUsed               0
+  trnopt                        0
+  actSymbFlag                   0
+  partialAssemb                 0
+  cadoe_frqswp_vt               0
+  rbflag                        0
+  blrOptions(1)                 0
+  blrOptions(2)                 0
+  blrOptions(3)                 0
+  blrOptions(4)                 0
+  blrOptions(5)                 0
+  hrmopt                        0
+  morStage                      0
+  HUGE               0.126765E+31
+  extrng(1)          0.000000E+00
+  extrng(2)          0.000000E+00
+  pccgThresh         0.100000E-07
+  vtomeg2            0.000000E+00
+  blrToler(1)        0.000000E+00
+  blrToler(2)        0.000000E+00
+  blrToler(3)        0.000000E+00
+  blrToler(4)        0.000000E+00
+
+  Updated memoryReuse key = 2
+
+ NUMBER OF SMP THREADS USED       =     1
+ ELEMENT FORMULATION CP TIME      =    29.016
+ ELEMENT FORMULATION ELAPSED TIME =    29.286
+     FORCE CONVERGENCE VALUE  =  0.4840E-02  CRITERION=  0.5220E-03
+
+ ZeroThreshold value for dropping near-zero values is set to:  0.1000000000E-13
+
+ MultiSolution: Sparse Assembly Option .... Call No. 7
+     ANSYS largest memory block available     1061432060 :  1012.26 Mbytes
+                     ANSYS memory in use      1312152896 :  9443.37 Mbytes
+                   ANSYS max memory used       623574208 : 12882.69 Mbytes
+
+ ZeroThreshold value for dropping near-zero values when writing matrix has been adjusted to:  1.0000000000E-14
+
+  End of PcgEnd
+     ANSYS largest memory block available     1162794876 :  1108.93 Mbytes
+                     ANSYS memory in use      3946941376 :  7860.10 Mbytes
+                 ANSYS max memory in use       623574208 : 12882.69 Mbytes
+  Total Time (sec) for Sparse Assembly      2.16 cpu     2.16 wall
+
+ SPARSE MATRIX DIRECT SOLVER.
+  Number of equations =     5533009,    Maximum wavefront =    105
+ ncoefKL/neqn =   11.3
+
+ after mf2Sym on process   0
+ Currently using      =       63142330
+ Needs for next phase =       63142330
+
+ Call to mf2LOps
+            my_Lnz            my_ops           ttl_Lnz           ttl_ops
+        248328977.      22544451405.        248328977.      22544451405.
+
+           min Lnz           max Lnz   ratio
+ -------------------------------------------
+    0.24832898E+09    0.24832898E+09  1.0000
+
+           min ops           max ops   ratio
+ -------------------------------------------
+    0.22544451E+11    0.22544451E+11  1.0000
+  Memory allocated for solver              =  6058.781 MB
+  Memory required for in-core solution     =  5844.921 MB
+  Memory required for out-of-core solution =  3679.468 MB
+
+ *** NOTE ***                            CP =     494.062   TIME= 20:25:38
+ The Sparse Matrix Solver is currently running in the in-core memory
+ mode.  This memory mode uses the most amount of memory in order to
+ avoid using the hard drive as much as possible, which most often
+ results in the fastest solution time.  This mode is recommended if
+ enough physical memory is present to accommodate all of the solver
+ data.
+ adjust near zero pivots tolerance =   6.072653772528453E-014
+ # of positive pivots  =       5533009
+ # of negative pivots  =             0
+ # of near zero pivots =             0
+ Maximum pivot         =    0.3267E+05
+ Minimum pivot         =    0.1340E+01
+
+ # of 1x1 pivots       =             0
+ # of 2x2 pivots       =             0
+ # of delayed pivots   =             0
+ # of defered pivots   =             0
+ Sparse solver maximum pivot= 32669.1275 at node 94123 UY.
+ Sparse solver minimum pivot= 1.3398463 at node 424 UX.
+ Sparse solver minimum pivot in absolute value= 1.3398463 at node 424
+ UX.
+
+ ===========================
+ = multifrontal statistics =
+ ===========================
+
+     number of equations                     =         5533009
+     no. of nonzeroes in lower triangle of a =        62751093
+     no. of nonzeroes in the factor l        =       294559232
+     ratio of nonzeroes in factor (min/max)  =          1.0000
+     number of super nodes                   =          369891
+     maximum order of a front matrix         =            1450
+     maximum size of a front matrix          =         1051975
+     maximum size of a front trapezoid       =          933661
+     no. of floating point ops for factor    =      2.2544D+10
+     no. of floating point ops for solve     =      0.0000D+00
+     ratio of flops for factor (min/max)     =          1.0000
+     ratio of allocated memory (max/min)     =          1.0000
+     near zero pivot monitoring activated
+     number of pivots adjusted               =               0
+     negative pivot monitoring activated
+     number of negative pivots encountered   =               0
+     factorization panel size                =             128
+     number of processes used                =               1
+     number of threads per process used      =               1
+     number of cores used                    =               1
+     time (cpu & wall) for structure input   =        0.000000        0.000000
+     time (cpu & wall) for ordering          =        0.000000        0.000000
+     time (cpu & wall) for other matrix prep =        0.000000        0.000000
+     time (cpu & wall) for value input       =        0.468750        0.463920
+     time (cpu & wall) for matrix distrib.   =        4.046875        4.092523
+     time (cpu & wall) for numeric factor    =        3.062500        3.089729
+     computational rate (gflops) for factor  =        7.361454        7.296579
+     time (cpu & wall) for numeric solve     =        0.750000        0.746597
+     computational rate (gflops) for solve   =        0.000000        0.000000
+     effective I/O rate (GB/sec) for solve   =        0.000000        0.000000
+
+     i/o stats: unit-Core          file length             amount transferred
+                                 words       mbytes          words       mbytes
+                   ----     ----------     --------     ----------     --------
+                95-   0      63143936.      482. MB      63142330.      482. MB
+
+                -------     ----------     --------     ----------     --------
+                Totals:      63143936.      482. MB      63142330.      482. MB
+
+
+  Total Solver Memory allocated              =     6058.781 MB
+
+  Sparse Matrix Solver      CPU Time (sec) =          9.078
+  Sparse Matrix Solver  ELAPSED Time (sec) =          9.147
+  Sparse Matrix Solver   Memory Used ( MB) =       6058.781
+
+    EQUIL ITER   7 COMPLETED.  NEW TRIANG MATRIX.  MAX DOF INC= -0.7675E-05
+
+ NUMBER OF SMP THREADS USED       =     1
+ ELEMENT FORMULATION CP TIME      =    20.984
+ ELEMENT FORMULATION ELAPSED TIME =    21.089
+     DISP CONVERGENCE VALUE   =  0.7314E-05  CRITERION=  0.2658E-04 <<< CONVERGED
+     LINE SEARCH PARAMETER =  0.9529     SCALED MAX DOF INC = -0.7314E-05
+
+         Dump symbolic assembly keys:
+  accOn                         0
+  accSP                         0
+  accDbg                        0
+  accMinSz           0.000000E+00
+  accMaxSz           0.000000E+00
+  accMinOps          0.000000E+00
+  myNumAccDev                   1
+  kThermType                    0
+  kThermOld                     0
+  timint                        0
+  frdsup                        0
+  nrkey                         1
+  memoryReuse                   2
+  diagtraleigh                  0
+  cin(1)             0.000000E+00
+  cin(2)             0.000000E+00
+  tintpr(4)          0.100000E+01
+  newCElogic                   -1
+  mpcMemoryReuse                4
+  pcgopts(1)                    0
+  pcgopts(2)                    0
+  pcgopts(3)                   -2
+  pcgopts(4)                    0
+  pcgopts(5)                    0
+  pcgopts(6)                    0
+  pcgopts(7)                    0
+  pcgopts(8)                   13
+  pcgopts2(1)                   0
+  pcgopts2(2)                   0
+  GenericSolve                  3
+  SvElemMult                    0
+  key_unsym                     0
+  lumplocal                     0
+  analysistype                  0
+  cadoe_analysisty             -1
+  cadoe_pass                    0
+  overCheck                     0
+  overMethod                    0
+  imgPrs                        0
+  debuglvl                      0
+  LevDifficult                  0
+  DScompare                     0
+  FullFileReq                   0
+  DistFullFile                  0
+  OutOfCoreAssmKey              0
+  modext                        0
+  CycNumSectorsL                0
+  scaleMass                     0
+  ASMdbg                        2
+  TrackInquire(2)               0
+  localNonlKey                  0
+  new_arckey                    0
+  inrlf                         0
+  asmContKey                    1
+  twoStepMethUsed               0
+  trnopt                        0
+  actSymbFlag                   0
+  partialAssemb                 0
+  cadoe_frqswp_vt               0
+  rbflag                        0
+  blrOptions(1)                 0
+  blrOptions(2)                 0
+  blrOptions(3)                 0
+  blrOptions(4)                 0
+  blrOptions(5)                 0
+  hrmopt                        0
+  morStage                      0
+  HUGE               0.126765E+31
+  extrng(1)          0.000000E+00
+  extrng(2)          0.000000E+00
+  pccgThresh         0.100000E-07
+  vtomeg2            0.000000E+00
+  blrToler(1)        0.000000E+00
+  blrToler(2)        0.000000E+00
+  blrToler(3)        0.000000E+00
+  blrToler(4)        0.000000E+00
+
+  Updated memoryReuse key = 2
+
+ NUMBER OF SMP THREADS USED       =     1
+ ELEMENT FORMULATION CP TIME      =    29.203
+ ELEMENT FORMULATION ELAPSED TIME =    29.352
+     FORCE CONVERGENCE VALUE  =  0.4437E-02  CRITERION=  0.5232E-03
+
+ ZeroThreshold value for dropping near-zero values is set to:  0.1000000000E-13
+
+ MultiSolution: Sparse Assembly Option .... Call No. 8
+     ANSYS largest memory block available     1061431996 :  1012.26 Mbytes
+                     ANSYS memory in use      1312152960 :  9443.37 Mbytes
+                   ANSYS max memory used       623574208 : 12882.69 Mbytes
+
+ ZeroThreshold value for dropping near-zero values when writing matrix has been adjusted to:  1.0000000000E-14
+
+  End of PcgEnd
+     ANSYS largest memory block available     1621319228 :  1546.21 Mbytes
+                     ANSYS memory in use      3946941440 :  7860.10 Mbytes
+                 ANSYS max memory in use       623574208 : 12882.69 Mbytes
+  Total Time (sec) for Sparse Assembly      2.36 cpu     2.36 wall
+
+ SPARSE MATRIX DIRECT SOLVER.
+  Number of equations =     5533009,    Maximum wavefront =    105
+ ncoefKL/neqn =   11.3
+
+ after mf2Sym on process   0
+ Currently using      =       63142330
+ Needs for next phase =       63142330
+
+ Call to mf2LOps
+            my_Lnz            my_ops           ttl_Lnz           ttl_ops
+        248328977.      22544451405.        248328977.      22544451405.
+
+           min Lnz           max Lnz   ratio
+ -------------------------------------------
+    0.24832898E+09    0.24832898E+09  1.0000
+
+           min ops           max ops   ratio
+ -------------------------------------------
+    0.22544451E+11    0.22544451E+11  1.0000
+  Memory allocated for solver              =  6058.781 MB
+  Memory required for in-core solution     =  5844.921 MB
+  Memory required for out-of-core solution =  3679.468 MB
+
+ *** NOTE ***                            CP =     559.578   TIME= 20:26:44
+ The Sparse Matrix Solver is currently running in the in-core memory
+ mode.  This memory mode uses the most amount of memory in order to
+ avoid using the hard drive as much as possible, which most often
+ results in the fastest solution time.  This mode is recommended if
+ enough physical memory is present to accommodate all of the solver
+ data.
+ adjust near zero pivots tolerance =   6.072653769397646E-014
+ # of positive pivots  =       5533009
+ # of negative pivots  =             0
+ # of near zero pivots =             0
+ Maximum pivot         =    0.3267E+05
+ Minimum pivot         =    0.1303E+01
+
+ # of 1x1 pivots       =             0
+ # of 2x2 pivots       =             0
+ # of delayed pivots   =             0
+ # of defered pivots   =             0
+ Sparse solver maximum pivot= 32669.1312 at node 94123 UY.
+ Sparse solver minimum pivot= 1.30255266 at node 424 UX.
+ Sparse solver minimum pivot in absolute value= 1.30255266 at node 424
+ UX.
+
+ ===========================
+ = multifrontal statistics =
+ ===========================
+
+     number of equations                     =         5533009
+     no. of nonzeroes in lower triangle of a =        62751093
+     no. of nonzeroes in the factor l        =       294559232
+     ratio of nonzeroes in factor (min/max)  =          1.0000
+     number of super nodes                   =          369891
+     maximum order of a front matrix         =            1450
+     maximum size of a front matrix          =         1051975
+     maximum size of a front trapezoid       =          933661
+     no. of floating point ops for factor    =      2.2544D+10
+     no. of floating point ops for solve     =      0.0000D+00
+     ratio of flops for factor (min/max)     =          1.0000
+     ratio of allocated memory (max/min)     =          1.0000
+     near zero pivot monitoring activated
+     number of pivots adjusted               =               0
+     negative pivot monitoring activated
+     number of negative pivots encountered   =               0
+     factorization panel size                =             128
+     number of processes used                =               1
+     number of threads per process used      =               1
+     number of cores used                    =               1
+     time (cpu & wall) for structure input   =        0.000000        0.000000
+     time (cpu & wall) for ordering          =        0.000000        0.000000
+     time (cpu & wall) for other matrix prep =        0.000000        0.000000
+     time (cpu & wall) for value input       =        0.500000        0.502717
+     time (cpu & wall) for matrix distrib.   =        3.765625        3.789445
+     time (cpu & wall) for numeric factor    =        3.046875        3.083664
+     computational rate (gflops) for factor  =        7.399205        7.310931
+     time (cpu & wall) for numeric solve     =        0.734375        0.733222
+     computational rate (gflops) for solve   =        0.000000        0.000000
+     effective I/O rate (GB/sec) for solve   =        0.000000        0.000000
+
+     i/o stats: unit-Core          file length             amount transferred
+                                 words       mbytes          words       mbytes
+                   ----     ----------     --------     ----------     --------
+                95-   0      63143936.      482. MB      63142330.      482. MB
+
+                -------     ----------     --------     ----------     --------
+                Totals:      63143936.      482. MB      63142330.      482. MB
+
+
+  Total Solver Memory allocated              =     6058.781 MB
+
+  Sparse Matrix Solver      CPU Time (sec) =          8.750
+  Sparse Matrix Solver  ELAPSED Time (sec) =          8.802
+  Sparse Matrix Solver   Memory Used ( MB) =       6058.781
+
+    EQUIL ITER   8 COMPLETED.  NEW TRIANG MATRIX.  MAX DOF INC= -0.6525E-05
+
+ NUMBER OF SMP THREADS USED       =     1
+ ELEMENT FORMULATION CP TIME      =    21.812
+ ELEMENT FORMULATION ELAPSED TIME =    21.899
+     DISP CONVERGENCE VALUE   =  0.6024E-05  CRITERION=  0.2658E-04 <<< CONVERGED
+     LINE SEARCH PARAMETER =  0.9233     SCALED MAX DOF INC = -0.6024E-05
+
+         Dump symbolic assembly keys:
+  accOn                         0
+  accSP                         0
+  accDbg                        0
+  accMinSz           0.000000E+00
+  accMaxSz           0.000000E+00
+  accMinOps          0.000000E+00
+  myNumAccDev                   1
+  kThermType                    0
+  kThermOld                     0
+  timint                        0
+  frdsup                        0
+  nrkey                         1
+  memoryReuse                   2
+  diagtraleigh                  0
+  cin(1)             0.000000E+00
+  cin(2)             0.000000E+00
+  tintpr(4)          0.100000E+01
+  newCElogic                   -1
+  mpcMemoryReuse                4
+  pcgopts(1)                    0
+  pcgopts(2)                    0
+  pcgopts(3)                   -2
+  pcgopts(4)                    0
+  pcgopts(5)                    0
+  pcgopts(6)                    0
+  pcgopts(7)                    0
+  pcgopts(8)                   13
+  pcgopts2(1)                   0
+  pcgopts2(2)                   0
+  GenericSolve                  3
+  SvElemMult                    0
+  key_unsym                     0
+  lumplocal                     0
+  analysistype                  0
+  cadoe_analysisty             -1
+  cadoe_pass                    0
+  overCheck                     0
+  overMethod                    0
+  imgPrs                        0
+  debuglvl                      0
+  LevDifficult                  0
+  DScompare                     0
+  FullFileReq                   0
+  DistFullFile                  0
+  OutOfCoreAssmKey              0
+  modext                        0
+  CycNumSectorsL                0
+  scaleMass                     0
+  ASMdbg                        2
+  TrackInquire(2)               0
+  localNonlKey                  0
+  new_arckey                    0
+  inrlf                         0
+  asmContKey                    1
+  twoStepMethUsed               0
+  trnopt                        0
+  actSymbFlag                   0
+  partialAssemb                 0
+  cadoe_frqswp_vt               0
+  rbflag                        0
+  blrOptions(1)                 0
+  blrOptions(2)                 0
+  blrOptions(3)                 0
+  blrOptions(4)                 0
+  blrOptions(5)                 0
+  hrmopt                        0
+  morStage                      0
+  HUGE               0.126765E+31
+  extrng(1)          0.000000E+00
+  extrng(2)          0.000000E+00
+  pccgThresh         0.100000E-07
+  vtomeg2            0.000000E+00
+  blrToler(1)        0.000000E+00
+  blrToler(2)        0.000000E+00
+  blrToler(3)        0.000000E+00
+  blrToler(4)        0.000000E+00
+
+  Updated memoryReuse key = 2
+
+ NUMBER OF SMP THREADS USED       =     1
+ ELEMENT FORMULATION CP TIME      =    30.891
+ ELEMENT FORMULATION ELAPSED TIME =    31.065
+     FORCE CONVERGENCE VALUE  =  0.4344E-02  CRITERION=  0.5129E-03
+
+ ZeroThreshold value for dropping near-zero values is set to:  0.1000000000E-13
+
+ MultiSolution: Sparse Assembly Option .... Call No. 9
+     ANSYS largest memory block available     1161551420 :  1107.74 Mbytes
+                     ANSYS memory in use      1312152960 :  9443.37 Mbytes
+                   ANSYS max memory used       623574208 : 12882.69 Mbytes
+
+ ZeroThreshold value for dropping near-zero values when writing matrix has been adjusted to:  1.0000000000E-14
+
+  End of PcgEnd
+     ANSYS largest memory block available     1162794876 :  1108.93 Mbytes
+                     ANSYS memory in use      3946941440 :  7860.10 Mbytes
+                 ANSYS max memory in use       623574208 : 12882.69 Mbytes
+  Total Time (sec) for Sparse Assembly      2.23 cpu     2.23 wall
+
+ SPARSE MATRIX DIRECT SOLVER.
+  Number of equations =     5533009,    Maximum wavefront =    105
+ ncoefKL/neqn =   11.3
+
+ after mf2Sym on process   0
+ Currently using      =       63142330
+ Needs for next phase =       63142330
+
+ Call to mf2LOps
+            my_Lnz            my_ops           ttl_Lnz           ttl_ops
+        248328977.      22544451405.        248328977.      22544451405.
+
+           min Lnz           max Lnz   ratio
+ -------------------------------------------
+    0.24832898E+09    0.24832898E+09  1.0000
+
+           min ops           max ops   ratio
+ -------------------------------------------
+    0.22544451E+11    0.22544451E+11  1.0000
+  Memory allocated for solver              =  6058.781 MB
+  Memory required for in-core solution     =  5844.921 MB
+  Memory required for out-of-core solution =  3679.468 MB
+
+ *** NOTE ***                            CP =     627.297   TIME= 20:27:52
+ The Sparse Matrix Solver is currently running in the in-core memory
+ mode.  This memory mode uses the most amount of memory in order to
+ avoid using the hard drive as much as possible, which most often
+ results in the fastest solution time.  This mode is recommended if
+ enough physical memory is present to accommodate all of the solver
+ data.
+ adjust near zero pivots tolerance =   6.072653754002165E-014
+ # of positive pivots  =       5533009
+ # of negative pivots  =             0
+ # of near zero pivots =             0
+ Maximum pivot         =    0.3267E+05
+ Minimum pivot         =    0.1242E+01
+
+ # of 1x1 pivots       =             0
+ # of 2x2 pivots       =             0
+ # of delayed pivots   =             0
+ # of defered pivots   =             0
+ Sparse solver maximum pivot= 32669.1335 at node 94123 UY.
+ Sparse solver minimum pivot= 1.24153487 at node 424 UX.
+ Sparse solver minimum pivot in absolute value= 1.24153487 at node 424
+ UX.
+
+ ===========================
+ = multifrontal statistics =
+ ===========================
+
+     number of equations                     =         5533009
+     no. of nonzeroes in lower triangle of a =        62751093
+     no. of nonzeroes in the factor l        =       294559232
+     ratio of nonzeroes in factor (min/max)  =          1.0000
+     number of super nodes                   =          369891
+     maximum order of a front matrix         =            1450
+     maximum size of a front matrix          =         1051975
+     maximum size of a front trapezoid       =          933661
+     no. of floating point ops for factor    =      2.2544D+10
+     no. of floating point ops for solve     =      0.0000D+00
+     ratio of flops for factor (min/max)     =          1.0000
+     ratio of allocated memory (max/min)     =          1.0000
+     near zero pivot monitoring activated
+     number of pivots adjusted               =               0
+     negative pivot monitoring activated
+     number of negative pivots encountered   =               0
+     factorization panel size                =             128
+     number of processes used                =               1
+     number of threads per process used      =               1
+     number of cores used                    =               1
+     time (cpu & wall) for structure input   =        0.000000        0.000000
+     time (cpu & wall) for ordering          =        0.000000        0.000000
+     time (cpu & wall) for other matrix prep =        0.000000        0.000000
+     time (cpu & wall) for value input       =        0.515625        0.508273
+     time (cpu & wall) for matrix distrib.   =        3.671875        3.721780
+     time (cpu & wall) for numeric factor    =        3.125000        3.260141
+     computational rate (gflops) for factor  =        7.214224        6.915176
+     time (cpu & wall) for numeric solve     =        0.890625        0.904743
+     computational rate (gflops) for solve   =        0.000000        0.000000
+     effective I/O rate (GB/sec) for solve   =        0.000000        0.000000
+
+     i/o stats: unit-Core          file length             amount transferred
+                                 words       mbytes          words       mbytes
+                   ----     ----------     --------     ----------     --------
+                95-   0      63143936.      482. MB      63142330.      482. MB
+
+                -------     ----------     --------     ----------     --------
+                Totals:      63143936.      482. MB      63142330.      482. MB
+
+
+  Total Solver Memory allocated              =     6058.781 MB
+
+  Sparse Matrix Solver      CPU Time (sec) =          8.922
+  Sparse Matrix Solver  ELAPSED Time (sec) =          9.129
+  Sparse Matrix Solver   Memory Used ( MB) =       6058.781
+
+    EQUIL ITER   9 COMPLETED.  NEW TRIANG MATRIX.  MAX DOF INC= -0.1093E-04
+
+ NUMBER OF SMP THREADS USED       =     1
+ ELEMENT FORMULATION CP TIME      =    21.703
+ ELEMENT FORMULATION ELAPSED TIME =    21.983
+     DISP CONVERGENCE VALUE   =  0.1077E-04  CRITERION=  0.2658E-04 <<< CONVERGED
+     LINE SEARCH PARAMETER =  0.9851     SCALED MAX DOF INC = -0.1077E-04
+
+         Dump symbolic assembly keys:
+  accOn                         0
+  accSP                         0
+  accDbg                        0
+  accMinSz           0.000000E+00
+  accMaxSz           0.000000E+00
+  accMinOps          0.000000E+00
+  myNumAccDev                   1
+  kThermType                    0
+  kThermOld                     0
+  timint                        0
+  frdsup                        0
+  nrkey                         1
+  memoryReuse                   2
+  diagtraleigh                  0
+  cin(1)             0.000000E+00
+  cin(2)             0.000000E+00
+  tintpr(4)          0.100000E+01
+  newCElogic                   -1
+  mpcMemoryReuse                4
+  pcgopts(1)                    0
+  pcgopts(2)                    0
+  pcgopts(3)                   -2
+  pcgopts(4)                    0
+  pcgopts(5)                    0
+  pcgopts(6)                    0
+  pcgopts(7)                    0
+  pcgopts(8)                   13
+  pcgopts2(1)                   0
+  pcgopts2(2)                   0
+  GenericSolve                  3
+  SvElemMult                    0
+  key_unsym                     0
+  lumplocal                     0
+  analysistype                  0
+  cadoe_analysisty             -1
+  cadoe_pass                    0
+  overCheck                     0
+  overMethod                    0
+  imgPrs                        0
+  debuglvl                      0
+  LevDifficult                  0
+  DScompare                     0
+  FullFileReq                   0
+  DistFullFile                  0
+  OutOfCoreAssmKey              0
+  modext                        0
+  CycNumSectorsL                0
+  scaleMass                     0
+  ASMdbg                        2
+  TrackInquire(2)               0
+  localNonlKey                  0
+  new_arckey                    0
+  inrlf                         0
+  asmContKey                    1
+  twoStepMethUsed               0
+  trnopt                        0
+  actSymbFlag                   0
+  partialAssemb                 0
+  cadoe_frqswp_vt               0
+  rbflag                        0
+  blrOptions(1)                 0
+  blrOptions(2)                 0
+  blrOptions(3)                 0
+  blrOptions(4)                 0
+  blrOptions(5)                 0
+  hrmopt                        0
+  morStage                      0
+  HUGE               0.126765E+31
+  extrng(1)          0.000000E+00
+  extrng(2)          0.000000E+00
+  pccgThresh         0.100000E-07
+  vtomeg2            0.000000E+00
+  blrToler(1)        0.000000E+00
+  blrToler(2)        0.000000E+00
+  blrToler(3)        0.000000E+00
+  blrToler(4)        0.000000E+00
+
+  Updated memoryReuse key = 2
+
+ NUMBER OF SMP THREADS USED       =     1
+ ELEMENT FORMULATION CP TIME      =    31.734
+ ELEMENT FORMULATION ELAPSED TIME =    31.983
+     FORCE CONVERGENCE VALUE  =  0.3932E-02  CRITERION=  0.5008E-03
+
+ ZeroThreshold value for dropping near-zero values is set to:  0.1000000000E-13
+
+ MultiSolution: Sparse Assembly Option .... Call No. 10
+     ANSYS largest memory block available     1061432060 :  1012.26 Mbytes
+                     ANSYS memory in use      1312152896 :  9443.37 Mbytes
+                   ANSYS max memory used       623574208 : 12882.69 Mbytes
+
+ ZeroThreshold value for dropping near-zero values when writing matrix has been adjusted to:  1.0000000000E-14
+
+  End of PcgEnd
+     ANSYS largest memory block available     1162794876 :  1108.93 Mbytes
+                     ANSYS memory in use      3946941376 :  7860.10 Mbytes
+                 ANSYS max memory in use       623574208 : 12882.69 Mbytes
+  Total Time (sec) for Sparse Assembly      2.14 cpu     2.16 wall
+
+ SPARSE MATRIX DIRECT SOLVER.
+  Number of equations =     5533009,    Maximum wavefront =    105
+ ncoefKL/neqn =   11.3
+
+ after mf2Sym on process   0
+ Currently using      =       63142330
+ Needs for next phase =       63142330
+
+ Call to mf2LOps
+            my_Lnz            my_ops           ttl_Lnz           ttl_ops
+        248328977.      22544451405.        248328977.      22544451405.
+
+           min Lnz           max Lnz   ratio
+ -------------------------------------------
+    0.24832898E+09    0.24832898E+09  1.0000
+
+           min ops           max ops   ratio
+ -------------------------------------------
+    0.22544451E+11    0.22544451E+11  1.0000
+  Memory allocated for solver              =  6058.781 MB
+  Memory required for in-core solution     =  5844.921 MB
+  Memory required for out-of-core solution =  3679.468 MB
+
+ *** NOTE ***                            CP =     696.000   TIME= 20:29:01
+ The Sparse Matrix Solver is currently running in the in-core memory
+ mode.  This memory mode uses the most amount of memory in order to
+ avoid using the hard drive as much as possible, which most often
+ results in the fastest solution time.  This mode is recommended if
+ enough physical memory is present to accommodate all of the solver
+ data.

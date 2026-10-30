@@ -178,11 +178,15 @@ def verify_import(execution,mesh,manifest):
         constraints=re.findall(r'^\s*(\d+)\s+(UX|UY|ROTZ)\s+([\d.Ee+\-]+)',inventory,re.M)
         if any(int(n)<=len(mesh.nodes) and dof=='UY' for n,dof,_ in constraints):
             raise ValueError('Contact bypassed by specimen UY constraints')
-        if any(token not in (execution/'solver.out').read_text() for token in [
-            'Frictionless contact pair is defined','Contact algorithm: Augmented Lagrange method',
+        solver_log=(execution/'solver.out').read_text()
+        if any(token not in solver_log for token in [
+            'Frictionless contact pair is defined',
             'CONTACT PAIR HAVING REAL ID =           2 IS INITIALLY CLOSED',
             'CONTACT PAIR HAVING REAL ID =           3 IS INITIALLY CLOSED']):
             raise ValueError('Actual initial contact/formulation check missing')
+        if manifest.get('contact_algorithm_keyopt2',0)==1:
+            if not re.search(r'Contact algorithm:.*penalty',solver_log,re.I):raise ValueError('Actual pure-penalty algorithm missing')
+        elif 'Contact algorithm: Augmented Lagrange method' not in solver_log:raise ValueError('Actual augmented-Lagrange algorithm missing')
     return {'status':'PASS','nodes':len(nodes),'TRI6':len(elements),'exact_connectivity':True,
             'axes':'global XY','max_coordinate_error_mm':float(np.max(np.abs(np.array([[r['x_mm'],r['y_mm']] for r in nodes])-mesh.nodes))),
             'stress_field_location':'corner_nodes_only; midside displacements retained'}
