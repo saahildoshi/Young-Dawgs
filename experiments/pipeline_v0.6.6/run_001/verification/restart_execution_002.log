@@ -1,0 +1,26 @@
+rectangle_continuous_002 PROCESS_EXITED 0 [(1, 1), (1, 2), (2, 1), (2, 2)]
+rectangle_continuous_002_post PROCESS_EXITED 1
+rectangle_pause_002 PROCESS_EXITED 0
+rectangle_restart_002 PROCESS_EXITED 0 [(2, 1), (2, 2)]
+rectangle_restart_002_post PROCESS_EXITED 1
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\sd22446\Projects\Young-Dawgs-VSCode\scripts\v066_restart.py", line 128, in <module>
+    if args.action=='small':small_study()
+                            ~~~~~~~~~~~^^
+  File "C:\Users\sd22446\Projects\Young-Dawgs-VSCode\scripts\v066_restart.py", line 113, in small_study
+    a=np.loadtxt(post/filename,delimiter=',',skiprows=1,ndmin=2);b=np.loadtxt(repeat/filename,delimiter=',',skiprows=1,ndmin=2)
+  File "C:\Users\sd22446\Projects\Young-Dawgs-VSCode\.venv\Lib\site-packages\numpy\lib\_npyio_impl.py", line 1381, in loadtxt
+    arr = _read(fname, dtype=dtype, comment=comment, delimiter=delimiter,
+                converters=converters, skiplines=skiprows, usecols=usecols,
+                unpack=unpack, ndmin=ndmin, encoding=encoding,
+                max_rows=max_rows, quote=quotechar)
+  File "C:\Users\sd22446\Projects\Young-Dawgs-VSCode\.venv\Lib\site-packages\numpy\lib\_npyio_impl.py", line 1011, in _read
+    fh = np.lib._datasource.open(fname, 'rt', encoding=encoding)
+  File "C:\Users\sd22446\Projects\Young-Dawgs-VSCode\.venv\Lib\site-packages\numpy\lib\_datasource.py", line 192, in open
+    return ds.open(path, mode, encoding=encoding, newline=newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sd22446\Projects\Young-Dawgs-VSCode\.venv\Lib\site-packages\numpy\lib\_datasource.py", line 529, in open
+    raise FileNotFoundError(f"{path} not found.")
+FileNotFoundError: C:\Users\sd22446\AppData\Local\YoungDawgs\artifacts\solver\v066\rectangle_continuous_002_post\stage002_history.csv not found.

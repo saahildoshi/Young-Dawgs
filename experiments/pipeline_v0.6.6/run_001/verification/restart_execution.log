@@ -1,0 +1,13 @@
+rectangle_continuous_001 PROCESS_EXITED 0 [(1, 1), (1, 2), (1, 1), (1, 2)]
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\sd22446\Projects\Young-Dawgs-VSCode\scripts\v066_restart.py", line 126, in <module>
+    if args.action=='small':small_study()
+                            ~~~~~~~~~~~^^
+  File "C:\Users\sd22446\Projects\Young-Dawgs-VSCode\scripts\v066_restart.py", line 89, in small_study
+    states=endpoint_states(continuous,[.0025,.005])
+  File "C:\Users\sd22446\Projects\Young-Dawgs-VSCode\scripts\v066_restart.py", line 43, in endpoint_states
+    if len(candidates)!=1:raise ValueError('Missing/duplicate actual endpoint '+str(target))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Missing/duplicate actual endpoint 0.0025

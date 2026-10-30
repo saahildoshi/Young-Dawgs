@@ -1,0 +1,13 @@
+{
+  "cause": "Re-entering POST1 reset result filename to readonly.rst; first SET was valid but second lacked FILE binding.",
+  "failed_exports": [
+    "rectangle_continuous_002_post",
+    "rectangle_restart_002_post"
+  ],
+  "native_returncodes": [
+    1,
+    1
+  ],
+  "physical_gates_changed": false,
+  "repair": "Reissue explicit authenticated FILE before every selected SET. Retain failed exports; reuse unchanged successful source solves in new read-only export directories."
+}
