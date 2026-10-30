@@ -73,6 +73,17 @@ def run_variant(mesh,setup,variant):
     label=variant['id'];out=BASE/label;out.mkdir(exist_ok=False)
     m=load(setup/'model_manifest.json');top=m['controls']['top'];height=m['config']['height'];strain=variant['strain']
     lines=['/BATCH','/CLEAR,START',database_resume(setup/'contact_model.db').strip(),'/GOPR']
+    if any(k in variant for k in ['FKN','stiffness_update','contact_detection','algorithm']):
+        lines+=['/PREP7']
+        if 'algorithm' in variant:
+            m['contact_algorithm_keyopt2']=variant['algorithm'];lines += [f'KEYOPT,3,2,{variant["algorithm"]}']
+        if 'FKN' in variant:
+            m['FKN']=variant['FKN'];lines += [f'RMODIF,2,3,{m["FKN"]}',f'RMODIF,3,3,{m["FKN"]}']
+        if 'stiffness_update' in variant:
+            m['contact_stiffness_update_keyopt10']=variant['stiffness_update'];lines += [f'KEYOPT,3,10,{variant["stiffness_update"]}']
+        if 'contact_detection' in variant:
+            m['contact_detection_keyopt4']=variant['contact_detection'];lines += [f'KEYOPT,3,4,{variant["contact_detection"]}']
+        lines+=['FINISH']
     if not variant['contact']:
         bottom=np.unique(mesh.boundary[mesh.boundary_groups=='bottom']);anchor=int(bottom[np.argmin(mesh.nodes[bottom,0])])+1
         top=int(np.unique(mesh.boundary[mesh.boundary_groups=='top']).min())+1
@@ -83,7 +94,7 @@ def run_variant(mesh,setup,variant):
     lines+=['FINISH','SAVE,diagnostic_final,db','/EXIT,NOSAVE']
     (out/'input.inp').write_text('\n'.join(lines)+'\n');write_json(out/'model_manifest.json',m)
     write_json(out/'provenance.json',{'variant':variant,'source_mesh_semantic_sha256':mesh_hash(mesh),'source_database_sha256':file_hash(setup/'contact_model.db'),'input_sha256':file_hash(out/'input.inp'),'registered_plan_sha256':file_hash(RUN/'protocol/DIAGNOSTIC_PLAN_001.json'),'scope':'DIAGNOSTIC_ONLY, explicitly different direct/linearized physical variants'})
-    receipt=run_diagnostic(out)
+    receipt=run_diagnostic(out,cores=variant.get('cores',1))
     snapshots=[]
     for path in sorted(out.glob('compression.nr[0-9]*')):
         snapshots.append(localize_residual(path,mesh.nodes,mesh.boundary,mesh.boundary_groups))

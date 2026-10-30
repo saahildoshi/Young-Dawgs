@@ -1,0 +1,16 @@
+.F........                                                               [100%]
+================================== FAILURES ===================================
+_____________ test_native_residual_schema_reproduces_native_norm ______________
+
+    def test_native_residual_schema_reproduces_native_norm():
+        p=BASE/'rectangle_telemetry_001';z=np.load(RUN.parents[1]/'pipeline_v0.6.2/run_001/rectangle_contact/generated/input_002/mesh.npz')
+        r=localize_residual(p/'compression.nr001',z['nodes'],z['boundary'],z['boundary_groups'])
+        norm=float(re.search(r'CNVV\s*=\s*([\d.Ee+\-]+)',r['native_convergence_header'])[1])
+>       assert abs(r['specimen_translation_L2_N']/norm-1)<1e-4
+E       assert 0.00010327452138825244 < 0.0001
+E        +  where 0.00010327452138825244 = abs(((4.6805165719653814e-08 / 4.681e-08) - 1))
+
+validation\ansys_v064_integration.py:43: AssertionError
+=========================== short test summary info ===========================
+FAILED validation/ansys_v064_integration.py::test_native_residual_schema_reproduces_native_norm
+1 failed, 9 passed in 1.54s

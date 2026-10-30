@@ -179,3 +179,11 @@ def test_monitor_failure_and_cancel_terminate_owned_process(tmp_path,error,statu
     def stop(folder):raise error
     r=bounded_run([sys.executable,'-c','import time; time.sleep(30)'],tmp_path/'owned',timeout=10,stop_check=stop)
     assert r['status']==status and r['returncode'] is not None and r['runtime_seconds']<10
+
+
+def test_real_resource_samples_are_bounded_and_explicit(tmp_path):
+    import sys
+    from metamaterial_eval.simulation.windows_ansys import bounded_run
+    r=bounded_run([sys.executable,'-c','import time; time.sleep(.25)'],tmp_path/'samples',resource_sample_seconds=.1)
+    assert 1<=len(r['resource_samples'])<=5
+    assert all(s['available_RAM_bytes']>0 and s['elapsed_seconds']>=0 for s in r['resource_samples'])

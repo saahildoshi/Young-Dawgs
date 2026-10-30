@@ -1,0 +1,14 @@
+{
+  "acceptance": "Actual nonzero solver convergence plus original endpoint penetration/equilibrium/contact-force gates; no relaxed criteria",
+  "evidence": "Compliant fixed PP100 has native chatter15/12; direct converges. Updating PP100 and lowering fixed penalty toFKN1 both failed; smaller increments/cutbacks also failed. Thus stiffness or step size alone is not a demonstrated cure.",
+  "frozen_before_execution": true,
+  "installed_support": "Official adjacent CONTA172 key4reference only; actual v241 must accept and print configuration",
+  "one_additional_control": {
+    "KEYOPT4": 2,
+    "baseline": "pp_base fixedPP100",
+    "id": "pp_nodal_target",
+    "single_changed_dimension": "Gauss detection0 to nodal detection with target-surface normal2"
+  },
+  "purpose": "Test normal/detection integration sensitivity on deforming quadratic cap contact; keep physical frictionless separable rigid-flat platen experiment",
+  "stop": "If no supported correction passes small controls, full retry NOT EXECUTED; no further contact search."
+}

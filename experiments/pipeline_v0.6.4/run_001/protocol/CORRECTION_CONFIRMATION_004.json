@@ -1,0 +1,13 @@
+{
+  "comparison_reference": "v063 candidate004 fixed purepenalty FKN100; parameter-equivalent fresh setup resumed from original rectangle model",
+  "confirmation_runs": [
+    "rectangle_pp_base",
+    "rectangle_pp_nodal",
+    "rectangle_pp_nodal_2cores"
+  ],
+  "criteria": "Each gate0, reaction/element contact force residual<=1%, max stored endpoint penetration<=1e-5mm; compare forces within1%; actual2core receipt only establishes observed2core capability",
+  "finding": "Nodal target-normal KEYOPT4=2 alone converged compliant PP100 at0.5% with stage gate0, balanced nonzeroRF0.05306515N. Other one-variable contact controls failed.",
+  "frozen_before_execution": true,
+  "full_retry": "Still requires independently frozen committed protocol; not launched here",
+  "same_physics": "Accepted 617-node rectangle, E1000 nu.3 t1, frictionless separable contact, 0.5% compression"
+}

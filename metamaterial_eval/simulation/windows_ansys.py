@@ -37,7 +37,7 @@ def installations(environ=None, program_files=None):
 
 
 def bounded_run(command, directory, *, timeout=180, rss_limit=8*1024**3, prepared=False,
-                min_disk_free=0, min_available_ram=0, stop_check=None):
+                min_disk_free=0, min_available_ram=0, stop_check=None,resource_sample_seconds=0):
     """Supervise only the new process and descendants; preserve logs on every exit."""
     import psutil
     directory = Path(directory).resolve()
@@ -58,13 +58,20 @@ def bounded_run(command, directory, *, timeout=180, rss_limit=8*1024**3, prepare
                                        creationflags=flags)
             owned = psutil.Process(process.pid)
             state = None
+            last_sample=-1e30
+            if resource_sample_seconds:receipt['resource_samples']=[]
             while process.poll() is None:
+                rss=None
                 try:
                     tree = [owned, *owned.children(recursive=True)]
                     rss = sum(p.memory_info().rss for p in tree if p.is_running())
                     receipt['peak_tree_rss_bytes'] = max(receipt['peak_tree_rss_bytes'], rss)
                 except (psutil.NoSuchProcess, psutil.AccessDenied):
                     pass
+                elapsed=time.perf_counter()-started
+                if resource_sample_seconds and elapsed-last_sample>=resource_sample_seconds:
+                    receipt['resource_samples'].append({'elapsed_seconds':elapsed,'tree_rss_bytes':rss,'available_RAM_bytes':psutil.virtual_memory().available,'disk_free_bytes':shutil.disk_usage(directory).free})
+                    last_sample=elapsed
                 if time.perf_counter()-started > timeout:
                     state = 'TIMEOUT'
                 if receipt['peak_tree_rss_bytes'] > rss_limit:

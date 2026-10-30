@@ -1,0 +1,127 @@
+{
+  "FKN": 100,
+  "FTOLN_absolute_mm": -1e-05,
+  "NLGEOM": true,
+  "accepted_small_recovery_receipt_sha256": "bfc4110f2189c28fca5c536321288cc59eca51f3806e255b3003ed3cbc71f4d6",
+  "achieved_UY_absolute_tolerance_mm": 1e-08,
+  "amendment_sha256": "41c2d9775d21756210ae1199e0481956277dba0bd3b0f1758f354511213033f6",
+  "assembly_assessment_sha256": "7cf3d9405bcc3cd77059c0d0cec551fff102e31b6b7a1a1ce4509fd290756b41",
+  "available_RAM_at_freeze_bytes": 37050511360,
+  "concurrency": "one owned MAPDL tree",
+  "contact_algorithm_keyopt2": 1,
+  "contact_detection_keyopt4": 2,
+  "contact_force_balance_relative_limit": 0.01,
+  "contact_scope": "PLATEN_CONTACT_ONLY",
+  "contact_sensitivity_freeze_sha256": "9b66cca0d6d603e2302dfbf886505a7699ebbf5c1443b7b22d705eff94dcac91",
+  "contact_setup_sha256": "182d93b660505bfec27166384d14ab744d521c5410eca4eba6f7a599f32787cd",
+  "contact_stiffness_update_keyopt10": 1,
+  "controls": {
+    "AUTOTS": true,
+    "LNSRCH": true,
+    "NEQIT": 24,
+    "NROPT": "FULL",
+    "NSUBST": [
+      2,
+      20,
+      1
+    ],
+    "force_CNVTOL_minref_N": 1e-08,
+    "force_CNVTOL_relative": 0.005
+  },
+  "corrected_rectangle_acceptance_sha256": "b4d179d8d38aa2535b071f5135fdffdb6bd1c7c7fec5f4b4e0f02e5b84440bca",
+  "correction_amendment_sha256": "f1df96f506bb82932bab79678ac2cfaa119656c8ddcd159c5e1f0fb06ad1f65d",
+  "corrective_action": "Nodal contact detection with target normal; no specimen/physical model changes",
+  "diagnostic_budget": {
+    "bytes_cap": 2147483648,
+    "completed_iterations_cap": 32,
+    "cutbacks_cap": 3,
+    "minimum_cutbacks_before_stagnation": 1,
+    "minimum_iterations_before_stagnation": 24,
+    "native_snapshot_cap": 4,
+    "stop_stagnation": true,
+    "trend_window": 6
+  },
+  "dimensions_mm": [
+    10.24,
+    10.24,
+    1
+  ],
+  "early_stop_rationale": "NEQIT8 failed corrected compliant control; tested24/NSUBST2,20,1 with2SMP converged after actual cutback. Allow first24 updates, then six-evaluation stagnant/oscillating/increasing current-trial history after>=1cutback; cap32 total completed updates or3cutbacks. First large residual alone is never a stop.",
+  "eligibility": "Single accepted checkpoint gives only secant response, never fitted modulus or design ranking",
+  "fields": "all-node UX/UY and masked corner stresses/elastic strains at each converged registered checkpoint; no midside stress invented",
+  "force_balance_relative_limit": 0.01,
+  "formulation": "PLANE183 six-node plane stress explicit initial thickness 1 mm",
+  "friction": 0,
+  "frozen_before_microstructure_compression": true,
+  "frozen_input_sha256": "7d3f1c90467b96f916e7e5293b3f3d65a1f13b60de53d33615eb3ebd3427aa45",
+  "full_trial_vs_mechanical": "All CND/NR trial records UNCONVERGED_DIAGNOSTIC_ONLY; native convergence, signedRF/contact, full fields and mapping gates required",
+  "import_validation_sha256": "5140b197a97eb31c5bbef55d53fc8e9e1f52f1211a4dbaccd0dfe723bcc2b99d",
+  "initial_contact": "both real pairs initially closed; zero/3.55e-15 mm penetration",
+  "limitations": [
+    "mechanical mesh convergence unqualified",
+    "internal self-contact not configured",
+    "prior cumulative small-pore fidelity and production simplification HOLD",
+    "no experimental calibration",
+    "preliminary single-mesh pilot only"
+  ],
+  "material": {
+    "E_MPa": 1000,
+    "nu": 0.3,
+    "status": "PROVISIONAL_UNCALIBRATED"
+  },
+  "max_additional_full_model_attempts": 0,
+  "mesh_identity": "HISTORICAL_MESH_IDENTITY_VERIFIED_BY_REPRODUCTION",
+  "mesh_semantic_sha256": "e26863263774cf86c777b1485ac0e639216a91644007c4da272469a7447000bc",
+  "native_jobname": "v064r001",
+  "output": "OUTRES ALL LAST per load step; no full-field export at every substep",
+  "parallel_scope": "Actual2SMP licensed rectangle and compliant controls passed; no total license entitlement/all20core or full-model speedup claim",
+  "penetration_limit_mm": 1e-05,
+  "predecessor_status": "V063 no converged substeps; unchanged exact mesh/import reused",
+  "previous_attempt": "pilot_001 stopped with no converged substep after observed residual plateau; not a valid physical response",
+  "primary_full_model_attempts_max": 1,
+  "reaction_force_minimum_N": 1e-08,
+  "resource": {
+    "cores": 2,
+    "minimum_available_RAM_GiB": 12,
+    "minimum_disk_free_GiB": 20,
+    "rss_limit_GiB": 20,
+    "timeout_seconds": 1200
+  },
+  "resource_at_freeze": {
+    "available_RAM_bytes": 39516041216,
+    "disk_free_bytes": 1442704318464
+  },
+  "resource_gate": "CONDITIONAL_BOUNDED_FIRST_STAGE: actual linear assembly succeeded; factorization/contact memory not proved in advance; enforce hard process/OS reserves and stop on resource excess",
+  "revision": 1,
+  "root_cause_hypothesis": "Gauss contact-detection sensitivity with native chatter and platen-local FY residual. Causal small control passes only after key4=2; historical full causality still requires this retry.",
+  "schema": "young-dawgs-v0.6.4-full-recovery",
+  "scope_of_change": "fixed initial pure penalty contact; all physical/loading/acceptance/resource limits retained",
+  "separation_permitted": true,
+  "solver": "symmetric sparse direct, default memory allocation with PERFORMANCE; one SMP core",
+  "source_geometry_sha256": "4700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1",
+  "stabilization": "none; no weak springs",
+  "stage_advancement": "actual LAST result time/displacement, nonnegligible signed reactions, <=1% normalized equilibrium, each pair closed+positive pressure, <=1e-5 mm endpoint penetration and <=1% signed contact-force/reaction residual; stop after first failed gate",
+  "stage_continuation": "after each POST1 checkpoint, subsequent stages use verified ANTYPE,STATIC,REST,,,CONTINUE; require increasing actual load-step IDs and preserve checkpoint RST sets",
+  "stiffness_fit": "through-origin least squares on valid achieved checkpoints with 0 < epsilon <=0.001, >=2 nonzero points; otherwise no fitted modulus",
+  "stop_conditions": [
+    "timeout",
+    "RSS or OS RAM reserve",
+    "disk reserve",
+    "negative pivot count >0",
+    "solver errors/distortion",
+    "failed stage/contact gate"
+  ],
+  "strains": [
+    0.0001
+  ],
+  "supports": "lower pilot UX/UY/ROTZ fixed; upper UX/ROTZ fixed and UY prescribed; one bottom specimen UX anchor; no specimen UY constraints",
+  "telemetry": [
+    "NLDIAG CONT ITER",
+    "NLDIAG NRRE ON2",
+    "NLDIAG EFLG ON2",
+    "NLHIST UY/RF at upper pilot",
+    "1s actual resource samples"
+  ],
+  "units": "mm-N-MPa",
+  "warning_policy": "retain recommendation to update stiffness; fixed stiffness is deliberate diagnostic choice validated on rectangle; no formal contact-policy convergence claim"
+}

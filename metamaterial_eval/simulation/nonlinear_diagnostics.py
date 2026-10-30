@@ -153,6 +153,8 @@ class DiagnosticBudget:
     cutbacks_cap:int=4
     trend_window:int=6
     stop_stagnation:bool=False
+    minimum_iterations_before_stagnation:int=24
+    minimum_cutbacks_before_stagnation:int=1
 
 
 def telemetry_commands(top):
@@ -174,22 +176,24 @@ def diagnostic_stop(directory,budget):
     if has_negative_pivots(text) or re.search(r'element.*highly distorted',text,re.I):return 'SOLVER_PIVOT_OR_DISTORTION_STOP'
     if len(parsed['completed_iterations'])>=budget.completed_iterations_cap:return 'REGISTERED_ITERATION_LIMIT'
     if len(parsed['cutback_events'])>=budget.cutbacks_cap:return 'REGISTERED_CUTBACK_LIMIT'
-    if budget.stop_stagnation and len(parsed['cutback_events'])>=2:
+    if budget.stop_stagnation and len(parsed['cutback_events'])>=budget.minimum_cutbacks_before_stagnation and len(parsed['completed_iterations'])>=budget.minimum_iterations_before_stagnation:
         values=[v['ratio'] for v in parsed['force_evaluations'] if v['trial_sequence']==len(parsed['cutback_events'])]
         if len(values)>=budget.trend_window and residual_trend(values) in ['PLATEAU','OSCILLATING','INCREASING']:return 'REGISTERED_RESIDUAL_STAGNATION'
     return None
 
 
-def run_diagnostic(directory,*,cores=1,timeout=180,rss_GiB=8,budget=None):
+def run_diagnostic(directory,*,cores=1,timeout=180,rss_GiB=8,budget=None,jobname='compression'):
     directory=Path(directory);budget=budget or DiagnosticBudget(bytes_cap=256*1024**2,completed_iterations_cap=300,cutbacks_cap=100)
     if cores not in [1,2]:raise ValueError('Only prospectively registered 1/2-core diagnostic probes')
-    process=bounded_run([str(discover_solver()),'-b','-smp','-np',str(cores),'-m','4096','-j','compression','-i','input.inp','-o','solver.out'],directory,prepared=True,timeout=timeout,rss_limit=rss_GiB*1024**3,min_disk_free=20*1024**3,min_available_ram=12*1024**3,stop_check=lambda p:diagnostic_stop(p,budget))
+    if not re.fullmatch(r'[A-Za-z0-9_]{1,32}',jobname):raise ValueError('Invalid native jobname')
+    process=bounded_run([str(discover_solver()),'-b','-smp','-np',str(cores),'-m','4096','-j',jobname,'-i','input.inp','-o','solver.out'],directory,prepared=True,timeout=timeout,rss_limit=rss_GiB*1024**3,min_disk_free=20*1024**3,min_available_ram=12*1024**3,stop_check=lambda p:diagnostic_stop(p,budget),resource_sample_seconds=1)
     text=(directory/'solver.out').read_text(errors='replace') if (directory/'solver.out').exists() else ''
     parsed=parse_solver_log(text)
-    receipt={'status':process['status'],'process':process,'solver_version':solver_release(text),'input_sha256':file_hash(directory/'input.inp'),'converged_steps':[(r['load_step'],r['substep']) for r in parsed['converged_substeps']],'warnings':solver_warnings(text),'diagnostic_only':True}
+    receipt={'status':process['status'],'process':process,'solver_version':solver_release(text),'input_sha256':file_hash(directory/'input.inp'),'native_jobname':jobname,'converged_steps':[(r['load_step'],r['substep']) for r in parsed['converged_substeps']],'warnings':solver_warnings(text),'diagnostic_only':True}
     write_json(directory/'execution_receipt.json',receipt)
     write_json(directory/'nonlinear_telemetry.json',parsed)
-    contact=parse_contact((directory/'compression.cnd').read_text(errors='replace')) if (directory/'compression.cnd').exists() else {'records':[],'issues':['MISSING_FILE']}
+    contact_path=directory/(jobname+'.cnd')
+    contact=parse_contact(contact_path.read_text(errors='replace')) if contact_path.exists() else {'records':[],'issues':['MISSING_FILE']}
     write_json(directory/'contact_telemetry.json',contact);write_json(directory/'contact_summary.json',contact_summary(contact['records']))
     return receipt
 

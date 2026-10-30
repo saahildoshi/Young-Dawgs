@@ -46,3 +46,10 @@ def test_missing_stress_component_is_not_filled(tmp_path):
 def test_windows_blank_lines_do_not_hide_solver_warning():
     from metamaterial_eval.simulation.solver_execution import solver_warnings
     assert solver_warnings('*** WARNING *** CP = 1\n\n It is highly recommended to update stiffness\n')==['It is highly recommended to update stiffness']
+
+
+def test_unique_native_result_jobname_is_validated(tmp_path):
+    from metamaterial_eval.simulation.microstructure_results import native_result_path
+    assert native_result_path(tmp_path,{'result_jobname':'v064r001'})==tmp_path/'v064r001.rst'
+    assert native_result_path(tmp_path,{})==tmp_path/'compression.rst'
+    with pytest.raises(ValueError):native_result_path(tmp_path,{'result_jobname':'../outside'})
