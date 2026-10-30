@@ -52,3 +52,29 @@ Execution requires the full protocol to be committed first. No second full
 trial is authorized by this implementation. Failed numerical data remain
 ineligible for performance ranking. One valid point gives at most a preliminary
 secant response; mesh convergence and all prior physical/scientific HOLDs remain.
+
+## Evidence correction and final outcome — 2026-10-30
+
+The prospective text above is retained as the original decision record. Its
+claim of a "real cutback" in the successful NEQIT24 recovery control was
+incorrect. Native records show three converged substeps and **zero bisections**;
+automatic increment prediction reduced the next increment after convergence.
+True failed-trial bisections were demonstrated by separate failed controls.
+`audit/STEP_PREDICTION_CORRECTION_012.json` records this distinction.
+
+The primary full run recovered the first nonzero equilibrium at 0.005% strain
+after seven Newton updates. It stopped at the unchanged 20-GiB memory guard
+while attempting the next increment; its RST contained no readable data set.
+Under the user's section 21 exception, the prospectively committed technical
+amendment 009 superseded the original no-second-trial restriction solely to
+retain that known checkpoint with explicit output controls. No third full run
+was performed or authorized by this milestone.
+
+The conditional repair again announced equilibrium after seven updates, but
+hit the memory guard during result writing. Read-only SET recovered the native
+0.005% displacement field, with every deformed TRI6 mapping positive. Required
+reactions, contact-element results, stress and elastic strain were unavailable;
+zero/sentinel exports are quarantined. There are **zero mechanically accepted
+checkpoints**, no modulus and no performance score. Native contact-pair forces
+are diagnostic evidence, not a substitute for independently verified support
+reactions. See the final recovery and validation reports in run_001.
