@@ -10,7 +10,7 @@
         m = resume_exploration(run, execute=True)
 &gt;       assert m["status"] == "COMPLETE"
 E       AssertionError: assert 'FAILED' == 'COMPLETE'
-E         
+E
 E         - COMPLETE
 E         + FAILED
 
@@ -23,7 +23,7 @@ tests\test_pipeline_exploration.py:66: AssertionError</failure></testcase><testc
         report = read_json(run / m["latest_attempt"] / "exploration_report.json")
 &gt;       assert m["status"] == "COMPLETE" and report["engineering_valid_count"] == 0
 E       AssertionError: assert ('FAILED' == 'COMPLETE'
-E         
+E
 E         - COMPLETE
 E         + FAILED)
 
@@ -45,7 +45,7 @@ tests\test_pipeline_exploration.py:105: AssertionError</failure></testcase><test
         m = resume_exploration(run, execute=True)
 &gt;       assert m["status"] == "COMPLETE"
 E       AssertionError: assert 'FAILED' == 'COMPLETE'
-E         
+E
 E         - COMPLETE
 E         + FAILED
 

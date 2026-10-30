@@ -18,10 +18,10 @@ from scripts.v066_restart import REPO,RUN,BASE,load,compact
 def post_commands(mesh):
     lines=direct_post({'specimen_nodes':len(mesh.nodes)},.4)
     lines+=['ESEL,S,REAL,,0','ESEL,R,ENAME,,172','*GET,NC,ELEM,0,COUNT',
-        '*CFOPEN,internal_contact,csv','*VWRITE',"('element,status,pressure_i,pressure_j,gap_i,gap_j,internal_FY')",'EID=0',
+        '*CFOPEN,internal_contact,csv','*VWRITE',"('element,status,pressure_i,pressure_j,gap_i,gap_j,internal_FY,i_node')",'EID=0',
         '*DO,KK,1,NC','EID=ELNEXT(EID)','*GET,STV,ELEM,EID,NMISC,19','*GET,PI,ELEM,EID,SMISC,1',
         '*GET,PJ,ELEM,EID,SMISC,2','*GET,GI,ELEM,EID,NMISC,5','*GET,GJ,ELEM,EID,NMISC,6',
-        '*GET,FYV,ELEM,EID,NMISC,22','*VWRITE,EID,STV,PI,PJ,GI,GJ,FYV',"(F12.0,',',F4.0,5(',',E24.16))",'*ENDDO','*CFCLOS','ALLSEL,ALL']
+        '*GET,FYV,ELEM,EID,NMISC,22','*GET,INV,ELEM,EID,NODE,1','*VWRITE,EID,STV,PI,PJ,GI,GJ,FYV,INV',"(F12.0,',',F4.0,5(',',E24.16),',',F12.0)",'*ENDDO','*CFCLOS','ALLSEL,ALL']
     return lines
 
 
