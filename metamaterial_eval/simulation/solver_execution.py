@@ -38,13 +38,19 @@ def discover_solver(executable=None):
     return None
 
 
+def has_negative_pivots(text):
+    """Performance logs also print monitoring enabled and zero counts."""
+    counts=re.findall(r'(?:#\s*of\s+negative pivots|number of negative pivots encountered)\s*=\s*(\d+)',text,re.I)
+    return any(int(n)>0 for n in counts) or bool(re.search(r'\b(?:a|an) negative pivot (?:value|was|has|at)',text,re.I))
+
+
 def classify_log(text,returncode,has_result,has_history):
     lower=text.lower()
     if re.search(r'license.*(?:fail|denied|unavailable|not available)|(?:fail|unable).*license|licensed number.*exceeded|ansys license manager error|no licenses? available',lower):
         return 'LICENSE_FAILURE'
     if re.search(r'not enough memory|insufficient memory|out of memory|unable to allocate',lower):
         return 'MEMORY_EXHAUSTION'
-    if re.search(r'element.*(?:highly distorted|excessive distortion)|negative pivot',lower):
+    if re.search(r'element.*(?:highly distorted|excessive distortion)',lower) or has_negative_pivots(text):
         return 'ELEMENT_DISTORTION_OR_INSTABILITY'
     if returncode!=0:return 'SOLVER_PROCESS_FAILURE'
     if re.search(r'\*\*\*\s*(?:error|fatal)\s*\*\*\*|solution.*not converged|unconverged solution|convergence failure',lower):

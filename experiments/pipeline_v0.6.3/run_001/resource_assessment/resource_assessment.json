@@ -1,0 +1,105 @@
+{
+  "converged_steps": [],
+  "factorization_memory": "NOT_ESTABLISHED_BY_WRFULL",
+  "input_sha256": "148435efeb37e0dd780ceb56711d55cfaedc7db5dbd8bbe636acad846293b810",
+  "matrix_file_bytes": 1093337088,
+  "memory_lines": [
+    "SHARED MEMORY PARALLEL REQUESTED",
+    "MEMORY REQUESTED (MB)        = 4096",
+    "Memory resident data base increased from      1024 MB to      2048 MB.",
+    "USE SPARSE MATRIX DIRECT SOLVER",
+    "BCSOPTION: USE DEFAULT MEMORY ALLOCATION LOGIC FOR SPARSE DIRECT SOLVER",
+    "EQUATION SOLVER OPTION. . . . . . . . . . . . .SPARSE",
+    "GLOBALLY ASSEMBLED MATRIX . . . . . . . . . . .SYMMETRIC",
+    "The initial memory allocation (-m) has been exceeded.",
+    "Supplemental memory allocations are being used.",
+    "memoryReuse                  -1",
+    "mpcMemoryReuse                0",
+    "Updated memoryReuse key = -1",
+    "Range of element maximum matrix coefficients in global coordinates",
+    "*** ELEMENT MATRIX FORMULATION TIMES",
+    "Time at end of element matrix formulation CP = 28.96875.",
+    "ANSYS largest memory block available     1007278204 :   960.62 Mbytes",
+    "ANSYS memory in use      2145413824 :  6142.03 Mbytes",
+    "ANSYS max memory used      3527246912 :  7459.84 Mbytes",
+    "ZeroThreshold value for dropping near-zero values when writing matrix has been adjusted to:  1.0000000000E-14",
+    "ANSYS largest memory block available     1162270268 :  1108.43 Mbytes",
+    "ANSYS memory in use      1617717056 :  5638.78 Mbytes",
+    "ANSYS max memory in use      4116337792 :  8021.65 Mbytes",
+    "reached and the FULL file has been written.  Skipping equation",
+    "1042.688 MB WRITTEN ON ASSEMBLED MATRIX FILE: compression.full",
+    "Total number of cores requested         :    1 (Shared Memory Parallel)",
+    "Equation solver used                              :            Sparse (symmetric)",
+    "Sum of memory used on all processes               :     7858.0 MB",
+    "Sum of memory allocated on all processes          :    12160.0 MB",
+    "Physical memory available                         :         64 GB",
+    "|  Database Requested(-db)  1024 MB     Scratch Memory Requested      3008 MB |",
+    "|  Maximum Database Used    1948 MB     Maximum Scratch Memory Used   5910 MB |"
+  ],
+  "process": {
+    "artifacts": {
+      "compression.err": {
+        "bytes": 80,
+        "sha256": "b4e8267723424b4733bca84a6426195ceda0877238f90bebab636f44800152d1"
+      },
+      "compression.esav": {
+        "bytes": 259588096,
+        "sha256": "e0f70c36ca9580a7aebea241c59d52efcb67f797d76ba77ae2c1e1c27d6f0d30"
+      },
+      "compression.full": {
+        "bytes": 1093337088,
+        "sha256": "0c624c42d21b3b50d23a7394da15b2d069686fa05a66b4b811e6e62bc22cf4bf"
+      },
+      "compression.log": {
+        "bytes": 250,
+        "sha256": "0cefcd35889c6159835ec6a6b7f65969fac9ccb9da16564265bdca4eb5b52baa"
+      },
+      "compression.mntr": {
+        "bytes": 707,
+        "sha256": "a351cc74adffb59808e6a2552084970f1d56ee801b907a744e4b2a1a7453fc41"
+      },
+      "input.inp": {
+        "bytes": 441,
+        "sha256": "148435efeb37e0dd780ceb56711d55cfaedc7db5dbd8bbe636acad846293b810"
+      },
+      "launcher.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "solver.out": {
+        "bytes": 21705,
+        "sha256": "7c00587f24bb451a780d3ed6c659efefc7e0748b3e05a06523554c4bbe835a02"
+      }
+    },
+    "command": [
+      "C:\\Program Files\\ANSYS Inc\\v241\\ansys\\bin\\winx64\\ANSYS241.exe",
+      "-b",
+      "-smp",
+      "-np",
+      "1",
+      "-m",
+      "4096",
+      "-j",
+      "compression",
+      "-i",
+      "input.inp",
+      "-o",
+      "solver.out"
+    ],
+    "min_available_ram_bytes": 12884901888,
+    "min_disk_free_bytes": 21474836480,
+    "peak_tree_rss_bytes": 10981822464,
+    "returncode": 0,
+    "rss_limit_bytes": 21474836480,
+    "run_directory": "C:\\Users\\sd22446\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\YoungDawgs\\artifacts\\solver\\v063\\assembly_001",
+    "runtime_seconds": 36.80667489999905,
+    "started_utc": "2026-10-30T00:08:10.617850+00:00",
+    "status": "PROCESS_EXITED",
+    "timeout_seconds": 600
+  },
+  "reported_equations": [],
+  "scope": "linear no-contact assembly only; no equation solution, factorization or mechanical result",
+  "solver_version": "2024 R1",
+  "status": "ASSEMBLY_ONLY_COMPLETE_NOT_SOLVED",
+  "warnings": []
+}
