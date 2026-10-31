@@ -6,6 +6,8 @@ from metamaterial_eval.simulation.mesh_generation import Mesh
 from metamaterial_eval.simulation.element_quality import quadratic_mapping
 from metamaterial_eval.simulation.deformed_boundaries import screen
 from metamaterial_eval.simulation.nodal_contact_geometry import explain_nodal_pairs
+from metamaterial_eval.simulation.general_contact_results import explain_contact_pairs
+from metamaterial_eval.simulation.quadratic_separation import certify_separated
 from metamaterial_eval.simulation.reporting import write_json
 from metamaterial_eval.simulation.solver_execution import file_hash
 from metamaterial_eval.simulation.microstructure_results import unsupported_result_queries
@@ -59,16 +61,34 @@ def qualify(label):
         geometry_error=None
         try:
             if overlap['orientation_inverted_loops'] or overlap['edges_exceeding_requested_tolerance']: raise ValueError('Boundary orientation/subdivision failure')
-            explanations=explain_nodal_pairs(overlap,eids,{eid_to_boundary[int(r[0])]:r for r in contact},m,xy)
+            lookup={eid_to_boundary[int(r[0])]:r for r in contact}
+            if manifest.get('GC_detection_keyopt4',2)==2:
+                explanations=explain_nodal_pairs(overlap,eids,lookup,m,xy)
+            else:
+                explanations=[]
+                for pair in overlap['examples']:
+                    proof=certify_separated(xy[m.boundary[pair['edge_a']]],xy[m.boundary[pair['edge_b']]])
+                    if proof['passed']:
+                        explanations.append({**pair,'explanation':'GUARDED_POSITIVE_QUADRATIC_SEPARATION','geometry_proof':proof})
+                    else:
+                        one={**overlap,'suspicious_pair_count':1,'examples':[pair]}
+                        explanations+=explain_contact_pairs(one,eids,lookup)
         except ValueError as exc:
             geometry_error=str(exc); explanations=[]
         native_closed=int(np.sum(contact[:,1]>=2)) if len(contact) else 0
-        valid=positive and pen<=1e-5 and reaction_error<=.01 and contact_error<=.01 and geometry_error is None
+        force_path=RUN/'local_fixture'/(label+'_interface_force.json')
+        force_q=json.loads(force_path.read_text(encoding='utf-8')) if force_path.exists() else None
+        interface=next((r for r in force_q['states'] if (r['load_step'],r['substep'])==(state['load_step'],state['substep'])),None) if force_q else None
+        native_closed=int(np.sum(contact[:,1]>=2)) if len(contact) else 0
+        force_pass=bool(interface and interface['opposition_passed']) if native_closed else True
+        valid=positive and pen<=1e-5 and reaction_error<=.01 and force_pass and geometry_error is None
         record={**state,'mechanical_gates_passed':bool(valid),'extrapolated':state['load_step']>15,
                 'scope':'LOCAL_DIAGNOSTIC_ONLY', 'all_TRI6_positive':positive,'maximum_penetration_mm':pen,
                 'signed_reaction_sum_N':forces[:,1:3].sum(axis=0).tolist(),'reaction_sum_relative':reaction_error,
                 'platen_signed_RF_N':forces[-1,1:3].tolist(),'cut_signed_RF_N':forces[:-1,1:3].sum(axis=0).tolist(),
                 'assembled_GC_force_residual_relative':contact_error,'closed_gc_skins':native_closed,
+                'selected_skin_FSUM_scope':'Selected contact element contributions, not a complete two-sided interface balance',
+                'independent_two_sided_interface':interface,'contact_force_opposition_passed':force_pass,
                 'maximum_pressure_MPa':float(contact[:,2:5].max()) if len(contact) else 0.,
                 'boundary_candidates':overlap['suspicious_pair_count'],'geometry_failure':geometry_error,'geometry_explanations':explanations}
         if state['load_step']<=15:
