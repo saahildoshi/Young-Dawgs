@@ -1,0 +1,32 @@
+{
+  "evidence": "Nodal1% step has8completed Newton updates; last evaluated force residual20.80N vs0.08334N criterion, following20.58N vs0.08336N, with contact switching and no cutback. Last native converged state LS2SS7=0.00859375. Native convergence has not been established at1%.",
+  "interrupt": "If1% remains unconverged, request documented clean nonlinear stop via compression.abt containing nonlinear on the first line; do not accept the interrupted trial. Source input remains unchanged.",
+  "limit": "At most one full fine-mesh controller retry. If native/field/contact/geometric checks or finite budgets fail, preserve the highest valid state and finish the requested reports; no further algorithm variants.",
+  "native_restart": "Use authenticated copies only. ANTYPE,STATIC,REST,LS,SS,ENDSTEP then SOLVE ends the incomplete load step at its accepted actual substep and rescales stored loads. Only after this native end-step, begin a new load step with total UY=-10.24*target. Do not alter substepping silently inside a continued incomplete load step.",
+  "prerequisites": "Independently reopen and qualify every converged saved nodal state. Authenticate retained native RDB/LDHI/Rnnn and actual frame identity. Validate native ANTYPE ENDSTEP on the existing small five-substep fixture, including unchanged parent/end-state U/S/EPEL/contact/history within1e-5scaled tolerance.",
+  "references": [
+    "https://ansyshelp.ansys.com/public/views/secured/corp/v252/en/ans_bas/Hlp_G_BAS3_11.html",
+    "https://ansyshelp.ansys.com/public/Views/Secured/corp/v242/en/ans_cmd/Hlp_C_ANTYPE.html"
+  ],
+  "registered_utc": "2026-10-31T03:34:49.602744+00:00",
+  "resources": "Original six-hour campaign clock retained, at most60minutes for this contact-onset retry,30min without a converged step, existing HealthPolicy/noRSS cap/40GiB disk reserve, qualified8SMP and one native job at a time.",
+  "retry_controls": {
+    "NEQIT": 12,
+    "first_target": 0.01,
+    "initial_global_strain_increment": 5e-05,
+    "maximum_global_strain_increment": 0.00025,
+    "minimum_global_strain_increment": 1e-06,
+    "next_targets_if_qualified": [
+      0.05,
+      0.1,
+      0.2,
+      0.3,
+      0.4
+    ]
+  },
+  "schema": "young-dawgs-v0.6.6-bounded-contact-onset-loading-recovery",
+  "scope": "Same nodal general-contact model and fine geometry. One bounded loading-controller recovery, not a different contact algorithm or design comparison. Preserve the current source and every prior HOLD.",
+  "source_input_sha256": "22a9422afbacbc23ea97930d4c4ae05c5ec18aa8c24d700927f394654ad8020f",
+  "source_manifest_sha256": "976e4b28483354d05f1a2004f5aa749dfa840a9cd00e80e0ca26ef72764f26eb",
+  "unchanged": "Original mesh/material/thickness, KEYOPT4=2 nodal detection, FKN100/FTOLN-1e-5, full Newton/line search/AUTOTS and all signed1%force/1e-5mm penetration/complete-field/mapping/geometry gates. Every saved nodal state must qualify before further loading."
+}
