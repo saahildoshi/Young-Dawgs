@@ -1,0 +1,72 @@
+{
+  "execution_cores": 2,
+  "execution_scope": "SMALL_NATIVE_ENDSTEP_CONTROL_QUALIFICATION",
+  "input_sha256": "7e9d54ca2db009994ad416c10b493be38cffc102fc9bf7a3c12d9a60ed6c6bd0",
+  "model": {
+    "FKN": 100,
+    "FTOLN_absolute_mm": -1e-05,
+    "anchor_UX_node": 4,
+    "config": {
+      "boundary_size": 0.0033333333333333335,
+      "bulk_size": 0.04,
+      "dimensions": "PROVISIONAL",
+      "force_basis": "total_N",
+      "height": 10.24,
+      "large_deformation": true,
+      "material": "ASSUMED_NOT_MEASURED",
+      "mode": "plane_stress",
+      "poisson_ratio": 0.3,
+      "strains": [
+        0.005,
+        0.01,
+        0.02
+      ],
+      "thickness": 1.0,
+      "time_axis": "quasi_static_pseudo_time",
+      "units": "mm-N-MPa",
+      "width": 10.24,
+      "young_modulus": 1000.0
+    },
+    "contact_algorithm_keyopt2": 1,
+    "contact_detection_keyopt4": 2,
+    "contact_elements": {
+      "bottom": 20,
+      "top": 20
+    },
+    "contact_scope": "PLATEN_CONTACT_ONLY",
+    "contact_stiffness_update_keyopt10": 1,
+    "controls": {
+      "bottom": 620,
+      "top": 623
+    },
+    "initial_geometric_gaps_mm": {
+      "bottom": 0,
+      "top": 0
+    },
+    "internal_self_contact": "UNQUALIFIED_NOT_CONFIGURED",
+    "schema": "young-dawgs-v0.6.3-contact-model",
+    "specimen_TRI6": 268,
+    "specimen_UY_constraints": false,
+    "specimen_nodes": 617,
+    "user_model_elements": 312,
+    "user_model_nodes": 623
+  },
+  "omitted_required_category_negative_control": null,
+  "output_selection": [
+    "OUTRES,ERASE",
+    "OUTRES,ALL,NONE",
+    "OUTRES,NSOL,LAST",
+    "OUTRES,RSOL,LAST",
+    "OUTRES,STRS,LAST",
+    "OUTRES,EPEL,LAST",
+    "OUTRES,CONT,LAST",
+    "OUTRES,MISC,LAST"
+  ],
+  "previous_strain": 0.003,
+  "protocol_sha256": "d218c7c59eea3f18d3988bd1e264ec73f0b5db1a39622e74ef56f68f25bf67bd",
+  "source_contact_database_sha256": "b8c97bcc84a03b88b7328c112bb011f59fb311ed51bd9fb7fb655e8d40e80646",
+  "target_strain": 0.005,
+  "targets": [
+    0.005
+  ]
+}
