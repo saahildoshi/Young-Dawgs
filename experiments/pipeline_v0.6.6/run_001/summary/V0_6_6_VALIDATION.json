@@ -1,0 +1,1104 @@
+{
+  "accepted_measurements": [
+    {
+      "compression_displacement_mm": 0.0005120000000000002,
+      "engineering_compression_strain": 5.0000000000000016e-05,
+      "lower_rf_y_N": 0.06074445939887244,
+      "nominal_compression_stress_MPa": 0.005901798352544726,
+      "pseudo_time": 5e-05,
+      "reaction_balance_relative": 0.005104074871727321,
+      "secant_modulus_MPa": 118.03596705089448,
+      "source": "v065 authenticated accepted parent",
+      "upper_rf_y_N": -0.060434415130058
+    },
+    {
+      "compression_displacement_mm": 0.001024,
+      "engineering_compression_strain": 9.999999999999999e-05,
+      "load_step": 2,
+      "lower_rf_y_N": 0.1199764084894856,
+      "nominal_compression_stress_MPa": 0.011739138213400625,
+      "pseudo_time": 0.0001,
+      "reaction_balance_relative": 0.001933027061849736,
+      "secant_modulus_MPa": 117.39138213400626,
+      "source": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v066\\fine_stage01_001",
+      "substep": 1,
+      "upper_rf_y_N": -0.1202087753052224
+    },
+    {
+      "compression_displacement_mm": 0.005632000000000002,
+      "engineering_compression_strain": 0.0005500000000000001,
+      "load_step": 3,
+      "lower_rf_y_N": 0.659202260796403,
+      "nominal_compression_stress_MPa": 0.06444526585886357,
+      "pseudo_time": 0.00055,
+      "reaction_balance_relative": 0.0010868925285875645,
+      "secant_modulus_MPa": 117.17321065247918,
+      "source": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v066\\fine_stage01_001",
+      "substep": 1,
+      "upper_rf_y_N": -0.6599195223947629
+    },
+    {
+      "compression_displacement_mm": 0.01024,
+      "engineering_compression_strain": 0.001,
+      "load_step": 3,
+      "lower_rf_y_N": 1.197284239933984,
+      "nominal_compression_stress_MPa": 0.11712048824970937,
+      "pseudo_time": 0.001,
+      "reaction_balance_relative": 0.0016922674812768258,
+      "secant_modulus_MPa": 117.12048824970937,
+      "source": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v066\\fine_stage01_001",
+      "substep": 2,
+      "upper_rf_y_N": -1.199313799677024
+    }
+  ],
+  "accepted_point_count": 4,
+  "actual_fine_converged_states": [
+    {
+      "job": "fine_stage01_001",
+      "load_step": 2,
+      "pseudo_time": 0.0001,
+      "source_line": 1165,
+      "substep": 1,
+      "time_increment": 5e-05
+    },
+    {
+      "job": "fine_stage01_001",
+      "load_step": 3,
+      "pseudo_time": 0.00055,
+      "source_line": 1777,
+      "substep": 1,
+      "time_increment": 0.00045
+    },
+    {
+      "job": "fine_stage01_001",
+      "load_step": 3,
+      "pseudo_time": 0.001,
+      "source_line": 2292,
+      "substep": 2,
+      "time_increment": 0.00045
+    }
+  ],
+  "base_commit": "ce6f601da40784621f3324b7e5805983704973b9",
+  "commits_before_containing_report_commit": [
+    "63886a743334c1c783dc169bc0a0e40cee078165 docs(fem): register v0.6.6 progressive large-strain compression protocol",
+    "c9d8099f55738ba0808226a11cf6e5e002ce4a46 feat(ansys): verify native restart and multi-checkpoint compression output",
+    "2e9f39f8f0131f69bee2d90bfec5370f3d5bd620 feat(fem): screen quadratic boundary overlap and reject unqualified coarse/contact candidates",
+    "d6aba1ef56cbf5c5bf6a34866ee981b39d5d5826 feat(ansys): freeze authenticated fine-mesh progressive compression campaign",
+    "6af10a96a3516891ec0bcaa9d167f35cb46484bb feat(fem): independently qualify progressive native states and retain partial-job evidence",
+    "5d3b8dd6b328c49217a41f43965c9976286f466b fix(validation): repair relocated Python environment and prepare shorter-gap contact control",
+    "41cd832da156261a12d52544ebbfb227b266dd7b fix(fem): quarantine absent continuum strain fields under nonzero load",
+    "dfda76c00e69a249ae80a8b33fb49721895038bb feat(ansys): accept four fine-mesh response points and gate continuation toward one percent",
+    "d1024d2516fc3287418a6f5967c6e73afbba5538 feat(contact): demonstrate gap-closing general contact with opposing forces and bounded penetration"
+  ],
+  "completed_Newton_updates": 7,
+  "compression_work": {
+    "limitation": "Only accepted sampled forces on observed interval; sparse quadrature is not an energy/dissipation convergence study. No origin extrapolation.",
+    "points": 4,
+    "status": "OBSERVED_INTERVAL_TRAPEZOIDAL_ESTIMATE",
+    "travel_interval_mm": [
+      0.0005120000000000002,
+      0.01024
+    ],
+    "work_J": 6.1273338287055955e-06,
+    "work_N_mm": 0.006127333828705595
+  },
+  "contact_scope": "Main fine continuation remains PLATEN_ONLY_EXPLORATORY; no unmodeled pore-wall crossings accepted",
+  "failed_fine_jobs": [],
+  "independent_acceptance": {
+    "A_GEOMETRY_AUTHENTICATED": "PASS",
+    "B_MESH_QUALIFIED": "PASS_ORIGINAL_FINE_GATES",
+    "C_RESTART_VERIFIED": "PASS_ACTUAL_LICENSED",
+    "D_MULTI_POINT_OUTPUT_VERIFIED": "PASS_ACTUAL_LICENSED",
+    "E_PLATEN_CONTACT_QUALIFIED": "PASS_ACCEPTED_STATES",
+    "F_INTERNAL_CONTACT_IMPLEMENTED": "SMALL_FIXTURE_ONLY; FULL_MICROSTRUCTURE_NOT_CONFIGURED",
+    "G_INTERNAL_CONTACT_DEMONSTRATED": "PENDING_OR_HOLD",
+    "H_INTERNAL_OVERLAP_SCREENED": "PASS_BOUNDED_SCREEN_ACCEPTED_STATES",
+    "I_PROGRESSIVE_COMPRESSION_EXECUTED": "PASS",
+    "J_FIRST_ONE_PERCENT": "NOT_ACHIEVED",
+    "K_FIRST_FIVE_PERCENT": "NOT_ACHIEVED",
+    "L_FIRST_TEN_PERCENT": "NOT_ACHIEVED",
+    "M_FIRST_TWENTY_PERCENT": "NOT_ACHIEVED",
+    "N_THIRTY_PERCENT_TARGET": "NOT_ACHIEVED",
+    "O_FORTY_PERCENT_STRETCH": "NOT_ACHIEVED",
+    "P_MULTI_POINT_STRESS_STRAIN": "PASS",
+    "Q_DEFORMATION_FIELDS": "PASS_ACTUAL_NATIVE_FIELDS",
+    "R_MECHANICAL_MESH_CONVERGENCE": "UNQUALIFIED",
+    "S_MATERIAL_CALIBRATION": "UNQUALIFIED",
+    "T_PAPER_READINESS": "RESEARCH_HOLD",
+    "U_LLM_OPTIMIZATION": "NOT_IMPLEMENTED"
+  },
+  "initial_modulus_fit": {
+    "R_squared": 0.9999995892388926,
+    "effective_modulus_MPa": 117.13641689053354,
+    "minimum_points": 3,
+    "normalized_modulus": 0.11713641689053354,
+    "points": 4,
+    "registered_interval": [
+      5e-05,
+      0.001
+    ],
+    "status": "PRELIMINARY_SINGLE_MESH_THROUGH_ORIGIN_FIT"
+  },
+  "material": "Provisional linear-elastic E1000MPa,nu0.3,plane stress,t1mm. Native local elastic strains tracked; no calibrated polymer/yield/fracture model.",
+  "maximum_actual_Newton_converged_engineering_strain": 0.001,
+  "maximum_qualified_engineering_strain": 0.001,
+  "native_cutback_events": 0,
+  "new_fine_converged_substeps": 3,
+  "no_3D_batch_or_LLM_optimization": true,
+  "no_automatic_push": true,
+  "performance": {
+    "actual_native_processes": 19,
+    "disk_scope": "All files in current v066 raw artifact tree, including copied immutable parents and diagnostics; baseline/mesh durable store separate",
+    "fine_native_restart_processes": 1,
+    "fine_source_runtime_seconds": 391.93452739994973,
+    "fixed_RSS_cap": null,
+    "genuine_native_restart_processes": 3,
+    "health_criteria": "Registered actual available/committed memory, paging and reserve conditions",
+    "independent_POST1_processes": 7,
+    "jobs": [
+      {
+        "accepted_native_substeps": 5,
+        "execution_kind": "LICENSED_PROGRESSIVE_SOLVE",
+        "job": "compliant_continuous_002",
+        "maximum_sampled_page_reads_per_second": 3.538728195241543,
+        "minimum_sampled_available_RAM_bytes": 44616130560,
+        "native_recorded_artifact_bytes": 39581570,
+        "native_restart": false,
+        "peak_tree_RSS_bytes": 313331712,
+        "receipt_sha256": "949a0c50a3168e0eb8a9b02ab59beb6ab49344b6b9f331961e62f99f57f45066",
+        "returncode": 0,
+        "rss_limit_bytes": null,
+        "runtime_seconds": 8.505068799946457,
+        "severe_paging_samples": 0,
+        "started_utc": "2026-10-30T23:29:51.427038+00:00",
+        "status": "PROCESS_EXITED"
+      },
+      {
+        "accepted_native_substeps": 0,
+        "execution_kind": "INDEPENDENT_READ_ONLY_POST1",
+        "job": "compliant_continuous_002_post003",
+        "maximum_sampled_page_reads_per_second": 0.0,
+        "minimum_sampled_available_RAM_bytes": 44809990144,
+        "native_recorded_artifact_bytes": 1744920,
+        "native_restart": false,
+        "peak_tree_RSS_bytes": 236105728,
+        "receipt_sha256": "c053f527ece7237338b90b43373a3d86200ebaa61ffbffd27484b37c672c8475",
+        "returncode": 0,
+        "rss_limit_bytes": null,
+        "runtime_seconds": 4.524788099806756,
+        "severe_paging_samples": 0,
+        "started_utc": "2026-10-30T23:30:00.157286+00:00",
+        "status": "PROCESS_EXITED"
+      },
+      {
+        "accepted_native_substeps": 3,
+        "execution_kind": "LICENSED_PROGRESSIVE_SOLVE",
+        "job": "compliant_pause_002",
+        "maximum_sampled_page_reads_per_second": 5.861643524735208,
+        "minimum_sampled_available_RAM_bytes": 44558848000,
+        "native_recorded_artifact_bytes": 38211909,
+        "native_restart": false,
+        "peak_tree_RSS_bytes": 301703168,
+        "receipt_sha256": "c3ec21a36dca73cccf1072d4fb3f518864cf9a87d5b5b796d5b9fad5268878bc",
+        "returncode": 0,
+        "rss_limit_bytes": null,
+        "runtime_seconds": 6.731655000010505,
+        "severe_paging_samples": 0,
+        "started_utc": "2026-10-30T23:30:04.835190+00:00",
+        "status": "PROCESS_EXITED"
+      },
+      {
+        "accepted_native_substeps": 2,
+        "execution_kind": "LICENSED_PROGRESSIVE_SOLVE",
+        "job": "compliant_restart_002",
+        "maximum_sampled_page_reads_per_second": 0.0,
+        "minimum_sampled_available_RAM_bytes": 44785528832,
+        "native_recorded_artifact_bytes": 39237651,
+        "native_restart": true,
+        "peak_tree_RSS_bytes": 307560448,
+        "receipt_sha256": "3bf7b1c9f4b48858a48e3e17850d767762667c8af20215d2142adef752377d98",
+        "returncode": 0,
+        "rss_limit_bytes": null,
+        "runtime_seconds": 3.4595425000879914,
+        "severe_paging_samples": 0,
+        "started_utc": "2026-10-30T23:30:11.812702+00:00",
+        "status": "PROCESS_EXITED"
+      },
+      {
+        "accepted_native_substeps": 0,
+        "execution_kind": "INDEPENDENT_READ_ONLY_POST1",
+        "job": "compliant_restart_002_post003",
+        "maximum_sampled_page_reads_per_second": 0.0,
+        "minimum_sampled_available_RAM_bytes": 44768108544,
+        "native_recorded_artifact_bytes": 1744887,
+        "native_restart": false,
+        "peak_tree_RSS_bytes": 236032000,
+        "receipt_sha256": "20e16d6ad25bd128dc7ee003fb0f296d30b57840e5b56f49e709257d850168cb",
+        "returncode": 0,
+        "rss_limit_bytes": null,
+        "runtime_seconds": 3.212759899906814,
+        "severe_paging_samples": 0,
+        "started_utc": "2026-10-30T23:30:15.493006+00:00",
+        "status": "PROCESS_EXITED"
+      },
+      {
+        "accepted_native_substeps": 3,
+        "execution_kind": "LICENSED_PROGRESSIVE_SOLVE",
+        "job": "fine_stage01_001",
+        "maximum_sampled_page_reads_per_second": 660.7050455207124,
+        "minimum_sampled_available_RAM_bytes": 23532183552,
+        "native_recorded_artifact_bytes": 12917169817,
+        "native_restart": true,
+        "peak_tree_RSS_bytes": 21611687936,
+        "receipt_sha256": "8e29b79f430744ddd875abd25c7761632c6917a4c777200b8549e12232ba4591",
+        "returncode": 0,
+        "rss_limit_bytes": null,
+        "runtime_seconds": 391.93452739994973,
+        "severe_paging_samples": 0,
+        "started_utc": "2026-10-30T23:39:53.105681+00:00",
+        "status": "PROCESS_EXITED"
+      },
+      {
+        "accepted_native_substeps": 0,
+        "execution_kind": "INDEPENDENT_READ_ONLY_POST1",
+        "job": "fine_stage01_001_post001",
+        "maximum_sampled_page_reads_per_second": 550.0027301937328,
+        "minimum_sampled_available_RAM_bytes": 37242970112,
+        "native_recorded_artifact_bytes": 789345981,
+        "native_restart": false,
+        "peak_tree_RSS_bytes": 7688040448,
+        "receipt_sha256": "96040a3b16273c821dc63df45381011008e7b769aa481408514dcd64fb73175b",
+        "returncode": 0,
+        "rss_limit_bytes": null,
+        "runtime_seconds": 296.6892488000449,
+        "severe_paging_samples": 0,
+        "started_utc": "2026-10-30T23:46:41.013378+00:00",
+        "status": "PROCESS_EXITED"
+      },
+      {
+        "accepted_native_substeps": 8,
+        "execution_kind": "LICENSED_PROGRESSIVE_SOLVE",
+        "job": "internal_fixture_disabled_001",
+        "maximum_sampled_page_reads_per_second": 23.334322525594125,
+        "minimum_sampled_available_RAM_bytes": 44536242176,
+        "native_recorded_artifact_bytes": 22158874,
+        "native_restart": false,
+        "peak_tree_RSS_bytes": 270495744,
+        "receipt_sha256": "b6afd4f99410b6b704336ab64d95c0ce606895918c89b4d8d0af7aa4d9c57f60",
+        "returncode": 15,
+        "rss_limit_bytes": null,
+        "runtime_seconds": 6.209592200117186,
+        "severe_paging_samples": 0,
+        "started_utc": "2026-10-30T23:35:44.091378+00:00",
+        "status": "NATIVE_SOLVER_ERROR_OR_DISTORTION"
+      },
+      {
+        "accepted_native_substeps": 12,
+        "execution_kind": "LICENSED_PROGRESSIVE_SOLVE",
+        "job": "internal_fixture_disabled_002",
+        "maximum_sampled_page_reads_per_second": 0.0,
+        "minimum_sampled_available_RAM_bytes": 45239566336,
+        "native_recorded_artifact_bytes": 26998701,
+        "native_restart": false,
+        "peak_tree_RSS_bytes": 271491072,
+        "receipt_sha256": "7573b9826f1059c97017b6c73f02975bb933a8146bf106fa0628c0c16fe1658c",
+        "returncode": 0,
+        "rss_limit_bytes": null,
+        "runtime_seconds": 4.683040200034156,
+        "severe_paging_samples": 0,
+        "started_utc": "2026-10-30T23:51:50.648996+00:00",
+        "status": "PROCESS_EXITED"
+      },
+      {
+        "accepted_native_substeps": 10,
+        "execution_kind": "LICENSED_PROGRESSIVE_SOLVE",
+        "job": "internal_fixture_enabled_001",
+        "maximum_sampled_page_reads_per_second": 0.5923378492907702,
+        "minimum_sampled_available_RAM_bytes": 44707188736,
+        "native_recorded_artifact_bytes": 25231253,
+        "native_restart": false,
+        "peak_tree_RSS_bytes": 329551872,
+        "receipt_sha256": "1fbcdfc1a4be94ca8136277bf922a0cbf5b7dc15eb690f2aabbd13e7fd3c5e42",
+        "returncode": 15,
+        "rss_limit_bytes": null,
+        "runtime_seconds": 8.636579300044104,
+        "severe_paging_samples": 0,
+        "started_utc": "2026-10-30T23:35:50.586346+00:00",
+        "status": "NATIVE_SOLVER_ERROR_OR_DISTORTION"
+      },
+      {
+        "accepted_native_substeps": 12,
+        "execution_kind": "LICENSED_PROGRESSIVE_SOLVE",
+        "job": "internal_fixture_enabled_002",
+        "maximum_sampled_page_reads_per_second": 6.2724317841681305,
+        "minimum_sampled_available_RAM_bytes": 44975140864,
+        "native_recorded_artifact_bytes": 28597664,
+        "native_restart": false,
+        "peak_tree_RSS_bytes": 331280384,
+        "receipt_sha256": "2c19289adcc05c69d634675d8d4c6dd486ec9094ce9d249b256012540543fba8",
+        "returncode": 0,
+        "rss_limit_bytes": null,
+        "runtime_seconds": 6.782786499941722,
+        "severe_paging_samples": 0,
+        "started_utc": "2026-10-30T23:51:55.583989+00:00",
+        "status": "PROCESS_EXITED"
+      },
+      {
+        "accepted_native_substeps": 4,
+        "execution_kind": "LICENSED_PROGRESSIVE_SOLVE",
+        "job": "rectangle_continuous_001",
+        "maximum_sampled_page_reads_per_second": 147.38441786430153,
+        "minimum_sampled_available_RAM_bytes": 44976386048,
+        "native_recorded_artifact_bytes": 3611341,
+        "native_restart": false,
+        "peak_tree_RSS_bytes": 258338816,
+        "receipt_sha256": "181220f56b916a790fb5af952edf6958dddddaa7b84e4785ccb7a99f431c9fd3",
+        "returncode": 0,
+        "rss_limit_bytes": null,
+        "runtime_seconds": 4.840553099988028,
+        "severe_paging_samples": 0,
+        "started_utc": "2026-10-30T23:24:29.029161+00:00",
+        "status": "PROCESS_EXITED"
+      },
+      {
+        "accepted_native_substeps": 4,
+        "execution_kind": "LICENSED_PROGRESSIVE_SOLVE",
+        "job": "rectangle_continuous_002",
+        "maximum_sampled_page_reads_per_second": 0.0,
+        "minimum_sampled_available_RAM_bytes": 44914081792,
+        "native_recorded_artifact_bytes": 4203222,
+        "native_restart": false,
+        "peak_tree_RSS_bytes": 248926208,
+        "receipt_sha256": "9c584c950c8aa68e5b8d5092ee93d67fdc890289ca71f40f3b4427eee2355e18",
+        "returncode": 0,
+        "rss_limit_bytes": null,
+        "runtime_seconds": 3.00527870003134,
+        "severe_paging_samples": 0,
+        "started_utc": "2026-10-30T23:25:32.450634+00:00",
+        "status": "PROCESS_EXITED"
+      },
+      {
+        "accepted_native_substeps": 0,
+        "execution_kind": "INDEPENDENT_READ_ONLY_POST1",
+        "job": "rectangle_continuous_002_post",
+        "maximum_sampled_page_reads_per_second": 0.0,
+        "minimum_sampled_available_RAM_bytes": 44890836992,
+        "native_recorded_artifact_bytes": 106212,
+        "native_restart": false,
+        "peak_tree_RSS_bytes": 210333696,
+        "receipt_sha256": "068669f0ec4465462c5f4fcf8e04d7dd6dc476fcf846fd2f5e5c80220ea95b0c",
+        "returncode": 1,
+        "rss_limit_bytes": null,
+        "runtime_seconds": 2.6414745999500155,
+        "severe_paging_samples": 0,
+        "started_utc": "2026-10-30T23:25:35.641973+00:00",
+        "status": "PROCESS_EXITED"
+      },
+      {
+        "accepted_native_substeps": 0,
+        "execution_kind": "INDEPENDENT_READ_ONLY_POST1",
+        "job": "rectangle_continuous_002_post003",
+        "maximum_sampled_page_reads_per_second": 0.0,
+        "minimum_sampled_available_RAM_bytes": 44866490368,
+        "native_recorded_artifact_bytes": 179416,
+        "native_restart": false,
+        "peak_tree_RSS_bytes": 217939968,
+        "receipt_sha256": "b8416ea71e20e197e89c5f517a4e98eeca9c99a287b81729a747f636bdde7a62",
+        "returncode": 0,
+        "rss_limit_bytes": null,
+        "runtime_seconds": 2.8060260000638664,
+        "severe_paging_samples": 0,
+        "started_utc": "2026-10-30T23:29:45.640270+00:00",
+        "status": "PROCESS_EXITED"
+      },
+      {
+        "accepted_native_substeps": 2,
+        "execution_kind": "LICENSED_PROGRESSIVE_SOLVE",
+        "job": "rectangle_pause_002",
+        "maximum_sampled_page_reads_per_second": 23.652068609920622,
+        "minimum_sampled_available_RAM_bytes": 44871741440,
+        "native_recorded_artifact_bytes": 3239634,
+        "native_restart": false,
+        "peak_tree_RSS_bytes": 235966464,
+        "receipt_sha256": "0cc748c02f3f5e6c69aa6b6dc2853649d2d3b38a1c24d6b904c5a1dcea742b07",
+        "returncode": 0,
+        "rss_limit_bytes": null,
+        "runtime_seconds": 2.769488299963996,
+        "severe_paging_samples": 0,
+        "started_utc": "2026-10-30T23:25:38.405193+00:00",
+        "status": "PROCESS_EXITED"
+      },
+      {
+        "accepted_native_substeps": 2,
+        "execution_kind": "LICENSED_PROGRESSIVE_SOLVE",
+        "job": "rectangle_restart_002",
+        "maximum_sampled_page_reads_per_second": 0.0,
+        "minimum_sampled_available_RAM_bytes": 44866121728,
+        "native_recorded_artifact_bytes": 4152844,
+        "native_restart": true,
+        "peak_tree_RSS_bytes": 241557504,
+        "receipt_sha256": "a504d891b049f364471fcf206b139c0f2f7b2acf48d8473449f47ce13870d408",
+        "returncode": 0,
+        "rss_limit_bytes": null,
+        "runtime_seconds": 2.866589599987492,
+        "severe_paging_samples": 0,
+        "started_utc": "2026-10-30T23:25:41.364737+00:00",
+        "status": "PROCESS_EXITED"
+      },
+      {
+        "accepted_native_substeps": 0,
+        "execution_kind": "INDEPENDENT_READ_ONLY_POST1",
+        "job": "rectangle_restart_002_post",
+        "maximum_sampled_page_reads_per_second": 0.0,
+        "minimum_sampled_available_RAM_bytes": 44872663040,
+        "native_recorded_artifact_bytes": 106191,
+        "native_restart": false,
+        "peak_tree_RSS_bytes": 207757312,
+        "receipt_sha256": "d8023484b93f3ec7c8dc5b735e58265775cf06b473426687b47001f25e7bc073",
+        "returncode": 1,
+        "rss_limit_bytes": null,
+        "runtime_seconds": 2.642847100039944,
+        "severe_paging_samples": 0,
+        "started_utc": "2026-10-30T23:25:44.422139+00:00",
+        "status": "PROCESS_EXITED"
+      },
+      {
+        "accepted_native_substeps": 0,
+        "execution_kind": "INDEPENDENT_READ_ONLY_POST1",
+        "job": "rectangle_restart_002_post003",
+        "maximum_sampled_page_reads_per_second": 0.0,
+        "minimum_sampled_available_RAM_bytes": 44844879872,
+        "native_recorded_artifact_bytes": 179383,
+        "native_restart": false,
+        "peak_tree_RSS_bytes": 220893184,
+        "receipt_sha256": "5f81af42bfa8591fa7e487db5a072cd2fe26df49f68451eea021fee99cc58916",
+        "returncode": 0,
+        "rss_limit_bytes": null,
+        "runtime_seconds": 2.652867600088939,
+        "severe_paging_samples": 0,
+        "started_utc": "2026-10-30T23:29:48.594704+00:00",
+        "status": "PROCESS_EXITED"
+      }
+    ],
+    "maximum_page_reads_per_second": 660.7050455207124,
+    "nonlinear_source_processes": 12,
+    "peak_fine_tree_RSS_bytes": 21611687936,
+    "peak_tree_RSS_bytes": 21611687936,
+    "physical_v066_raw_disk_bytes": 28070698149,
+    "severe_paging_samples": 0,
+    "sum_native_runtime_seconds": 765.5947137000039
+  },
+  "protected_historical_files_unchanged": true,
+  "qualifications": [
+    {
+      "absolute_elastic_components_percentiles": [
+        [
+          9.29822865539707e-06,
+          9.57857256600683e-06
+        ],
+        [
+          9.576447774528668e-05,
+          6.153585765911375e-05
+        ],
+        [
+          0.00016222675464936,
+          0.00010649016068456553
+        ],
+        [
+          0.0007095280935739554,
+          0.0004551291660559186
+        ]
+      ],
+      "accepted": true,
+      "actual_TRI6": 1261670,
+      "actual_history": [
+        0.0001,
+        2.0,
+        1.0,
+        -0.001024,
+        -0.1202087753052224,
+        0.1199764084894856
+      ],
+      "actual_native_corner_nodes": 752212,
+      "actual_nodes": 2766505,
+      "boundary_screen_summary": {
+        "boundary_loops": 413,
+        "edges_exceeding_requested_tolerance": 0,
+        "examples": [],
+        "limitation": "Conservative spatial-index polygonal screen with exact quadratic chord-deviation bounds; uncertain near-contact points need separate native-contact/exact-curve verification.",
+        "maximum_exact_chord_error_bound_mm": 6.800928711861982e-07,
+        "minimum_area_ratio": 0.999639584826529,
+        "minimum_near_sampled_distance_mm": null,
+        "minimum_separation_scope": "Only near pairs inside twice chord-error tolerance are queried; no exhaustive opposing-wall minimum claimed",
+        "orientation_inverted_loops": [],
+        "original_edges": 243576,
+        "passed": true,
+        "pore_loops": 412,
+        "status": "PASS_BOUNDED_QUADRATIC_BOUNDARY_SCREEN",
+        "subdivided_segments": 243576,
+        "suspicious_pair_count": 0,
+        "tolerance_mm": 1e-06
+      },
+      "contact_scope": "PLATEN_ONLY_EXPLORATORY",
+      "contacts": [
+        {
+          "closed_elements": 769,
+          "contact_element_force_y_N": -0.11997640857564,
+          "max_stored_endpoint_penetration_mm": 1.1069938e-09,
+          "max_stored_endpoint_pressure_MPa": 0.6655286,
+          "minimum_signed_gap_mm": -0.00014726672,
+          "pair": "bottom",
+          "pilot_reaction_y_N": 0.1199764084894856,
+          "signed_opposition_residual_relative": 7.180945332573387e-10,
+          "total_elements": 1368
+        },
+        {
+          "closed_elements": 648,
+          "contact_element_force_y_N": 0.12020877515779001,
+          "max_stored_endpoint_penetration_mm": 5.6613381e-10,
+          "max_stored_endpoint_pressure_MPa": 0.33836636,
+          "minimum_signed_gap_mm": -4.9440547e-05,
+          "pair": "top",
+          "pilot_reaction_y_N": -0.1202087753052224,
+          "signed_opposition_residual_relative": 1.2264695256037596e-09,
+          "total_elements": 1230
+        }
+      ],
+      "corner_field_columns": [
+        "SYY_MPa",
+        "SEQV_MPa",
+        "elastic_EYY",
+        "elastic_EXX"
+      ],
+      "corner_field_percentiles": [
+        [
+          -0.8776627960464293,
+          1.854807783014436e-13,
+          -0.0007095280935739554,
+          -0.0004551291660559186
+        ],
+        [
+          -0.17034377668060002,
+          1.481725180281335e-05,
+          -0.00016214994554362302,
+          -6.495536512817062e-05
+        ],
+        [
+          -0.0014796016296033615,
+          0.02713021306858067,
+          -4.8420412188225145e-06,
+          2.25259247552528e-06
+        ],
+        [
+          0.017878812212450173,
+          0.12265597150398799,
+          1.4364347600592903e-05,
+          5.437981800664449e-05
+        ],
+        [
+          0.047115690367209896,
+          0.19126146751007217,
+          3.680605573394131e-05,
+          0.0001001778582853993
+        ],
+        [
+          0.3325915974171827,
+          0.994305291390143,
+          0.0002510103398605002,
+          0.0004161232999359559
+        ]
+      ],
+      "displacement_ranges_mm": [
+        [
+          -0.0004975989820433066,
+          -0.001073440547336865,
+          1.106993808189275e-09
+        ],
+        [
+          0.0002509068648717482,
+          0.0001472667219056751,
+          0.0011450641856836977
+        ]
+      ],
+      "eligible_for_LLM_performance_ranking": false,
+      "export": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v066\\fine_stage01_001_post001",
+      "failures": [],
+      "field_locations": "U at every native node; SYY/SEQV/EPEL Y/X native corner-node averages, no invented midside stress",
+      "internal_self_contact": "UNQUALIFIED_NOT_CONFIGURED",
+      "invalid_deformed_mappings": 0,
+      "large_field_artifacts": {
+        "corner_node_ids.npy": {
+          "bytes": 6017824,
+          "sha256": "9305e0758ca8542f19da13d582ddeaacba2904f2d0390ae83f7882edbc152056"
+        },
+        "native_corner_stress_strain.npy": {
+          "bytes": 24070912,
+          "sha256": "bb5d61c2c50507c5191ad9be37dfbe5d942047bd1be46aab8b28eb1db64c835b"
+        },
+        "native_displacement.npy": {
+          "bytes": 110660328,
+          "sha256": "3c6d21bba1325f133162e7f8a2b759d41220817d136296a28bb5924f87121633"
+        }
+      },
+      "measurement": {
+        "compression_displacement_mm": 0.001024,
+        "engineering_compression_strain": 9.999999999999999e-05,
+        "lower_rf_y_N": 0.1199764084894856,
+        "nominal_compression_stress_MPa": 0.011739138213400625,
+        "pseudo_time": 0.0001,
+        "reaction_balance_relative": 0.001933027061849736,
+        "upper_rf_y_N": -0.1202087753052224
+      },
+      "mechanical_mesh_convergence": "UNQUALIFIED",
+      "minimum_deformed_determinant_mm2": 2.397638779716724e-06,
+      "native_RST_sha256": "61c767d0d1410e38571921f6b20206618f7a5a6c01a9849e4a4f8243bdacabfe",
+      "percentile_levels": [
+        0,
+        1,
+        50,
+        95,
+        99,
+        100
+      ],
+      "raw_native_field_hashes": {
+        "stage001_contact.csv": "c189f996f13ed16d4b1649dd1ae2a98ae895753dbd2edb50ae7f2a9d4ea4c79c",
+        "stage001_displacements.csv": "4c7364a3854d8f430756821c9f4c35aa623d5960cdb16fd6031cb770869e4658",
+        "stage001_gate.txt": "1e5e7c9b238a1e20180b918bd4925fc1f4709beba2d6507be73c13a25a3692d0",
+        "stage001_history.csv": "b353e235003cf1781ab2ba62b2934551aaae0b4676161b511ebc6f4c2790c494",
+        "stage001_stress.csv": "6602d77891cb72d13450f68c51b2b1b2c09c3417b296d0a2dc50d3bc4764f92f"
+      },
+      "read_only_receipt_sha256": "96040a3b16273c821dc63df45381011008e7b769aa481408514dcd64fb73175b",
+      "schema": "young-dawgs-v0.6.6-actual-native-state",
+      "source": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v066\\fine_stage01_001",
+      "source_process_status": "PROCESS_EXITED",
+      "source_receipt_sha256": "8e29b79f430744ddd875abd25c7761632c6917a4c777200b8549e12232ba4591",
+      "state": {
+        "load_step": 2,
+        "substep": 1,
+        "time": 0.0001
+      },
+      "status": "MECHANICALLY_ACCEPTED_SINGLE_MESH_EXPLORATORY"
+    },
+    {
+      "absolute_elastic_components_percentiles": [
+        [
+          5.108101182301817e-05,
+          5.2698796071225876e-05
+        ],
+        [
+          0.0005263922931814241,
+          0.0003385949843186988
+        ],
+        [
+          0.0008920789363846953,
+          0.0005860327536016982
+        ],
+        [
+          0.003902320681245654,
+          0.00251607474109971
+        ]
+      ],
+      "accepted": true,
+      "actual_TRI6": 1261670,
+      "actual_history": [
+        0.00055,
+        3.0,
+        1.0,
+        -0.005632000000000002,
+        -0.6599195223947629,
+        0.659202260796403
+      ],
+      "actual_native_corner_nodes": 752212,
+      "actual_nodes": 2766505,
+      "boundary_screen_summary": {
+        "boundary_loops": 413,
+        "edges_exceeding_requested_tolerance": 0,
+        "examples": [],
+        "limitation": "Conservative spatial-index polygonal screen with exact quadratic chord-deviation bounds; uncertain near-contact points need separate native-contact/exact-curve verification.",
+        "maximum_exact_chord_error_bound_mm": 9.999497572025261e-07,
+        "minimum_area_ratio": 0.9980150285544146,
+        "minimum_near_sampled_distance_mm": null,
+        "minimum_separation_scope": "Only near pairs inside twice chord-error tolerance are queried; no exhaustive opposing-wall minimum claimed",
+        "orientation_inverted_loops": [],
+        "original_edges": 243576,
+        "passed": true,
+        "pore_loops": 412,
+        "status": "PASS_BOUNDED_QUADRATIC_BOUNDARY_SCREEN",
+        "subdivided_segments": 244815,
+        "suspicious_pair_count": 0,
+        "tolerance_mm": 1e-06
+      },
+      "contact_scope": "PLATEN_ONLY_EXPLORATORY",
+      "contacts": [
+        {
+          "closed_elements": 769,
+          "contact_element_force_y_N": -0.6592022600468199,
+          "max_stored_endpoint_penetration_mm": 6.1525687e-09,
+          "max_stored_endpoint_pressure_MPa": 3.6989462,
+          "minimum_signed_gap_mm": -0.00081943918,
+          "pair": "bottom",
+          "pilot_reaction_y_N": 0.659202260796403,
+          "signed_opposition_residual_relative": 1.1371063281573613e-09,
+          "total_elements": 1368
+        },
+        {
+          "closed_elements": 646,
+          "contact_element_force_y_N": 0.65991952249039,
+          "max_stored_endpoint_penetration_mm": 3.1243204e-09,
+          "max_stored_endpoint_pressure_MPa": 1.8673412,
+          "minimum_signed_gap_mm": -0.00027291171,
+          "pair": "top",
+          "pilot_reaction_y_N": -0.6599195223947629,
+          "signed_opposition_residual_relative": 1.4490715697821038e-10,
+          "total_elements": 1230
+        }
+      ],
+      "corner_field_columns": [
+        "SYY_MPa",
+        "SEQV_MPa",
+        "elastic_EYY",
+        "elastic_EXX"
+      ],
+      "corner_field_percentiles": [
+        [
+          -4.831603566617275,
+          1.12994045366127e-11,
+          -0.003902320681245654,
+          -0.00251607474109971
+        ],
+        [
+          -0.9367345655347392,
+          8.134089197427252e-05,
+          -0.0008916946489964349,
+          -0.0003577070500533853
+        ],
+        [
+          -0.008093627800795866,
+          0.14914119710484863,
+          -2.6557274102982448e-05,
+          1.2375894845147101e-05
+        ],
+        [
+          0.09846171562873716,
+          0.6746130040297079,
+          7.907097944605424e-05,
+          0.00029923105569916236
+        ],
+        [
+          0.2595033505496146,
+          1.0520045624787697,
+          0.00020266410962813217,
+          0.0005513562649871132
+        ],
+        [
+          1.829005199102469,
+          5.470298775251012,
+          0.001382769819625103,
+          0.002291858571932069
+        ]
+      ],
+      "displacement_ranges_mm": [
+        [
+          -0.002771107761025048,
+          -0.005904911707105699,
+          6.152568659926977e-09
+        ],
+        [
+          0.001349060388373352,
+          0.0008194392129715583,
+          0.006313273990279091
+        ]
+      ],
+      "eligible_for_LLM_performance_ranking": false,
+      "export": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v066\\fine_stage01_001_post001",
+      "failures": [],
+      "field_locations": "U at every native node; SYY/SEQV/EPEL Y/X native corner-node averages, no invented midside stress",
+      "internal_self_contact": "UNQUALIFIED_NOT_CONFIGURED",
+      "invalid_deformed_mappings": 0,
+      "large_field_artifacts": {
+        "corner_node_ids.npy": {
+          "bytes": 6017824,
+          "sha256": "9305e0758ca8542f19da13d582ddeaacba2904f2d0390ae83f7882edbc152056"
+        },
+        "native_corner_stress_strain.npy": {
+          "bytes": 24070912,
+          "sha256": "127ac7e6a23c592abf7c2876524e4fee8ceac1d251d32ffb9d8ce88f3b8cd05d"
+        },
+        "native_displacement.npy": {
+          "bytes": 110660328,
+          "sha256": "c87cdaed84d26cd369ccb53f6160bb21a32b1665b8124dace288e08a10bff0fd"
+        }
+      },
+      "measurement": {
+        "compression_displacement_mm": 0.005632000000000002,
+        "engineering_compression_strain": 0.0005500000000000001,
+        "lower_rf_y_N": 0.659202260796403,
+        "nominal_compression_stress_MPa": 0.06444526585886357,
+        "pseudo_time": 0.00055,
+        "reaction_balance_relative": 0.0010868925285875645,
+        "upper_rf_y_N": -0.6599195223947629
+      },
+      "mechanical_mesh_convergence": "UNQUALIFIED",
+      "minimum_deformed_determinant_mm2": 2.3976467849916177e-06,
+      "native_RST_sha256": "61c767d0d1410e38571921f6b20206618f7a5a6c01a9849e4a4f8243bdacabfe",
+      "percentile_levels": [
+        0,
+        1,
+        50,
+        95,
+        99,
+        100
+      ],
+      "raw_native_field_hashes": {
+        "stage002_contact.csv": "6ca5d0b61967cf6896aee3a47918b885ac4b16e68339e94aed1824cdec4488b0",
+        "stage002_displacements.csv": "74106044e26afd6e886618add18438983809eeee80876b669b0de546dc477101",
+        "stage002_gate.txt": "bf1607c000c3881560be55d3a23fa8c255bfae644e9f63f38a5505cd62629a98",
+        "stage002_history.csv": "959b52b0026c7e38c610107a96be74e58ece2050543317f8bf1e07638fb4e21d",
+        "stage002_stress.csv": "13683bfec8ce488400550b36c881124e8b6cd5e0f66288a80f16f28fe2b615e9"
+      },
+      "read_only_receipt_sha256": "96040a3b16273c821dc63df45381011008e7b769aa481408514dcd64fb73175b",
+      "schema": "young-dawgs-v0.6.6-actual-native-state",
+      "source": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v066\\fine_stage01_001",
+      "source_process_status": "PROCESS_EXITED",
+      "source_receipt_sha256": "8e29b79f430744ddd875abd25c7761632c6917a4c777200b8549e12232ba4591",
+      "state": {
+        "load_step": 3,
+        "substep": 1,
+        "time": 0.00055
+      },
+      "status": "MECHANICALLY_ACCEPTED_SINGLE_MESH_EXPLORATORY"
+    },
+    {
+      "absolute_elastic_components_percentiles": [
+        [
+          9.275274532799101e-05,
+          9.553061920008308e-05
+        ],
+        [
+          0.000956618322081442,
+          0.0006160698077265145
+        ],
+        [
+          0.0016220847647255073,
+          0.001065631645133452
+        ],
+        [
+          0.007094999352355569,
+          0.00459798338012155
+        ]
+      ],
+      "accepted": true,
+      "actual_TRI6": 1261670,
+      "actual_history": [
+        0.001,
+        3.0,
+        2.0,
+        -0.01024,
+        -1.199313799677024,
+        1.197284239933984
+      ],
+      "actual_native_corner_nodes": 752212,
+      "actual_nodes": 2766505,
+      "boundary_screen_summary": {
+        "boundary_loops": 413,
+        "edges_exceeding_requested_tolerance": 0,
+        "examples": [],
+        "limitation": "Conservative spatial-index polygonal screen with exact quadratic chord-deviation bounds; uncertain near-contact points need separate native-contact/exact-curve verification.",
+        "maximum_exact_chord_error_bound_mm": 9.999823648604522e-07,
+        "minimum_area_ratio": 0.9963835043080101,
+        "minimum_near_sampled_distance_mm": null,
+        "minimum_separation_scope": "Only near pairs inside twice chord-error tolerance are queried; no exhaustive opposing-wall minimum claimed",
+        "orientation_inverted_loops": [],
+        "original_edges": 243576,
+        "passed": true,
+        "pore_loops": 412,
+        "status": "PASS_BOUNDED_QUADRATIC_BOUNDARY_SCREEN",
+        "subdivided_segments": 250769,
+        "suspicious_pair_count": 0,
+        "tolerance_mm": 1e-06
+      },
+      "contact_scope": "PLATEN_ONLY_EXPLORATORY",
+      "contacts": [
+        {
+          "closed_elements": 769,
+          "contact_element_force_y_N": -1.19728423674784,
+          "max_stored_endpoint_penetration_mm": 1.1298425e-08,
+          "max_stored_endpoint_pressure_MPa": 6.7926536,
+          "minimum_signed_gap_mm": -0.0015071671,
+          "pair": "bottom",
+          "pilot_reaction_y_N": 1.197284239933984,
+          "signed_opposition_residual_relative": 2.6611425332582083e-09,
+          "total_elements": 1368
+        },
+        {
+          "closed_elements": 638,
+          "contact_element_force_y_N": 1.1993138002267,
+          "max_stored_endpoint_penetration_mm": 5.7150924e-09,
+          "max_stored_endpoint_pressure_MPa": 3.4157915,
+          "minimum_signed_gap_mm": -0.0010936469,
+          "pair": "top",
+          "pilot_reaction_y_N": -1.199313799677024,
+          "signed_opposition_residual_relative": 4.583254879387251e-10,
+          "total_elements": 1230
+        }
+      ],
+      "corner_field_columns": [
+        "SYY_MPa",
+        "SEQV_MPa",
+        "elastic_EYY",
+        "elastic_EXX"
+      ],
+      "corner_field_percentiles": [
+        [
+          -8.792902847949392,
+          1.749735370377511e-12,
+          -0.007094999352355569,
+          -0.00459798338012155
+        ],
+        [
+          -1.703467310473114,
+          0.00010421005030150768,
+          -0.0016213264354853084,
+          -0.000651067693095269
+        ],
+        [
+          -0.014590696075607524,
+          0.27097377079566115,
+          -4.808549235003575e-05,
+          2.2317016939356862e-05
+        ],
+        [
+          0.17927006988747074,
+          1.2266160396623682,
+          0.00014398256603996104,
+          0.0005441805883738118
+        ],
+        [
+          0.47245833980798607,
+          1.9134411767906776,
+          0.00036911752738564776,
+          0.0010031906151812026
+        ],
+        [
+          3.324545126497417,
+          9.948856573269115,
+          0.00251787198435113,
+          0.004172684749913487
+        ]
+      ],
+      "displacement_ranges_mm": [
+        [
+          -0.005102522329701854,
+          -0.01133364689937082,
+          1.129842559334306e-08
+        ],
+        [
+          0.002397943226289678,
+          0.001507167066841137,
+          0.011534855212846315
+        ]
+      ],
+      "eligible_for_LLM_performance_ranking": false,
+      "export": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v066\\fine_stage01_001_post001",
+      "failures": [],
+      "field_locations": "U at every native node; SYY/SEQV/EPEL Y/X native corner-node averages, no invented midside stress",
+      "internal_self_contact": "UNQUALIFIED_NOT_CONFIGURED",
+      "invalid_deformed_mappings": 0,
+      "large_field_artifacts": {
+        "corner_node_ids.npy": {
+          "bytes": 6017824,
+          "sha256": "9305e0758ca8542f19da13d582ddeaacba2904f2d0390ae83f7882edbc152056"
+        },
+        "native_corner_stress_strain.npy": {
+          "bytes": 24070912,
+          "sha256": "4586ac044031a77e75b35d9e5b5dbf2f670e2ddc35f82dd5ff88af192a49b053"
+        },
+        "native_displacement.npy": {
+          "bytes": 110660328,
+          "sha256": "5fc5ec28535eae57056d6dc31dc63121731f420fb1a3cf81c301479ddf03edad"
+        }
+      },
+      "measurement": {
+        "compression_displacement_mm": 0.01024,
+        "engineering_compression_strain": 0.001,
+        "lower_rf_y_N": 1.197284239933984,
+        "nominal_compression_stress_MPa": 0.11712048824970937,
+        "pseudo_time": 0.001,
+        "reaction_balance_relative": 0.0016922674812768258,
+        "upper_rf_y_N": -1.199313799677024
+      },
+      "mechanical_mesh_convergence": "UNQUALIFIED",
+      "minimum_deformed_determinant_mm2": 2.3976547468435786e-06,
+      "native_RST_sha256": "61c767d0d1410e38571921f6b20206618f7a5a6c01a9849e4a4f8243bdacabfe",
+      "percentile_levels": [
+        0,
+        1,
+        50,
+        95,
+        99,
+        100
+      ],
+      "raw_native_field_hashes": {
+        "stage003_contact.csv": "1bf99378dd8667842b44be9d4c67a4de0c2da0db7bfd9f7072e7d81398cdb3f6",
+        "stage003_displacements.csv": "f27545d8563064169407e51ea93454bd215fae0ba4042ea5198036486222bf11",
+        "stage003_gate.txt": "c78adaca1fa2a2db24972925cbdb22f07a2622e60976750ff59e42daeb5e882f",
+        "stage003_history.csv": "8207c65880b9768b36f041dc2d72b1b6ecc86067f6585ab98e89c4a65fb0dfa5",
+        "stage003_stress.csv": "e5b5a4690816d217bcdc979de8787070dadb4b3516e84645eb8f85f78334976d"
+      },
+      "read_only_receipt_sha256": "96040a3b16273c821dc63df45381011008e7b769aa481408514dcd64fb73175b",
+      "schema": "young-dawgs-v0.6.6-actual-native-state",
+      "source": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v066\\fine_stage01_001",
+      "source_process_status": "PROCESS_EXITED",
+      "source_receipt_sha256": "8e29b79f430744ddd875abd25c7761632c6917a4c777200b8549e12232ba4591",
+      "state": {
+        "load_step": 3,
+        "substep": 2,
+        "time": 0.001
+      },
+      "status": "MECHANICALLY_ACCEPTED_SINGLE_MESH_EXPLORATORY"
+    }
+  ],
+  "schema": "young-dawgs-v0.6.6-validation",
+  "snapshot_artifacts": [
+    {
+      "directory": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v065\\full_recovery_001_qualified",
+      "engineering_strain": 5e-05,
+      "label": "baseline_000005"
+    },
+    {
+      "directory": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v066\\fine_stage01_001_qualified001\\state001",
+      "engineering_strain": 0.0001,
+      "label": "fine_stage01_001_state001"
+    },
+    {
+      "directory": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v066\\fine_stage01_001_qualified001\\state002",
+      "engineering_strain": 0.00055,
+      "label": "fine_stage01_001_state002"
+    },
+    {
+      "directory": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v066\\fine_stage01_001_qualified001\\state003",
+      "engineering_strain": 0.001,
+      "label": "fine_stage01_001_state003"
+    }
+  ],
+  "status": "IN_PROGRESS_COMPLETED_JOBS_ONLY",
+  "tests": {
+    "active": {
+      "errors": 0,
+      "failures": 0,
+      "passed": 755,
+      "skipped": 0,
+      "tests": 755
+    },
+    "archive_groups": 9,
+    "archived_passed": 475,
+    "counts_overlap_do_not_sum": true,
+    "licensed": {
+      "errors": 0,
+      "failures": 0,
+      "passed": 26,
+      "skipped": 0,
+      "tests": 26
+    }
+  }
+}
