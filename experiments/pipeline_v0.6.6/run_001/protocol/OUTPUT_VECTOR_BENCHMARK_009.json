@@ -1,0 +1,8 @@
+{
+  "candidate": "Bound vector arrays by complete2766505-node inventory instead of250000 chunks; U arrays freed before S/EPEL arrays, approximate133MB maximum explicit stress vectors",
+  "reason": "Repeated native corner averaging across44stress vector queries per state dominates export. Native results are already stored at all converged substeps; avoid spending campaign time repeating this work.",
+  "scope": "Read-only output performance, no new solve or physical model change",
+  "selection": "Select larger bound only if runtime<=80% of prior three-set average per-state cost. Timing comparison is aggregate per-state inference, not a matched isolated timing proof. Otherwise retain250000.",
+  "source": "Already independently accepted fine_stage01_001 LS3SS2 at0.001 engineering strain",
+  "validation": "Require byte-identical U,S/EPEL,history,contact versus prior qualified250000-node output; gate0 and normal native exit; same immutable source RST; keep HealthPolicy/no fixed RSS cap"
+}

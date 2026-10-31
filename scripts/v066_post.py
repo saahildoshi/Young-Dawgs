@@ -20,9 +20,9 @@ def selected_states(source,maximum=8):
     return [{'time':rows[i]['pseudo_time'],'load_step':rows[i]['load_step'],'substep':rows[i]['substep']} for i in sorted(indices)]
 
 
-def process(label,revision='001'):
+def process(label,revision='001',chunk_size=250000):
     source=BASE/label;states=selected_states(source)
-    out=export(source,label+'_post'+revision,states)
+    out=export(source,label+'_post'+revision,states,chunk_size=chunk_size)
     compact(out,RUN/'progressive_compression'/out.name)
     mesh,_,_=resolve_manifest(REPO/'experiments/pipeline_v0.6.3/run_001/mesh_reproduction/attempt_002/artifact_manifest.json',root=Path.home()/'YoungDawgs-Artifacts')
     results=[]
@@ -42,4 +42,5 @@ def process(label,revision='001'):
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('label');p.add_argument('--revision',default='001');a=p.parse_args();process(a.label,a.revision)
+    p=argparse.ArgumentParser();p.add_argument('label');p.add_argument('--revision',default='001');p.add_argument('--chunk-size',type=int,default=250000)
+    a=p.parse_args();process(a.label,a.revision,a.chunk_size)
