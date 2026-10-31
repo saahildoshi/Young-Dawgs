@@ -23,6 +23,16 @@ def selected_states(source,maximum=8):
     return [{'time':rows[i]['pseudo_time'],'load_step':rows[i]['load_step'],'substep':rows[i]['substep']} for i in sorted(indices)]
 
 
+
+def trajectory_member(q,earlier_failure):
+    """A valid endpoint cannot repair an unresolved earlier loading path."""
+    if earlier_failure is not None:
+        q={**q,'failures':list(q['failures'])+['Earlier saved checkpoint failed qualification; subsequent loading path remains unqualified'],
+           'accepted':False,'status':'PRIOR_TRAJECTORY_CHECKPOINT_HOLD','earlier_failed_state':earlier_failure}
+    elif not q['accepted']:earlier_failure=dict(q['state'])
+    return q,earlier_failure
+
+
 def process(label,revision='001',chunk_size=250000,farfield=False,reuse_export=None):
     source=BASE/label;states=selected_states(source)
     if reuse_export:
@@ -32,11 +42,13 @@ def process(label,revision='001',chunk_size=250000,farfield=False,reuse_export=N
     else:out=export(source,label+'_post'+revision,states,chunk_size=chunk_size,farfield=farfield)
     if not (RUN/'progressive_compression'/out.name).exists():compact(out,RUN/'progressive_compression'/out.name)
     mesh,_,_=resolve_manifest(REPO/'experiments/pipeline_v0.6.3/run_001/mesh_reproduction/attempt_002/artifact_manifest.json',root=Path.home()/'YoungDawgs-Artifacts')
-    results=[]
+    results=[];earlier_failure=None
     for i,state in enumerate(states,1):
         raw=BASE/(label+'_qualified'+revision)/f'state{i:03d}'
         setup=BASE/'fine_gc_setup_001' if load(source/'simulation_manifest.json')['model'].get('general_contact_elements') else None
         q=qualify_state(source,out,mesh,i,state,raw,general_contact_setup=setup)
+        q,earlier_failure=trajectory_member(q,earlier_failure)
+        write_json(raw/'qualification.json',q)
         target=RUN/'mechanical_results'/(label+'_qualified'+revision)/f'state{i:03d}'
         target.mkdir(parents=True,exist_ok=False)
         for name in ['qualification.json','boundary_screen.json']:

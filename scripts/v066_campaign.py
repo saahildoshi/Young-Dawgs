@@ -20,7 +20,7 @@ def remaining_solver_budget():
     return min(5400,remaining)
 
 
-def prepare(label,parent,load_step,substep,previous,targets,cores=None):
+def prepare(label,parent,load_step,substep,previous,targets,cores=None,*,qualification=None):
     parent=Path(parent);directory=BASE/label
     assert load(RUN/'restart_validation/RESTART_VALIDATION.json')['status']=='PASS_ACTUAL_LICENSED_NATIVE_RESTART'
     first=BASE/'fine_stage01_001/execution_receipt.json'
@@ -41,6 +41,7 @@ def prepare(label,parent,load_step,substep,previous,targets,cores=None):
         restart_state={'load_step':load_step,'substep':substep,'time':previous},
         contact_limitation='FULL_NATIVE_GENERAL_SELF_CONTACT; independent engagement/geometry gates required' if manifest['model'].get('general_contact_elements') else 'PLATEN_ONLY_EXPLORATORY; no accepted unmodeled wall crossings',
         prepared_utc=datetime.now(timezone.utc).isoformat())
+    if qualification is not None:manifest.update(parent_qualification_path=str(Path(qualification).resolve()),parent_qualification_sha256=file_hash(qualification))
     if cores!=2:manifest.update(resource_protocol_sha256=file_hash(RUN/'protocol/SMP_RESOURCE_018.json'),parallel_qualification_sha256=file_hash(policy_path))
     write_json(directory/'simulation_manifest.json',manifest)
     compact(directory,RUN/'progressive_compression'/('prepared_'+label))
@@ -52,9 +53,10 @@ def prepare_next(label,parent_label,targets,cores=None):
     if not revisions:raise ValueError('No independent parent qualification')
     q=load(revisions[-1])
     if not q['last_state_accepted']:raise ValueError('Last parent state did not pass continuation gates')
+    if not all(row['accepted'] for row in q['results']):raise ValueError('An earlier parent checkpoint failed trajectory qualification')
     state=q['states'][-1]
     if Path(q['source']).resolve()!=(BASE/parent_label).resolve():raise ValueError('Parent qualification identity mismatch')
-    return prepare(label,BASE/parent_label,state['load_step'],state['substep'],state['time'],targets,cores)
+    return prepare(label,BASE/parent_label,state['load_step'],state['substep'],state['time'],targets,cores,qualification=revisions[-1])
 
 
 def freeze():
@@ -89,6 +91,7 @@ if __name__=='__main__':
         actual_protocol=RUN/'protocol/NODAL_CONTACT_REPAIR_021.json' if m['model'].get('general_contact_detection_keyopt4')==2 else (RUN/'protocol/FULL_GENERAL_CONTACT_014.json' if m['model'].get('general_contact_elements') else PROTOCOL)
         committed(actual_protocol);assert file_hash(actual_protocol)==m['protocol_sha256']
         assert file_hash(d/'input.inp')==m['input_sha256'] and file_hash(d/'input.inp')==file_hash(RUN/'progressive_compression'/('prepared_'+a.label)/'input.inp')
+        if m.get('parent_qualification_path'):assert file_hash(m['parent_qualification_path'])==m['parent_qualification_sha256']
         cores=m.get('execution_cores',2)
         if cores!=2:
             assert m['resource_protocol_sha256']==file_hash(RUN/'protocol/SMP_RESOURCE_018.json') and m['parallel_qualification_sha256']==file_hash(RUN/'performance/SMP_QUALIFICATION.json')
