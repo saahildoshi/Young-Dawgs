@@ -1,0 +1,239 @@
+FFFFFF                                                                   [100%]
+================================== FAILURES ===================================
+______ test_resolves_small_positive_gap_without_assigning_contact_force _______
+
+    def test_resolves_small_positive_gap_without_assigning_contact_force():
+        a=np.array([[0.,0.],[1,0],[.5,0]])
+>       r=certify_separated(a,a+[0,1e-8]);assert r['passed'] and 0<r['minimum_certified_separation_mm']<1e-8
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_quadratic_separation.py:9:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+a = array([[0. , 0. ],
+       [1. , 0. ],
+       [0.5, 0. ]])
+b = array([[0.e+00, 1.e-08],
+       [1.e+00, 1.e-08],
+       [5.e-01, 1.e-08]])
+guard = 1e-12, max_depth = 20, max_cells = 10000
+
+    def certify_separated(a,b,*,guard=1e-12,max_depth=20,max_cells=10000):
+        """Cover the parameter square with positive chord-distance lower bounds.
+
+        For each quadratic subarc, its exact maximal chord deviation is the
+        midside bow. Triangle inequality supplies the separation bound. Only
+        positive guarded bounds pass; crossings/touches/exhausted bounds HOLD.
+        This is a floating-point calculation with an explicit guard, not formal
+        interval arithmetic. No force/contact status is inferred from geometry.
+        """
+        a,b=np.asarray(a,dtype=float),np.asarray(b,dtype=float)
+        if a.shape!=(3,2) or b.shape!=(3,2) or not np.isfinite([a,b]).all():raise ValueError('Require finite I,J,midside edge coordinates')
+>       guard=max(guard,128*np.finfo(float).eps*max(1,float(np.max(abs([a,b])))))
+                                                                   ^^^^^^^^^^
+E       TypeError: bad operand type for abs(): 'list'
+
+metamaterial_eval\simulation\quadratic_separation.py:23: TypeError
+________ test_curvature_uncertainty_can_be_refined_to_prove_separation ________
+
+    def test_curvature_uncertainty_can_be_refined_to_prove_separation():
+        a=np.array([[-1.,0.],[1,0],[0,1]])
+        b=np.array([[0.,.2],[0,.8],[0,.5]])
+>       r=certify_separated(a,b);assert r['passed'] and r['processed_cells']>1
+          ^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_quadratic_separation.py:15:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+a = array([[-1.,  0.],
+       [ 1.,  0.],
+       [ 0.,  1.]])
+b = array([[0. , 0.2],
+       [0. , 0.8],
+       [0. , 0.5]]), guard = 1e-12
+max_depth = 20, max_cells = 10000
+
+    def certify_separated(a,b,*,guard=1e-12,max_depth=20,max_cells=10000):
+        """Cover the parameter square with positive chord-distance lower bounds.
+
+        For each quadratic subarc, its exact maximal chord deviation is the
+        midside bow. Triangle inequality supplies the separation bound. Only
+        positive guarded bounds pass; crossings/touches/exhausted bounds HOLD.
+        This is a floating-point calculation with an explicit guard, not formal
+        interval arithmetic. No force/contact status is inferred from geometry.
+        """
+        a,b=np.asarray(a,dtype=float),np.asarray(b,dtype=float)
+        if a.shape!=(3,2) or b.shape!=(3,2) or not np.isfinite([a,b]).all():raise ValueError('Require finite I,J,midside edge coordinates')
+>       guard=max(guard,128*np.finfo(float).eps*max(1,float(np.max(abs([a,b])))))
+                                                                   ^^^^^^^^^^
+E       TypeError: bad operand type for abs(): 'list'
+
+metamaterial_eval\simulation\quadratic_separation.py:23: TypeError
+_____ test_never_accepts_intersection_or_unresolved_touch[straight_cross] _____
+
+kind = 'straight_cross'
+
+    @pytest.mark.parametrize('kind',['straight_cross','curved_cross','touch','below_guard'])
+    def test_never_accepts_intersection_or_unresolved_touch(kind):
+        a=np.array([[-1.,0.],[1,0],[0,0]])
+        b=np.array([[0.,-1],[0,1],[0,0]])
+        if kind=='curved_cross':a=np.array([[-1.,1.],[1,1],[0,-1]])
+        if kind in ['touch','below_guard']:b=a+[0,0 if kind=='touch' else 1e-14]
+>       assert not certify_separated(a,b)['passed']
+                   ^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_quadratic_separation.py:24:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+a = array([[-1.,  0.],
+       [ 1.,  0.],
+       [ 0.,  0.]])
+b = array([[ 0., -1.],
+       [ 0.,  1.],
+       [ 0.,  0.]]), guard = 1e-12
+max_depth = 20, max_cells = 10000
+
+    def certify_separated(a,b,*,guard=1e-12,max_depth=20,max_cells=10000):
+        """Cover the parameter square with positive chord-distance lower bounds.
+
+        For each quadratic subarc, its exact maximal chord deviation is the
+        midside bow. Triangle inequality supplies the separation bound. Only
+        positive guarded bounds pass; crossings/touches/exhausted bounds HOLD.
+        This is a floating-point calculation with an explicit guard, not formal
+        interval arithmetic. No force/contact status is inferred from geometry.
+        """
+        a,b=np.asarray(a,dtype=float),np.asarray(b,dtype=float)
+        if a.shape!=(3,2) or b.shape!=(3,2) or not np.isfinite([a,b]).all():raise ValueError('Require finite I,J,midside edge coordinates')
+>       guard=max(guard,128*np.finfo(float).eps*max(1,float(np.max(abs([a,b])))))
+                                                                   ^^^^^^^^^^
+E       TypeError: bad operand type for abs(): 'list'
+
+metamaterial_eval\simulation\quadratic_separation.py:23: TypeError
+______ test_never_accepts_intersection_or_unresolved_touch[curved_cross] ______
+
+kind = 'curved_cross'
+
+    @pytest.mark.parametrize('kind',['straight_cross','curved_cross','touch','below_guard'])
+    def test_never_accepts_intersection_or_unresolved_touch(kind):
+        a=np.array([[-1.,0.],[1,0],[0,0]])
+        b=np.array([[0.,-1],[0,1],[0,0]])
+        if kind=='curved_cross':a=np.array([[-1.,1.],[1,1],[0,-1]])
+        if kind in ['touch','below_guard']:b=a+[0,0 if kind=='touch' else 1e-14]
+>       assert not certify_separated(a,b)['passed']
+                   ^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_quadratic_separation.py:24:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+a = array([[-1.,  1.],
+       [ 1.,  1.],
+       [ 0., -1.]])
+b = array([[ 0., -1.],
+       [ 0.,  1.],
+       [ 0.,  0.]]), guard = 1e-12
+max_depth = 20, max_cells = 10000
+
+    def certify_separated(a,b,*,guard=1e-12,max_depth=20,max_cells=10000):
+        """Cover the parameter square with positive chord-distance lower bounds.
+
+        For each quadratic subarc, its exact maximal chord deviation is the
+        midside bow. Triangle inequality supplies the separation bound. Only
+        positive guarded bounds pass; crossings/touches/exhausted bounds HOLD.
+        This is a floating-point calculation with an explicit guard, not formal
+        interval arithmetic. No force/contact status is inferred from geometry.
+        """
+        a,b=np.asarray(a,dtype=float),np.asarray(b,dtype=float)
+        if a.shape!=(3,2) or b.shape!=(3,2) or not np.isfinite([a,b]).all():raise ValueError('Require finite I,J,midside edge coordinates')
+>       guard=max(guard,128*np.finfo(float).eps*max(1,float(np.max(abs([a,b])))))
+                                                                   ^^^^^^^^^^
+E       TypeError: bad operand type for abs(): 'list'
+
+metamaterial_eval\simulation\quadratic_separation.py:23: TypeError
+_________ test_never_accepts_intersection_or_unresolved_touch[touch] __________
+
+kind = 'touch'
+
+    @pytest.mark.parametrize('kind',['straight_cross','curved_cross','touch','below_guard'])
+    def test_never_accepts_intersection_or_unresolved_touch(kind):
+        a=np.array([[-1.,0.],[1,0],[0,0]])
+        b=np.array([[0.,-1],[0,1],[0,0]])
+        if kind=='curved_cross':a=np.array([[-1.,1.],[1,1],[0,-1]])
+        if kind in ['touch','below_guard']:b=a+[0,0 if kind=='touch' else 1e-14]
+>       assert not certify_separated(a,b)['passed']
+                   ^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_quadratic_separation.py:24:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+a = array([[-1.,  0.],
+       [ 1.,  0.],
+       [ 0.,  0.]])
+b = array([[-1.,  0.],
+       [ 1.,  0.],
+       [ 0.,  0.]]), guard = 1e-12
+max_depth = 20, max_cells = 10000
+
+    def certify_separated(a,b,*,guard=1e-12,max_depth=20,max_cells=10000):
+        """Cover the parameter square with positive chord-distance lower bounds.
+
+        For each quadratic subarc, its exact maximal chord deviation is the
+        midside bow. Triangle inequality supplies the separation bound. Only
+        positive guarded bounds pass; crossings/touches/exhausted bounds HOLD.
+        This is a floating-point calculation with an explicit guard, not formal
+        interval arithmetic. No force/contact status is inferred from geometry.
+        """
+        a,b=np.asarray(a,dtype=float),np.asarray(b,dtype=float)
+        if a.shape!=(3,2) or b.shape!=(3,2) or not np.isfinite([a,b]).all():raise ValueError('Require finite I,J,midside edge coordinates')
+>       guard=max(guard,128*np.finfo(float).eps*max(1,float(np.max(abs([a,b])))))
+                                                                   ^^^^^^^^^^
+E       TypeError: bad operand type for abs(): 'list'
+
+metamaterial_eval\simulation\quadratic_separation.py:23: TypeError
+______ test_never_accepts_intersection_or_unresolved_touch[below_guard] _______
+
+kind = 'below_guard'
+
+    @pytest.mark.parametrize('kind',['straight_cross','curved_cross','touch','below_guard'])
+    def test_never_accepts_intersection_or_unresolved_touch(kind):
+        a=np.array([[-1.,0.],[1,0],[0,0]])
+        b=np.array([[0.,-1],[0,1],[0,0]])
+        if kind=='curved_cross':a=np.array([[-1.,1.],[1,1],[0,-1]])
+        if kind in ['touch','below_guard']:b=a+[0,0 if kind=='touch' else 1e-14]
+>       assert not certify_separated(a,b)['passed']
+                   ^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_quadratic_separation.py:24:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+a = array([[-1.,  0.],
+       [ 1.,  0.],
+       [ 0.,  0.]])
+b = array([[-1.e+00,  1.e-14],
+       [ 1.e+00,  1.e-14],
+       [ 0.e+00,  1.e-14]])
+guard = 1e-12, max_depth = 20, max_cells = 10000
+
+    def certify_separated(a,b,*,guard=1e-12,max_depth=20,max_cells=10000):
+        """Cover the parameter square with positive chord-distance lower bounds.
+
+        For each quadratic subarc, its exact maximal chord deviation is the
+        midside bow. Triangle inequality supplies the separation bound. Only
+        positive guarded bounds pass; crossings/touches/exhausted bounds HOLD.
+        This is a floating-point calculation with an explicit guard, not formal
+        interval arithmetic. No force/contact status is inferred from geometry.
+        """
+        a,b=np.asarray(a,dtype=float),np.asarray(b,dtype=float)
+        if a.shape!=(3,2) or b.shape!=(3,2) or not np.isfinite([a,b]).all():raise ValueError('Require finite I,J,midside edge coordinates')
+>       guard=max(guard,128*np.finfo(float).eps*max(1,float(np.max(abs([a,b])))))
+                                                                   ^^^^^^^^^^
+E       TypeError: bad operand type for abs(): 'list'
+
+metamaterial_eval\simulation\quadratic_separation.py:23: TypeError
+=========================== short test summary info ===========================
+FAILED tests/test_quadratic_separation.py::test_resolves_small_positive_gap_without_assigning_contact_force
+FAILED tests/test_quadratic_separation.py::test_curvature_uncertainty_can_be_refined_to_prove_separation
+FAILED tests/test_quadratic_separation.py::test_never_accepts_intersection_or_unresolved_touch[straight_cross]
+FAILED tests/test_quadratic_separation.py::test_never_accepts_intersection_or_unresolved_touch[curved_cross]
+FAILED tests/test_quadratic_separation.py::test_never_accepts_intersection_or_unresolved_touch[touch]
+FAILED tests/test_quadratic_separation.py::test_never_accepts_intersection_or_unresolved_touch[below_guard]
+6 failed in 8.67s

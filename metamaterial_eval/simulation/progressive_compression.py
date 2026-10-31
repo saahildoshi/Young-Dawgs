@@ -89,6 +89,9 @@ def multi_export_input(database,result_base,model,states,*,chunk_size=250000,far
     if "'" in result_base:raise ValueError('Unsupported result path')
     lines=['/BATCH','/CLEAR,START',database_resume(database).strip(),'/FILNAME,readonly','/GOPR',
            '/POST1',"FILE,'"+result_base+"',rst",'/OUTPUT,result_sets,txt','SET,LIST','/OUTPUT']
+    if model.get('general_contact_detection_keyopt4')==2:
+        where=lines.index('/POST1')
+        lines[where:where]=['/PREP7','/OUTPUT,native_contact_type,txt','ETLIST,4','/OUTPUT','FINISH']
     old=vector_fields(model['specimen_nodes'],'stage001')
     seen=set()
     for i,state in enumerate(states,1):

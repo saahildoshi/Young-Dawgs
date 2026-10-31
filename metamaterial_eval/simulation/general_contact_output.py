@@ -26,6 +26,6 @@ def general_contact_vectors(model,prefix,chunk_size=250000):
     lines+=['*VLEN,NLEN','*VMASK,GSEL(1)',
         '*VWRITE,GID(1),GST(1),GPI(1),GPJ(1),GPM(1),GGI(1),GGJ(1),GFY(1),GTI(1),GTJ(1),GNI(1),GNJ(1),GNM(1),GFX(1)',
         "(F12.0,',',F4.0,6(',',E24.16),5(',',F12.0),',',E24.16)",'*ENDDO']+deletes(names)+['*ENDIF','*CFCLOS','ALLSEL,ALL']
-    return lines+['CMSEL,S,'+model['general_contact_component'],'ESEL,R,ETAB,CNSTAT,1,3','*GET,NGCF,ELEM,0,COUNT',
+    return lines+['CMSEL,S,'+model['general_contact_component'],'ESEL,R,ETAB,CNSTAT,1,3','*GET,NGCF,ELEM,0,COUNT','CMSEL,S,'+model['general_contact_component'],
         f'*CFOPEN,{prefix}_gc_balance,csv','*VWRITE',"('assembled_contact_fx_N,assembled_contact_fy_N')",'*IF,NGCF,GT,0,THEN','NSEL,ALL','FSUM,,CONT',
         '*GET,GFSX,FSUM,0,ITEM,FX','*GET,GFSY,FSUM,0,ITEM,FY','*VWRITE,GFSX,GFSY',"(E24.16,',',E24.16)",'*ENDIF','*CFCLOS','ALLSEL,ALL']

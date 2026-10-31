@@ -5,7 +5,7 @@ import numpy as np
 from .native_qualification import stream_csv
 from .microstructure_results import numeric,force_metrics,contact_metrics,unsupported_result_queries
 from .progressive_compression import load,result_sets
-from .element_quality import quadratic_mapping
+from .element_quality import quadratic_mapping,corner_metrics
 from .deformed_boundaries import screen
 from .progressive_contact import validate_inventory,certify_farfield_separation
 from .general_contact_results import qualify_general_contact
@@ -54,12 +54,16 @@ def qualify_state(source,export,mesh,index,state,output,*,general_contact_setup=
     result={'schema':'young-dawgs-v0.6.6-actual-native-state','state':state,'accepted':False,'failures':[],
         'contact_scope':'PLATEN_ONLY_EXPLORATORY','mechanical_mesh_convergence':'UNQUALIFIED',
         'internal_self_contact':'UNQUALIFIED_NOT_CONFIGURED','eligible_for_LLM_performance_ranking':False,
-        'source':str(source),'export':str(export)}
+        'source':str(source),'export':str(export),'field_artifact_directory':str(output)}
     try:
         manifest,receipt,post,provenance,sets=authenticate(source,export,mesh);model=manifest['model']
         if model.get('general_contact_elements'):
             result.update(contact_scope=model['contact_scope'],internal_self_contact='CONFIGURED_NATIVE_GENERAL_CONTACT',model_variant=model['model_variant'])
             if general_contact_setup is None:raise ValueError('General-contact state requires authenticated native GC qualification')
+            if model.get('general_contact_detection_keyopt4')==2:
+                inventory=export/'native_contact_type.txt'
+                if file_hash(inventory)!=post['process']['artifacts'].get(inventory.name,{}).get('sha256') or not re.search(r'KEYOPT\( 1- 6\)=\s+0\s+1\s+0\s+2',inventory.read_text()):raise ValueError('Actual post-solution nodal contact detection was not verified')
+                result['actual_postsolution_general_contact_detection_keyopt4']=2
         key=(state['load_step'],state['substep']);converged=load(source/'nonlinear_telemetry.json')['converged_substeps']
         matching=[r for r in converged if (r['load_step'],r['substep'])==key]
         if len(matching)!=1 or not any((s['load_step'],s['substep'])==key for s in sets):raise ValueError('Set not independently corroborated as converged')
@@ -122,8 +126,10 @@ def qualify_state(source,export,mesh,index,state,output,*,general_contact_setup=
         if offset!=len(corners):raise ValueError('Incomplete native continuum fields')
         if not np.any(stress[:,:2]) or not np.any(stress[:,2:]):raise ValueError('Absent continuum stress/strain under nonzero load')
         stress.flush();minimum=np.inf;invalid=0
+        angle_values=np.empty(len(mesh.triangles));aspect_values=np.empty(len(mesh.triangles));nonpositive_corners=0
         for i in range(0,len(mesh.triangles),20000):
-            tri=mesh.triangles[i:i+20000];q=quadratic_mapping(mesh.nodes[tri]+u[tri,:2]);invalid+=int(np.sum(~q['positive_over_reference_triangle']));minimum=min(minimum,float(q['determinant_min'].min()))
+            tri=mesh.triangles[i:i+20000];points=mesh.nodes[tri]+u[tri,:2];q=quadratic_mapping(points);invalid+=int(np.sum(~q['positive_over_reference_triangle']));minimum=min(minimum,float(q['determinant_min'].min()))
+            corners_shape=corner_metrics(points[:,:3]);angle_values[i:i+len(tri)]=corners_shape['minimum_angle_deg'];aspect_values[i:i+len(tri)]=corners_shape['aspect_ratio'];nonpositive_corners+=int(np.sum(~corners_shape['positive_orientation']))
         if invalid:result['failures'].append('Invalid deformed quadratic mappings')
         overlap=screen(u[:,3:5],mesh.boundary,mesh.boundary_groups,original=mesh.nodes,record_limit=100000 if model.get('general_contact_elements') else 32);write_json(output/'boundary_screen.json',overlap)
         if model.get('general_contact_elements'):
@@ -132,6 +138,10 @@ def qualify_state(source,export,mesh,index,state,output,*,general_contact_setup=
         elif not overlap['passed']:result['failures'].append('Unmodeled overlap/near contact uncertainty')
         result.update(actual_nodes=count,actual_TRI6=len(mesh.triangles),actual_native_corner_nodes=len(corners),
             invalid_deformed_mappings=invalid,minimum_deformed_determinant_mm2=minimum,
+            deformed_corner_shape_diagnostics={'minimum_angle_deg':float(angle_values.min()),'angle_percentiles_deg':np.percentile(angle_values,[0,1,50,95,99,100]).tolist(),
+                'finite_aspect_percentiles':np.percentile(aspect_values[np.isfinite(aspect_values)],[0,1,50,95,99,100]).tolist() if np.isfinite(aspect_values).any() else [],
+                'nonfinite_aspect_count':int(np.sum(~np.isfinite(aspect_values))),'nonpositive_corner_triangle_count':nonpositive_corners,
+                'scope':'Corner-based shape diagnostics, not a replacement for the whole-domain quadratic Jacobian check or mechanical mesh convergence. Frozen10deg gate applies to the original selected mesh.'},
             field_locations='U at every native node; SYY/SEQV/EPEL Y/X native corner-node averages, no invented midside stress',
             corner_field_columns=['SYY_MPa','SEQV_MPa','elastic_EYY','elastic_EXX'],
             corner_field_percentiles=np.percentile(stress,[0,1,50,95,99,100],axis=0).tolist(),percentile_levels=[0,1,50,95,99,100],
