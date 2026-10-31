@@ -50,7 +50,6 @@ def export(directory,label,states,*,chunk_size=250000):
     manifest=load(directory/'simulation_manifest.json')
     database=directory/'checkpoint.db' if (directory/'checkpoint.db').exists() else directory/'compression.rdb'
     text=multi_export_input(database,directory/'compression',manifest['model'],states,chunk_size=chunk_size)
-    text=text.replace('/POST1', '/SOLU\n/OUTPUT,restart_sets,txt\nRESCONTROL,FILE_SUMMARY\n/OUTPUT\nFINISH\n/POST1',1)
     (out/'input.inp').write_text(text,encoding='utf-8')
     write_json(out/'provenance.json',{'source':str(directory.resolve()),'source_execution_receipt_sha256':file_hash(directory/'execution_receipt.json'),
         'source_RST_sha256':file_hash(directory/'compression.rst'),'source_database_filename':database.name,'source_database_sha256':file_hash(database),
