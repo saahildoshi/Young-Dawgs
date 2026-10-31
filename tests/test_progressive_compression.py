@@ -17,6 +17,7 @@ def test_total_displacement_and_adaptive_bounds():
     lines=load_commands(.1,.05,99,10.24)
     assert 'D,99,UY,-1.024' in lines and 'TIME,0.10000000000000001' in lines
     assert 'NEQIT,24' in lines and 'OUTRES,EPEL,ALL' in lines
+    assert 'RESCONTROL,DEFINE,ALL,1,-1,,3' in lines
     n=next(x for x in lines if x.startswith('NSUBST')).split(',')
     assert int(n[2])>=int(n[1])>=int(n[3])>=1 and n[4]=='OFF'
 

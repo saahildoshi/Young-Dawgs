@@ -33,7 +33,7 @@ def load_commands(target,previous,top,height,*,initial=.0005,minimum=1e-6,maximu
             f'NSUBST,{initial_steps},{maximum_steps},{minimum_steps},OFF',
             'OUTRES,ERASE','OUTRES,ALL,NONE']+[
             'OUTRES,'+item+(','+'ALL' if all_fields else ',LAST') for item in ['NSOL','RSOL','STRS','EPEL','CONT','MISC']]+[
-            'OUTPR,ALL,NONE','OSRESULT,ERASE','RESCONTROL,DEFINE,ALL,ALL,-1,,3',
+            'OUTPR,ALL,NONE','OSRESULT,ERASE','RESCONTROL,DEFINE,ALL,1,-1,,3',
             f'TIME,{target:.17g}',f'D,{top},UY,{-height*target:.17g}','SOLVE']
 
 

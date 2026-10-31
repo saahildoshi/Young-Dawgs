@@ -1,0 +1,72 @@
+{
+  "execution_scope": "GENERAL_CONTACT_SETUP_NO_SOLVE",
+  "input_sha256": "ba719dd4440fb1d60ee64e006a91251d3c15969b87c21d2cad94d7719800f201",
+  "mesh_semantic_sha256": "e26863263774cf86c777b1485ac0e639216a91644007c4da272469a7447000bc",
+  "model": {
+    "FKN": 100,
+    "FTOLN_absolute_mm": -1e-05,
+    "anchor_UX_node": 1172,
+    "config": {
+      "boundary_size": 0.0033333333333333335,
+      "bulk_size": 0.04,
+      "dimensions": "PROVISIONAL",
+      "force_basis": "total_N",
+      "height": 10.24,
+      "large_deformation": true,
+      "material": "ASSUMED_NOT_MEASURED",
+      "mode": "plane_stress",
+      "poisson_ratio": 0.3,
+      "strains": [
+        0.005,
+        0.01,
+        0.02
+      ],
+      "thickness": 1.0,
+      "time_axis": "quasi_static_pseudo_time",
+      "units": "mm-N-MPa",
+      "width": 10.24,
+      "young_modulus": 1000.0
+    },
+    "contact_algorithm_keyopt2": 1,
+    "contact_detection_keyopt4": 2,
+    "contact_elements": {
+      "bottom": 1368,
+      "top": 1230
+    },
+    "contact_scope": "PLATEN_AND_GENERAL_SELF_CONTACT",
+    "contact_stiffness_update_keyopt10": 1,
+    "controls": {
+      "bottom": 2766508,
+      "top": 2766511
+    },
+    "general_contact_component": "INTERNAL_GC",
+    "general_contact_elements": 243576,
+    "initial_geometric_gaps_mm": {
+      "bottom": 0,
+      "top": 0
+    },
+    "internal_self_contact": "GENERAL_CONTACT_ALL_EXPOSED_SURFACES",
+    "model_variant": "FINE_FULL_SELF_CONTACT_V066_GC014",
+    "schema": "young-dawgs-v0.6.3-contact-model",
+    "specimen_TRI6": 1261670,
+    "specimen_UY_constraints": false,
+    "specimen_nodes": 2766505,
+    "user_model_elements": 1507848,
+    "user_model_nodes": 2766511
+  },
+  "omitted_required_category_negative_control": null,
+  "output_selection": [
+    "OUTRES,ERASE",
+    "OUTRES,ALL,NONE",
+    "OUTRES,NSOL,LAST",
+    "OUTRES,RSOL,LAST",
+    "OUTRES,STRS,LAST",
+    "OUTRES,EPEL,LAST",
+    "OUTRES,CONT,LAST",
+    "OUTRES,MISC,LAST"
+  ],
+  "protocol_sha256": "2f0eb7fc9d47cada8217bb85e9832dadc2ca4aa23dea95c01a54e88e887e4a45",
+  "source_contact_database_sha256": "34a17675246a77f243ca5c001963fdcd1016f970a9b600036aa5f89d57e3c3d8",
+  "source_geometry_sha256": "4700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1",
+  "target_strain": 5e-05
+}
