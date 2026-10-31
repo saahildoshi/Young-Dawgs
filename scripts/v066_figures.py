@@ -112,6 +112,29 @@ def rejected_crossing():
     save(fig,'rejected_platen_1percent_exact_crossing.png')
 
 
+
+def rejected_general_crossing():
+    path=RUN/'deformation/FULL_GC_ONE_PERCENT_EXACT_DIAGNOSIS.json'
+    if not path.exists():return
+    data=load(path);fig,axes=plt.subplots(1,2,figsize=(10,5),layout='constrained')
+    t=np.linspace(0,1,200)
+    shape=np.column_stack([(1-t)*(1-2*t),t*(2*t-1),4*t*(1-t)])
+    for ax,record in zip(axes,data['pairs']):
+        for points,color in zip(record['quadratic_points'],['#0072b2','#d55e00']):
+            xy=np.asarray(points);curve=shape@xy;ax.plot(curve[:,0],curve[:,1],color=color,lw=2)
+            ax.scatter(xy[:2,0],xy[:2,1],color=color,s=25)
+        v=record['solutions'][0]['parameters'][0]
+        cross=np.array([(1-v)*(1-2*v),v*(2*v-1),4*v*(1-v)])@np.asarray(record['quadratic_points'][0])
+        ax.scatter(cross[0],cross[1],color='red',marker='x',s=65,zorder=5)
+        ax.set(aspect='equal',xlabel='Native deformed x (mm)',ylabel='Native deformed y (mm)',title=f"Edges {record['edge_a']} / {record['edge_b']}")
+        ax.grid(alpha=.2);ax.ticklabel_format(axis='both',style='plain',useOffset=False)
+    from matplotlib.ticker import MaxNLocator
+    axes[1].set_aspect('auto');axes[1].xaxis.set_major_locator(MaxNLocator(3));axes[1].tick_params(axis='x',labelsize=8)
+    axes[1].set_title(axes[1].get_title()+'\nIndependent x/y scales',fontsize=11)
+    fig.suptitle('Rejected 1% Gauss-point general contact: exact endpoint-region crossings',fontsize=13)
+    save(fig,'rejected_gc_gauss_1percent_exact_crossing.png')
+
+
 def main():
     summary=load(RUN/'summary/V0_6_6_VALIDATION.json')
     label='Full exposed-surface self-contact' if summary.get('primary_model_variant','').startswith('FINE_FULL') else 'Platen-only reference'
@@ -123,7 +146,7 @@ def main():
     for record in summary['snapshot_artifacts']:
         if any(abs(record['engineering_strain']-x)<1e-10 for x in major):
             snapshot(mesh,Path(record['directory']),record['label']);selected.append(record)
-    rejected_crossing()
+    rejected_crossing();rejected_general_crossing()
     write_json(RUN/'figures/manifest.json',{'rendered_states':selected,'deformation_scale':1,'curve':'Accepted actual states only; no uncomputed extension',
         'field_location':'U all nodes; SYY/SEQV/EPEL native corner-node averages; pressures at native platen endpoints; GC pressure is native element mean',
         'png_files':[p.name for p in (RUN/'figures').glob('*.png')]})
