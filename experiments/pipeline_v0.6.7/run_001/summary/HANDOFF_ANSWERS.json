@@ -1,0 +1,565 @@
+{
+  "answers": [
+    {
+      "answer": "Yes; WKB SHA2564700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1.",
+      "number": 1,
+      "question": "Was the original geometry authenticated?"
+    },
+    {
+      "answer": "Yes; semantic SHA256e26863263774cf86c777b1485ac0e639216a91644007c4da272469a7447000bc,2766505nodes/1261670TRI6.",
+      "number": 2,
+      "question": "Was the exact fine mesh authenticated?"
+    },
+    {
+      "answer": "Yes; exact LS3SS6,time0.009270608836206897; all four native file hashes match.",
+      "number": 3,
+      "question": "Was the last v0.6.6 restart authenticated?"
+    },
+    {
+      "answer": "Yes; initial and final hashes plus fresh read-only native POST1 verify unchanged files.",
+      "number": 4,
+      "question": "Was the parent restart preserved unchanged?"
+    },
+    {
+      "answer": "Prior platen-only and Gauss-GC1% states remain rejected.",
+      "number": 5,
+      "question": "Which previous 1% results were rejected?"
+    },
+    {
+      "answer": "Two exact quadratic nonadjacent boundary crossings near the upper external corner, missed by the corresponding contact treatment.",
+      "number": 6,
+      "question": "What specific contact/geometry failure made them invalid?"
+    },
+    {
+      "answer": "All15 original nodal primary-branch points through0.9270608836206897%; reference branches remain separate.",
+      "number": 7,
+      "question": "Which v0.6.6 primary states remain accepted?"
+    },
+    {
+      "answer": "Yes; protected historical Git diff is empty.",
+      "number": 8,
+      "question": "Were historical experiment files preserved?"
+    },
+    {
+      "answer": "The approaching upper external free/top-corner surfaces accompany the residual concentration and contact cycling; exact global causality remains qualified.",
+      "number": 9,
+      "question": "Which physical contact region caused or accompanied the observed convergence difficulty?"
+    },
+    {
+      "answer": "Accepted deformed location approximately x1.934mm,y10.130\u201310.133mm; original x1.96\u20131.98mm,y10.227\u201310.240mm.",
+      "number": 10,
+      "question": "What coordinates identify the region?"
+    },
+    {
+      "answer": "Principal full skins1295993,1494296,1494295; adjacent1285266/1383913; actual source type4/section4.",
+      "number": 11,
+      "question": "Which contact skins were involved?"
+    },
+    {
+      "answer": "Zero-based original boundary27837,28505,28506, with adjacent27838/28504.",
+      "number": 12,
+      "question": "Which boundary segments were involved?"
+    },
+    {
+      "answer": "General self-contact of external specimen faces near the upper corner, not demonstrated internal pore-wall engagement; platen contact coexists elsewhere.",
+      "number": 13,
+      "question": "Was the first problematic interaction internal self-contact or platen contact?"
+    },
+    {
+      "answer": "Yes; native aggregate GC counts/chattering change. The accepted full parent remains open with zero GC pressure.",
+      "number": 14,
+      "question": "Were actual contact status changes observed?"
+    },
+    {
+      "answer": "Not in the full failed trial: CND is aggregate. Local converged fields identify actual skins/status/targets; no missing trial transitions are invented.",
+      "number": 15,
+      "question": "Were actual individual element transitions identified?"
+    },
+    {
+      "answer": "Yes; top64 nodes in both retained NR snapshots, led by98184/99405 and nearby original nodes.",
+      "number": 16,
+      "question": "Were dominant residual nodes localized?"
+    },
+    {
+      "answer": "Approximate accepted-geometry opposing normal dot product\u22120.999406; complete failed-trial normals are unavailable.",
+      "number": 17,
+      "question": "Were contact normals consistent?"
+    },
+    {
+      "answer": "Yes; prior full unconverged trial reports3.178046e\u22126mm. New local native penetration is reported separately by state and formulation.",
+      "number": 18,
+      "question": "Was penetration observed?"
+    },
+    {
+      "answer": "Yes; full terminal native chattering level4 and local switching diagnostics. Pair records do not identify every individual transition.",
+      "number": 19,
+      "question": "Was contact chattering demonstrated?"
+    },
+    {
+      "answer": "Near-endpoint contact switching is supported; original-body section identity matters in the submodel. Penalty scaling alone did not resolve onset.",
+      "number": 20,
+      "question": "What is the strongest supported failure mechanism?"
+    },
+    {
+      "answer": "Global compliance/path effects, earliest submodel stress mismatch, nanogap/contact-state mismatch and a robust geometry-valid detection treatment remain unresolved.",
+      "number": 21,
+      "question": "What aspects remain unresolved?"
+    },
+    {
+      "answer": "Yes;5527 exact original nodes and2499 original TRI6.",
+      "number": 22,
+      "question": "Was a geometry-faithful local model created?"
+    },
+    {
+      "answer": "Original element centroids in x1.70\u20132.24mm,y>=9.95mm; all six nodes/connectivity retained with original-ID maps.",
+      "number": 23,
+      "question": "How was its geometry extracted?"
+    },
+    {
+      "answer": "Measured15-state cut-displacement history on60 cut nodes, original rigid platen motion; final-two-state secant extrapolation is diagnostic only.",
+      "number": 24,
+      "question": "How were boundary conditions selected?"
+    },
+    {
+      "answer": "Final parent core U/S/EPEL matches registered field tolerances; earliest stress states and the nanogap/contact status do not match exactly.",
+      "number": 25,
+      "question": "Did the fixture match the accepted parent state?"
+    },
+    {
+      "answer": "Corrected section-preserving baseline reproduces qualitative residual cycling/cutbacks and nonconvergence; exact full threshold differs.",
+      "number": 26,
+      "question": "Did the baseline fixture reproduce the problem?"
+    },
+    {
+      "answer": "Removed global compliance and connected-body context; section identity was corrected, but full cut-force feedback and future cut motion remain absent.",
+      "number": 27,
+      "question": "If not, what mechanical context was missing?"
+    },
+    {
+      "answer": "Nodal2 FKN100,10,1; projection3 FKN1; one FKN1 native NEQIT24\u219264 control recovery. Three earlier setup comparisons are invalid.",
+      "number": 28,
+      "question": "Which correction candidates were tested?"
+    },
+    {
+      "answer": "None passed the complete registered local onset path with all gates; no full correction selected.",
+      "number": 29,
+      "question": "Which candidate passed?"
+    },
+    {
+      "answer": "Final valid local recovery patch forces[[-0.01347677952650564, -0.002210155091424578], [0.01347677790288973, 0.002210153146973893]]N; opposition error1.85488689e-07,zero platen patch force.",
+      "number": 30,
+      "question": "What signed force evidence supports the result?"
+    },
+    {
+      "answer": "Final valid local recovery penetration9.056528256e-07mm. Projection endpoint native CND penetration1.433883e\u22126mm does not cure its geometry failure.",
+      "number": 31,
+      "question": "What penetration was measured?"
+    },
+    {
+      "answer": "Projection states show unexplained crossings and are rejected. Accepted nodal local crossings are covered only by existing native-linked contact interpretations.",
+      "number": 32,
+      "question": "Were any solid crossings observed?"
+    },
+    {
+      "answer": "Yes for independently screened converged local states; all2499 deformed maps positive. Failed/debug fields are not accepted.",
+      "number": 33,
+      "question": "Were element mappings valid?"
+    },
+    {
+      "answer": "Yes; actual licensed Ansys MAPDL2024R1 native solves and independent POST1 readbacks.",
+      "number": 34,
+      "question": "Was the correction tested on actual licensed ANSYS?"
+    },
+    {
+      "answer": "Preserved and reopened read-only; no new full solve used it because no local correction passed.",
+      "number": 35,
+      "question": "Was the original accepted restart used?"
+    },
+    {
+      "answer": "No fresh full branch was launched. Projection would require one, but failed local geometry.",
+      "number": 36,
+      "question": "If not, why was a fresh branch required?"
+    },
+    {
+      "answer": "Native local NEQIT CONTINUE executes; FKN modification of the accepted full parent was not verified or attempted.",
+      "number": 37,
+      "question": "Was restart compatibility independently verified?"
+    },
+    {
+      "answer": "No new full formulation selected; inherited full nodal target-normal general contact remains the historical baseline.",
+      "number": 38,
+      "question": "Which contact formulation was selected?"
+    },
+    {
+      "answer": "No full physical assumptions changed; all local material, thickness and plane-stress assumptions retained.",
+      "number": 39,
+      "question": "Which physical assumptions changed, if any?"
+    },
+    {
+      "answer": "Local NEQIT24\u219264 in one authenticated restart; full controls unchanged. Projection was a separately registered local variant.",
+      "number": 40,
+      "question": "Which solver controls changed?"
+    },
+    {
+      "answer": "Yes; CNVTOL.005,norm2,minref1e\u22128,1% force opposition,1e\u22125mm penetration and existing crossing criteria preserved.",
+      "number": 41,
+      "question": "Were equilibrium tolerances preserved?"
+    },
+    {
+      "answer": "Zero full recovery attempts;8 small native solver processes,including1 genuine local restart.",
+      "number": 42,
+      "question": "How many full-model recovery attempts occurred?"
+    },
+    {
+      "answer": "No new full state crosses the prior limit.",
+      "number": 43,
+      "question": "Did the model cross the previous 0.9271% limit?"
+    },
+    {
+      "answer": "No;1% remains unqualified.",
+      "number": 44,
+      "question": "Was an accepted 1% checkpoint achieved?"
+    },
+    {
+      "answer": "None for the full model. One additional locally accepted diagnostic restart state has native boundary parameter0.009533949392187499; not full compression strain.",
+      "number": 45,
+      "question": "What was the first newly accepted strain?"
+    },
+    {
+      "answer": "No accepted full internal-contact engagement; local external-wall engagement is demonstrated.",
+      "number": 46,
+      "question": "Did active internal contact occur in the full model?"
+    },
+    {
+      "answer": "New local two-sided structural interface forces are independently verified; inherited full acceptance remains unchanged.",
+      "number": 47,
+      "question": "Were contact forces independently verified?"
+    },
+    {
+      "answer": "Full inherited balance remains1.7803048048850376e\u22125 relative; final local recovery reaction-sum error2.12395767e-08.",
+      "number": 48,
+      "question": "Were force reactions balanced?"
+    },
+    {
+      "answer": "No excessive penetration in the reported mechanically accepted local recovery; failed/setup/projection records remain separate and retain their diagnostics.",
+      "number": 49,
+      "question": "Was any contact penetration excessive?"
+    },
+    {
+      "answer": "Yes in projection diagnostics; rejected. No new full state is accepted with crossing.",
+      "number": 50,
+      "question": "Were any quadratic boundary crossings detected?"
+    },
+    {
+      "answer": "No inversion in independently screened converged states; failed trial fields are not qualified.",
+      "number": 51,
+      "question": "Did any elements invert?"
+    },
+    {
+      "answer": "Nodal contact-onset convergence exhaustion. The64-iteration restart gains one state, then residual rises to0.003722N versus0.002604N; projection instead fails geometry.",
+      "number": 52,
+      "question": "What caused any remaining solver failure?"
+    },
+    {
+      "answer": "0.9270608836206897% full-model compression, unchanged.",
+      "number": 53,
+      "question": "What is the maximum qualified full-model compression?"
+    },
+    {
+      "answer": "No.",
+      "number": 54,
+      "question": "Was 2% reached?"
+    },
+    {
+      "answer": "No.",
+      "number": 55,
+      "question": "Was 5% reached?"
+    },
+    {
+      "answer": "No.",
+      "number": 56,
+      "question": "Was 10% reached?"
+    },
+    {
+      "answer": "No.",
+      "number": 57,
+      "question": "Was 20% reached?"
+    },
+    {
+      "answer": "No.",
+      "number": 58,
+      "question": "Was 30% reached?"
+    },
+    {
+      "answer": "No.",
+      "number": 59,
+      "question": "Was 40% reached?"
+    },
+    {
+      "answer": "0.09493103448275862mm.",
+      "number": 60,
+      "question": "What is the maximum qualified platen displacement?"
+    },
+    {
+      "answer": "Zero new full accepted substeps; the local control restart contributes one preserved mechanically valid diagnostic state.",
+      "number": 61,
+      "question": "How many new accepted substeps were obtained?"
+    },
+    {
+      "answer": "29 native cutback events across the five valid local mechanical/control variants; full retry cutbacks0. Invalid setup cases are separately retained.",
+      "number": 62,
+      "question": "How many cutbacks occurred?"
+    },
+    {
+      "answer": "New accepted full self-contact count0. Local whole-field projection closed-skin maximum4 is geometrically quarantined; raw trial GC count maximum6 is not an accepted full count.",
+      "number": 63,
+      "question": "What was the maximum contact-active element count?"
+    },
+    {
+      "answer": "Raw local trial GC penetration maximum7.733388e-05mm,including unconverged/setup cases. Final valid local recovery9.056528256e-07mm; no new full-model maximum.",
+      "number": 64,
+      "question": "What was the maximum reported contact penetration?"
+    },
+    {
+      "answer": "Original full LS3SS6,R001,time0.009270608836206897; preserved unchanged.",
+      "number": 65,
+      "question": "What is the last valid restart checkpoint?"
+    },
+    {
+      "answer": "No candidate passed the complete geometry-valid local onset path, so the full-entry gate remained closed.",
+      "number": 66,
+      "question": "What prevented further compression if the target was not reached?"
+    },
+    {
+      "answer": "No new full-model curve;15 inherited primary points remain the qualified branch.",
+      "number": 67,
+      "question": "Was a genuine full-model stress\u2013strain curve obtained beyond v0.6.6?"
+    },
+    {
+      "answer": "Inherited full upper reaction magnitude10.90307046622248N.",
+      "number": 68,
+      "question": "What is the peak accepted reaction force?"
+    },
+    {
+      "answer": "Inherited full nominal compression stress1.064752975217039MPa.",
+      "number": 69,
+      "question": "What is the peak accepted nominal stress?"
+    },
+    {
+      "answer": "At the maximum qualified full0.9270608836206897%,1.064752975217039MPa. No new major full checkpoint stress exists.",
+      "number": 70,
+      "question": "What stress was recorded at the major achieved checkpoints?"
+    },
+    {
+      "answer": "Yes; inherited full snapshots and new actual local diagnostic snapshots/fields.",
+      "number": 71,
+      "question": "Were deformation snapshots extracted?"
+    },
+    {
+      "answer": "Full15 historical primary strains through0.9270608836206897%; local measured-history checkpoints and explicitly secant-extrapolated states, not new full strains.",
+      "number": 72,
+      "question": "At which strains?"
+    },
+    {
+      "answer": "Yes; inherited full native corner S and independently reopened local S.",
+      "number": 73,
+      "question": "Were actual stress fields extracted?"
+    },
+    {
+      "answer": "Yes; inherited full native EPEL and independently reopened local EPEL.",
+      "number": 74,
+      "question": "Were actual strain fields extracted?"
+    },
+    {
+      "answer": "Local native GC pressure fields are extracted; accepted full GC remains open/zero. No full pore-contact pressure field is invented.",
+      "number": 75,
+      "question": "Were internal contact-pressure fields extracted?"
+    },
+    {
+      "answer": "Inherited minimum pore-area ratio0.96562185745; no observed full pore closure.",
+      "number": 76,
+      "question": "Were any pores observed approaching closure?"
+    },
+    {
+      "answer": "No accepted full pore-wall engagement. The proven local interaction is on external upper-edge surfaces.",
+      "number": 77,
+      "question": "Were pore walls observed engaging?"
+    },
+    {
+      "answer": "Unexplained projection crossings are rejected; historical invalid1% states remain rejected.",
+      "number": 78,
+      "question": "Were any solid overlaps rejected?"
+    },
+    {
+      "answer": "Inherited full maxabs EYY0.066973865607,EXX0.046433799385. Final valid local recovery maxabs EYY/EXX[0.02066318598153294, 0.01390264861496385]; local context only.",
+      "number": 79,
+      "question": "What maximum local strain was observed?"
+    },
+    {
+      "answer": "Provisional and uncalibrated; these numerical results do not validate elastic material behavior at substantial compression.",
+      "number": 80,
+      "question": "Do the provisional material assumptions remain physically plausible?"
+    },
+    {
+      "answer": "No; mechanical mesh convergence remains unqualified.",
+      "number": 81,
+      "question": "Was mechanical mesh convergence established?"
+    },
+    {
+      "answer": "No new smaller mesh investigated.",
+      "number": 82,
+      "question": "Was a smaller mesh investigated?"
+    },
+    {
+      "answer": "Not applicable; historical failed-angle coarse mesh is not reused.",
+      "number": 83,
+      "question": "Did it pass the original geometric quality gates?"
+    },
+    {
+      "answer": "Full fine2766505nodes/1261670TRI6; extracted diagnostic5527nodes/2499TRI6,not a smaller full specimen mesh.",
+      "number": 84,
+      "question": "What were its node and element counts?"
+    },
+    {
+      "answer": "No new mesh comparison or convergence study.",
+      "number": 85,
+      "question": "Was its response mechanically compared with the fine mesh?"
+    },
+    {
+      "answer": "No separately loaded reduced-domain compression demonstrator.",
+      "number": 86,
+      "question": "Was a reduced-domain demonstrator executed?"
+    },
+    {
+      "answer": "Not applicable; local cut-field load parameter is not demonstrator compression strain.",
+      "number": 87,
+      "question": "If so, what was its maximum accepted strain?"
+    },
+    {
+      "answer": "Yes; all local diagnostics remain explicitly separate from the full specimen.",
+      "number": 88,
+      "question": "Was that result kept explicitly separate from the full specimen?"
+    },
+    {
+      "answer": "Native process wall-time sum306.571s across20 processes; includes read-only postprocessing,not physical loading time.",
+      "number": 89,
+      "question": "What was the total solver runtime?"
+    },
+    {
+      "answer": "Peak native process-tree RSS7.148479GiB.",
+      "number": 90,
+      "question": "What was the peak process memory?"
+    },
+    {
+      "answer": "0 sampled severe paging events; maximum system hard-fault read proxy648.9/s,not pagefile-only traffic.",
+      "number": 91,
+      "question": "Was there sustained severe paging?"
+    },
+    {
+      "answer": "Raw v067 disk792178074bytes (0.737773GiB); inherited raw artifacts and durable fine mesh are separate.",
+      "number": 92,
+      "question": "How much disk space was used?"
+    },
+    {
+      "answer": "One genuine local native restart process; no full native restart solve.",
+      "number": 93,
+      "question": "How many native restart processes were executed?"
+    },
+    {
+      "answer": "794 current tests passed.",
+      "number": 94,
+      "question": "How many current tests passed?"
+    },
+    {
+      "answer": "475 archived replay checks across9groups passed.",
+      "number": 95,
+      "question": "How many archived tests passed?"
+    },
+    {
+      "answer": "131 actual licensed-artifact evidence checks passed; includes104 inherited v066 checks and27 new v067 checks,not that many new solves.",
+      "number": 96,
+      "question": "How many real licensed ANSYS evidence checks passed?"
+    },
+    {
+      "answer": "All three invalid setup cases,three failed nodal stiffness cases,projection geometry rejection and64-iteration restart failure/debug outputs are preserved externally with compact tracked evidence.",
+      "number": 97,
+      "question": "Which failures were preserved?"
+    },
+    {
+      "answer": "New v067 experiment/protocol/verification/report/figure files, v067 scripts andvalidation/ansys_v067_integration.py; see FILE_CHANGES.json. Historical files and existing solver implementation are unchanged.",
+      "number": 98,
+      "question": "Which files were created or modified?"
+    },
+    {
+      "answer": "Descriptive local commits are listed in this handoff and the final delivery Git ledger.",
+      "number": 99,
+      "question": "Which Git commits were created?"
+    },
+    {
+      "answer": "Full actual hashes/messages are in the Git table below; the post-commit external delivery ledger adds the containing final commits.",
+      "number": 100,
+      "question": "What are their hashes and messages?"
+    },
+    {
+      "answer": "Final clean-tree check is recorded after all documentation/verification commits in the delivery ledger.",
+      "number": 101,
+      "question": "Is the working tree clean?"
+    },
+    {
+      "answer": "No; no push command was issued.",
+      "number": 102,
+      "question": "Was anything pushed?"
+    },
+    {
+      "answer": "CONTACT_ONSET_LOCALIZED__NO_QUALIFIED_CORRECTION__FULL_RETRY_NOT_JUSTIFIED.",
+      "number": 103,
+      "question": "What is the exact v0.6.7 status?"
+    },
+    {
+      "answer": "No; the full numerical barrier remains unresolved. It is localized and reproduced qualitatively in an exact-mesh submodel.",
+      "number": 104,
+      "question": "Was the previous contact-onset numerical barrier resolved?"
+    },
+    {
+      "answer": "No.",
+      "number": 105,
+      "question": "Was the full specimen's 30% target reached?"
+    },
+    {
+      "answer": "No.",
+      "number": 106,
+      "question": "Was its 40% stretch target reached?"
+    },
+    {
+      "answer": "Inherited15 qualified full primary points; corrected nodal local states passing their own gates,including one recovered local state,remain diagnostic only.",
+      "number": 107,
+      "question": "Which results are independently mechanically accepted?"
+    },
+    {
+      "answer": "All new local results,secant extrapolation,invalid setup cases and projection/debug results. They establish diagnostics,not extended full performance.",
+      "number": 108,
+      "question": "Which results are diagnostic only?"
+    },
+    {
+      "answer": "Full internal pore contact,mechanical mesh convergence,material calibration and paper readiness remain unresolved; local early stress/nanogap context mismatch is explicit.",
+      "number": 109,
+      "question": "Which results have unresolved internal-contact or mesh limitations?"
+    },
+    {
+      "answer": "Show the genuine0.927060884% full response/fields,the onset close-up,residual localization,source-section audit and local candidate/force/geometry comparisons. Do not show an unqualified1% or30% result as accepted.",
+      "number": 110,
+      "question": "What should be shown to Dr. Wang?"
+    },
+    {
+      "answer": "A contact treatment that passes exact geometry/force gates through onset,qualified full1% progression then30\u201340%,mechanical mesh convergence and physical material/experimental calibration.",
+      "number": 111,
+      "question": "What remains before a paper-quality large-strain dataset?"
+    },
+    {
+      "answer": "Resolve exact curved-surface contact coverage at the localized upper external corner; qualify the correction locally before one full-model recovery.",
+      "number": 112,
+      "question": "What is the next most important development milestone?"
+    }
+  ],
+  "status": "CONTACT_ONSET_LOCALIZED__NO_QUALIFIED_CORRECTION__FULL_RETRY_NOT_JUSTIFIED"
+}

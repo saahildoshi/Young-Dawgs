@@ -32,8 +32,15 @@ def qualify(label):
     z=np.load(fixture/'mesh.npz'); m=Mesh(*[z[k] for k in ['nodes','triangles','boundary','boundary_groups']])
     spec=json.loads((fixture/'fixture_manifest.json').read_text(encoding='utf-8'))
     manifest=json.loads((source/'simulation_manifest.json').read_text(encoding='utf-8'))
+    native_contact=json.loads((source/'contact_telemetry.json').read_text(encoding='utf-8'))['records']
     original=z['original_nodes_one_based']
-    topo=table(source/'gc_topology.csv',6).astype(int)
+    topology_path=source/'gc_topology.csv'
+    if not topology_path.exists() and manifest.get('source_local_restart'):
+        parent_source=__import__('pathlib').Path(manifest['source_local_restart'])
+        topology_path=parent_source/'gc_topology.csv'
+        parent_receipt=json.loads((parent_source/'execution_receipt.json').read_text(encoding='utf-8'))
+        assert file_hash(topology_path)==parent_receipt['process']['artifacts']['gc_topology.csv']['sha256']
+    topo=table(topology_path,6).astype(int)
     by_nodes={tuple(sorted(e+1)):i for i,e in enumerate(m.boundary)}
     eid_to_boundary={int(row[0]):by_nodes[tuple(sorted(row[1:4]))] for row in topo}
     mapped=np.array(list(eid_to_boundary.values()))
@@ -46,6 +53,8 @@ def qualify(label):
     states=[]
     for state in p['states']:
         prefix=post/state['prefix']
+        time_file=prefix.with_name(prefix.name+'_time.csv')
+        native_time=float(table(time_file,1)[0,0]) if time_file.exists() else state['time']
         u=table(prefix.with_name(prefix.name+'_displacements.csv'),3)
         assert np.array_equal(u[:,0],np.arange(1,len(m.nodes)+1))
         xy=m.nodes+u[:,1:3]
@@ -54,7 +63,13 @@ def qualify(label):
         contact=table(prefix.with_name(prefix.name+'_gc_fields.csv'),14)
         forces=table(prefix.with_name(prefix.name+'_reactions.csv'),3)
         balance=table(prefix.with_name(prefix.name+'_gc_balance.csv'),2)
-        pen=max(0,float(contact[:,5:7].max())) if len(contact) else 0.
+        endpoint_pen=max(0,float(contact[:,5:7].max())) if len(contact) else 0.
+        last_contact={}
+        for row in native_contact:
+            if row['pair']<0 and (row['load_step'],row['substep'])==(state['load_step'],state['substep']):
+                last_contact[row['pair']]=row
+        cnd_pen=max([0.]+[r['penetration_or_gap_mm'] for r in last_contact.values()])
+        pen=max(endpoint_pen,cnd_pen)
         reaction_error=float(np.linalg.norm(forces[:,1:3].sum(axis=0))/max(np.linalg.norm(forces[:,1:3],axis=1).sum(),1e-12))
         contact_error=float(np.linalg.norm(balance[0])/max(np.linalg.norm(contact[:,[13,7]],axis=1).sum(),1e-12)) if len(balance) else 0.
         overlap=screen(xy,m.boundary,m.boundary_groups,original=m.nodes,record_limit=100000)
@@ -82,8 +97,9 @@ def qualify(label):
         native_closed=int(np.sum(contact[:,1]>=2)) if len(contact) else 0
         force_pass=bool(interface and interface['opposition_passed']) if native_closed else True
         valid=positive and pen<=1e-5 and reaction_error<=.01 and force_pass and geometry_error is None
-        record={**state,'mechanical_gates_passed':bool(valid),'extrapolated':state['load_step']>15,
+        record={**state,'time':native_time,'parsed_solver_log_time':state['time'],'mechanical_gates_passed':bool(valid),'extrapolated':state['load_step']>15,
                 'scope':'LOCAL_DIAGNOSTIC_ONLY', 'all_TRI6_positive':positive,'maximum_penetration_mm':pen,
+                'stored_endpoint_penetration_mm':endpoint_pen,'native_converged_contact_diagnostic_penetration_mm':cnd_pen,
                 'signed_reaction_sum_N':forces[:,1:3].sum(axis=0).tolist(),'reaction_sum_relative':reaction_error,
                 'platen_signed_RF_N':forces[-1,1:3].tolist(),'cut_signed_RF_N':forces[:-1,1:3].sum(axis=0).tolist(),
                 'assembled_GC_force_residual_relative':contact_error,'closed_gc_skins':native_closed,
@@ -107,10 +123,11 @@ def qualify(label):
             record['parent_match_passed']=bool(record['cut_displacement_max_error_mm']<=1e-10 and record['core_U_RMS_relative']<=.02 and errors.max()<=.1)
         states.append(record)
     q={'label':label,'physical_face_inventory_verified':True,'GC_faces':len(mapped),'native_GC_types':np.unique(topo[:,4]).tolist(),
-       'parent_match_all_measured_states':all(r.get('parent_match_passed',True) for r in states),
+       'parent_match_all_measured_states':all(r['parent_match_passed'] for r in states if 'parent_match_passed' in r) if any('parent_match_passed' in r for r in states) else None,
        'licensed_POST1_receipt_sha256':file_hash(post/'execution_receipt.json'),'states':states,
        'all_local_states_mechanical_gates_passed':all(r['mechanical_gates_passed'] for r in states),
-       'full_model_strain_qualification':False,'local_failure_reproduced':'No full-model Newton stall reproduced under measured-cut/secant boundary control; inspect accepted-state contact/geometry mismatch separately.'}
+       'full_model_strain_qualification':False,
+       'local_failure_reproduced':'Qualitative contact-onset nonconvergence reproduced; exact global threshold/context differs.' if json.loads((source/'execution_receipt.json').read_text(encoding='utf-8'))['process']['returncode'] else 'No Newton stall in this variant; all independent geometry gates still apply.'}
     write_json(RUN/'local_fixture'/(label+'_qualification.json'),q)
     print(label,'parent match',q['parent_match_all_measured_states'],'all mechanics',q['all_local_states_mechanical_gates_passed'],flush=True)
     for r in states[-5:]:print(r['time'],r['maximum_penetration_mm'],r['mechanical_gates_passed'],r.get('parent_match_passed'),str(r['geometry_failure'])[:140],flush=True)
