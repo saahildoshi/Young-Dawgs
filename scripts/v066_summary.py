@@ -100,7 +100,7 @@ def assemble(in_progress=False):
         if r['status']!='PROCESS_EXITED' or r['process']['returncode']!=0:failure_jobs.append({'job':path.parent.name,'status':r['status'],'returncode':r['process']['returncode'],'last_converged':t['converged_substeps'][-1] if t['converged_substeps'] else None})
     branches={name:characterize(rows) for name,rows in branches.items()}
     contact_branches=[name for name in branches if name!=reference]
-    primary=max(contact_branches,key=lambda name:(branches[name]['maximum_qualified_engineering_strain'],name)) if contact_branches else reference
+    primary=max(contact_branches,key=lambda name:(branches[name]['maximum_qualified_engineering_strain'],name=='FINE_FULL_SELF_CONTACT_NODAL_V066_021',name)) if contact_branches else reference
     measurements=branches[primary]['accepted_measurements'];fit=branches[primary]['initial_modulus_fit'];work=branches[primary]['compression_work']
     maximum=max(b['maximum_qualified_engineering_strain'] for b in branches.values())
     maximum_converged=max([.00005]+[s['pseudo_time'] for s in all_converged])

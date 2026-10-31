@@ -10,6 +10,7 @@ from metamaterial_eval.simulation.mesh_artifacts import resolve_manifest
 from metamaterial_eval.simulation.config import CompressionConfig
 from metamaterial_eval.simulation.contact_setup import platen_plan
 from metamaterial_eval.simulation.reporting import write_json
+from metamaterial_eval.simulation.solver_execution import file_hash
 from scripts.v066_restart import REPO,RUN,BASE,load
 
 
@@ -32,7 +33,7 @@ def snapshot(mesh,directory,label):
     # Native corner fields plotted only at their actual supported locations.
     corner_tri=np.searchsorted(corners,mesh.triangles[:,:3])
     assert np.array_equal(corners[corner_tri],mesh.triangles[:,:3])
-    values=[(u[corners,2],'Mean native corner displacement magnitude (mm)','viridis'),(s[:,0],'Mean native corner SYY (MPa)','coolwarm'),
+    values=[(u[corners,2],'Mean displacement magnitude from native corner U (mm)','viridis'),(s[:,0],'Mean native corner SYY (MPa)','coolwarm'),
             (s[:,1],'Mean native corner SEQV (MPa)','magma'),(s[:,2],'Mean native corner elastic EYY','coolwarm')]
     for (v,title,cmap),suffix in zip(values,['U','SYY','SEQV','EYY']):
         fig,ax=plt.subplots(figsize=(7,7));xy=u[corners,3:5]
@@ -141,15 +142,27 @@ def main():
     curves(summary['accepted_measurements'],model_label=label)
     for variant,branch in summary.get('model_branches',{}).items():curves(branch['accepted_measurements'],name=variant+'_response.png',model_label='Full exposed-surface self-contact' if variant.startswith('FINE_FULL') else 'Platen-only reference')
     mesh,_,_=resolve_manifest(REPO/'experiments/pipeline_v0.6.3/run_001/mesh_reproduction/attempt_002/artifact_manifest.json',root=Path.home()/'YoungDawgs-Artifacts')
+    previous=load(RUN/'figures/manifest.json').get('snapshot_cache',{}) if (RUN/'figures/manifest.json').exists() else {}
+    renderer=file_hash(Path(__file__));snapshot_cache={}
     selected=[];major=[.00005,.001,.01,.05,.1,.2,.3,.4,summary['maximum_qualified_engineering_strain']]
     major += [b['maximum_qualified_engineering_strain'] for b in summary.get('model_branches',{}).values()]
     for record in summary['snapshot_artifacts']:
         if any(abs(record['engineering_strain']-x)<1e-10 for x in major):
-            snapshot(mesh,Path(record['directory']),record['label']);selected.append(record)
+            directory=Path(record['directory']);qualification=load(directory/'qualification.json')
+            for name,binding in qualification['large_field_artifacts'].items():
+                if file_hash(directory/name)!=binding['sha256']:raise ValueError('Changed qualified native field array: '+name)
+            digest=file_hash(directory/'qualification.json');cached=previous.get(record['label'],{})
+            outputs=cached.get('outputs',{})
+            reusable=bool(outputs and cached.get('renderer_sha256')==renderer and cached.get('qualification_sha256')==digest and all((RUN/'figures'/name).exists() and file_hash(RUN/'figures'/name)==value for name,value in outputs.items()))
+            if not reusable:
+                snapshot(mesh,directory,record['label'])
+                outputs={p.name:file_hash(p) for p in (RUN/'figures').glob(record['label']+'_*.png')}
+            snapshot_cache[record['label']]={'qualification_sha256':digest,'renderer_sha256':renderer,'outputs':outputs}
+            selected.append(record)
     rejected_crossing();rejected_general_crossing()
     write_json(RUN/'figures/manifest.json',{'rendered_states':selected,'deformation_scale':1,'curve':'Accepted actual states only; no uncomputed extension',
         'field_location':'U all nodes; SYY/SEQV/EPEL native corner-node averages; pressures at native platen endpoints; GC pressure is native element mean',
-        'png_files':[p.name for p in (RUN/'figures').glob('*.png')]})
+        'snapshot_cache':snapshot_cache,'renderer_sha256':renderer,'png_files':[p.name for p in (RUN/'figures').glob('*.png')]})
 
 
 if __name__=='__main__':main()
