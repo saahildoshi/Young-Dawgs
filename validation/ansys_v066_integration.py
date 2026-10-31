@@ -131,3 +131,15 @@ def test_gauss_one_percent_endpoint_crossings_are_quarantined():
     assert not q['results'][-1]['accepted'] and q['results'][-1]['failures']
     d=read(RUN/'deformation/FULL_GC_ONE_PERCENT_EXACT_DIAGNOSIS.json')
     assert d['status']=='CONFIRMED_UNMODELED_CROSSING'
+
+
+def test_actual_nodal_fixture_geometry_uses_native_constraints_and_rejects_known_crossings():
+    q=read(RUN/'internal_contact/NODAL_FIXTURE_GEOMETRY_QUALIFICATION_002.json')
+    assert q['status']=='PASS_ACTUAL_NODAL_FIXTURE_BOUNDED_CONTACT_GEOMETRY'
+    assert q['candidate_records']==148 and len(q['explanations'])==148
+    for name,digest in q['actual_native_field_hashes'].items():assert file_hash(BASE/'internal_fixture_enabled_003_post001'/name)==digest
+    for record in q['explanations']:
+        assert record.get('geometry_proof',{}).get('passed') or record.get('native_target_link_a_to_b') or record.get('native_target_link_b_to_a')
+    protocol=read(RUN/'protocol/NODAL_CONTACT_INTERPRETATION_023.json')
+    assert protocol['fixture_sha256']==file_hash(RUN/'internal_contact/NODAL_FIXTURE_GEOMETRY_QUALIFICATION_002.json')
+    assert read(RUN/'internal_contact/NODAL_INTERPRETER_REJECTS_KNOWN_GP_CROSSINGS.json')['rejected']
