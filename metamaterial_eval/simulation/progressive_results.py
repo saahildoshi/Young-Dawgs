@@ -8,6 +8,7 @@ from .progressive_compression import load,result_sets
 from .element_quality import quadratic_mapping
 from .deformed_boundaries import screen
 from .progressive_contact import validate_inventory,certify_farfield_separation
+from .general_contact_results import qualify_general_contact
 from .reporting import write_json,mesh_hash
 from .solver_execution import file_hash,has_negative_pivots
 
@@ -48,7 +49,7 @@ def authenticate(source,export,mesh):
     return manifest,receipt,post,provenance,result_sets((export/'result_sets.txt').read_text())
 
 
-def qualify_state(source,export,mesh,index,state,output):
+def qualify_state(source,export,mesh,index,state,output,*,general_contact_setup=None):
     source,export,output=map(Path,[source,export,output]);output.mkdir(parents=True,exist_ok=False)
     result={'schema':'young-dawgs-v0.6.6-actual-native-state','state':state,'accepted':False,'failures':[],
         'contact_scope':'PLATEN_ONLY_EXPLORATORY','mechanical_mesh_convergence':'UNQUALIFIED',
@@ -56,6 +57,9 @@ def qualify_state(source,export,mesh,index,state,output):
         'source':str(source),'export':str(export)}
     try:
         manifest,receipt,post,provenance,sets=authenticate(source,export,mesh);model=manifest['model']
+        if model.get('general_contact_elements'):
+            result.update(contact_scope=model['contact_scope'],internal_self_contact='CONFIGURED_NATIVE_GENERAL_CONTACT',model_variant=model['model_variant'])
+            if general_contact_setup is None:raise ValueError('General-contact state requires authenticated native GC qualification')
         key=(state['load_step'],state['substep']);converged=load(source/'nonlinear_telemetry.json')['converged_substeps']
         matching=[r for r in converged if (r['load_step'],r['substep'])==key]
         if len(matching)!=1 or not any((s['load_step'],s['substep'])==key for s in sets):raise ValueError('Set not independently corroborated as converged')
@@ -66,6 +70,8 @@ def qualify_state(source,export,mesh,index,state,output):
         prefix=f'stage{index:03d}'
         names=[prefix+s for s in ['_history.csv','_gate.txt','_displacements.csv','_stress.csv','_contact.csv']]
         if provenance.get('native_farfield_status_inventory'):names.append(prefix+'_contact_status.csv')
+        if model.get('general_contact_elements'):names.extend([prefix+'_gc_status.csv',prefix+'_gc_fields.csv'])
+        if model.get('general_contact_elements') and (export/(prefix+'_gc_balance.csv')).exists():names.append(prefix+'_gc_balance.csv')
         hashes={}
         for name in names:
             hashes[name]=file_hash(export/name)
@@ -119,8 +125,11 @@ def qualify_state(source,export,mesh,index,state,output):
         for i in range(0,len(mesh.triangles),20000):
             tri=mesh.triangles[i:i+20000];q=quadratic_mapping(mesh.nodes[tri]+u[tri,:2]);invalid+=int(np.sum(~q['positive_over_reference_triangle']));minimum=min(minimum,float(q['determinant_min'].min()))
         if invalid:result['failures'].append('Invalid deformed quadratic mappings')
-        overlap=screen(u[:,3:5],mesh.boundary,mesh.boundary_groups,original=mesh.nodes);write_json(output/'boundary_screen.json',overlap)
-        if not overlap['passed']:result['failures'].append('Unmodeled overlap/near contact uncertainty')
+        overlap=screen(u[:,3:5],mesh.boundary,mesh.boundary_groups,original=mesh.nodes,record_limit=100000 if model.get('general_contact_elements') else 32);write_json(output/'boundary_screen.json',overlap)
+        if model.get('general_contact_elements'):
+            try:result['general_contact']=qualify_general_contact(source,export,prefix,manifest,mesh,overlap,result['state'],general_contact_setup)
+            except ValueError as exc:result['failures'].append(str(exc))
+        elif not overlap['passed']:result['failures'].append('Unmodeled overlap/near contact uncertainty')
         result.update(actual_nodes=count,actual_TRI6=len(mesh.triangles),actual_native_corner_nodes=len(corners),
             invalid_deformed_mappings=invalid,minimum_deformed_determinant_mm2=minimum,
             field_locations='U at every native node; SYY/SEQV/EPEL Y/X native corner-node averages, no invented midside stress',
@@ -128,8 +137,12 @@ def qualify_state(source,export,mesh,index,state,output):
             corner_field_percentiles=np.percentile(stress,[0,1,50,95,99,100],axis=0).tolist(),percentile_levels=[0,1,50,95,99,100],
             absolute_elastic_components_percentiles=np.percentile(abs(stress[:,2:]),[50,95,99,100],axis=0).tolist(),
             displacement_ranges_mm=np.stack([np.min(u[:,:3],axis=0),np.max(u[:,:3],axis=0)]).tolist(),
-            boundary_screen_summary={k:v for k,v in overlap.items() if k!='pore_area_records'})
+            boundary_screen_summary={k:(v[:32] if k=='examples' else v) for k,v in overlap.items() if k!='pore_area_records'})
         np.save(output/'corner_node_ids.npy',corners);del u,stress
+        if model.get('general_contact_elements') and abs(result['state']['time']-.001)<1e-12 and 'measurement' in result:
+            reference=1.199313799677024;actual=float(-result['measurement']['upper_rf_y_N']);relative=float(abs(actual-reference)/reference)
+            result['initial_response_comparison']={'platen_only_reference_force_N':reference,'general_contact_force_N':actual,'relative_difference':relative,'prospective_tolerance':.005,'passed':bool(relative<=.005)}
+            if relative>.005:result['failures'].append('Full general-contact initial response differs from qualified reference by more than0.5%')
         result['large_field_artifacts']={p.name:{'bytes':p.stat().st_size,'sha256':file_hash(p)} for p in output.glob('*.npy')}
         result['accepted']=not result['failures'];result['status']='MECHANICALLY_ACCEPTED_SINGLE_MESH_EXPLORATORY' if result['accepted'] else 'NATIVE_CONVERGED_BUT_UNQUALIFIED'
     except (ValueError,FileNotFoundError,KeyError,IndexError) as exc:

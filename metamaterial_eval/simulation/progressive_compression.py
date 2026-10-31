@@ -14,6 +14,7 @@ from .system_health import HealthPolicy
 from .windows_ansys import bounded_run
 from .solver_execution import discover_solver,file_hash,solver_release,solver_warnings
 from .reporting import write_json
+from .general_contact_output import general_contact_vectors
 
 
 def load(path):return json.loads(Path(path).read_text(encoding='utf-8'))
@@ -99,7 +100,7 @@ def multi_export_input(database,result_base,model,states,*,chunk_size=250000,far
         block=block[:offset]+chunked_vectors(model['specimen_nodes'],'stage001',chunk_size)+block[offset+len(old):]
         if farfield:
             where=block.index('*CFOPEN,stage001_contact,csv')
-            inventory=['ESEL,S,TYPE,,3','ETABLE,ERAS','ETABLE,CNSTAT,NMISC,19','ALLSEL,ALL',
+            inventory=['ESEL,S,ENAME,,172','ETABLE,ERAS','ETABLE,CNSTAT,NMISC,19','ALLSEL,ALL',
                 '*CFOPEN,stage001_contact_status,csv','*VWRITE',"('pair,element,status')",'*DO,PAIR,1,2',
                 '*IF,PAIR,EQ,1,THEN','CMSEL,S,BOTTOM_CONTACT','*ELSE','CMSEL,S,TOP_CONTACT','*ENDIF',
                 '*GET,NC,ELEM,0,COUNT','EID=0','*DO,KK,1,NC','EID=ELNEXT(EID)',
@@ -114,6 +115,10 @@ def multi_export_input(database,result_base,model,states,*,chunk_size=250000,far
                     revised.extend(['*ENDIF',line]);inside=False
                 else:revised.append(line)
             block=revised
+        if model.get('general_contact_elements'):
+            if not farfield:raise ValueError('General contact requires explicit native availability inventory')
+            where=block.index('*IF,FAILG,NE,0,THEN')
+            block=block[:where]+general_contact_vectors(model,'stage001',chunk_size=min(250000,chunk_size))+block[where:]
         for line in block:
             if line=='/POST1':lines+=['/POST1',"FILE,'"+result_base+"',rst"]
             elif line=='SET,LAST':lines.append(f'SET,{key[0]},{key[1]}')

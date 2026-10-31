@@ -12,6 +12,14 @@ from scripts.v066_restart import REPO,RUN,BASE,PLAN,load,compact
 PROTOCOL=RUN/'protocol/FINE_PROGRESSIVE_005.json'
 
 
+def remaining_solver_budget():
+    first=load(BASE/'fine_stage01_001/execution_receipt.json')['process']['started_utc']
+    elapsed=(datetime.now(timezone.utc)-datetime.fromisoformat(first.replace('Z','+00:00'))).total_seconds()
+    remaining=21600-elapsed
+    if remaining<=0:raise RuntimeError('Registered six-hour campaign budget exhausted')
+    return min(5400,remaining)
+
+
 def prepare(label,parent,load_step,substep,previous,targets):
     parent=Path(parent);directory=BASE/label
     assert load(RUN/'restart_validation/RESTART_VALIDATION.json')['status']=='PASS_ACTUAL_LICENSED_NATIVE_RESTART'
@@ -22,7 +30,8 @@ def prepare(label,parent,load_step,substep,previous,targets):
     manifest=authenticated_restart_copy(parent,directory,expected_mesh=HISTORICAL)
     text=continuation_input(load_step,substep,targets,previous,manifest['model'],all_fields=True)
     (directory/'input.inp').write_text(text,encoding='utf-8')
-    manifest.update(input_sha256=file_hash(directory/'input.inp'),protocol_sha256=file_hash(PROTOCOL),
+    actual_protocol=RUN/'protocol/FULL_GENERAL_CONTACT_014.json' if manifest['model'].get('general_contact_elements') else PROTOCOL
+    manifest.update(input_sha256=file_hash(directory/'input.inp'),protocol_sha256=file_hash(actual_protocol),
         target_strain=targets[-1],targets=targets,previous_strain=previous,
         restart_state={'load_step':load_step,'substep':substep,'time':previous},
         contact_limitation='PLATEN_ONLY_EXPLORATORY; no accepted unmodeled wall crossings',
@@ -70,6 +79,8 @@ if __name__=='__main__':
         print(prepare_next(a.label,a.parent,a.targets),flush=True)
     else:
         committed(PROTOCOL);committed(RUN/'progressive_compression'/('prepared_'+a.label)/'input.inp')
-        d=BASE/a.label;r=run_progressive(d,timeout=5400,no_progress_seconds=1800)
+        d=BASE/a.label;m=load(d/'simulation_manifest.json')
+        assert file_hash(d/'input.inp')==m['input_sha256'] and file_hash(d/'input.inp')==file_hash(RUN/'progressive_compression'/('prepared_'+a.label)/'input.inp')
+        r=run_progressive(d,timeout=remaining_solver_budget(),no_progress_seconds=1800)
         compact(d,RUN/'progressive_compression'/a.label)
         print(a.label,r['status'],r['process']['returncode'],r['converged_steps'][-1:],flush=True)
