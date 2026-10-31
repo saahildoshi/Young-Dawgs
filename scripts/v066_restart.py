@@ -20,7 +20,7 @@ PLAN=RUN/'protocol/LARGE_STRAIN_PLAN_001.json'
 def compact(source,target):
     target.mkdir(parents=True,exist_ok=False)
     for name in ['input.inp','simulation_manifest.json','execution_receipt.json','nonlinear_telemetry.json','contact_summary.json',
-                 'restart_provenance.json','provenance.json','result_sets.txt','restart_sets.txt']:
+                 'restart_provenance.json','provenance.json','result_sets.txt','restart_sets.txt','native_contact_type.txt','nodal_type_before.txt']:
         path=source/name
         if not path.exists():continue
         if name=='execution_receipt.json' and path.stat().st_size>1024**2:
