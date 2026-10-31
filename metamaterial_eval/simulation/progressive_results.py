@@ -32,6 +32,10 @@ def authenticate(source,export,mesh):
     source,export=Path(source),Path(export)
     receipt=load(source/'execution_receipt.json');post=load(export/'execution_receipt.json')
     manifest=load(source/'simulation_manifest.json');provenance=load(export/'provenance.json')
+    if manifest.get('parent_qualification_path'):
+        if file_hash(manifest['parent_qualification_path'])!=manifest['parent_qualification_sha256']:raise ValueError('Changed accepted-parent qualification')
+        parent=load(manifest['parent_qualification_path'])
+        if not parent['last_state_accepted'] or not all(row['accepted'] for row in parent['results']):raise ValueError('Unqualified parent trajectory')
     if manifest['mesh_semantic_sha256']!=mesh_hash(mesh):raise ValueError('Source mesh identity mismatch')
     if receipt['input_sha256']!=manifest['input_sha256'] or file_hash(source/'input.inp')!=receipt['input_sha256']:raise ValueError('Source input mismatch')
     if post['status']!='PROCESS_EXITED' or post['process']['returncode']!=0:raise ValueError('Independent read-only process failed')

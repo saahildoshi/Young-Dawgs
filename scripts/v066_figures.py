@@ -14,6 +14,13 @@ from metamaterial_eval.simulation.solver_execution import file_hash
 from scripts.v066_restart import REPO,RUN,BASE,load
 
 
+
+def model_label(variant):
+    if 'NODAL' in (variant or ''):return 'Nodal self-contact'
+    if (variant or '').startswith('FINE_FULL'):return 'Gauss-point self-contact'
+    return 'Platen-only reference'
+
+
 def save(fig,name):
     fig.savefig(RUN/'figures'/name,dpi=170,bbox_inches='tight');plt.close(fig);gc.collect()
 
@@ -23,12 +30,15 @@ def snapshot(mesh,directory,label):
     s=np.load(directory/'native_corner_stress_strain.npy',mmap_mode='r')
     corners=np.load(directory/'corner_node_ids.npy',mmap_mode='r')-1
     q=load(directory/'qualification.json');e=q['state']['time'] if 'state' in q else q['accepted_measurements'][0]['engineering_compression_strain'];accepted=q['accepted']
+    xlim=(min(-.15,float(u[:,3].min())-.05),max(10.39,float(u[:,3].max())+.05))
+    ylim=(min(-.15,float(u[:,4].min())-.05),max(10.39,float(u[:,4].max())+.05))
+    description=model_label(q.get('model_variant'))
     lines=mesh.boundary[:,:2]
     fig,ax=plt.subplots(figsize=(7,7))
     ax.add_collection(LineCollection(mesh.nodes[lines],colors='.75',linewidths=.2,label='Initial'))
     ax.add_collection(LineCollection(u[lines,3:5],colors='#006da5',linewidths=.22,label='Actual deformed'))
-    ax.set(xlim=(-.15,10.39),ylim=(-.15,10.39),aspect='equal',xlabel='x (mm)',ylabel='y (mm)',
-        title=f'Design9: {100*e:.6g}% compression, true 1× scale\n'+(('Accepted; full exposed-surface self-contact' if q.get('general_contact') else 'Accepted; platen-only reference') if accepted else 'UNQUALIFIED diagnostic state'))
+    ax.set(xlim=xlim,ylim=ylim,aspect='equal',xlabel='x (mm)',ylabel='y (mm)',
+        title=f'Design9: {100*e:.6g}% compression, true 1× scale\n'+(('Accepted; '+description) if accepted else 'UNQUALIFIED diagnostic state'))
     ax.legend(loc='upper right');save(fig,label+'_deformation.png')
     # Native corner fields plotted only at their actual supported locations.
     corner_tri=np.searchsorted(corners,mesh.triangles[:,:3])
@@ -62,13 +72,25 @@ def snapshot(mesh,directory,label):
         gc_file=export/next(name for name in q['raw_native_field_hashes'] if name.endswith('_gc_fields.csv'))
         columns=gc_file.read_text().splitlines()[0].strip().split(',');g=read_table(gc_file,columns)
         fig,ax=plt.subplots(figsize=(7,7));ax.add_collection(LineCollection(u[lines,3:5],colors='.8',linewidths=.2))
-        if len(g) and np.any(g[:,4]>0):
-            chosen=g[g[:,4]>0];nodes=chosen[:,[10,12,11]].astype(int)-1
+        if len(g) and np.any((g[:,1]>=2)&(g[:,4]>0)):
+            chosen=g[(g[:,1]>=2)&(g[:,4]>0)];nodes=chosen[:,[10,12,11]].astype(int)-1
             colored=LineCollection(u[nodes,3:5],array=chosen[:,4],cmap='magma',linewidths=1.5);ax.add_collection(colored)
             fig.colorbar(colored,ax=ax,label='Native element-mean contact pressure (MPa)')
         else:ax.text(.5,.02,'No native self-contact engagement',transform=ax.transAxes,ha='center')
-        ax.set(xlim=(-.15,10.39),ylim=(-.15,10.39),aspect='equal',xlabel='Deformed x (mm)',ylabel='Deformed y (mm)',title=f'Native general self-contact pressure\nActual {100*e:.6g}% compression; true 1× scale')
+        ax.set(xlim=xlim,ylim=ylim,aspect='equal',xlabel='Deformed x (mm)',ylabel='Deformed y (mm)',title=f'Native general self-contact pressure\nActual {100*e:.6g}% compression; true 1× scale')
         save(fig,label+'_self_contact_pressure.png')
+        if len(g) and np.any((g[:,1]>=2)&(g[:,4]>0)):
+            chosen=g[(g[:,1]>=2)&(g[:,4]>0)];peak_row=chosen[np.argmax(chosen[:,4])]
+            peak_nodes=peak_row[[10,12,11]].astype(int)-1;center=u[peak_nodes,3:5].mean(axis=0)
+            radius=max(.02,float(np.ptp(u[peak_nodes,3:5],axis=0).max())*4)
+            fig,ax=plt.subplots(figsize=(7,6));geometry=mesh.boundary[:,[0,2,1]]
+            ax.add_collection(LineCollection(u[geometry,3:5],colors='.65',linewidths=.7))
+            colored=LineCollection(u[chosen[:,[10,12,11]].astype(int)-1,3:5],array=chosen[:,4],cmap='magma',linewidths=2.5)
+            ax.add_collection(colored);fig.colorbar(colored,ax=ax,label='Native element-mean pressure (MPa)')
+            ax.set(xlim=(center[0]-radius,center[0]+radius),ylim=(center[1]-radius,center[1]+radius),aspect='equal',xlabel='Deformed x (mm)',ylabel='Deformed y (mm)',title=f'{description}: actual contact hotspot\n{100*e:.6g}% compression; native element {int(peak_row[0])}')
+            save(fig,label+'_self_contact_hotspot.png')
+            write_json(RUN/'mechanical_results'/(label+'_self_contact_hotspot.json'),{'native_element':int(peak_row[0]),'native_element_mean_pressure_MPa':float(peak_row[4]),'deformed_center_xy_mm':center.tolist(),'scope':'Actual converged closed native contact skin; quadratic midside geometry displayed, no invented nodal pressure or pore-closure claim.'})
+
     peak=int(np.argmax(s[:,1]));center=u[corners[peak],3:5]
     fig,axes=plt.subplots(1,2,figsize=(10,4))
     for ax,v,title,cmap in [(axes[0],s[:,1],'Native SEQV (MPa)','magma'),(axes[1],s[:,2],'Native elastic EYY','coolwarm')]:
@@ -138,9 +160,9 @@ def rejected_general_crossing():
 
 def main():
     summary=load(RUN/'summary/V0_6_6_VALIDATION.json')
-    label='Full exposed-surface self-contact' if summary.get('primary_model_variant','').startswith('FINE_FULL') else 'Platen-only reference'
+    label=model_label(summary.get('primary_model_variant'))
     curves(summary['accepted_measurements'],model_label=label)
-    for variant,branch in summary.get('model_branches',{}).items():curves(branch['accepted_measurements'],name=variant+'_response.png',model_label='Full exposed-surface self-contact' if variant.startswith('FINE_FULL') else 'Platen-only reference')
+    for variant,branch in summary.get('model_branches',{}).items():curves(branch['accepted_measurements'],name=variant+'_response.png',model_label=model_label(variant))
     mesh,_,_=resolve_manifest(REPO/'experiments/pipeline_v0.6.3/run_001/mesh_reproduction/attempt_002/artifact_manifest.json',root=Path.home()/'YoungDawgs-Artifacts')
     previous=load(RUN/'figures/manifest.json').get('snapshot_cache',{}) if (RUN/'figures/manifest.json').exists() else {}
     renderer=file_hash(Path(__file__));snapshot_cache={}

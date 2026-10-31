@@ -1,0 +1,22 @@
+{
+  "actual_converged_self_contact_at_highest": 0,
+  "decided_utc": "2026-10-31T11:32:56.223020+00:00",
+  "last_valid_restart": "fine_nodal_recovery01_001, load step 3/substep 6, strain 0.0092706088362069, frame compression.r001; authenticated RDB/LDHI/Rnnn and native fields in restart_validation/FINAL_VALID_NATIVE_RESTART.json.",
+  "maximum_valid_measurement": {
+    "compression_displacement_mm": 0.09493103448275862,
+    "engineering_compression_strain": 0.009270608836206897,
+    "lower_rf_y_N": 10.90287635833509,
+    "nominal_compression_stress_MPa": 1.064752975217039,
+    "pseudo_time": 0.009270608836206897,
+    "reaction_balance_relative": 1.7803048048850376e-05,
+    "upper_rf_y_N": -10.90307046622248
+  },
+  "maximum_valid_strain": 0.009270608836206897,
+  "next_step": "Resolve convergence through the sharp exterior contact-onset region in a geometry-faithful local fixture, retaining signed force, penetration and overlap limits, then replay the full fine mesh. Qualify any changed contact formulation before further 1\u21925\u219210\u219220\u219230\u219240%loading. Mechanical mesh convergence and calibrated material/thickness/experiments remain required for a paper dataset.",
+  "no_3D_batch_LLM_manufacturing_or_push": true,
+  "no_further_fine_solve_in_this_milestone": true,
+  "reason": "The registered 30-minute limit without a new converged state stopped the single bounded contact-onset retry after 3019.84 s. Force residuals kept cycling during the next contact-active trial despite one native bisection. No 1% endpoint passed;5\u201340% stages were not executed. This is a numerical contact/control limit under the registered budget, not a demonstrated material-collapse limit.",
+  "restart_evidence": "C:\\Users\\sd22446\\Projects\\Young-Dawgs-VSCode\\experiments\\pipeline_v0.6.6\\run_001\\restart_validation\\FINAL_VALID_NATIVE_RESTART.json",
+  "schema": "young-dawgs-v0.6.6-final-stop",
+  "scope": "All six new converged states independently passed. SS999999/unconverged contact-active trials excluded. Original1%platen-only and Gauss states remain rejected for exact crossings. Native actual1%convergence in those older branches does not establish valid1%mechanics."
+}

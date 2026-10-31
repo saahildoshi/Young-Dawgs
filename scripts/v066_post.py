@@ -9,6 +9,11 @@ from scripts.v066_restart import REPO,RUN,BASE,load,compact,export
 
 def selected_states(source,maximum=8):
     rows=load(source/'nonlinear_telemetry.json')['converged_substeps']
+    manifest=load(source/'simulation_manifest.json')
+    if manifest.get('execution_scope')=='SAME_NODAL_MODEL_AUTHENTICATED_ENDSTEP_CONTACT_ONSET_RECOVERY':
+        parent=manifest['restart_state'];rows=[r for r in rows if (r['load_step'],r['substep'])!=(parent['load_step'],parent['substep'])]
+        # The preserved parent RST set is already qualified in its own source.
+        # ENDSTEP completion is a native event, not a new strain measurement.
     if not rows:raise ValueError('No actual converged native states')
     if load(source/'simulation_manifest.json')['model'].get('general_contact_detection_keyopt4')==2:
         # Preserve a continuous screened trajectory through first corner contact.

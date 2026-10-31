@@ -143,3 +143,16 @@ def test_actual_nodal_fixture_geometry_uses_native_constraints_and_rejects_known
     protocol=read(RUN/'protocol/NODAL_CONTACT_INTERPRETATION_023.json')
     assert protocol['fixture_sha256']==file_hash(RUN/'internal_contact/NODAL_FIXTURE_GEOMETRY_QUALIFICATION_002.json')
     assert read(RUN/'internal_contact/NODAL_INTERPRETER_REJECTS_KNOWN_GP_CROSSINGS.json')['rejected']
+
+
+def test_actual_native_endstep_preserves_fields_and_scaled_cumulative_loads():
+    q=read(RUN/'restart_validation/ENDSTEP_CONTROL_QUALIFICATION.json')
+    assert q['status']=='PASS_ACTUAL_NATIVE_ENDSTEP_CUMULATIVE_FIELDS_AND_CONTROLLER'
+    assert q['actual_prior_state']=={'time':.003,'load_step':1,'substep':3}
+    assert q['actual_new_end_state']['load_step']==2
+    assert q['native_endstep_verified'] and q['native_RST_reopened']
+    assert all(c['passed'] and c['maximum_column_scaled_error']<1e-5 for c in q['comparisons'])
+    assert all(c['maximum_column_scaled_error']==0 for c in q['comparisons'] if c['stage']==1)
+    source=BASE/'rectangle_endstep_control_002';provenance=read(source/'restart_provenance.json')
+    for name,binding in provenance['copied_native_files'].items():assert file_hash(Path(provenance['source'])/name)==binding['sha256']
+    text=(source/'input.inp').read_text();assert 'ANTYPE,STATIC,REST,1,3,ENDSTEP' in text and 'NEQIT,12' in text

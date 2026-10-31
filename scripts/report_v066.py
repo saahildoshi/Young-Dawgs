@@ -29,6 +29,7 @@ def main():
     reference=s['model_branches']['PLATEN_ONLY_REFERENCE'];fit=s['initial_modulus_fit'];work=s['compression_work']
     accepted=[q for q in s['qualifications'] if q['accepted'] and q.get('model_variant','PLATEN_ONLY_REFERENCE')==primary]
     highest=max(accepted,key=lambda q:q['state']['time']) if accepted else None
+    highest_snapshot=max((r for r in s['snapshot_artifacts'] if r.get('model_variant')==primary),key=lambda r:r['engineering_strain'])
     pressure=max((c['max_stored_endpoint_pressure_MPa'] for q in accepted for c in q.get('contacts',[])),default=None)
     gc=[q['general_contact'] for q in accepted if q.get('general_contact')]
     full_engaged=any(g['closed_skins']>0 for g in gc)
@@ -50,6 +51,8 @@ Thirty percent primary target: {'REACHED VALIDLY' if maximum>=.3-1e-12 else 'NOT
     identity='''Design9, seed 1, native 1024 canonical polygon source. Source SHA256 `4700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1`; fine mesh semantic SHA256 `e26863263774cf86c777b1485ac0e639216a91644007c4da272469a7447000bc`. Structural nodes 2,766,505; structural TRI6 elements 1,261,670; all 412 original pore loops. Original minimum angle 11.404135 degrees exceeds frozen 10 degrees. Original sampled feature rule >=3; selected fine observed minimum 7. All original quadratic mappings qualified. Full model additionally has 2,598 platen contact skins,4 rigid target/pilot elements and 243,576 native GC skins, with 6 auxiliary platen nodes. These overlays do not replace the original continuum mesh.'''
     assumptions='''Licensed ANSYS Mechanical APDL2024R1, 2D plane stress, mm-N-MPa, width/height 10.24 mm and provisional thickness 1 mm. Provisional E=1000 MPa, nu=0.3 linear elasticity, NLGEOM ON. No material calibration, plasticity, damage, fracture, out-of-plane buckling or experimental prediction is established. Native local strains are monitored, but supported corner averages can understate integration-point extremes. Pixel-boundary stress concentrations and force curves remain unqualified for mesh convergence.'''
     controls='''Displacement-controlled quasi-static pseudo-time, total upperUY=-10.24*engineering_strain mm. Full Newton, line search, AUTOTS, NEQIT=24, force CNVTOL=0.005/norm 2/minimum reference 1e-8; initial increment <=0.0005, maximum 0.005, minimum 1e-6. Sparse DEFAULT memory selection, actual licensed SMP settings recorded in receipts. No fixed RSS cap; system available/committed memory and paging HealthPolicy, 40 GiB free-disk reserve, one native job at a time, original six-hour campaign/90-minute stage/30-minute no-progress bounds. The qualified numerical restart frequency is1, with three rolling frames; the legacy ALL-frequency retention deviation is explicitly documented.'''
+    if any(j['job']=='fine_nodal_recovery01_001' for j in perf['jobs']):
+        controls+=' A single same-nodal-model contact-onset recovery used native ENDSTEP at the accepted intermediate frame, then NEQIT=12, initial global increment 5e-5, maximum 2.5e-4 and minimum 1e-6. Its native input, actual outcomes and finite 60-minute bound are recorded under protocol025. The original nodal 1% trial was deliberately interrupted after oscillation; a predictive native bisection occurred just before the ABT was acknowledged. Its seven converged states remain independently accepted, while SS999999 is debug-only.'
     gates='''Accepted states independently reopen native RST using the actual LS/SS and full-precision TNOW. Require complete all-node U, native corner SYY/SEQV/EPEL Y/X, signed support imbalance<=1%, independent platen contact-force opposition<=1%, positive pressure/engagement, stored endpoint penetration<=1e-5mm, every deformed TRI6 map positive, and no unexplained boundary crossing. Whole-element ETABLE NMISC19 inventories distinguish native far-field record absence from missing active data; every missing platen far-field edge must independently clear the finite platen by analytic quadratic bounds. Full-GC contact intersections require actual closed positive-pressure native links or the prospectively registered bounded nodal shared-endpoint explanation, plus native assembled force balance. Pure geometric separation never supplies a contact force. No default/ignored/sentinel result values establish acceptance.'''
     save('V0_6_6_PROGRESSIVE_COMPRESSION.md',f'''# v0.6.6 progressive compression
 
@@ -143,13 +146,19 @@ Small fixture qualified; full 243,576-skin model implemented. Actual full accept
 
 Rectangle and compliant continuous/restarted histories and fields passed the registered 1e-5 scaled tolerance. Genuine v065 native continuation executed before the full-GC corrective fresh model. Actual native frame inventories expose the legacy endpoint-only retention deviation. Numeric frequency 1 was separately demonstrated to retain the last 3 of 5 substeps. All parents are immutable authenticated copies. Last valid restart:{restart}.
 
+The additional native ENDSTEP/controller comparison passed: the preserved prior-state fields were byte-identical, and the largest final column-scaled difference was 1.3650661e-7 against the unchanged 1e-5 tolerance. The first retention-only reference lacked an intermediate RST set; that failed readback is preserved, and the corrected five-state reference writes all required fields. See restart_validation/ENDSTEP_CONTROL_QUALIFICATION.json and audit027.
+
 ## G. Progressive mechanical results
 
 {curve}
 
+![Accepted native mechanical response](figures/accepted_mechanical_response.png)
+
 Initial fit:{fit}. Preserved reference fit:{reference['initial_modulus_fit']}. Work:{work}. Peak computed primary force {peak_force} N; nominal stress {peak_stress} MPa. No values are generated for missing major strains.
 
 ## H. Deformation
+
+![Highest qualified native deformation](figures/{highest_snapshot['label']}_deformation.png)
 
 See actual native field hashes, pore areas and true-scale figures in V0_6_6_DEFORMATION_RESULTS.md and figures/manifest.json. Highest local strain diagnostics:{local}.
 
@@ -205,7 +214,7 @@ STOP: no 3D, batch design comparison,manufacturing,autonomous LLM optimization o
     # self-contained pointer to the final physical branch and retention evidence.
     for name in ['V0_6_6_LARGE_STRAIN_PROTOCOL.md','V0_6_6_RESTART_VALIDATION.md','V0_6_6_MESH_STRATEGY.md']:
         p=RUN/name;old=p.read_text();marker='\n## Final v0.6.6 outcome\n'
-        old=old.split(marker)[0];save(name,old.rstrip()+marker+'\n'+shared+'\nAuthoritative final branch/gate/resource evidence is in V0_6_6_VALIDATION.md and summary/V0_6_6_VALIDATION.json. Each full-GC model preserves the fine mesh, adds all exposed self-contact skins and remains separate from the original platen-only native restart branch. Actual restart inventories and numerical-frequency correction are preserved in audit015 and restart_validation/RETENTION_QUALIFICATION.json.\n')
+        old=old.split(marker)[0];save(name,old.rstrip()+marker+'\n'+shared+'\nAuthoritative final branch/gate/resource evidence is in V0_6_6_VALIDATION.md and summary/V0_6_6_VALIDATION.json. Each full-GC model preserves the fine mesh, adds all exposed self-contact skins and remains separate from the original platen-only native restart branch. Actual restart inventories and numerical-frequency correction are preserved in audit015 and restart_validation/RETENTION_QUALIFICATION.json. Native mid-load-step ENDSTEP and the bounded controller recovery are independently documented in restart_validation/ENDSTEP_CONTROL_QUALIFICATION.json and protocol025; cumulative loads and required fields passed the actual small-model comparison.\n')
     yes=lambda target:'Yes, independently qualified.' if maximum>=target-1e-12 else 'No, not independently qualified.'
     answers=[
         'Design9, seed 1, native 1024 canonical polygon.', 'Yes; source SHA256 4700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1.',
@@ -225,7 +234,7 @@ STOP: no 3D, batch design comparison,manufacturing,autonomous LLM optimization o
         'Yes. The platen-only and default Gauss-point GC014 1% states both contain two confirmed quadratic crossings and are rejected; nodal-repair results are reported separately.', 'Yes, those crossing states are invalid and excluded from accepted curves.',
         'Yes, native platen forces and fixture contact transmission; full-model engagement is reported independently.',
         'Positive stored endpoint values denote penetration; far-field absence is explicit, not a zero gap.',
-        'Chattering is recorded in native diagnostics; causal attribution is not isolated.',
+        'Contact switching accompanied the first nodal 1% residual oscillation; the single smaller-increment retry is separately recorded. Causal attribution is not isolated from the nonlinear controls.',
         f'Native completed {native*100:.9g}%; independently qualified maximum {maximum*100:.9g}%.',
         *[yes(t) for t in [.01,.05,.1,.2,.3,.4]],f'{10.24*native:.10g} mm at the highest completed native strain; {10.24*maximum:.10g} mm at the highest independently accepted strain.',
         controls,f"{s['total_accepted_unique_branch_states']} qualified branch states;{s['new_fine_converged_substeps']} new native fine substeps.",
