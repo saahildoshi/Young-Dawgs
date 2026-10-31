@@ -18,7 +18,10 @@ def table(rows,columns):
     return '\n'.join(lines)
 
 
-def save(name,text):(RUN/name).write_text(text.rstrip()+'\n',encoding='utf-8')
+def save(name,text):
+    for a,b in {'APDL2024R1':'APDL 2024 R1','skins,4':'skins, 4','frequency is1':'frequency is 1','protocol025':'protocol 025','protocol023':'protocol 023','protocol021':'protocol 021','audit027':'audit 027','audit015':'audit 015',';5–40%':'; 5–40%','.json..':'.json.'}.items():text=text.replace(a,b)
+    text=re.sub(r':(?=[A-Za-z{\[])',': ',text)
+    (RUN/name).write_text(text.rstrip()+'\n',encoding='utf-8',newline='\n')
 
 
 def main():
@@ -140,7 +143,7 @@ The one smaller exact-geometry candidate had 1,383,233 nodes/610,630 TRI6 and a 
 
 ## E. Contact model
 
-Small fixture qualified; full 243,576-skin model implemented. Actual full accepted engagement:{full_engaged}. See V0_6_6_INTERNAL_CONTACT.md. The platen-only 1% state is rejected for two confirmed free-boundary crossings. Separate model branches are never spliced. The default Gauss-point GC014 1% state also fails exact boundary crossing checks; its valid predecessor remains preserved. The single nodal repair is separately identified in protocol021 and the contact report.
+Small fixture qualified; full 243,576-skin model implemented. Actual full accepted engagement: {'Yes' if full_engaged else 'No; accepted full-model records remain open with zero pressure'}. See V0_6_6_INTERNAL_CONTACT.md. The platen-only 1% state is rejected for two confirmed free-boundary crossings. Separate model branches are never spliced. The default Gauss-point GC014 1% state also fails exact boundary crossing checks; its valid predecessor remains preserved. The single nodal repair is separately identified in protocol021 and the contact report.
 
 ## F. Restart qualification
 
@@ -176,7 +179,7 @@ Native numerical convergence is not material calibration, mesh convergence, expe
 
 ## K. Performance
 
-Total native process runtime {perf['sum_native_runtime_seconds']:.6g} s; fine source runtime {perf['fine_source_runtime_seconds']:.6g} s; peak native process-tree RSS {perf['peak_tree_RSS_bytes']/2**30:.6g} GiB. Severe-paging samples {perf['severe_paging_samples']}; maximum page-read rate {perf['maximum_page_reads_per_second']}. Raw v066 tree disk {perf['physical_v066_raw_disk_bytes']/2**30:.6g} GiB, including preserved/copy parents and diagnostics. Scope and per-job data are in performance/PERFORMANCE.json. No fixed RSS cap was used.
+Total native process runtime {perf['sum_native_runtime_seconds']:.6g} s; fine source runtime {perf['fine_source_runtime_seconds']:.6g} s; peak native process-tree RSS {perf['peak_tree_RSS_bytes']/2**30:.6g} GiB. Severe-paging samples {perf['severe_paging_samples']}; maximum page-read rate {perf['maximum_page_reads_per_second']}. Raw v066 tree disk {perf['physical_v066_raw_disk_bytes']/2**30:.6g} GiB, including preserved/copy parents and diagnostics. Scope and per-job data are in performance/PERFORMANCE.json. Page Reads/sec is a system hard-fault disk-read proxy, not solver-only or pagefile-only traffic; zero severe-threshold samples does not mean zero paging. No fixed RSS cap was used. The six-hour budget constrained fine-solve launches/timeouts; the final read-only recovery and documentation were completed on the later user continuation, without another nonlinear solve.
 
 ## L. Reproducibility and verification
 
@@ -213,7 +216,7 @@ STOP: no 3D, batch design comparison,manufacturing,autonomous LLM optimization o
     # Complete the three previously committed protocol/strategy reports with a
     # self-contained pointer to the final physical branch and retention evidence.
     for name in ['V0_6_6_LARGE_STRAIN_PROTOCOL.md','V0_6_6_RESTART_VALIDATION.md','V0_6_6_MESH_STRATEGY.md']:
-        p=RUN/name;old=p.read_text();marker='\n## Final v0.6.6 outcome\n'
+        p=RUN/name;old=p.read_text(encoding='utf-8');marker='\n## Final v0.6.6 outcome\n'
         old=old.split(marker)[0];save(name,old.rstrip()+marker+'\n'+shared+'\nAuthoritative final branch/gate/resource evidence is in V0_6_6_VALIDATION.md and summary/V0_6_6_VALIDATION.json. Each full-GC model preserves the fine mesh, adds all exposed self-contact skins and remains separate from the original platen-only native restart branch. Actual restart inventories and numerical-frequency correction are preserved in audit015 and restart_validation/RETENTION_QUALIFICATION.json. Native mid-load-step ENDSTEP and the bounded controller recovery are independently documented in restart_validation/ENDSTEP_CONTROL_QUALIFICATION.json and protocol025; cumulative loads and required fields passed the actual small-model comparison.\n')
     yes=lambda target:'Yes, independently qualified.' if maximum>=target-1e-12 else 'No, not independently qualified.'
     answers=[
@@ -255,11 +258,11 @@ STOP: no 3D, batch design comparison,manufacturing,autonomous LLM optimization o
         'Yes, bounded quadratic spatial screening with explicit native contact explanations.',
         'The highest accepted state is numerically interpretable within the provisional 2D/contact model. A higher converged state that fails geometry/contact checks is excluded; experimental prediction remains HOLD.',
         f"{perf['sum_native_runtime_seconds']:.9g} s summed native process runtime.",f"{perf['peak_tree_RSS_bytes']/2**30:.9g} GiB peak native process-tree RSS.",
-        str(perf['severe_paging_samples'])+'samples at the registered severe-paging threshold.',f"{perf['physical_v066_raw_disk_bytes']/2**30:.9g} GiB in the raw v066 tree; other roots separate.",
+        f"System hard-fault read proxy peaked at {perf['maximum_page_reads_per_second']:.6g} reads/s; {perf['severe_paging_samples']} samples reached the registered severe threshold. This system-wide counter does not isolate solver pagefile traffic.",f"{perf['physical_v066_raw_disk_bytes']/2**30:.9g} GiB in the raw v066 tree; other roots separate.",
         str(perf['genuine_native_restart_processes'])+'genuine native continuation processes.',str(tests['active']['passed']),str(tests['archived_passed']),str(tests['licensed']['passed']),
         'Yes, protected Git paths and authenticated source parents unchanged.',str(s['failed_fine_jobs'])+'; current continuation limit: '+decision['reason']+' Earlier unsupported readbacks and rejected crossing states remain preserved as diagnostic failures.',
         'Descriptive local commits only; see the exact ledger in V0_6_6_VALIDATION.md.', 'Full hashes/messages are in that ledger; the containing final report commit is identified in the delivery response.',
-        'Final delivery verifies the tree after the report commit.', 'No automatic push.',s['status'],yes(.3),yes(.4),
+        'Yes after the final local report commit; the delivery response records the clean-tree check and containing commit.', 'No automatic push.',s['status'],yes(.3),yes(.4),
         'Exactly the branch-separated accepted CSV rows; highest qualified'+str(maximum*100)+'%.',
         'All results retain provisional single-mesh research status; rejected native states are diagnostic only.',
         'Unexplained crossings, incomplete/unsupported fields, failed contact/mapping gates and mesh convergence remain unqualified.',assumptions,

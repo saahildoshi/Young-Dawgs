@@ -98,7 +98,7 @@ def assemble(in_progress=False):
         if r['execution_kind']!='LICENSED_PROGRESSIVE_SOLVE':continue
         t=load(path.parent/'nonlinear_telemetry.json');all_converged.extend({'job':path.parent.name,**s} for s in t['converged_substeps']);cuts+=len(t['cutback_events']);updates+=len(t['completed_iterations'])
         if r['status']!='PROCESS_EXITED' or r['process']['returncode']!=0:failure_jobs.append({'job':path.parent.name,'status':r['status'],'returncode':r['process']['returncode'],'last_converged':t['converged_substeps'][-1] if t['converged_substeps'] else None,
-            'controlled_native_ABT_requested':(path.parent/'compression.abt').exists() and 'terminated at the user' in (path.parent/'solver.out').read_text(errors='replace')})
+            'controlled_native_ABT_requested':'terminated at the user' in (path.parent/'solver.out').read_text(errors='replace') and 'ABT file' in (path.parent/'solver.out').read_text(errors='replace')})
     branches={name:characterize(rows) for name,rows in branches.items()}
     contact_branches=[name for name in branches if name!=reference]
     primary=max(contact_branches,key=lambda name:(branches[name]['maximum_qualified_engineering_strain'],name=='FINE_FULL_SELF_CONTACT_NODAL_V066_021',name)) if contact_branches else reference
