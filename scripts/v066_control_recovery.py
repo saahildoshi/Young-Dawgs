@@ -6,7 +6,7 @@ from scripts.v066_restart import RUN,BASE,load,compact,export,endpoint_states
 from scripts.v065_recovery import committed
 from scripts.v066_campaign import remaining_solver_budget
 from metamaterial_eval.simulation.mesh_artifacts import HISTORICAL
-from metamaterial_eval.simulation.progressive_compression import authenticated_restart_copy,load_commands,run_progressive
+from metamaterial_eval.simulation.progressive_compression import authenticated_restart_copy,load_commands,run_progressive,result_sets
 from metamaterial_eval.simulation.nonlinear_diagnostics import telemetry_commands
 from metamaterial_eval.simulation.reporting import write_json
 from metamaterial_eval.simulation.solver_execution import file_hash
@@ -63,6 +63,7 @@ def qualify_small():
     a=export(parent,'retention_endstep_reference_post002',before,chunk_size=128)
     b=export(source,SMALL+'_post001',after,chunk_size=128)
     compact(a,RUN/'restart_validation'/a.name);compact(b,RUN/'restart_validation'/b.name)
+    native_sets=result_sets((b/'result_sets.txt').read_text());assert all(r['substep']<=3 for r in native_sets if r['load_step']==1)
     comparisons=[]
     for stage in [1,2]:
         assert float((a/f'stage{stage:03d}_gate.txt').read_text().split(',')[0])==0
@@ -77,7 +78,7 @@ def qualify_small():
     q={'status':'PASS_ACTUAL_NATIVE_ENDSTEP_CUMULATIVE_FIELDS_AND_CONTROLLER' if passed else 'HOLD',
         'source_native_parent':str(parent),'source_native_recovery':str(source),'actual_prior_state':before[0],'actual_new_end_state':last,
         'history_identity_columns_intentionally_differ_at_final':'Parent LS1SS5 versus recovered new LS2; native time,total UY and both RF columns compared, never relabeled.',
-        'comparisons':comparisons,'native_execution_receipt_sha256':file_hash(source/'execution_receipt.json'),
+        'comparisons':comparisons,'actual_native_result_sets':native_sets,'native_execution_receipt_sha256':file_hash(source/'execution_receipt.json'),
         'protocol_sha256':file_hash(PROTOCOL),'native_parent_not_modified':True,'native_endstep_verified':True,
         'native_RST_reopened':True,'scope':'Actual small continuous-parent versus mid-load-step ENDSTEP/restart, retaining cumulative displacement and native U/S/EPEL/contact/history under NEQIT12/smaller steps.'}
     write_json(RUN/'restart_validation/ENDSTEP_CONTROL_QUALIFICATION.json',q);print(q['status'],comparisons,flush=True)
@@ -97,7 +98,7 @@ def prepare_fine():
         parent_qualification_path=str(qp.resolve()),parent_qualification_sha256=file_hash(qp),endstep_fixture_sha256=file_hash(check),
         solver_control_revision='CONTACT_ONSET_CONTROL_RECOVERY_025',solver_controls={'NEQIT':12,'initial_increment':5e-5,'maximum_increment':2.5e-4,'minimum_increment':1e-6},
         resource_protocol_sha256=file_hash(RUN/'protocol/SMP_RESOURCE_018.json'),parallel_qualification_sha256=file_hash(RUN/'performance/SMP_QUALIFICATION.json'),
-        restart_state=state)
+        restart_state=state,parent_native_inventory_receipt_sha256=file_hash(BASE/'fine_nodal_stage02_001_restart_inventory001/execution_receipt.json'))
     write_json(d/'simulation_manifest.json',m);compact(d,RUN/'progressive_compression'/('prepared_'+FINE));print(d,flush=True)
 
 

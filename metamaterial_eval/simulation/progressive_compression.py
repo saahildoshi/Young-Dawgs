@@ -29,7 +29,7 @@ def load_commands(target,previous,top,height,*,initial=.0005,minimum=1e-6,maximu
     validate_targets([target],previous)
     delta=target-previous
     initial_steps=max(1,math.ceil(delta/initial));minimum_steps=max(1,math.ceil(delta/maximum))
-    maximum_steps=max(initial_steps,math.ceil(delta/minimum))
+    maximum_steps=max(initial_steps,math.floor(delta/minimum))
     return ['AUTOTS,ON','NEQIT,24','NROPT,FULL','LNSRCH,ON','KBC,0',
             f'NSUBST,{initial_steps},{maximum_steps},{minimum_steps},OFF',
             'OUTRES,ERASE','OUTRES,ALL,NONE']+[

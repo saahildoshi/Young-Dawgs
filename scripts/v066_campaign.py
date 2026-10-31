@@ -56,6 +56,7 @@ def prepare_next(label,parent_label,targets,cores=None):
     if not all(row['accepted'] for row in q['results']):raise ValueError('An earlier parent checkpoint failed trajectory qualification')
     state=q['states'][-1]
     if Path(q['source']).resolve()!=(BASE/parent_label).resolve():raise ValueError('Parent qualification identity mismatch')
+    if abs(state['time']-load(BASE/parent_label/'simulation_manifest.json')['target_strain'])>1e-10:raise ValueError('Parent loading target is incomplete; use an explicitly qualified recovery')
     return prepare(label,BASE/parent_label,state['load_step'],state['substep'],state['time'],targets,cores,qualification=revisions[-1])
 
 

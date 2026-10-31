@@ -20,6 +20,7 @@ def test_total_displacement_and_adaptive_bounds():
     assert 'RESCONTROL,DEFINE,ALL,1,-1,,3' in lines
     n=next(x for x in lines if x.startswith('NSUBST')).split(',')
     assert int(n[2])>=int(n[1])>=int(n[3])>=1 and n[4]=='OFF'
+    assert (.1-.05)/int(n[2])>=1e-6
 
 
 def test_result_inventory_discards_debug_and_rejects_stale_order():
