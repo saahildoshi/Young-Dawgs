@@ -10,6 +10,9 @@ from scripts.v066_restart import REPO,RUN,BASE,load,compact,export
 def selected_states(source,maximum=8):
     rows=load(source/'nonlinear_telemetry.json')['converged_substeps']
     if not rows:raise ValueError('No actual converged native states')
+    if load(source/'simulation_manifest.json')['model'].get('general_contact_detection_keyopt4')==2:
+        # Preserve a continuous screened trajectory through first corner contact.
+        return [{'time':r['pseudo_time'],'load_step':r['load_step'],'substep':r['substep']} for r in rows]
     indices={0,len(rows)-1}
     for i in range(len(rows)-1):
         if rows[i]['load_step']!=rows[i+1]['load_step']:indices.add(i)
