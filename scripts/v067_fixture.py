@@ -91,6 +91,7 @@ def make_case(label, fkn):
     lines += component('PHYSICAL_NODES', np.unique(boundary[groups != 'artificial_cut']) + 1)
     lines += ['CMSEL,S,PHYSICAL_NODES', 'ESLN,S,1,ALL', 'CMSEL,R,ALL_GC', 'CM,INTERNAL_GC,ELEM',
               'CMSEL,S,ALL_GC', 'CMSEL,U,INTERNAL_GC', 'EDELE,ALL', 'ALLSEL,ALL',
+              'CMSEL,S,INTERNAL_GC', 'EMODIF,ALL,TYPE,4', 'EMODIF,ALL,SECNUM,4', 'ALLSEL,ALL',
               '*GET,ETMAX,ETYP,0,NUM,MAX', '*DO,IT,4,ETMAX', 'KEYOPT,IT,2,1', 'KEYOPT,IT,4,2', 'KEYOPT,IT,10,0', '*ENDDO',
               f'R,100,,,{fkn},-1e-5', 'GCDEF,SYMM,ALL,SELF,1,100',
               f'D,{pilot},UX,0', f'D,{pilot},UY,0', f'D,{pilot},ROTZ,0', '/GOPR', '/OUTPUT,local_inventory,txt',
@@ -117,6 +118,7 @@ def make_case(label, fkn):
     manifest = {'model_variant': 'ORIGINAL_MESH_LOCAL_DIAGNOSTIC', 'fixture_sha256': file_hash(source / 'fixture_manifest.json'),
                 'input_sha256': file_hash(d / 'input.inp'), 'GC_FKN': fkn, 'platen_FKN': 100, 'FTOLN_mm': -1e-5,
                 'targets': targets, 'measured_parent_count': len(times), 'diagnostic_extrapolation_after': times[-1],
+                'source_body_section_preserved': 4, 'source_body_section_evidence': 'parent_section_probe_001 actual licensed v241 readback',
                 'model': {'specimen_nodes': n, 'specimen_TRI6': ne, 'user_model_nodes': n+3,
                           'user_model_elements': ne + 2 + len(top_edges) + 2*len(boundary), 'controls': {'top': pilot},
                           'general_contact_component': 'INTERNAL_GC'}}
@@ -153,7 +155,7 @@ def post(label):
     states = []
     for j, (ls, r) in enumerate(last.items(), 1):
         prefix = f'state{j:03d}'
-        lines += [f"SET,{ls},{r['substep']}"] + vector_fields(manifest['model']['specimen_nodes'], prefix)
+        lines += [f"SET,{ls},{r['substep']}", '*GET,NTIME,ACTIVE,0,SET,TIME', f'*CFOPEN,{prefix}_time,csv', '*VWRITE', "('pseudo_time')", '*VWRITE,NTIME', '(E24.16)', '*CFCLOS'] + vector_fields(manifest['model']['specimen_nodes'], prefix)
         lines += ['ALLSEL,ALL', 'ETABLE,ERAS', 'ETABLE,CNSTAT,NMISC,19']
         lines += general_contact_vectors(manifest['model'], prefix, chunk_size=10000)
         lines += [f'*CFOPEN,{prefix}_reactions,csv', '*VWRITE', "('node,rx_N,ry_N')"]
