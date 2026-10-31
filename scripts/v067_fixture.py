@@ -65,7 +65,7 @@ def prepare():
     print(json.dumps({k: spec[k] for k in ['nodes', 'TRI6', 'physical_faces', 'cut_nodes']}), flush=True)
 
 
-def make_case(label, fkn):
+def make_case(label, fkn, detection=2):
     source = BASE / 'source_fixture_001'
     spec = json.loads((source / 'fixture_manifest.json').read_text(encoding='utf-8'))
     assert file_hash(source / 'mesh.npz') == spec['mesh_archive_sha256']
@@ -92,7 +92,7 @@ def make_case(label, fkn):
     lines += ['CMSEL,S,PHYSICAL_NODES', 'ESLN,S,1,ALL', 'CMSEL,R,ALL_GC', 'CM,INTERNAL_GC,ELEM',
               'CMSEL,S,ALL_GC', 'CMSEL,U,INTERNAL_GC', 'EDELE,ALL', 'ALLSEL,ALL',
               'CMSEL,S,INTERNAL_GC', 'EMODIF,ALL,TYPE,4', 'EMODIF,ALL,SECNUM,4', 'ALLSEL,ALL',
-              '*GET,ETMAX,ETYP,0,NUM,MAX', '*DO,IT,4,ETMAX', 'KEYOPT,IT,2,1', 'KEYOPT,IT,4,2', 'KEYOPT,IT,10,0', '*ENDDO',
+              '*GET,ETMAX,ETYP,0,NUM,MAX', '*DO,IT,4,ETMAX', 'KEYOPT,IT,2,1', f'KEYOPT,IT,4,{detection}', 'KEYOPT,IT,10,0', '*ENDDO',
               f'R,100,,,{fkn},-1e-5', 'GCDEF,SYMM,ALL,SELF,1,100',
               f'D,{pilot},UX,0', f'D,{pilot},UY,0', f'D,{pilot},ROTZ,0', '/GOPR', '/OUTPUT,local_inventory,txt',
               'ETLIST,ALL', 'RLIST,ALL', 'GCDEF,LIST', 'CMSEL,S,INTERNAL_GC', '*GET,NGC,ELEM,0,COUNT', '*STATUS,NGC', 'ALLSEL,ALL', '/OUTPUT',
@@ -116,7 +116,7 @@ def make_case(label, fkn):
     d.mkdir(parents=True, exist_ok=False)
     (d / 'input.inp').write_text('\n'.join(lines) + '\n', encoding='utf-8', newline='\n')
     manifest = {'model_variant': 'ORIGINAL_MESH_LOCAL_DIAGNOSTIC', 'fixture_sha256': file_hash(source / 'fixture_manifest.json'),
-                'input_sha256': file_hash(d / 'input.inp'), 'GC_FKN': fkn, 'platen_FKN': 100, 'FTOLN_mm': -1e-5,
+                'input_sha256': file_hash(d / 'input.inp'), 'GC_FKN': fkn, 'platen_FKN': 100, 'FTOLN_mm': -1e-5, 'GC_detection_keyopt4': detection,
                 'targets': targets, 'measured_parent_count': len(times), 'diagnostic_extrapolation_after': times[-1],
                 'source_body_section_preserved': 4, 'source_body_section_evidence': 'parent_section_probe_001 actual licensed v241 readback',
                 'model': {'specimen_nodes': n, 'specimen_TRI6': ne, 'user_model_nodes': n+3,
@@ -179,8 +179,9 @@ if __name__ == '__main__':
     p.add_argument('action', choices=['prepare', 'case', 'execute', 'post'])
     p.add_argument('--label', default='local_baseline_001')
     p.add_argument('--fkn', type=float, default=100)
+    p.add_argument('--detection', type=int, choices=[2,3], default=2)
     a = p.parse_args()
     if a.action == 'prepare': prepare()
-    elif a.action == 'case': make_case(a.label, a.fkn)
+    elif a.action == 'case': make_case(a.label, a.fkn, a.detection)
     elif a.action == 'execute': execute(a.label)
     else: post(a.label)
