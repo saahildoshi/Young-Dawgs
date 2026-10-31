@@ -25,8 +25,8 @@ def post_commands(mesh):
     return lines
 
 
-def main(short_gap=False):
-    revision='002' if short_gap else '001';gap=.01 if short_gap else .1
+def main(short_gap=False,revision=None,detection=0):
+    revision=revision or ('002' if short_gap else '001');gap=.01 if short_gap else .1
     height=.3+gap;travel=.02 if short_gap else .16;strain=travel/height
     protocol={'fixture':f'Connected C-cell, two0.15mm arms separated by{gap}mm gap,0.12mm left bridge',
         'geometry':f'union rectangles [0,0,1,.15], [0,{.15+gap},1,{height}], [0,0,.12,{height}]',
@@ -36,18 +36,19 @@ def main(short_gap=False):
         'enabled_disabled_comparison':True,'scope':'Small diagnostic fixture, not Design9 response',
         'acceptance':'Actual active general-contact elements, nonzero forces, pressure, native pen<=1e-5, signed support balance<=1%, positive deformed mappings; disabled may cross',
         'revision_reason':'002 closes a shorter initial gap without crushing the connecting bridge; fixes actual /FILNAME to compression; keeps original001 failure and unchanged acceptance gates' if short_gap else 'Original004 fixture'}
-    write_json(RUN/('protocol/INTERNAL_CONTACT_FIXTURE_006.json' if short_gap else 'protocol/INTERNAL_CONTACT_FIXTURE_004.json'),protocol)
+    protocol['contact_detection_keyopt4']=detection
+    write_json(RUN/('protocol/NODAL_FIXTURE_022.json' if detection else ('protocol/INTERNAL_CONTACT_FIXTURE_006.json' if short_gap else 'protocol/INTERNAL_CONTACT_FIXTURE_004.json')),protocol)
     cfg=replace(CompressionConfig(),width=1,height=height,boundary_size=.015,bulk_size=.025)
     geometry=shapely.union_all([shapely.box(0,0,1,.15),shapely.box(0,.15+gap,1,height),shapely.box(0,0,.12,height)])
     mesh=generate_mesh(geometry,cfg,policy=POLICY_B)
     local=BASE/('internal_fixture_geometry_'+revision);local.mkdir(parents=True,exist_ok=False);save_mesh(mesh,local/'mesh.npz')
-    source_name='source_002.wkt' if short_gap else 'source.wkt';manifest_name='fixture_manifest_002.json' if short_gap else 'fixture_manifest.json'
+    source_name=f'source_{revision}.wkt' if short_gap else 'source.wkt';manifest_name=f'fixture_manifest_{revision}.json' if short_gap else 'fixture_manifest.json'
     (RUN/'internal_contact'/source_name).write_text(geometry.wkt)
     write_json(RUN/'internal_contact'/manifest_name,{'nodes':len(mesh.nodes),'TRI6':len(mesh.triangles),'mesh_semantic_sha256':mesh_hash(mesh),'geometry_sha256':file_hash(RUN/'internal_contact'/source_name),'config':cfg.manifest(),'scope':'Distinct connected synthetic self-contact fixture'})
     lower=np.flatnonzero(np.isclose(mesh.nodes[:,1],.15)&(mesh.nodes[:,0]>=.12-1e-10))+1
     upper=np.flatnonzero(np.isclose(mesh.nodes[:,1],.15+gap)&(mesh.nodes[:,0]>=.12-1e-10))+1
     bottoms=np.unique(mesh.boundary[mesh.boundary_groups=='bottom']);anchor=int(bottoms[np.argmin(mesh.nodes[bottoms,0])])+1
-    for enabled in [False,True]:
+    for enabled in ([True] if detection else [False,True]):
         directory=BASE/(('internal_fixture_enabled_' if enabled else 'internal_fixture_disabled_')+revision)
         prepare_import(mesh,directory,cfg)
         source=(directory/'import.inp').read_text();source=source[:source.index('ALLSEL,ALL\nCHECK')]
@@ -62,13 +63,14 @@ def main(short_gap=False):
                     'CMSEL,S,INNER_LOW\nCMSEL,A,INNER_UP\nESLN,S,1\nESEL,R,REAL,,0\nESEL,R,ENAME,,172\nCM,INTERNAL_GC,ELEM\n'
                     'CMSEL,S,ALL_GC\nCMSEL,U,INTERNAL_GC\nEDELE,ALL\nALLSEL,ALL\nR,100,,,100,-1e-5\n'
                     'GCDEF,SYMM,ALL,SELF,1,100\n/OUTPUT,gc_inventory,txt\nGCDEF,LIST\nETLIST,ALL\nELIST,ALL\n/OUTPUT\n')
+                if detection:f.write(f'KEYOPT,2,4,{detection}\n/OUTPUT,nodal_type_before,txt\nETLIST,2\n/OUTPUT\n')
             f.write(f'CMSEL,S,BOTTOM_FACE\nD,ALL,UY,0\nALLSEL,ALL\nD,{anchor},UX,0\n'
                 f'CMSEL,S,TOP_FACE\nD,ALL,UY,{-travel:.17g}\nALLSEL,ALL\nFINISH\n/SOLU\nANTYPE,STATIC\nNLGEOM,ON\n'
                 'EQSLV,SPARSE\nNROPT,FULL\nAUTOTS,ON\nNSUBST,20,1000,10\nNEQIT,40\nLNSRCH,ON\nCNVTOL,F,,.005,2,1e-8\n'
                 f'OUTRES,ALL,ALL\nRESCONTROL,DEFINE,ALL,ALL,-1,,3\nNLDIAG,CONT,ITER\nTIME,{strain:.17g}\nSOLVE\n')
-            f.write('\n'.join(post_commands(mesh)))
+            f.write('\n'.join(direct_post({'specimen_nodes':len(mesh.nodes)},strain) if detection else post_commands(mesh)))
             f.write('\nFINISH\nSAVE,checkpoint,db,,MODEL\n/EXIT,NOSAVE\n')
-        write_json(directory/'simulation_manifest.json',{'model':{'specimen_nodes':len(mesh.nodes),'specimen_TRI6':len(mesh.triangles),'config':cfg.manifest()},'internal_contact':enabled,'input_sha256':file_hash(directory/'input.inp'),'mesh_semantic_sha256':mesh_hash(mesh),'target_strain':strain})
+        write_json(directory/'simulation_manifest.json',{'model':{'specimen_nodes':len(mesh.nodes),'specimen_TRI6':len(mesh.triangles),'config':cfg.manifest()},'internal_contact':enabled,'contact_detection_keyopt4':detection,'input_sha256':file_hash(directory/'input.inp'),'mesh_semantic_sha256':mesh_hash(mesh),'target_strain':strain})
         r=run_progressive(directory,timeout=300,no_progress_seconds=180,cores=2)
         compact(directory,RUN/'internal_contact'/directory.name)
         for name in ['direct_history.csv','direct_displacements.csv','direct_stress.csv','internal_contact.csv','gc_inventory.txt']:
@@ -80,4 +82,4 @@ def main(short_gap=False):
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--short-gap',action='store_true');a=p.parse_args();main(a.short_gap)
+    p=argparse.ArgumentParser();p.add_argument('--short-gap',action='store_true');p.add_argument('--revision');p.add_argument('--detection',type=int,choices=[0,2],default=0);a=p.parse_args();main(a.short_gap,a.revision,a.detection)

@@ -20,7 +20,7 @@ def remaining_solver_budget():
     return min(5400,remaining)
 
 
-def prepare(label,parent,load_step,substep,previous,targets):
+def prepare(label,parent,load_step,substep,previous,targets,cores=None):
     parent=Path(parent);directory=BASE/label
     assert load(RUN/'restart_validation/RESTART_VALIDATION.json')['status']=='PASS_ACTUAL_LICENSED_NATIVE_RESTART'
     first=BASE/'fine_stage01_001/execution_receipt.json'
@@ -30,25 +30,31 @@ def prepare(label,parent,load_step,substep,previous,targets):
     manifest=authenticated_restart_copy(parent,directory,expected_mesh=HISTORICAL)
     text=continuation_input(load_step,substep,targets,previous,manifest['model'],all_fields=True)
     (directory/'input.inp').write_text(text,encoding='utf-8')
-    actual_protocol=RUN/'protocol/FULL_GENERAL_CONTACT_014.json' if manifest['model'].get('general_contact_elements') else PROTOCOL
+    actual_protocol=RUN/'protocol/NODAL_CONTACT_REPAIR_021.json' if manifest['model'].get('general_contact_detection_keyopt4')==2 else (RUN/'protocol/FULL_GENERAL_CONTACT_014.json' if manifest['model'].get('general_contact_elements') else PROTOCOL)
+    policy_path=RUN/'performance/SMP_QUALIFICATION.json'
+    policy=load(policy_path) if policy_path.exists() else {'selected_cores':2,'attempts':[]}
+    if cores is None:cores=policy['selected_cores']
+    if cores!=2 and not any(a['requested_cores']==cores and a['passed'] for a in policy['attempts']):raise ValueError('Requested SMP setting has not passed actual licensed field qualification')
     manifest.update(input_sha256=file_hash(directory/'input.inp'),protocol_sha256=file_hash(actual_protocol),
         target_strain=targets[-1],targets=targets,previous_strain=previous,
+        execution_cores=cores,
         restart_state={'load_step':load_step,'substep':substep,'time':previous},
         contact_limitation='PLATEN_ONLY_EXPLORATORY; no accepted unmodeled wall crossings',
         prepared_utc=datetime.now(timezone.utc).isoformat())
+    if cores!=2:manifest.update(resource_protocol_sha256=file_hash(RUN/'protocol/SMP_RESOURCE_018.json'),parallel_qualification_sha256=file_hash(policy_path))
     write_json(directory/'simulation_manifest.json',manifest)
     compact(directory,RUN/'progressive_compression'/('prepared_'+label))
     return directory
 
 
-def prepare_next(label,parent_label,targets):
+def prepare_next(label,parent_label,targets,cores=None):
     revisions=sorted((RUN/'mechanical_results').glob(parent_label+'_qualification[0-9][0-9][0-9].json'))
     if not revisions:raise ValueError('No independent parent qualification')
     q=load(revisions[-1])
     if not q['last_state_accepted']:raise ValueError('Last parent state did not pass continuation gates')
     state=q['states'][-1]
     if Path(q['source']).resolve()!=(BASE/parent_label).resolve():raise ValueError('Parent qualification identity mismatch')
-    return prepare(label,BASE/parent_label,state['load_step'],state['substep'],state['time'],targets)
+    return prepare(label,BASE/parent_label,state['load_step'],state['substep'],state['time'],targets,cores)
 
 
 def freeze():
@@ -71,16 +77,19 @@ def freeze():
 
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('action',choices=['prepare-first','prepare-next','run']);p.add_argument('--label',default='fine_stage01_001')
-    p.add_argument('--parent');p.add_argument('--targets',type=float,nargs='+');a=p.parse_args()
+    p.add_argument('--parent');p.add_argument('--targets',type=float,nargs='+');p.add_argument('--cores',type=int,choices=[2,4,8]);a=p.parse_args()
     if a.action=='prepare-first':
         freeze();d=prepare(a.label,artifact_root()/'solver/v065/full_recovery_001',1,1,.00005,[.0001,.001]);print(d,flush=True)
     elif a.action=='prepare-next':
         if not a.parent or not a.targets:p.error('prepare-next requires --parent and --targets')
-        print(prepare_next(a.label,a.parent,a.targets),flush=True)
+        print(prepare_next(a.label,a.parent,a.targets,a.cores),flush=True)
     else:
         committed(PROTOCOL);committed(RUN/'progressive_compression'/('prepared_'+a.label)/'input.inp')
         d=BASE/a.label;m=load(d/'simulation_manifest.json')
         assert file_hash(d/'input.inp')==m['input_sha256'] and file_hash(d/'input.inp')==file_hash(RUN/'progressive_compression'/('prepared_'+a.label)/'input.inp')
-        r=run_progressive(d,timeout=remaining_solver_budget(),no_progress_seconds=1800)
+        cores=m.get('execution_cores',2)
+        if cores!=2:
+            assert m['resource_protocol_sha256']==file_hash(RUN/'protocol/SMP_RESOURCE_018.json') and m['parallel_qualification_sha256']==file_hash(RUN/'performance/SMP_QUALIFICATION.json')
+        r=run_progressive(d,timeout=remaining_solver_budget(),no_progress_seconds=1800,cores=cores)
         compact(d,RUN/'progressive_compression'/a.label)
         print(a.label,r['status'],r['process']['returncode'],r['converged_steps'][-1:],flush=True)

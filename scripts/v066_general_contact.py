@@ -91,32 +91,47 @@ def qualify():
     write_json(RUN/'internal_contact/FULL_GC_SETUP_QUALIFICATION.json',result);print(result['status'],result.get('failure'),flush=True)
 
 
-def prepare_first_solve():
+def prepare_first_solve(nodal=False):
     q=load(RUN/'internal_contact/FULL_GC_SETUP_QUALIFICATION.json')
     assert q['status']=='PASS_NATIVE_FULL_GC_SETUP__MECHANICS_PENDING'
     setup=BASE/'fine_gc_setup_001';source=setup/'contact_model_gc.db'
     assert file_hash(source)==q['native_MODEL_database_sha256']
-    d=BASE/'fine_gc_stage01_001';d.mkdir(parents=True,exist_ok=False)
-    model=q['model']
-    lines=['/BATCH','/CLEAR,START',database_resume(source).strip(),'/GOPR','/SOLU','ANTYPE,STATIC','NLGEOM,ON',
+    label='fine_nodal_stage01_001' if nodal else 'fine_gc_stage01_001'
+    d=BASE/label;d.mkdir(parents=True,exist_ok=False)
+    model=dict(q['model'])
+    protocol=RUN/'protocol/NODAL_CONTACT_REPAIR_021.json' if nodal else PROTOCOL
+    if nodal:
+        assert load(RUN/'internal_contact/NODAL_FIXTURE_QUALIFICATION.json')['status']=='PASS_ACTUAL_NODAL_GC_INTERFACE_FORCE_PEN_MAPPING'
+        model.update(model_variant='FINE_FULL_SELF_CONTACT_NODAL_V066_021',general_contact_detection_keyopt4=2)
+    lines=['/BATCH','/CLEAR,START',database_resume(source).strip(),'/GOPR']
+    if nodal:lines+=['/PREP7','KEYOPT,4,4,2','/OUTPUT,nodal_type_before,txt','ETLIST,4','/OUTPUT','FINISH']
+    lines+=['/SOLU','ANTYPE,STATIC','NLGEOM,ON',
         'EQSLV,SPARSE','BCSOPTION,,DEFAULT,,,,PERFORMANCE','CNVTOL,F,,.005,2,1e-8','RESCONTROL,DELETE,ALL']
     lines+=telemetry_commands(model['controls']['top'])+[f'NLHIST,NSOL,RFLOW,F,Y,{model["controls"]["bottom"]}']
     lines+=load_commands(.001,0,model['controls']['top'],model['config']['height'])
     (d/'input.inp').write_text('\n'.join(lines+['FINISH','SAVE,checkpoint,db,,MODEL','/EXIT,NOSAVE'])+'\n')
-    manifest=load(setup/'simulation_manifest.json');manifest.update(input_sha256=file_hash(d/'input.inp'),protocol_sha256=file_hash(PROTOCOL),
-        targets=[.001],target_strain=.001,previous_strain=0,execution_scope='FRESH_FINE_MODEL_WITH_GENERAL_SELF_CONTACT',
+    manifest=load(setup/'simulation_manifest.json');manifest.update(model=model,input_sha256=file_hash(d/'input.inp'),protocol_sha256=file_hash(protocol),
+        execution_cores=8 if nodal else 2,targets=[.001],target_strain=.001,previous_strain=0,execution_scope='FRESH_FINE_MODEL_WITH_GENERAL_SELF_CONTACT',
         source_general_contact_database_sha256=file_hash(source),source_setup_receipt_sha256=file_hash(setup/'execution_receipt.json'))
-    write_json(d/'simulation_manifest.json',manifest);compact(d,RUN/'progressive_compression/prepared_fine_gc_stage01_001')
+    if nodal:
+        assert load(RUN/'performance/SMP_QUALIFICATION.json')['selected_cores']==8
+        manifest.update(resource_protocol_sha256=file_hash(RUN/'protocol/SMP_RESOURCE_018.json'),parallel_qualification_sha256=file_hash(RUN/'performance/SMP_QUALIFICATION.json'),nodal_fixture_qualification_sha256=file_hash(RUN/'internal_contact/NODAL_FIXTURE_QUALIFICATION.json'))
+    write_json(d/'simulation_manifest.json',manifest);compact(d,RUN/'progressive_compression'/('prepared_'+label))
     print(d,flush=True)
 
 
-def run_first_solve():
-    d=BASE/'fine_gc_stage01_001';committed(PROTOCOL);committed(RUN/'progressive_compression/prepared_fine_gc_stage01_001/input.inp')
-    m=load(d/'simulation_manifest.json');assert file_hash(d/'input.inp')==m['input_sha256'] and file_hash(PROTOCOL)==m['protocol_sha256']
-    r=run_progressive(d,timeout=5400,no_progress_seconds=1800,cores=2);compact(d,RUN/'progressive_compression'/d.name)
+def run_first_solve(nodal=False):
+    label='fine_nodal_stage01_001' if nodal else 'fine_gc_stage01_001'
+    protocol=RUN/'protocol/NODAL_CONTACT_REPAIR_021.json' if nodal else PROTOCOL
+    d=BASE/label;committed(protocol);committed(RUN/'progressive_compression'/('prepared_'+label)/'input.inp')
+    m=load(d/'simulation_manifest.json');assert file_hash(d/'input.inp')==m['input_sha256'] and file_hash(protocol)==m['protocol_sha256']
+    from scripts.v066_campaign import remaining_solver_budget
+    if nodal:
+        assert m['resource_protocol_sha256']==file_hash(RUN/'protocol/SMP_RESOURCE_018.json') and m['parallel_qualification_sha256']==file_hash(RUN/'performance/SMP_QUALIFICATION.json')
+    r=run_progressive(d,timeout=remaining_solver_budget(),no_progress_seconds=1800,cores=m.get('execution_cores',2));compact(d,RUN/'progressive_compression'/d.name)
     print(r['status'],r['process']['returncode'],r['converged_steps'][-1:],flush=True)
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('action',choices=['prepare','execute','qualify','prepare-first','run-first']);a=p.parse_args()
-    {'prepare':prepare,'execute':execute,'qualify':qualify,'prepare-first':prepare_first_solve,'run-first':run_first_solve}[a.action]()
+    p=argparse.ArgumentParser();p.add_argument('action',choices=['prepare','execute','qualify','prepare-first','run-first']);p.add_argument('--nodal',action='store_true');a=p.parse_args()
+    {'prepare':prepare,'execute':execute,'qualify':qualify,'prepare-first':lambda:prepare_first_solve(a.nodal),'run-first':lambda:run_first_solve(a.nodal)}[a.action]()

@@ -1,0 +1,199 @@
+{
+  "converged_steps": [],
+  "execution_kind": "INDEPENDENT_READ_ONLY_POST1",
+  "input_sha256": "de3c31e27dc34c1a886bd9ea3fc4015f17c533fcc9c284465da3a27895d759a9",
+  "observed_progress": [],
+  "process": {
+    "artifacts": {
+      "input.inp": {
+        "bytes": 4209,
+        "sha256": "de3c31e27dc34c1a886bd9ea3fc4015f17c533fcc9c284465da3a27895d759a9"
+      },
+      "launcher.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "provenance.json": {
+        "bytes": 900,
+        "sha256": "44d077b70fcc21aa3e3114c9555a7b61feca78f82d2bcd265b3767ec354e0e2e"
+      },
+      "readonly.err": {
+        "bytes": 80,
+        "sha256": "e98f83835b908da8ff37e7548b134899283ce1b204adacf8aec8996ceb2faf33"
+      },
+      "readonly.log": {
+        "bytes": 250,
+        "sha256": "605a9b017940b6a69824e2ce6b2e24b23f1a65f5d8da7c057f230e32355ec776"
+      },
+      "result_sets.txt": {
+        "bytes": 261,
+        "sha256": "b621b64b4cdb0f70ce69fb6b0d4b76a5e3be5c4ee9584e5633cbeb1587dbeed0"
+      },
+      "solver.out": {
+        "bytes": 29764,
+        "sha256": "73c5387e436be729bc05138673ca4254b7480f8105fe92f6477db7ab29ade9a3"
+      },
+      "stage001_contact.csv": {
+        "bytes": 4447,
+        "sha256": "3094da4a074636c197c31bb0d85a7c401350700efb21ef60eef5740a6a1ad00a"
+      },
+      "stage001_contact_status.csv": {
+        "bytes": 981,
+        "sha256": "687ed572a4ebfda863c6bd71b3203bbfbab27d4066e67117496f7be81327f1dc"
+      },
+      "stage001_displacements.csv": {
+        "bytes": 39506,
+        "sha256": "312469eada0f48b41b1b12660d8f0ed74ca0e362194744afe189ba3a68e0bc2f"
+      },
+      "stage001_gate.txt": {
+        "bytes": 31,
+        "sha256": "683f1c8e55b2bed08e01589d31e2c769bd91609dadfa65f862cec52156f4dc11"
+      },
+      "stage001_history.csv": {
+        "bytes": 190,
+        "sha256": "d1167345ffd9cd7685806a5fd1a024ccd4f70b0ed5eb221bda4d9ad3c3a50db7"
+      },
+      "stage001_stress.csv": {
+        "bytes": 19997,
+        "sha256": "4052d59fb9deeda0d5756b1a05c9be8b21804093b0338682dc6eccb0a19e1660"
+      }
+    },
+    "command": [
+      "C:\\Program Files\\ANSYS Inc\\v241\\ansys\\bin\\winx64\\ANSYS241.exe",
+      "-b",
+      "-smp",
+      "-np",
+      "1",
+      "-m",
+      "4096",
+      "-j",
+      "readonly",
+      "-i",
+      "input.inp",
+      "-o",
+      "solver.out"
+    ],
+    "min_available_ram_bytes": 0,
+    "min_disk_free_bytes": 42949672960,
+    "native_signal_availability": [],
+    "paging_interpretation": "Page Reads/sec is system hard-fault disk-read proxy, not pagefile-only or per-process hard faults",
+    "peak_tree_rss_bytes": 210518016,
+    "resource_samples": [
+      {
+        "available_RAM_bytes": 47513513984,
+        "commit_fraction": 0.35853484466527097,
+        "commit_limit_bytes": 72698556416,
+        "commit_used_bytes": 26064965632,
+        "disk_free_bytes": 1344056221696,
+        "elapsed_seconds": 0.02001830004155636,
+        "native_markers_first_observed_seconds": {},
+        "output_file_bytes": {
+          "input.inp": 4209,
+          "launcher.log": 0,
+          "provenance.json": 900
+        },
+        "owned_processes": [
+          {
+            "name": "ANSYS241.exe",
+            "pid": 26044,
+            "status": "running"
+          },
+          {
+            "name": "conhost.exe",
+            "pid": 25608,
+            "status": "running"
+          }
+        ],
+        "page_reads_per_second": 0.0,
+        "page_writes_per_second": 0.0,
+        "pagefile_usage_percent": 2.1683692932128906,
+        "pages_input_per_second": 0.0,
+        "physical_RAM_bytes": 68403589120,
+        "seconds_without_output_growth": 0.02001830004155636,
+        "system_memory_percent": 30.5,
+        "tree_rss_bytes": 8511488,
+        "windows_low_memory": false
+      }
+    ],
+    "returncode": 0,
+    "rss_limit_bytes": null,
+    "run_directory": "C:\\Users\\sd22446\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\YoungDawgs\\artifacts\\solver\\v066\\rectangle_smp8_001_post001",
+    "runtime_seconds": 2.647771399933845,
+    "started_utc": "2026-10-31T02:13:44.566692+00:00",
+    "status": "PROCESS_EXITED",
+    "system_after": {
+      "available_RAM_bytes": 47463313408,
+      "commit_fraction": 0.3582958408547885,
+      "commit_limit_bytes": 72698556416,
+      "commit_used_bytes": 26047590400,
+      "disk_free_bytes": 1344056086528,
+      "elapsed_seconds": 2.6457008998841047,
+      "native_markers_first_observed_seconds": {},
+      "output_file_bytes": {
+        "input.inp": 4209,
+        "launcher.log": 0,
+        "provenance.json": 900,
+        "readonly.err": 80,
+        "readonly.log": 250,
+        "result_sets.txt": 261,
+        "solver.out": 29764,
+        "stage001_contact.csv": 4447,
+        "stage001_contact_status.csv": 981,
+        "stage001_displacements.csv": 39506,
+        "stage001_gate.txt": 31,
+        "stage001_history.csv": 190,
+        "stage001_stress.csv": 19997
+      },
+      "owned_processes": [],
+      "page_reads_per_second": 9.980224951967289,
+      "page_writes_per_second": 0.0,
+      "pagefile_usage_percent": 2.1683692932128906,
+      "pages_input_per_second": 69.47771985792612,
+      "physical_RAM_bytes": 68403589120,
+      "seconds_without_output_growth": 0.0,
+      "system_memory_percent": 30.6,
+      "tree_rss_bytes": null,
+      "windows_low_memory": false
+    },
+    "system_before": {
+      "available_RAM_bytes": 47519924224,
+      "commit_fraction": 0.35748158270554453,
+      "commit_limit_bytes": 72698556416,
+      "commit_used_bytes": 25988395008,
+      "disk_free_bytes": 1344056221696,
+      "elapsed_seconds": 0,
+      "native_markers_first_observed_seconds": {},
+      "output_file_bytes": {
+        "input.inp": 4209,
+        "provenance.json": 900
+      },
+      "owned_processes": [],
+      "page_reads_per_second": 0.0,
+      "page_writes_per_second": 0.0,
+      "pagefile_usage_percent": 2.1683692932128906,
+      "pages_input_per_second": 0.0,
+      "physical_RAM_bytes": 68403589120,
+      "seconds_without_output_growth": 0,
+      "system_memory_percent": 30.5,
+      "tree_rss_bytes": null,
+      "windows_low_memory": false
+    },
+    "system_health_policy": {
+      "available_reserve_bytes": 6442450944,
+      "commit_fraction": 0.98,
+      "commit_seconds": 15,
+      "critical_available_bytes": 1073741824,
+      "critical_seconds": 3,
+      "no_output_growth_seconds": 90,
+      "notification_seconds": 10,
+      "page_reads_per_second": 10000,
+      "paging_seconds": 60,
+      "reserve_seconds": 30
+    },
+    "timeout_seconds": 1800
+  },
+  "solver_version": "2024 R1",
+  "status": "PROCESS_EXITED",
+  "warning_occurrences": 0,
+  "warnings": []
+}
