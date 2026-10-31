@@ -39,7 +39,7 @@ def prepare(label,parent,load_step,substep,previous,targets,cores=None):
         target_strain=targets[-1],targets=targets,previous_strain=previous,
         execution_cores=cores,
         restart_state={'load_step':load_step,'substep':substep,'time':previous},
-        contact_limitation='PLATEN_ONLY_EXPLORATORY; no accepted unmodeled wall crossings',
+        contact_limitation='FULL_NATIVE_GENERAL_SELF_CONTACT; independent engagement/geometry gates required' if manifest['model'].get('general_contact_elements') else 'PLATEN_ONLY_EXPLORATORY; no accepted unmodeled wall crossings',
         prepared_utc=datetime.now(timezone.utc).isoformat())
     if cores!=2:manifest.update(resource_protocol_sha256=file_hash(RUN/'protocol/SMP_RESOURCE_018.json'),parallel_qualification_sha256=file_hash(policy_path))
     write_json(directory/'simulation_manifest.json',manifest)
@@ -86,6 +86,8 @@ if __name__=='__main__':
     else:
         committed(PROTOCOL);committed(RUN/'progressive_compression'/('prepared_'+a.label)/'input.inp')
         d=BASE/a.label;m=load(d/'simulation_manifest.json')
+        actual_protocol=RUN/'protocol/NODAL_CONTACT_REPAIR_021.json' if m['model'].get('general_contact_detection_keyopt4')==2 else (RUN/'protocol/FULL_GENERAL_CONTACT_014.json' if m['model'].get('general_contact_elements') else PROTOCOL)
+        committed(actual_protocol);assert file_hash(actual_protocol)==m['protocol_sha256']
         assert file_hash(d/'input.inp')==m['input_sha256'] and file_hash(d/'input.inp')==file_hash(RUN/'progressive_compression'/('prepared_'+a.label)/'input.inp')
         cores=m.get('execution_cores',2)
         if cores!=2:

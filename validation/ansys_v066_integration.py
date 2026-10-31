@@ -58,7 +58,9 @@ def test_actual_fine_checkpoint_all_fields_equilibrium_mapping_and_overlap(path)
         assert c['max_stored_endpoint_penetration_mm']<=1e-5 and c['signed_opposition_residual_relative']<=.01
     assert q['actual_nodes']==2766505 and q['actual_TRI6']==1261670 and q['actual_native_corner_nodes']==752212
     assert q['invalid_deformed_mappings']==0 and q['minimum_deformed_determinant_mm2']>0
-    assert q['boundary_screen_summary']['passed'] and q['boundary_screen_summary']['pore_loops']==412
+    assert q['boundary_screen_summary']['pore_loops']==412
+    assert q['boundary_screen_summary']['passed'] or q.get('general_contact',{}).get('status')=='PASS_FULL_NATIVE_GENERAL_CONTACT_CHECKS'
+    if q.get('actual_postsolution_general_contact_detection_keyopt4') is not None:assert q['actual_postsolution_general_contact_detection_keyopt4']==2
     export=Path(q['export'])
     for name,digest in q['raw_native_field_hashes'].items():assert file_hash(export/name)==digest
     assert read(export/'execution_receipt.json')['process']['returncode']==0
@@ -91,3 +93,41 @@ def test_smaller_mesh_is_not_misrepresented_as_qualified():
     c=read(RUN/'mesh_strategy/candidate_001.json')
     assert not c['quality']['accepted'] and c['quality']['min_angle_deg']<10
     assert c['status']=='REJECTED_ORIGINAL_GEOMETRY_GATES'
+
+
+def test_actual_nodal_fixture_supports_contact_transmission():
+    q=read(RUN/'internal_contact/NODAL_FIXTURE_QUALIFICATION.json')
+    assert q['status']=='PASS_ACTUAL_NODAL_GC_INTERFACE_FORCE_PEN_MAPPING'
+    assert q['actual_type_after_solution_verified'] and q['independent_RST_reopened']
+    assert q['closed_GC_skins']==114 and q['native_pressure_max_MPa']>0
+    assert q['all_quadratic_maps_positive']
+    assert q['reaction_balance_relative']<=.01 and q['assembled_GC_force_residual_relative']<=.01
+    assert q['stored_endpoint_penetration_max_mm']<=1e-5
+
+
+def test_actual_full_general_contact_covers_every_exposed_face():
+    q=read(RUN/'internal_contact/FULL_GC_SETUP_QUALIFICATION.json')
+    assert q['status']=='PASS_NATIVE_FULL_GC_SETUP__MECHANICS_PENDING'
+    assert q['native_skin_rows']==243576 and q['oriented_faces_matched']==243576
+    assert q['missing_exposed_faces']==0 and q['actual_fine_structural_geometry_preserved']
+    assert file_hash(BASE/'fine_gc_setup_001/gc_topology.csv')==q['native_gc_topology_sha256']
+
+
+def test_actual_numeric_restart_retention_corrected_legacy_deviation():
+    q=read(RUN/'restart_validation/RETENTION_QUALIFICATION.json')
+    assert q['status']=='PASS_ACTUAL_FRESH_FIVE_SUBSTEP_NUMERIC_FREQUENCY'
+    assert q['command']=='RESCONTROL,DELETE,ALL then RESCONTROL,DEFINE,ALL,1,-1,,3'
+
+
+def test_actual_eight_core_license_and_fields_qualified():
+    q=read(RUN/'performance/SMP_QUALIFICATION.json')
+    assert q['selected_cores']==8
+    assert any(a['requested_cores']==8 and a['passed'] for a in q['attempts'])
+
+
+def test_gauss_one_percent_endpoint_crossings_are_quarantined():
+    q=read(RUN/'mechanical_results/fine_gc_stage02_001_qualification001.json')
+    assert not q['last_state_accepted'] and q['last_accepted']['state']['time']==pytest.approx(.00859375)
+    assert not q['results'][-1]['accepted'] and q['results'][-1]['failures']
+    d=read(RUN/'deformation/FULL_GC_ONE_PERCENT_EXACT_DIAGNOSIS.json')
+    assert d['status']=='CONFIRMED_UNMODELED_CROSSING'
