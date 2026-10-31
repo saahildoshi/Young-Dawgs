@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "<stdin>", line 3, in <module>
+  File "C:\Users\sd22446\Projects\Young-Dawgs-VSCode\scripts\v066_contact_check.py", line 41, in analyze
+    directory=post(source,mesh) if independent else source
+              ~~~~^^^^^^^^^^^^^
+  File "C:\Users\sd22446\Projects\Young-Dawgs-VSCode\scripts\v066_contact_check.py", line 28, in post
+    write_json(out/'provenance.json',{'source_receipt_sha256':file_hash(source/'execution_receipt.json'),'source_RST_sha256':file_hash(source/'compression.rst'),
+                                                                                                                             ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sd22446\Projects\Young-Dawgs-VSCode\metamaterial_eval\simulation\solver_execution.py", line 16, in file_hash
+    with Path(path).open('rb') as stream:
+         ~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\sd22446\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v066\\internal_fixture_disabled_002\\compression.rst'

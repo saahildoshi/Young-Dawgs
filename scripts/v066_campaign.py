@@ -33,7 +33,9 @@ def prepare(label,parent,load_step,substep,previous,targets):
 
 
 def prepare_next(label,parent_label,targets):
-    q=load(RUN/'mechanical_results'/(parent_label+'_qualification001.json'))
+    revisions=sorted((RUN/'mechanical_results').glob(parent_label+'_qualification[0-9][0-9][0-9].json'))
+    if not revisions:raise ValueError('No independent parent qualification')
+    q=load(revisions[-1])
     if not q['last_state_accepted']:raise ValueError('Last parent state did not pass continuation gates')
     state=q['states'][-1]
     if Path(q['source']).resolve()!=(BASE/parent_label).resolve():raise ValueError('Parent qualification identity mismatch')

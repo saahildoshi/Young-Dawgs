@@ -8,7 +8,7 @@ from metamaterial_eval.simulation.reporting import mesh_hash
 from metamaterial_eval.simulation.solver_execution import file_hash
 
 
-@pytest.mark.parametrize('variant',['valid_partial_job','unconverged','debug_set','wrong_displacement','partial_nodes','inverted_map','overlap','imbalance','missing_strain','zero_strain','stale_rst','mutating_post','wrong_mesh'])
+@pytest.mark.parametrize('variant',['valid_partial_job','later_missing_strain','unconverged','debug_set','wrong_displacement','partial_nodes','inverted_map','overlap','imbalance','missing_strain','zero_strain','stale_rst','mutating_post','wrong_mesh'])
 def test_state_evidence_gates(tmp_path,variant):
     source=tmp_path/'source';post=tmp_path/'post';source.mkdir();post.mkdir()
     mesh=SimpleNamespace(nodes=np.array([[0.,0.],[1,0],[0,1],[.5,0],[.5,.5],[0,.5]]),triangles=np.array([[0,1,2,3,4,5]]),
@@ -25,7 +25,7 @@ def test_state_evidence_gates(tmp_path,variant):
     receipt={'status':'TIMEOUT','input_sha256':file_hash(source/'input.inp'),'process':{'returncode':-1,'artifacts':{p.name:{'sha256':file_hash(p)} for p in source.iterdir()}}}
     dump(source/'execution_receipt.json',receipt)
     (post/'input.inp').write_text('SOLVE\n' if variant=='mutating_post' else 'SET,2,1\n')
-    (post/'solver.out').write_text('The requested EPEL data is not available.' if variant=='missing_strain' else 'Synthetic readback')
+    (post/'solver.out').write_text('USE LOAD STEP 2 SUBSTEP 1 FOR LOAD CASE 0\n'+('The requested EPEL data is not available.' if variant=='missing_strain' else 'Synthetic readback')+('\nUSE LOAD STEP 3 SUBSTEP 1 FOR LOAD CASE 0\nThe requested EPEL data is not available.' if variant=='later_missing_strain' else ''))
     (post/'result_sets.txt').write_text('1 .0001 2 '+('999999' if variant=='debug_set' else '1')+' 7\n')
     (post/'stage001_gate.txt').write_text('0,0\n')
     uy=-.0002 if variant=='wrong_displacement' else -.0001
@@ -46,5 +46,12 @@ def test_state_evidence_gates(tmp_path,variant):
         # Duplicate physical loop must be caught even though every element maps positively.
         mesh.boundary=np.concatenate([mesh.boundary,mesh.boundary]);mesh.boundary_groups=np.array(['external']*6)
     r=qualify_state(source,post,mesh,1,state,tmp_path/'result')
-    assert r['accepted']==(variant=='valid_partial_job')
+    assert r['accepted']==(variant in ['valid_partial_job','later_missing_strain'])
     assert not r['eligible_for_LLM_performance_ranking']
+
+
+def test_native_time_print_precision_is_not_a_new_equilibrium_tolerance():
+    from metamaterial_eval.simulation.progressive_results import matches_printed_time
+    assert matches_printed_time(.01709375,'0.170938E-01')
+    assert not matches_printed_time(.017092,'0.170938E-01')
+    assert not matches_printed_time(float('nan'),'0.170938E-01')

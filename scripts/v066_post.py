@@ -20,9 +20,9 @@ def selected_states(source,maximum=8):
     return [{'time':rows[i]['pseudo_time'],'load_step':rows[i]['load_step'],'substep':rows[i]['substep']} for i in sorted(indices)]
 
 
-def process(label,revision='001',chunk_size=250000):
+def process(label,revision='001',chunk_size=250000,farfield=False):
     source=BASE/label;states=selected_states(source)
-    out=export(source,label+'_post'+revision,states,chunk_size=chunk_size)
+    out=export(source,label+'_post'+revision,states,chunk_size=chunk_size,farfield=farfield)
     compact(out,RUN/'progressive_compression'/out.name)
     mesh,_,_=resolve_manifest(REPO/'experiments/pipeline_v0.6.3/run_001/mesh_reproduction/attempt_002/artifact_manifest.json',root=Path.home()/'YoungDawgs-Artifacts')
     results=[]
@@ -36,11 +36,12 @@ def process(label,revision='001',chunk_size=250000):
             if p.exists():(target/name).write_bytes(p.read_bytes())
         results.append(q)
         print(label,state,q['status'],q['failures'],flush=True)
-    write_json(RUN/'mechanical_results'/(label+'_qualification'+revision+'.json'),{'source':str(source),'states':states,'results':results,
+    actual_states=[q.get('state',state) for q,state in zip(results,states)]
+    write_json(RUN/'mechanical_results'/(label+'_qualification'+revision+'.json'),{'source':str(source),'states':actual_states,'results':results,
         'last_state_accepted':bool(results[-1]['accepted']),'last_accepted':next((q for q in reversed(results) if q['accepted']),None)})
     return results
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('label');p.add_argument('--revision',default='001');p.add_argument('--chunk-size',type=int,default=250000)
-    a=p.parse_args();process(a.label,a.revision,a.chunk_size)
+    p=argparse.ArgumentParser();p.add_argument('label');p.add_argument('--revision',default='001');p.add_argument('--chunk-size',type=int,default=250000);p.add_argument('--farfield',action='store_true')
+    a=p.parse_args();process(a.label,a.revision,a.chunk_size,a.farfield)

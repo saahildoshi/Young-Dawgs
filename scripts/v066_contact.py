@@ -51,9 +51,9 @@ def main(short_gap=False):
         directory=BASE/(('internal_fixture_enabled_' if enabled else 'internal_fixture_disabled_')+revision)
         prepare_import(mesh,directory,cfg)
         source=(directory/'import.inp').read_text();source=source[:source.index('ALLSEL,ALL\nCHECK')]
+        if short_gap:source=source.replace('/FILNAME,model','/FILNAME,compression',1)
         with (directory/'input.inp').open('w',encoding='utf-8') as f:
             f.write(source)
-            if short_gap:f.write('/FILNAME,compression\n')
             component(f,'CORNERS',np.unique(mesh.triangles[:,:3])+1)
             component(f,'INNER_LOW',lower);component(f,'INNER_UP',upper)
             f.write('/GOPR\n')

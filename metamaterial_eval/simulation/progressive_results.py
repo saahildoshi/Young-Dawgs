@@ -7,8 +7,24 @@ from .microstructure_results import numeric,force_metrics,contact_metrics,unsupp
 from .progressive_compression import load,result_sets
 from .element_quality import quadratic_mapping
 from .deformed_boundaries import screen
+from .progressive_contact import validate_inventory,certify_farfield_separation
 from .reporting import write_json,mesh_hash
 from .solver_execution import file_hash,has_negative_pivots
+
+
+def matches_printed_time(actual,printed):
+    """Honor the last displayed digit; full native history remains authoritative."""
+    fields=printed.upper().replace('D','E').split('E');mantissa=fields[0];exponent=int(fields[1]) if len(fields)>1 else 0
+    decimals=len(mantissa.split('.')[1]) if '.' in mantissa else 0
+    bound=.5*10.**(exponent-decimals)
+    return bool(np.isfinite(actual) and abs(actual-float(printed))<=bound+1e-14*max(1,abs(actual)))
+
+
+def selected_state_log(text,key):
+    headers=list(re.finditer(r'USE LOAD STEP\s+(\d+)\s+SUBSTEP\s+(\d+)\s+FOR LOAD CASE',text))
+    found=[i for i,m in enumerate(headers) if tuple(map(int,m.groups()))==key]
+    if len(found)!=1:raise ValueError('Missing/duplicate native selected-set readback marker')
+    i=found[0];return text[headers[i].start():headers[i+1].start() if i+1<len(headers) else len(text)]
 
 
 def authenticate(source,export,mesh):
@@ -28,7 +44,7 @@ def authenticate(source,export,mesh):
         for name in names:
             if file_hash(directory/name)!=r['process']['artifacts'].get(name,{}).get('sha256'):raise ValueError('Changed native evidence: '+name)
     text=(export/'solver.out').read_text(errors='replace')
-    if unsupported_result_queries(text) or re.search(r'\*\*\*\s*(?:ERROR|FATAL)\s*\*\*',text,re.I):raise ValueError('Unsupported or invalid native readback')
+    if re.search(r'\*\*\*\s*(?:ERROR|FATAL)\s*\*\*',text,re.I):raise ValueError('Invalid native readback process')
     return manifest,receipt,post,provenance,result_sets((export/'result_sets.txt').read_text())
 
 
@@ -41,13 +57,15 @@ def qualify_state(source,export,mesh,index,state,output):
     try:
         manifest,receipt,post,provenance,sets=authenticate(source,export,mesh);model=manifest['model']
         key=(state['load_step'],state['substep']);converged=load(source/'nonlinear_telemetry.json')['converged_substeps']
-        matching=[r for r in converged if (r['load_step'],r['substep'])==key and abs(r['pseudo_time']-state['time'])<1e-10]
-        if len(matching)!=1 or not any((s['load_step'],s['substep'])==key and abs(s['time']-state['time'])<1e-10 for s in sets):raise ValueError('Set not independently corroborated as converged')
+        matching=[r for r in converged if (r['load_step'],r['substep'])==key]
+        if len(matching)!=1 or not any((s['load_step'],s['substep'])==key for s in sets):raise ValueError('Set not independently corroborated as converged')
         if index<1 or provenance['states'][index-1]!=state:raise ValueError('Selected export identity mismatch')
+        if unsupported_result_queries(selected_state_log((export/'solver.out').read_text(errors='replace'),key)):raise ValueError('Unsupported native records in selected state')
         source_before='\n'.join((source/'solver.out').read_text(errors='replace').splitlines()[:matching[0]['source_line']])
         if has_negative_pivots(source_before) or re.search(r'\*\*\*\s*FATAL\s*\*\*',source_before,re.I):raise ValueError('Invalidating solver diagnostic before state')
         prefix=f'stage{index:03d}'
         names=[prefix+s for s in ['_history.csv','_gate.txt','_displacements.csv','_stress.csv','_contact.csv']]
+        if provenance.get('native_farfield_status_inventory'):names.append(prefix+'_contact_status.csv')
         hashes={}
         for name in names:
             hashes[name]=file_hash(export/name)
@@ -55,14 +73,27 @@ def qualify_state(source,export,mesh,index,state,output):
         history=numeric(export/(prefix+'_history.csv'),['pseudo_time','load_step','substep','top_uy_mm','upper_rf_y_N','lower_rf_y_N'])
         if history.shape!=(1,6):raise ValueError('Missing/duplicate native history')
         time,ls,ss,uy,upper,lower=history[0]
-        if (ls,ss)!=key or abs(time-state['time'])>1e-10 or abs(uy+model['config']['height']*time)>1e-8:raise ValueError('Incorrect cumulative displacement/state')
+        source_lines=(source/'solver.out').read_text(errors='replace').splitlines()
+        printed=re.search(r'\*+\s*TIME\s*=\s*([\d.+\-Ee]+)\s+TIME INC','\n'.join(source_lines[matching[0]['source_line']:matching[0]['source_line']+3]))
+        source_time_ok=matches_printed_time(time,printed[1]) if printed else abs(time-matching[0]['pseudo_time'])<=1e-12
+        requested_time_ok=abs(state['time']-matching[0]['pseudo_time'])<=1e-12 or abs(state['time']-time)<=1e-12
+        inventory=[t for t,l,s in re.findall(r'^\s*\d+\s+([\d.Ee+\-]+)\s+(\d+)\s+(\d+)\s+\d+\s*$',(export/'result_sets.txt').read_text(),re.M) if (int(l),int(s))==key]
+        inventory_time_ok=len(inventory)==1 and matches_printed_time(time,inventory[0])
+        if (ls,ss)!=key or not source_time_ok or not requested_time_ok or not inventory_time_ok or abs(uy+model['config']['height']*time)>1e-8:raise ValueError('Incorrect cumulative displacement/state')
+        result['requested_state']=state;result['state']={'load_step':int(ls),'substep':int(ss),'time':float(time)}
         result.update(actual_history=history[0].tolist(),source_process_status=receipt['status'],native_RST_sha256=provenance['source_RST_sha256'],
             source_receipt_sha256=file_hash(source/'execution_receipt.json'),read_only_receipt_sha256=file_hash(export/'execution_receipt.json'),raw_native_field_hashes=hashes)
         try:
             result['measurement']=force_metrics(time,uy,upper,lower,**{k:model['config'][k] for k in ['width','height','thickness']})
         except ValueError as exc:result['failures'].append(str(exc))
+        status=None
         try:
-            result['contacts']=contact_metrics(numeric(export/(prefix+'_contact.csv'),['pair','element','status','pressure_i_MPa','pressure_j_MPa','gap_i_mm','gap_j_mm','contact_force_y_N']),model['contact_elements'],upper,lower)
+            contact_values=numeric(export/(prefix+'_contact.csv'),['pair','element','status','pressure_i_MPa','pressure_j_MPa','gap_i_mm','gap_j_mm','contact_force_y_N'])
+            status=numeric(export/(prefix+'_contact_status.csv'),['pair','element','status']) if provenance.get('native_farfield_status_inventory') else None
+            counts=validate_inventory(status,contact_values,model,len(mesh.triangles)) if status is not None else model['contact_elements']
+            result['contacts']=contact_metrics(contact_values,counts,upper,lower)
+            for c in result['contacts']:
+                c['stored_record_elements']=c['total_elements'];c['total_elements']=model['contact_elements'][c['pair']]
         except ValueError as exc:result['failures'].append(str(exc))
         if float((export/(prefix+'_gate.txt')).read_text().split(',')[0])!=0:result['failures'].append('Native mechanical gate failed')
         count=len(mesh.nodes);corners=np.unique(mesh.triangles[:,:3])+1
@@ -73,7 +104,11 @@ def qualify_state(source,export,mesh,index,state,output):
             if offset+n>count or not np.array_equal(v[:,0],np.arange(offset+1,offset+n+1)):raise ValueError('Missing/duplicate displacement inventory')
             u[offset:offset+n,:2]=v[:,1:];u[offset:offset+n,2]=np.linalg.norm(v[:,1:],axis=1);u[offset:offset+n,3:]=mesh.nodes[offset:offset+n]+v[:,1:];offset+=n
         if offset!=count:raise ValueError('Incomplete all-node displacement')
-        u.flush();stress=np.lib.format.open_memmap(output/'native_corner_stress_strain.npy',mode='w+',dtype=np.float64,shape=(len(corners),4));offset=0
+        u.flush()
+        if status is not None and 'contacts' in result:
+            try:result['native_farfield_separation']=certify_farfield_separation(mesh,u[:,3:5],model,status,uy)
+            except ValueError as exc:result['failures'].append(str(exc))
+        stress=np.lib.format.open_memmap(output/'native_corner_stress_strain.npy',mode='w+',dtype=np.float64,shape=(len(corners),4));offset=0
         for v in stream_csv(export/(prefix+'_stress.csv'),['node','syy_MPa','seqv_MPa','elastic_eyy','elastic_exx']):
             n=len(v)
             if offset+n>len(corners) or not np.array_equal(v[:,0],corners[offset:offset+n]):raise ValueError('Missing/duplicate native corner field inventory')

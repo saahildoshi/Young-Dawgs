@@ -83,7 +83,7 @@ def result_sets(text):
     return rows
 
 
-def multi_export_input(database,result_base,model,states,*,chunk_size=250000):
+def multi_export_input(database,result_base,model,states,*,chunk_size=250000,farfield=False):
     result_base=Path(result_base).resolve().as_posix()
     if "'" in result_base:raise ValueError('Unsupported result path')
     lines=['/BATCH','/CLEAR,START',database_resume(database).strip(),'/FILNAME,readonly','/GOPR',
@@ -97,9 +97,30 @@ def multi_export_input(database,result_base,model,states,*,chunk_size=250000):
         block=block[block.index('/POST1'):]
         offset=next(j for j in range(len(block)) if block[j:j+len(old)]==old)
         block=block[:offset]+chunked_vectors(model['specimen_nodes'],'stage001',chunk_size)+block[offset+len(old):]
+        if farfield:
+            where=block.index('*CFOPEN,stage001_contact,csv')
+            inventory=['ESEL,S,TYPE,,3','ETABLE,ERAS','ETABLE,CNSTAT,NMISC,19','ALLSEL,ALL',
+                '*CFOPEN,stage001_contact_status,csv','*VWRITE',"('pair,element,status')",'*DO,PAIR,1,2',
+                '*IF,PAIR,EQ,1,THEN','CMSEL,S,BOTTOM_CONTACT','*ELSE','CMSEL,S,TOP_CONTACT','*ENDIF',
+                '*GET,NC,ELEM,0,COUNT','EID=0','*DO,KK,1,NC','EID=ELNEXT(EID)',
+                '*GET,CSTATV,ELEM,EID,ETAB,CNSTAT','*VWRITE,PAIR,EID,CSTATV',"(F4.0,',',F12.0,',',F4.0)",
+                '*ENDDO','ALLSEL,ALL','*ENDDO','*CFCLOS']
+            block=block[:where]+inventory+block[where:]
+            revised=[];inside=False
+            for line in block:
+                if line=='*GET,STV,ELEM,EID,NMISC,19':
+                    revised.extend(['*GET,STV,ELEM,EID,ETAB,CNSTAT','*IF,STV,GT,0,THEN']);inside=True
+                elif line=='*ENDDO' and inside:
+                    revised.extend(['*ENDIF',line]);inside=False
+                else:revised.append(line)
+            block=revised
         for line in block:
             if line=='/POST1':lines+=['/POST1',"FILE,'"+result_base+"',rst"]
             elif line=='SET,LAST':lines.append(f'SET,{key[0]},{key[1]}')
+            elif line.startswith('*IF,ABS(TNOW-'):
+                lines.extend([f'*IF,LSV,NE,{key[0]},THEN','FAILG=1','*ENDIF',f'*IF,SSV,NE,{key[1]},THEN'])
+            elif line.startswith('*IF,ABS(UYTOP-'):
+                lines.append(f'*IF,ABS(UYTOP+({model["config"]["height"]:.17g})*TNOW),GT,1e-8,THEN')
             elif line=='SAVE,pilot_partial,db' or line=='/EXIT,NOSAVE':lines.append('/COM,UNQUALIFIED_STATE_EXPORTED_FOR_DIAGNOSTICS')
             else:lines.append(line.replace('stage001',f'stage{i:03d}'))
     text='\n'.join(lines+['FINISH','/EXIT,NOSAVE'])+'\n'

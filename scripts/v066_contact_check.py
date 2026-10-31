@@ -8,6 +8,7 @@ from metamaterial_eval.simulation.element_quality import quadratic_mapping
 from metamaterial_eval.simulation.deformed_boundaries import screen
 from metamaterial_eval.simulation.progressive_compression import run_progressive
 from metamaterial_eval.simulation.solver_execution import file_hash
+from metamaterial_eval.simulation.microstructure_results import observed_native_result
 from metamaterial_eval.simulation.reporting import write_json
 from scripts.v066_restart import RUN,BASE,load,compact
 from scripts.v066_contact import post_commands
@@ -18,14 +19,16 @@ def fixture_mesh():
 
 
 def post(source,mesh):
-    out=BASE/(source.name+'_post001');out.mkdir(parents=True,exist_ok=False)
-    result_base=(source/'compression').resolve().as_posix()
+    out=BASE/(source.name+'_post002');out.mkdir(parents=True,exist_ok=False)
+    receipt=load(source/'execution_receipt.json')
+    result,observation=observed_native_result(source,load(source/'simulation_manifest.json'),receipt,(source/'solver.out').read_text(errors='replace'))
+    result_base=result.with_suffix('').resolve().as_posix()
     lines=['/BATCH','/CLEAR,START',database_resume(source/'checkpoint.db').strip(),'/FILNAME,readonly','/GOPR']
     for line in post_commands(mesh):
         lines.append(line)
         if line=='/POST1':lines.extend(["FILE,'"+result_base+"',rst",'/OUTPUT,result_sets,txt','SET,LIST','/OUTPUT'])
     (out/'input.inp').write_text('\n'.join(lines+['FINISH','/EXIT,NOSAVE'])+'\n')
-    write_json(out/'provenance.json',{'source_receipt_sha256':file_hash(source/'execution_receipt.json'),'source_RST_sha256':file_hash(source/'compression.rst'),
+    write_json(out/'provenance.json',{'source_receipt_sha256':file_hash(source/'execution_receipt.json'),'source_RST_sha256':file_hash(result),'native_result_filename_observation':observation,
         'source_MODEL_database_sha256':file_hash(source/'checkpoint.db'),'input_sha256':file_hash(out/'input.inp'),'mode':'INDEPENDENT_NATIVE_POST1_NO_SOLVE_OR_SAVE'})
     r=run_progressive(out,timeout=300,solve=False,cores=1);compact(out,RUN/'internal_contact'/out.name)
     for name in ['direct_history.csv','direct_displacements.csv','direct_stress.csv','internal_contact.csv']:

@@ -65,13 +65,14 @@ def assemble(in_progress=False):
     measurements=[{**baseline['accepted_measurements'][0],'source':'v065 authenticated accepted parent'}]
     snapshots=[{'directory':str(artifact_root()/'solver/v065/full_recovery_001_qualified'),'label':'baseline_000005','engineering_strain':.00005}]
     qualifications=[];all_converged=[];cuts=0;updates=0;failure_jobs=[]
-    for path in sorted((RUN/'mechanical_results').glob('fine*_qualification001.json')):
+    for path in sorted((RUN/'mechanical_results').glob('fine*_qualification[0-9][0-9][0-9].json')):
         data=load(path)
+        revision=path.stem[-3:]
         for i,q in enumerate(data['results'],1):
             qualifications.append(q)
             if q['accepted']:
                 measurements.append({**q['measurement'],'source':str(q['source']),'load_step':q['state']['load_step'],'substep':q['state']['substep']})
-                snapshots.append({'directory':str(BASE/(Path(q['source']).name+'_qualified001')/f'state{i:03d}'),
+                snapshots.append({'directory':str(BASE/(Path(q['source']).name+'_qualified'+revision)/f'state{i:03d}'),
                     'label':Path(q['source']).name+f'_state{i:03d}','engineering_strain':q['state']['time']})
     for path in sorted(BASE.glob('fine_stage*/execution_receipt.json')):
         r=load(path)

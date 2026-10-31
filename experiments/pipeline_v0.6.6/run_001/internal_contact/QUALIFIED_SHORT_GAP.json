@@ -1,0 +1,93 @@
+{
+  "fixtures": [
+    {
+      "all_flagged_pairs_are_the_intended_opposed_walls": false,
+      "boundary_screen": {
+        "boundary_loops": 1,
+        "edges_exceeding_requested_tolerance": 2,
+        "limitation": "Conservative spatial-index polygonal screen with exact quadratic chord-deviation bounds; uncertain near-contact points need separate native-contact/exact-curve verification.",
+        "maximum_exact_chord_error_bound_mm": 1.4724631284194187e-07,
+        "minimum_area_ratio": null,
+        "minimum_near_sampled_distance_mm": 0.0,
+        "minimum_separation_scope": "Only near pairs inside twice chord-error tolerance are queried; no exhaustive opposing-wall minimum claimed",
+        "orientation_inverted_loops": [],
+        "original_edges": 294,
+        "passed": false,
+        "pore_loops": 0,
+        "status": "OVERLAP_OR_NEAR_CONTACT_UNQUALIFIED",
+        "subdivided_segments": 1229,
+        "suspicious_pair_count": 2,
+        "tolerance_mm": 1e-07
+      },
+      "enabled": false,
+      "engineering_strain": 0.06451612903225806,
+      "fixture_mechanical_gates_passed": false,
+      "independent_native_readback": true,
+      "independent_repeat_max_column_scaled_error": {
+        "direct_displacements.csv": 0.0,
+        "direct_history.csv": 0.0,
+        "direct_stress.csv": 0.0
+      },
+      "invalid_deformed_mappings": 0,
+      "lower_RF_N": 9.847120502622943,
+      "minimum_deformed_determinant_mm2": 8.940767535307795e-05,
+      "platen_travel_mm": 0.02,
+      "signed_support_balance_relative": 5.917214004568261e-08,
+      "source": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v066\\internal_fixture_disabled_002",
+      "source_receipt_sha256": "7573b9826f1059c97017b6c73f02975bb933a8146bf106fa0628c0c16fe1658c",
+      "upper_RF_N": -9.84711991994775
+    },
+    {
+      "active_elements": 114,
+      "all_flagged_pairs_are_the_intended_opposed_walls": true,
+      "boundary_screen": {
+        "boundary_loops": 1,
+        "edges_exceeding_requested_tolerance": 2,
+        "limitation": "Conservative spatial-index polygonal screen with exact quadratic chord-deviation bounds; uncertain near-contact points need separate native-contact/exact-curve verification.",
+        "maximum_exact_chord_error_bound_mm": 1.336793446404612e-07,
+        "minimum_area_ratio": null,
+        "minimum_near_sampled_distance_mm": 0.0,
+        "minimum_separation_scope": "Only near pairs inside twice chord-error tolerance are queried; no exhaustive opposing-wall minimum claimed",
+        "orientation_inverted_loops": [],
+        "original_edges": 294,
+        "passed": false,
+        "pore_loops": 0,
+        "status": "OVERLAP_OR_NEAR_CONTACT_UNQUALIFIED",
+        "subdivided_segments": 1120,
+        "suspicious_pair_count": 275,
+        "tolerance_mm": 1e-07
+      },
+      "enabled": true,
+      "engineering_strain": 0.06451612903225806,
+      "fixture_mechanical_gates_passed": true,
+      "gap_sign": "Native positive gap record is penetration; negative is opening; pressure and force are independently read",
+      "general_contact_elements": 118,
+      "independent_native_readback": true,
+      "independent_repeat_max_column_scaled_error": {
+        "direct_displacements.csv": 0.0,
+        "direct_history.csv": 0.0,
+        "direct_stress.csv": 0.0,
+        "internal_contact.csv": 0.0
+      },
+      "initial_opposed_wall_normal_dot_product": -1.0,
+      "internal_signed_force_balance_relative": 0.0002768629944267674,
+      "invalid_deformed_mappings": 0,
+      "lower_RF_N": 38.95905166779433,
+      "lower_wall_contact_FY_N": 14.642477244138718,
+      "max_endpoint_pressure_MPa": 41.1224250793457,
+      "max_stored_endpoint_penetration_mm": 3.144653959452626e-08,
+      "minimum_deformed_determinant_mm2": 9.370812937405917e-05,
+      "only_opposed_exposed_walls_selected": true,
+      "platen_travel_mm": 0.02,
+      "signed_support_balance_relative": 4.061398911238125e-08,
+      "source": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v066\\internal_fixture_enabled_002",
+      "source_receipt_sha256": "2c19289adcc05c69d634675d8d4c6dd486ec9094ce9d249b256012540543fba8",
+      "tiny_contact_overlap_interpretation": "Only intended native-contact wall pairs may approach/cross within the native1e-5mm penetration gate; this exception never applies to the platen-only microstructure",
+      "upper_RF_N": -38.95905325007689,
+      "upper_wall_contact_FY_N": -14.646532326936722
+    }
+  ],
+  "full_microstructure_internal_contact": "NOT_CONFIGURED; fine continuation retains exact v065 platen-only native restart",
+  "scalability": "Full213150pore-edge GC was not benchmarked; small success does not establish full model contact or postclosure response",
+  "status": "PASS_SMALL_NATIVE_INTERNAL_CONTACT_ONLY"
+}

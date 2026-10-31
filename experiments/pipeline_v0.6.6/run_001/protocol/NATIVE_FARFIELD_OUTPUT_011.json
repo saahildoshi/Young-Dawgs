@@ -1,0 +1,8 @@
+{
+  "documentation_scope": "Adjacent2024R2 documentation explains absent farfield records. Actual2024R1 native ETABLE probe establishes supported behavior.",
+  "method": "Export full2598-element native whole-status inventory; export pressure/gap/FY only when native whole status>0. Do not fill absent farfield field values. Require exact inventory/record matching and analytic quadratic deformed-edge separation from the finite platen for every status0 edge.",
+  "native_probe": "farfield_status_probe_001: ETABLE NMISC19 whole-element status returns119farfield zeros atLS4SS7 with zero native warnings/errors. CONT STAT returns fractional nodal averages and is not used for whole-element classification.",
+  "observation": "At LS4SS5 and later, direct queries to some platen elements produce native not-stored warnings. Whole export001 quarantined; no stale/default contact values accepted.",
+  "reference": "https://ansyshelp.ansys.com/public/Views/Secured/corp/v242/en/ans_elem/Hlp_E_CONTA172.html",
+  "unchanged_gates": "Support/contact force<=1%, positive native pressure/engagement, stored endpoint pen<=1e-5mm, all-nodeU/nativeS/EPEL complete, all mappings positive, no unmodeled internal overlaps. Farfield separation floating-point guard1e-8mm, no geometry or physical solver change."
+}

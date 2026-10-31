@@ -1,0 +1,33 @@
+{
+  "TRI6": 1261670,
+  "connected_exclusions": "Native general-contact topology/normal exclusions; verify exact generated exposed-face coverage and baseline no spurious force coupling. No explicit same-body SELF exclusion that would disable required folding contact.",
+  "contact_acceptance": "Full native whole-element contact availability, positive actual engagement when closure occurs; stored endpoint penetration<=1e-5mm, equal/opposite native internal forces, explanatory target/skin IDs for boundary contact; uncertain or unexplained crossing unqualified.",
+  "fallback": "If full setup/cost/initial response/contact/geometric gates fail, retain original valid branch and document precise HOLD. Do not manufacture30% fields.",
+  "first_mechanical_stage": 0.001,
+  "general_contact": "GCGEN NEW42,0,PART,SELECT on PLANE183; GCDEF SYMM ALL SELF,mat1,real100; pure penalty/default general-contact options as validated on fixture; FKN100,FTOLN-1e-5,MU0",
+  "initial_response_check": "At0.1%, independently require force within0.5% of accepted platen-only reference1.199313799677024N, no unmodeled geometry crossing and all standard equilibrium/mapping/output gates. Do not splice response branches.",
+  "material": "Unchanged provisional E1000MPa,nu0.3,t1mm,plane stress,NLGEOM ON; no plasticity/stabilization/geometry edits",
+  "mesh_preserved": true,
+  "mesh_semantic_sha256": "e26863263774cf86c777b1485ac0e639216a91644007c4da272469a7447000bc",
+  "next_targets": [
+    0.01,
+    0.05,
+    0.1,
+    0.2,
+    0.3,
+    0.4
+  ],
+  "pore_edges": 213150,
+  "primary_target": 0.3,
+  "reason": "Actual quadratic self-crossing at1% on external/top faces; platen-only state rejected, highest accepted0.809375%. Small connected general-contact fixture independently passed.",
+  "resource_budget": "Original six-hour campaign clock retained,90min/stage,30min no-progress; one native job,twoSMP,noRSS cap,HealthPolicy,40GiB disk reserve",
+  "schema": "young-dawgs-v0.6.6-conditional-full-self-contact",
+  "scope": "One corrective same-geometry/fine-mesh model, not a batch across designs. New contact topology requires a fresh model; do not disguise it as v065 native-state continuation.",
+  "setup_gate": "Actual full native skin inventory equals all243576 oriented quadratic exposed edges, unchanged nodes/structural elements/platen pairs, normal native exit and readable model DB.",
+  "source_database_sha256": "34a17675246a77f243ca5c001963fdcd1016f970a9b600036aa5f89d57e3c3d8",
+  "source_geometry_sha256": "4700d4581d2f86c19e382eb2406a57f98724e478c3391acc4d3dc0425d4b8dc1",
+  "stretch_target": 0.4,
+  "structural_nodes": 2766505,
+  "surface_edges": 243576,
+  "surface_selection": "ALL exposed deformable faces including original top/bottom pair-contact faces; first collision involves top/external faces. Rigid platen pair definitions retained; no general rigid target added."
+}

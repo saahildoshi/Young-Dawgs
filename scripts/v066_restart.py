@@ -33,6 +33,8 @@ def compact(source,target):
     for path in source.glob('stage*_gate.txt'):shutil.copy2(path,target/path.name)
     for path in source.glob('stage*_contact.csv'):
         if path.stat().st_size<1024**2:shutil.copy2(path,target/path.name)
+    for path in source.glob('stage*_contact_status.csv'):
+        if path.stat().st_size<1024**2:shutil.copy2(path,target/path.name)
 
 
 def endpoint_states(directory,targets):
@@ -45,16 +47,16 @@ def endpoint_states(directory,targets):
     return states
 
 
-def export(directory,label,states,*,chunk_size=250000):
+def export(directory,label,states,*,chunk_size=250000,farfield=False):
     directory=Path(directory);out=BASE/label;out.mkdir(parents=True,exist_ok=False)
     manifest=load(directory/'simulation_manifest.json')
     database=directory/'checkpoint.db' if (directory/'checkpoint.db').exists() else directory/'compression.rdb'
-    text=multi_export_input(database,directory/'compression',manifest['model'],states,chunk_size=chunk_size)
+    text=multi_export_input(database,directory/'compression',manifest['model'],states,chunk_size=chunk_size,farfield=farfield)
     (out/'input.inp').write_text(text,encoding='utf-8')
     write_json(out/'provenance.json',{'source':str(directory.resolve()),'source_execution_receipt_sha256':file_hash(directory/'execution_receipt.json'),
         'source_RST_sha256':file_hash(directory/'compression.rst'),'source_database_filename':database.name,'source_database_sha256':file_hash(database),
         'source_manifest_sha256':file_hash(directory/'simulation_manifest.json'),'states':states,'input_sha256':file_hash(out/'input.inp'),
-        'mode':'READ_ONLY_NATIVE_MULTI_SET_NO_SOLVE_OR_SAVE'})
+        'mode':'READ_ONLY_NATIVE_MULTI_SET_NO_SOLVE_OR_SAVE','native_farfield_status_inventory':farfield})
     r=run_progressive(out,timeout=1800,solve=False,cores=1)
     print(label,r['status'],r['process']['returncode'],flush=True)
     return out
