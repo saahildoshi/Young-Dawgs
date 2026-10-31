@@ -1,0 +1,284 @@
+{
+  "absolute_elastic_components_percentiles": [
+    [
+      9.279726006386556e-05,
+      9.578933138663459e-05
+    ],
+    [
+      0.0009563689379312594,
+      0.0006161331594927639
+    ],
+    [
+      0.0016219870150472448,
+      0.0010658648377127305
+    ],
+    [
+      0.00709507287624056,
+      0.004597990621012862
+    ]
+  ],
+  "accepted": true,
+  "actual_TRI6": 1261670,
+  "actual_history": [
+    0.001,
+    1.0,
+    2.0,
+    -0.01024,
+    -1.203355235346389,
+    1.202968494845688
+  ],
+  "actual_native_corner_nodes": 752212,
+  "actual_nodes": 2766505,
+  "actual_postsolution_general_contact_detection_keyopt4": 2,
+  "boundary_screen_summary": {
+    "boundary_loops": 413,
+    "edges_exceeding_requested_tolerance": 0,
+    "examples": [],
+    "limitation": "Conservative spatial-index polygonal screen with exact quadratic chord-deviation bounds; uncertain near-contact points need separate native-contact/exact-curve verification.",
+    "maximum_exact_chord_error_bound_mm": 9.999600345735961e-07,
+    "minimum_area_ratio": 0.9963862992396506,
+    "minimum_near_sampled_distance_mm": null,
+    "minimum_separation_scope": "Only near pairs inside twice chord-error tolerance are queried; no exhaustive opposing-wall minimum claimed",
+    "orientation_inverted_loops": [],
+    "original_edges": 243576,
+    "passed": true,
+    "pore_loops": 412,
+    "status": "PASS_BOUNDED_QUADRATIC_BOUNDARY_SCREEN",
+    "subdivided_segments": 250772,
+    "suspicious_pair_count": 0,
+    "tolerance_mm": 1e-06
+  },
+  "contact_scope": "PLATEN_AND_GENERAL_SELF_CONTACT",
+  "contacts": [
+    {
+      "closed_elements": 769,
+      "contact_element_force_y_N": -1.2029684935993,
+      "max_stored_endpoint_penetration_mm": 1.1276884e-08,
+      "max_stored_endpoint_pressure_MPa": 6.7797031,
+      "minimum_signed_gap_mm": -0.0014941839,
+      "pair": "bottom",
+      "pilot_reaction_y_N": 1.202968494845688,
+      "signed_opposition_residual_relative": 1.0360937208060715e-09,
+      "stored_record_elements": 1368,
+      "total_elements": 1368
+    },
+    {
+      "closed_elements": 652,
+      "contact_element_force_y_N": 1.2033552353833,
+      "max_stored_endpoint_penetration_mm": 5.711275e-09,
+      "max_stored_endpoint_pressure_MPa": 3.4135098,
+      "minimum_signed_gap_mm": -0.00049670471,
+      "pair": "top",
+      "pilot_reaction_y_N": -1.203355235346389,
+      "signed_opposition_residual_relative": 3.067333542224786e-11,
+      "stored_record_elements": 1230,
+      "total_elements": 1230
+    }
+  ],
+  "corner_field_columns": [
+    "SYY_MPa",
+    "SEQV_MPa",
+    "elastic_EYY",
+    "elastic_EXX"
+  ],
+  "corner_field_percentiles": [
+    [
+      -8.792978826276686,
+      3.874327552367237e-11,
+      -0.00709507287624056,
+      -0.004597990621012862
+    ],
+    [
+      -1.7035086330956253,
+      0.00017995585966152679,
+      -0.0016211452648555932,
+      -0.0006510581926548481
+    ],
+    [
+      -0.014639751028934155,
+      0.2710946843396208,
+      -4.816555596375752e-05,
+      2.249143431105748e-05
+    ],
+    [
+      0.179246162737961,
+      1.2265093660504296,
+      0.00014393501130143275,
+      0.0005442574827300056
+    ],
+    [
+      0.47220483991409906,
+      1.9135073157339042,
+      0.0003685826841997871,
+      0.0010030720324501747
+    ],
+    [
+      3.32208307088957,
+      9.948925408277436,
+      0.002518123967841374,
+      0.004172789322150374
+    ]
+  ],
+  "deformed_corner_shape_diagnostics": {
+    "angle_percentiles_deg": [
+      11.406204262359703,
+      22.046050328758223,
+      46.58013822916611,
+      56.99371801524253,
+      58.70656576085417,
+      59.9998666395319
+    ],
+    "finite_aspect_percentiles": [
+      1.1547038478369027,
+      1.185561493361959,
+      1.5399403823959563,
+      2.5397448780221925,
+      3.152224354707895,
+      5.183324162000247
+    ],
+    "minimum_angle_deg": 11.406204262359703,
+    "nonfinite_aspect_count": 0,
+    "nonpositive_corner_triangle_count": 0,
+    "scope": "Corner-based shape diagnostics, not a replacement for the whole-domain quadratic Jacobian check or mechanical mesh convergence. Frozen10deg gate applies to the original selected mesh."
+  },
+  "displacement_ranges_mm": [
+    [
+      -0.005068244646792272,
+      -0.01073670469214122,
+      1.12768846881947e-08
+    ],
+    [
+      0.002425992198219297,
+      0.001494183846007311,
+      0.011452025439865635
+    ]
+  ],
+  "eligible_for_LLM_performance_ranking": false,
+  "export": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v066\\fine_nodal_stage01_001_post001",
+  "failures": [],
+  "field_artifact_directory": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v066\\fine_nodal_stage01_001_qualified001\\state002",
+  "field_locations": "U at every native node; SYY/SEQV/EPEL Y/X native corner-node averages, no invented midside stress",
+  "general_contact": {
+    "boundary_interpretation": "Only actual closed native target-segment links explain bounded-screen contact intersections; native penetration remains within1e-5mm. No unmodeled pair accepted.",
+    "closed_skins": 0,
+    "columns": [
+      "element",
+      "status",
+      "pi_MPa",
+      "pj_MPa",
+      "pmean_MPa",
+      "peni_mm",
+      "penj_mm",
+      "fy_N",
+      "target_i",
+      "target_j",
+      "i",
+      "j",
+      "mid",
+      "fx_N"
+    ],
+    "explained_boundary_pair_count": 0,
+    "explained_pair_examples": [],
+    "farfield_skins": 243576,
+    "force_scope": "Symmetric native contact-skin normal forces; target-role force projection is also part of native assembly. Platen signed equilibrium independently required.",
+    "gc_fields_sha256": "ada64ce6cc10dd69ed4006f41ad8c8db8150e12dafe1521d3397c851f7248363",
+    "gc_status_sha256": "022b40875245d72a9c4b86585afc7691c4f8e3588082096741d37ce272871dbb",
+    "general_contact_skin_count": 243576,
+    "max_stored_endpoint_penetration_mm": 0,
+    "max_stored_pressure_MPa": 0,
+    "native_assembled_contact_force_XY_N": null,
+    "native_assembled_contact_force_balance_relative": null,
+    "native_last_iteration_diagnostic_penetration_mm": 0,
+    "native_pair_count_field_limitation": "General-contact CND active_elements may be -1; whole-element status inventory is authoritative",
+    "native_skin_FX_balance_relative": null,
+    "native_skin_FY_balance_relative": 0.0,
+    "native_skin_normal_FX_sum_N": null,
+    "native_skin_normal_FY_sum_N": 0,
+    "status": "PASS_FULL_NATIVE_GENERAL_CONTACT_CHECKS",
+    "stored_record_skins": 0,
+    "topology_sha256": "190df142475fcdb84ea474ad75323da551f74fb83429db76883c22df93dda7d7"
+  },
+  "initial_response_comparison": {
+    "general_contact_force_N": 1.203355235346389,
+    "passed": true,
+    "platen_only_reference_force_N": 1.199313799677024,
+    "prospective_tolerance": 0.005,
+    "relative_difference": 0.0033697900169691627
+  },
+  "internal_self_contact": "CONFIGURED_NATIVE_GENERAL_CONTACT",
+  "invalid_deformed_mappings": 0,
+  "large_field_artifacts": {
+    "corner_node_ids.npy": {
+      "bytes": 6017824,
+      "sha256": "9305e0758ca8542f19da13d582ddeaacba2904f2d0390ae83f7882edbc152056"
+    },
+    "native_corner_stress_strain.npy": {
+      "bytes": 24070912,
+      "sha256": "d38e0b4c8987d437d17fc7e82d5297d1b573bf17842adadc8a95df5d76b5b595"
+    },
+    "native_displacement.npy": {
+      "bytes": 110660328,
+      "sha256": "ad4bf2e2c763415d2ead1842118f63f57c9a9de92da01ca99fe1496d1dc8a7e3"
+    }
+  },
+  "measurement": {
+    "compression_displacement_mm": 0.01024,
+    "engineering_compression_strain": 0.001,
+    "lower_rf_y_N": 1.202968494845688,
+    "nominal_compression_stress_MPa": 0.1175151597017958,
+    "pseudo_time": 0.001,
+    "reaction_balance_relative": 0.00032138514824315607,
+    "upper_rf_y_N": -1.203355235346389
+  },
+  "mechanical_mesh_convergence": "UNQUALIFIED",
+  "minimum_deformed_determinant_mm2": 2.397654756573212e-06,
+  "model_variant": "FINE_FULL_SELF_CONTACT_NODAL_V066_021",
+  "native_RST_sha256": "b37aaa3e6a36479614636c38d5b7927ebd00a603490ed0b2783297c3d9319b8b",
+  "native_farfield_separation": [
+    {
+      "minimum_certified_axis_separation_mm": null,
+      "native_farfield_elements": 0,
+      "pair": "bottom"
+    },
+    {
+      "minimum_certified_axis_separation_mm": null,
+      "native_farfield_elements": 0,
+      "pair": "top"
+    }
+  ],
+  "percentile_levels": [
+    0,
+    1,
+    50,
+    95,
+    99,
+    100
+  ],
+  "raw_native_field_hashes": {
+    "stage002_contact.csv": "3e5068d1e68b4c8d0808027f6a244437e96f839dcb9024154c70d05b1311d5cb",
+    "stage002_contact_status.csv": "635a5de46bc2eb8e317bb288b7371465b13633c62d346fa403fa8f08add1a8df",
+    "stage002_displacements.csv": "92ac3918ff35cde148e016730dfae16b0425a0deac99895ba9820ba5e7839197",
+    "stage002_gate.txt": "411c570d577d10eca2bcd7600d97f9d4addf2dc13bc9e498996ef1433f05dec8",
+    "stage002_gc_balance.csv": "ce8cc41f957591ce1cbd0793f3c7a1b349f260bcd367cdac061337f1f3719c0a",
+    "stage002_gc_fields.csv": "ada64ce6cc10dd69ed4006f41ad8c8db8150e12dafe1521d3397c851f7248363",
+    "stage002_gc_status.csv": "022b40875245d72a9c4b86585afc7691c4f8e3588082096741d37ce272871dbb",
+    "stage002_history.csv": "9bf073d157aee5d9405fbc20db5e303eecb83738aa419a8bd46f43007a2883d8",
+    "stage002_stress.csv": "2b502e25b87be06d084e7b12014c3c3f422a412e5f074fe8e0b44d76316a815b"
+  },
+  "read_only_receipt_sha256": "1d35887a0bd30f3438b550612144260f3c15316149579ad640eaa987020b59f6",
+  "requested_state": {
+    "load_step": 1,
+    "substep": 2,
+    "time": 0.001
+  },
+  "schema": "young-dawgs-v0.6.6-actual-native-state",
+  "source": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v066\\fine_nodal_stage01_001",
+  "source_process_status": "PROCESS_EXITED",
+  "source_receipt_sha256": "e95c18f79a0a26612bace50053ef9ce2fdd5b42ead571cb4f1f6eae3cc808b68",
+  "state": {
+    "load_step": 1,
+    "substep": 2,
+    "time": 0.001
+  },
+  "status": "MECHANICALLY_ACCEPTED_SINGLE_MESH_EXPLORATORY"
+}
