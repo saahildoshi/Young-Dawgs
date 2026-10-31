@@ -1,0 +1,18 @@
+retention_endstep_reference_post001 PROCESS_EXITED 1
+rectangle_endstep_control_001_post001 PROCESS_EXITED 1
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\sd22446\Projects\Young-Dawgs-VSCode\scripts\v066_control_recovery.py", line 98, in <module>
+    {'prepare-small':prepare_small,'run-small':execute_small,'qualify-small':qualify_small,'prepare-fine':prepare_fine,'run-fine':execute_fine}[a.action]()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\sd22446\Projects\Young-Dawgs-VSCode\scripts\v066_control_recovery.py", line 51, in qualify_small
+    assert float((a/f'stage{stage:03d}_gate.txt').read_text().split(',')[0])==0
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\sd22446\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sd22446\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v066\\retention_endstep_reference_post001\\stage001_gate.txt'

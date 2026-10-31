@@ -12,20 +12,37 @@ from metamaterial_eval.simulation.reporting import write_json
 from metamaterial_eval.simulation.solver_execution import file_hash
 
 PROTOCOL=RUN/'protocol/CONTACT_ONSET_CONTROL_RECOVERY_025.json'
-SMALL='rectangle_endstep_control_001';FINE='fine_nodal_recovery01_001'
+REFERENCE='rectangle_endstep_reference_all_002';SMALL='rectangle_endstep_control_002';FINE='fine_nodal_recovery01_001'
 
 
 def endstep_input(ls,ss,previous,target,model):
     lines=['/BATCH','/CLEAR,START','RESUME,compression,rdb','/FILNAME,compression','/GOPR','/SOLU',
-        f'ANTYPE,STATIC,REST,{ls},{ss},ENDSTEP','SOLVE']
+        f'ANTYPE,STATIC,REST,{ls},{ss},ENDSTEP','OUTRES,ERASE','OUTRES,ALL,NONE']
+    lines+=['OUTRES,'+item+',ALL' for item in ['NSOL','RSOL','STRS','EPEL','CONT','MISC']]+['SOLVE']
     lines+=telemetry_commands(model['controls']['top'])+[f'NLHIST,NSOL,RFLOW,F,Y,{model["controls"]["bottom"]}']
     lines+=load_commands(target,previous,model['controls']['top'],model['config']['height'],initial=5e-5,maximum=2.5e-4,minimum=1e-6,all_fields=True)
     lines=['NEQIT,12' if line=='NEQIT,24' else line for line in lines]
     return '\n'.join(lines+['FINISH','SAVE,checkpoint,db,,MODEL','/EXIT,NOSAVE'])+'\n'
 
 
+
+def prepare_reference():
+    source=BASE/'restart_retention_probe_001';d=BASE/REFERENCE;d.mkdir(parents=True,exist_ok=False)
+    text=(source/'input.inp').read_text()
+    for item in ['NSOL','RSOL','STRS','EPEL','CONT','MISC']:text=text.replace('OUTRES,'+item+',LAST','OUTRES,'+item+',ALL')
+    (d/'input.inp').write_text(text);m=load(source/'simulation_manifest.json')
+    m.update(input_sha256=file_hash(d/'input.inp'),protocol_sha256=file_hash(PROTOCOL),execution_scope='FRESH_SMALL_FIVE_SUBSTEP_ALL_FIELD_ENDSTEP_REFERENCE')
+    write_json(d/'simulation_manifest.json',m);compact(d,RUN/'restart_validation'/('prepared_'+REFERENCE));print(d,flush=True)
+
+
+def execute_reference():
+    committed(PROTOCOL);committed(RUN/'restart_validation'/('prepared_'+REFERENCE)/'input.inp')
+    d=BASE/REFERENCE;r=run_progressive(d,timeout=180,no_progress_seconds=120,cores=2)
+    compact(d,RUN/'restart_validation'/REFERENCE);print(REFERENCE,r['status'],r['process']['returncode'],flush=True)
+
+
 def prepare_small():
-    d=BASE/SMALL;m=authenticated_restart_copy(BASE/'restart_retention_probe_001',d)
+    d=BASE/SMALL;m=authenticated_restart_copy(BASE/REFERENCE,d)
     (d/'input.inp').write_text(endstep_input(1,3,.003,.005,m['model']))
     m.update(input_sha256=file_hash(d/'input.inp'),protocol_sha256=file_hash(PROTOCOL),previous_strain=.003,target_strain=.005,targets=[.005],execution_scope='SMALL_NATIVE_ENDSTEP_CONTROL_QUALIFICATION',execution_cores=2)
     write_json(d/'simulation_manifest.json',m);compact(d,RUN/'restart_validation'/('prepared_'+SMALL));print(d,flush=True)
@@ -38,12 +55,12 @@ def execute_small():
 
 
 def qualify_small():
-    parent=BASE/'restart_retention_probe_001';source=BASE/SMALL
+    parent=BASE/REFERENCE;source=BASE/SMALL
     assert load(source/'execution_receipt.json')['process']['returncode']==0
     last=endpoint_states(source,[.005])[0];assert last['load_step']==2
     before=[{'time':.003,'load_step':1,'substep':3},{'time':.005,'load_step':1,'substep':5}]
     after=[before[0],last]
-    a=export(parent,'retention_endstep_reference_post001',before,chunk_size=128)
+    a=export(parent,'retention_endstep_reference_post002',before,chunk_size=128)
     b=export(source,SMALL+'_post001',after,chunk_size=128)
     compact(a,RUN/'restart_validation'/a.name);compact(b,RUN/'restart_validation'/b.name)
     comparisons=[]
@@ -94,5 +111,5 @@ def execute_fine():
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('action',choices=['prepare-small','run-small','qualify-small','prepare-fine','run-fine']);a=p.parse_args()
-    {'prepare-small':prepare_small,'run-small':execute_small,'qualify-small':qualify_small,'prepare-fine':prepare_fine,'run-fine':execute_fine}[a.action]()
+    p=argparse.ArgumentParser();p.add_argument('action',choices=['prepare-reference','run-reference','prepare-small','run-small','qualify-small','prepare-fine','run-fine']);a=p.parse_args()
+    {'prepare-reference':prepare_reference,'run-reference':execute_reference,'prepare-small':prepare_small,'run-small':execute_small,'qualify-small':qualify_small,'prepare-fine':prepare_fine,'run-fine':execute_fine}[a.action]()
