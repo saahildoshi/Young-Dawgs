@@ -72,7 +72,9 @@ def qualify_general_contact(source,export,prefix,manifest,mesh,overlap,state,set
     cnd_pen=max([0]+[r['penetration_or_gap_mm'] for r in last.values()])
     if cnd_pen>1e-5:raise ValueError('Converged-step native general-contact diagnostic penetration exceeds1e-5mm')
     return {'status':'PASS_FULL_NATIVE_GENERAL_CONTACT_CHECKS','general_contact_skin_count':len(status),'farfield_skins':int(np.sum(status[:,1]==0)),
-        'stored_record_skins':len(fields),'closed_skins':closed,'max_stored_pressure_MPa':pressure,'max_stored_endpoint_penetration_mm':penetration,
+        'stored_record_skins':len(fields),'closed_skins':closed,
+        'closed_original_surface_groups':{str(g):int(np.sum(mesh.boundary_groups[indices[status[:,1]>=2]]==g)) for g in np.unique(mesh.boundary_groups[indices[status[:,1]>=2]])},
+        'max_stored_pressure_MPa':pressure,'max_stored_endpoint_penetration_mm':penetration,
         'native_last_iteration_diagnostic_penetration_mm':cnd_pen,'native_pair_count_field_limitation':'General-contact CND active_elements may be -1; whole-element status inventory is authoritative',
         'native_skin_normal_FY_sum_N':fy,'native_skin_normal_FX_sum_N':fx,'native_skin_FY_balance_relative':ybalance,'native_skin_FX_balance_relative':xbalance,
         'native_assembled_contact_force_XY_N':assembled,'native_assembled_contact_force_balance_relative':assembled_residual,
