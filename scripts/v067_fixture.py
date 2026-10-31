@@ -89,11 +89,15 @@ def make_case(label, fkn):
     lines += [f'EN,{ne+3+i},{a+1},{b+1},{mid+1}' for i, (a, b, mid) in enumerate(top_edges)]
     lines += ['ALLSEL,ALL', 'ESEL,S,TYPE,,1', 'GCGEN,NEW,42,0,PART,SELECT', 'GCGEN,SELECT', 'CM,ALL_GC,ELEM', 'ALLSEL,ALL']
     lines += component('PHYSICAL_NODES', np.unique(boundary[groups != 'artificial_cut']) + 1)
-    lines += ['CMSEL,S,PHYSICAL_NODES', 'ESLN,S,1,ALL', 'ESEL,R,TYPE,,4', 'CM,INTERNAL_GC,ELEM',
+    lines += ['CMSEL,S,PHYSICAL_NODES', 'ESLN,S,1,ALL', 'CMSEL,R,ALL_GC', 'CM,INTERNAL_GC,ELEM',
               'CMSEL,S,ALL_GC', 'CMSEL,U,INTERNAL_GC', 'EDELE,ALL', 'ALLSEL,ALL',
-              'KEYOPT,4,2,1', 'KEYOPT,4,4,2', 'KEYOPT,4,10,0', f'R,100,,,{fkn},-1e-5', 'GCDEF,SYMM,ALL,SELF,1,100',
+              '*GET,ETMAX,ETYP,0,NUM,MAX', '*DO,IT,4,ETMAX', 'KEYOPT,IT,2,1', 'KEYOPT,IT,4,2', 'KEYOPT,IT,10,0', '*ENDDO',
+              f'R,100,,,{fkn},-1e-5', 'GCDEF,SYMM,ALL,SELF,1,100',
               f'D,{pilot},UX,0', f'D,{pilot},UY,0', f'D,{pilot},ROTZ,0', '/GOPR', '/OUTPUT,local_inventory,txt',
               'ETLIST,ALL', 'RLIST,ALL', 'GCDEF,LIST', 'CMSEL,S,INTERNAL_GC', '*GET,NGC,ELEM,0,COUNT', '*STATUS,NGC', 'ALLSEL,ALL', '/OUTPUT',
+              'CMSEL,S,INTERNAL_GC', '*CFOPEN,gc_topology,csv', '*VWRITE', "('element,i,j,mid,type,section')", 'IE=0', '*DO,KK,1,NGC', 'IE=ELNEXT(IE)',
+              '*GET,NI,ELEM,IE,NODE,1', '*GET,NJ,ELEM,IE,NODE,2', '*GET,NM,ELEM,IE,NODE,3', '*GET,TY,ELEM,IE,ATTR,TYPE', '*GET,SC,ELEM,IE,ATTR,SECN',
+              '*VWRITE,IE,NI,NJ,NM,TY,SC', "(F12.0,5(',',F12.0))", '*ENDDO', '*CFCLOS', 'ALLSEL,ALL',
               'FINISH', 'SAVE,initial,db', '/SOLU', 'ANTYPE,STATIC', 'NLGEOM,ON', 'EQSLV,SPARSE', 'NROPT,FULL', 'LNSRCH,ON',
               'CNVTOL,F,,.005,2,1e-8', 'NEQIT,24', 'AUTOTS,ON', 'RESCONTROL,DEFINE,ALL,1,-1,,3',
               'NLDIAG,CONT,ITER', 'NLDIAG,NRRE,ON,2', 'NLDIAG,EFLG,ON,2', 'OUTRES,ALL,ALL']
@@ -114,7 +118,7 @@ def make_case(label, fkn):
                 'input_sha256': file_hash(d / 'input.inp'), 'GC_FKN': fkn, 'platen_FKN': 100, 'FTOLN_mm': -1e-5,
                 'targets': targets, 'measured_parent_count': len(times), 'diagnostic_extrapolation_after': times[-1],
                 'model': {'specimen_nodes': n, 'specimen_TRI6': ne, 'user_model_nodes': n+3,
-                          'user_model_elements': ne + 2 + len(top_edges) + len(boundary), 'controls': {'top': pilot},
+                          'user_model_elements': ne + 2 + len(top_edges) + 2*len(boundary), 'controls': {'top': pilot},
                           'general_contact_component': 'INTERNAL_GC'}}
     write_json(d / 'simulation_manifest.json', manifest)
     target = RUN / 'local_fixture' / ('prepared_' + label)
@@ -132,12 +136,49 @@ def execute(label):
     print(label, r['status'], r['process']['returncode'], r['converged_steps'][-3:], flush=True)
 
 
+def post(label):
+    from metamaterial_eval.simulation.microstructure_pilot import database_resume
+    from scripts.v066_restart import compact
+    source = BASE / label
+    manifest = json.loads((source / 'simulation_manifest.json').read_text(encoding='utf-8'))
+    telemetry = json.loads((source / 'nonlinear_telemetry.json').read_text(encoding='utf-8'))
+    z = np.load(BASE / 'source_fixture_001/mesh.npz')
+    last = {}
+    for r in telemetry['converged_substeps']:
+        last[r['load_step']] = r
+    d = BASE / (label + '_post001')
+    d.mkdir(parents=True, exist_ok=False)
+    lines = ['/BATCH', '/CLEAR,START', database_resume(source / 'initial.db').strip(), '/FILNAME,readonly', '/POST1',
+             "FILE,'" + (source / 'compression').as_posix() + "',rst", '/OUTPUT,result_sets,txt', 'SET,LIST', '/OUTPUT']
+    states = []
+    for j, (ls, r) in enumerate(last.items(), 1):
+        prefix = f'state{j:03d}'
+        lines += [f"SET,{ls},{r['substep']}"] + vector_fields(manifest['model']['specimen_nodes'], prefix)
+        lines += ['ALLSEL,ALL', 'ETABLE,ERAS', 'ETABLE,CNSTAT,NMISC,19']
+        lines += general_contact_vectors(manifest['model'], prefix, chunk_size=10000)
+        lines += [f'*CFOPEN,{prefix}_reactions,csv', '*VWRITE', "('node,rx_N,ry_N')"]
+        for i in list(z['cut_nodes_zero_based'] + 1) + [manifest['model']['controls']['top']]:
+            lines += [f'*GET,RX,NODE,{i},RF,FX', f'*GET,RY,NODE,{i},RF,FY', f'*VWRITE,{i},RX,RY', "(F12.0,2(',',E24.16))"]
+        lines += ['*CFCLOS']
+        states.append({'prefix': prefix, 'load_step': ls, 'substep': r['substep'], 'time': r['pseudo_time']})
+    lines += ['FINISH', '/EXIT,NOSAVE']
+    (d / 'input.inp').write_text('\n'.join(lines)+'\n', encoding='utf-8', newline='\n')
+    write_json(d / 'provenance.json', {'source_RST_sha256': file_hash(source / 'compression.rst'),
+                                      'source_database_sha256': file_hash(source / 'initial.db'), 'states': states,
+                                      'source_receipt_sha256': file_hash(source / 'execution_receipt.json'),
+                                      'input_sha256': file_hash(d / 'input.inp'), 'mode': 'READ_ONLY_NATIVE_POST1'})
+    r = run_progressive(d, timeout=180, solve=False, cores=1)
+    compact(d, RUN / 'local_fixture' / d.name)
+    print(d.name, r['status'], r['process']['returncode'], flush=True)
+
+
 if __name__ == '__main__':
     p = argparse.ArgumentParser()
-    p.add_argument('action', choices=['prepare', 'case', 'execute'])
+    p.add_argument('action', choices=['prepare', 'case', 'execute', 'post'])
     p.add_argument('--label', default='local_baseline_001')
     p.add_argument('--fkn', type=float, default=100)
     a = p.parse_args()
     if a.action == 'prepare': prepare()
     elif a.action == 'case': make_case(a.label, a.fkn)
-    else: execute(a.label)
+    elif a.action == 'execute': execute(a.label)
+    else: post(a.label)
