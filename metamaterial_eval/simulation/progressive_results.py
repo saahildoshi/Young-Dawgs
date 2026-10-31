@@ -133,7 +133,15 @@ def qualify_state(source,export,mesh,index,state,output,*,general_contact_setup=
         if invalid:result['failures'].append('Invalid deformed quadratic mappings')
         overlap=screen(u[:,3:5],mesh.boundary,mesh.boundary_groups,original=mesh.nodes,record_limit=100000 if model.get('general_contact_elements') else 32);write_json(output/'boundary_screen.json',overlap)
         if model.get('general_contact_elements'):
-            try:result['general_contact']=qualify_general_contact(source,export,prefix,manifest,mesh,overlap,result['state'],general_contact_setup)
+            if model.get('general_contact_detection_keyopt4')==2 and overlap['suspicious_pair_count']:
+                from . import nodal_contact_geometry
+                for name in ['nodal_geometry_protocol','nodal_geometry_fixture']:
+                    binding=provenance.get(name,{})
+                    if not binding.get('path') or file_hash(binding['path'])!=binding.get('sha256'):raise ValueError('Unbound/stale nodal contact interpretation evidence')
+                fixture=load(provenance['nodal_geometry_fixture']['path']);protocol=load(provenance['nodal_geometry_protocol']['path'])
+                if fixture['status']!='PASS_ACTUAL_NODAL_FIXTURE_BOUNDED_CONTACT_GEOMETRY' or protocol['fixture_sha256']!=provenance['nodal_geometry_fixture']['sha256'] or provenance.get('nodal_geometry_implementation_sha256')!=file_hash(nodal_contact_geometry.__file__):raise ValueError('Nodal interpretation fixture/protocol/implementation mismatch')
+                result['nodal_geometry_interpretation']={k:provenance[k] for k in ['nodal_geometry_protocol','nodal_geometry_fixture','nodal_geometry_implementation_sha256']}
+            try:result['general_contact']=qualify_general_contact(source,export,prefix,manifest,mesh,overlap,result['state'],general_contact_setup,deformed_coordinates=u[:,3:5])
             except ValueError as exc:result['failures'].append(str(exc))
         elif not overlap['passed']:result['failures'].append('Unmodeled overlap/near contact uncertainty')
         result.update(actual_nodes=count,actual_TRI6=len(mesh.triangles),actual_native_corner_nodes=len(corners),

@@ -25,7 +25,7 @@ def explain_contact_pairs(overlap,eid_for_edge,field_for_edge):
     return explained
 
 
-def qualify_general_contact(source,export,prefix,manifest,mesh,overlap,state,setup):
+def qualify_general_contact(source,export,prefix,manifest,mesh,overlap,state,setup,*,deformed_coordinates=None):
     source,export,setup=map(Path,[source,export,setup]);model=manifest['model'];receipt=load(setup/'execution_receipt.json')
     if manifest['source_setup_receipt_sha256']!=file_hash(setup/'execution_receipt.json'):raise ValueError('General-contact setup receipt mismatch')
     topology_path=setup/'gc_topology.csv'
@@ -62,7 +62,11 @@ def qualify_general_contact(source,export,prefix,manifest,mesh,overlap,state,set
     if closed and assembled is None:raise ValueError('Engaged general contact lacks independently assembled native force balance')
     field_for_edge={int(indices[i]):fields[j] for j,i in enumerate(take)}
     eid_for_edge=np.zeros(len(mesh.boundary),dtype=np.int64);eid_for_edge[indices]=topology[:,0]
-    explained=explain_contact_pairs(overlap,eid_for_edge,field_for_edge)
+    if model.get('general_contact_detection_keyopt4')==2:
+        from .nodal_contact_geometry import explain_nodal_pairs
+        if deformed_coordinates is None:raise ValueError('Nodal geometry requires actual deformed native coordinates')
+        explained=explain_nodal_pairs(overlap,eid_for_edge,field_for_edge,mesh,deformed_coordinates)
+    else:explained=explain_contact_pairs(overlap,eid_for_edge,field_for_edge)
     if overlap['orientation_inverted_loops'] or overlap['edges_exceeding_requested_tolerance']:raise ValueError('Unqualified general-contact contour orientation/approximation')
     # The CND record is corroborated by the explicitly converged/readable LS/SS.
     telemetry=load(source/'contact_telemetry.json')['records']
@@ -79,6 +83,6 @@ def qualify_general_contact(source,export,prefix,manifest,mesh,overlap,state,set
         'native_skin_normal_FY_sum_N':fy,'native_skin_normal_FX_sum_N':fx,'native_skin_FY_balance_relative':ybalance,'native_skin_FX_balance_relative':xbalance,
         'native_assembled_contact_force_XY_N':assembled,'native_assembled_contact_force_balance_relative':assembled_residual,
         'explained_boundary_pair_count':len(explained),'explained_pair_examples':explained[:32],
-        'boundary_interpretation':'Only actual closed native target-segment links explain bounded-screen contact intersections; native penetration remains within1e-5mm. No unmodeled pair accepted.',
+        'boundary_interpretation':'Original direct native facet links retained; nodal shared-endpoint propagation additionally requires actual positive endpoint pressure/target identity and guarded contact localization inside5e-6mm-radius native-node balls. Strictly separated near pairs infer no contact. Native penetration remains<=1e-5mm.' if model.get('general_contact_detection_keyopt4')==2 else 'Only actual closed native target-segment links explain bounded-screen contact intersections; native penetration remains within1e-5mm. No unmodeled pair accepted.',
         'force_scope':'Symmetric native contact-skin normal forces; target-role force projection is also part of native assembly. Platen signed equilibrium independently required.',
         'columns':columns,'topology_sha256':file_hash(topology_path),'gc_status_sha256':file_hash(export/(prefix+'_gc_status.csv')),'gc_fields_sha256':file_hash(path)}

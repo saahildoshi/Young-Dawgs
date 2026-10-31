@@ -9,7 +9,7 @@ from metamaterial_eval.simulation.progressive_compression import (
     load,load_commands,authenticated_restart_copy,continuation_input,multi_export_input,run_progressive)
 from metamaterial_eval.simulation.solver_execution import file_hash
 from metamaterial_eval.simulation.reporting import write_json
-from scripts.v065_recovery import prepare_job
+from scripts.v065_recovery import prepare_job,committed
 
 REPO=Path(__file__).resolve().parents[1]
 RUN=REPO/'experiments/pipeline_v0.6.6/run_001'
@@ -53,10 +53,15 @@ def export(directory,label,states,*,chunk_size=250000,farfield=False):
     database=directory/'checkpoint.db' if (directory/'checkpoint.db').exists() else directory/'compression.rdb'
     text=multi_export_input(database,directory/'compression',manifest['model'],states,chunk_size=chunk_size,farfield=farfield)
     (out/'input.inp').write_text(text,encoding='utf-8')
-    write_json(out/'provenance.json',{'source':str(directory.resolve()),'source_execution_receipt_sha256':file_hash(directory/'execution_receipt.json'),
+    provenance={'source':str(directory.resolve()),'source_execution_receipt_sha256':file_hash(directory/'execution_receipt.json'),
         'source_RST_sha256':file_hash(directory/'compression.rst'),'source_database_filename':database.name,'source_database_sha256':file_hash(database),
         'source_manifest_sha256':file_hash(directory/'simulation_manifest.json'),'states':states,'input_sha256':file_hash(out/'input.inp'),
-        'mode':'READ_ONLY_NATIVE_MULTI_SET_NO_SOLVE_OR_SAVE','native_farfield_status_inventory':farfield})
+        'mode':'READ_ONLY_NATIVE_MULTI_SET_NO_SOLVE_OR_SAVE','native_farfield_status_inventory':farfield}
+    if manifest['model'].get('general_contact_detection_keyopt4')==2:
+        for name,path in [('nodal_geometry_protocol',RUN/'protocol/NODAL_CONTACT_INTERPRETATION_023.json'),('nodal_geometry_fixture',RUN/'internal_contact/NODAL_FIXTURE_GEOMETRY_QUALIFICATION_002.json')]:
+            committed(path);provenance[name]={'path':str(path.resolve()),'sha256':file_hash(path)}
+        provenance['nodal_geometry_implementation_sha256']=file_hash(REPO/'metamaterial_eval/simulation/nodal_contact_geometry.py')
+    write_json(out/'provenance.json',provenance)
     r=run_progressive(out,timeout=1800,solve=False,cores=1)
     print(label,r['status'],r['process']['returncode'],flush=True)
     return out
