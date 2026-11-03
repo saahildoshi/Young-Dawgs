@@ -1,0 +1,68 @@
+/BATCH
+/CLEAR,START
+RESUME,'C:/Users/sd22446/AppData/Local/Packages/OpenAI.Codex_2p2nqsd0c76g0/LocalCache/Local/YoungDawgs/artifacts/solver/v068/track_B_pair_setup_002/contact_model_pair',db
+/FILNAME,compression
+/FILNAME,readonly
+/PREP7
+CMBLOCK,PATCH_TARGET,NODE,21
+(8i10)
+       349       350       351      7619      7620      7621      7622      7623
+      7624      7625      7626      7627      7628      7629      7630      7631
+      7632      7715      7716      7717      7718
+CMBLOCK,PATCH_SOURCE,NODE,25
+(8i10)
+       260       261       262      6668      6669      6670      6671      6672
+      6713      6714      6715      6716      6717      6718      6719      6720
+      6721      6722      6723      6724      6725      6726      6727      6728
+      6730
+FINISH
+/POST1
+FILE,'C:/Users/sd22446/AppData/Local/Packages/OpenAI.Codex_2p2nqsd0c76g0/LocalCache/Local/YoungDawgs/artifacts/solver/v068/track_B_pair_to_01200_001/compression',rst
+SET,5,8
+*CFOPEN,pair_patch_forces,csv
+*VWRITE
+('side,solid_fx_N,solid_fy_N,platen_fx_N,platen_fy_N,gc_fx_N,gc_fy_N,pair_fx_N,pair_fy_N')
+ALLSEL,ALL
+CMSEL,S,PATCH_TARGET
+ESEL,S,TYPE,,1
+FSUM
+*GET,SFX,FSUM,0,ITEM,FX
+*GET,SFY,FSUM,0,ITEM,FY
+ESEL,S,TYPE,,3
+FSUM,,CONT
+*GET,PFX,FSUM,0,ITEM,FX
+*GET,PFY,FSUM,0,ITEM,FY
+CMSEL,S,INTERNAL_GC
+FSUM,,CONT
+*GET,GFX,FSUM,0,ITEM,FX
+*GET,GFY,FSUM,0,ITEM,FY
+CMSEL,S,LOCAL_PAIR_CONTACT
+FSUM,,CONT
+*GET,CFX,FSUM,0,ITEM,FX
+*GET,CFY,FSUM,0,ITEM,FY
+*VWRITE,1,SFX,SFY,PFX,PFY,GFX,GFY,CFX,CFY
+(F4.0,8(',',E24.16))
+ALLSEL,ALL
+CMSEL,S,PATCH_SOURCE
+ESEL,S,TYPE,,1
+FSUM
+*GET,SFX,FSUM,0,ITEM,FX
+*GET,SFY,FSUM,0,ITEM,FY
+ESEL,S,TYPE,,3
+FSUM,,CONT
+*GET,PFX,FSUM,0,ITEM,FX
+*GET,PFY,FSUM,0,ITEM,FY
+CMSEL,S,INTERNAL_GC
+FSUM,,CONT
+*GET,GFX,FSUM,0,ITEM,FX
+*GET,GFY,FSUM,0,ITEM,FY
+CMSEL,S,LOCAL_PAIR_CONTACT
+FSUM,,CONT
+*GET,CFX,FSUM,0,ITEM,FX
+*GET,CFY,FSUM,0,ITEM,FY
+*VWRITE,2,SFX,SFY,PFX,PFY,GFX,GFY,CFX,CFY
+(F4.0,8(',',E24.16))
+*CFCLOS
+ALLSEL,ALL
+FINISH
+/EXIT,NOSAVE
