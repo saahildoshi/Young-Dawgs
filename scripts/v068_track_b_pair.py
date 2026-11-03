@@ -8,7 +8,7 @@ from metamaterial_eval.simulation.microstructure_pilot import database_resume
 from metamaterial_eval.simulation.nonlinear_diagnostics import telemetry_commands
 from scripts.v068_common import BASE,RUN,read,write_json,file_hash,copy_evidence
 from scripts.v068_track_b import mesh_and_plan
-from scripts.v068_pair_common import face_owners,overlay
+from scripts.v068_pair_common import face_owners,overlay,native_skin_ids_by_face
 
 
 def selection():
@@ -33,11 +33,7 @@ def prepare_setup():
         raise ValueError('Original native model changed')
     original_model=read(BASE/'track_B_setup_001/simulation_manifest.json')
     original_gc=np.loadtxt(BASE/'track_B_setup_001/gc_topology.csv',delimiter=',',skiprows=1)
-    native_by_face={tuple(row[1:4].astype(int)):int(row[0]) for row in original_gc}
-    if len(native_by_face)!=len(mesh.boundary):
-        raise ValueError('Native original face lookup has duplicates')
-    try:face_eid=np.array([native_by_face[tuple((face+1).tolist())] for face in mesh.boundary])
-    except KeyError as exc:raise ValueError('Original face missing native GC skin') from exc
+    face_eid=native_skin_ids_by_face(mesh,original_gc)
     d=BASE/'track_B_pair_setup_002';d.mkdir(parents=True,exist_ok=False)
     owners=face_owners(mesh)
     with (d/'input.inp').open('w',encoding='utf-8',newline='\n') as f:
