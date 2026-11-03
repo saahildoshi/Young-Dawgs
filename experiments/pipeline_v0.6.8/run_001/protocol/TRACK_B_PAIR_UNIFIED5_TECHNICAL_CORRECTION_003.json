@@ -1,0 +1,20 @@
+{
+  "failed_last_native_state": {
+    "engineering_strain": 0.014271875,
+    "load_step": 6,
+    "substep": 28
+  },
+  "failed_source_RST_sha256": "3cd9d7ccdaea24b053a2541114e32a53117c77ffd4ceae61616cde27121a434a",
+  "failed_source_receipt_sha256": "f37a6f06ae4512e1ac3fd1401bedc80bb181f0824f8c5b82e12e66bfc1860ec5",
+  "fixture_first": "Repeat connected compliant C-cell pair fixture with KEYOPT(4)=5; require native closure, positive pressure, <=5e-5mm penetration, <=1% opposing structural force and signed reaction balance.",
+  "limits": "Exactly one detection-method correction; stop if new branch fails pressure-linked exact geometry, structural force, mapping, signed reactions, health or finite campaign clock.",
+  "mechanical": "Fresh zero-strain specimen branch with identical progressive checkpoints and explicit OUTRES,NLOAD,ALL. No advance from unqualified checkpoint.",
+  "native_setup": "Resume corrected original pair model DB only for setup, alter pair type6 detection, save new DB and verify native ETLIST. No old branch restart or curve splicing.",
+  "official_reference": "https://ansyshelp.ansys.com/public/Views/Secured/corp/v242/en/ans_ctec/Hlp_ctec_realkey.html",
+  "registered_before_new_native_run": true,
+  "schema": "young-dawgs-v068-one-supported-pair-detection-technical-correction",
+  "scope": "Separate selected Track B specimen only; Track A full-original HOLD unchanged.",
+  "single_change": "CONTA172 explicit local pair KEYOPT(4) from nodal normal-to-target 2 to unified detection 5; this is documented for pair-based CONTA172 in ANSYS 2024 R2 reference and must be verified in installed 2024 R1 native inventory.",
+  "trigger": "The preselected nodal pair (CONTA172 KEYOPT(4)=2) qualified 1.2% but opened at the exact crossed exterior arcs in the last converged 1.4271875% state; the next trial distorted structural PLANE183 element 9489 in the same arc neighborhood.",
+  "unchanged": "Exact selected crop, semantic mesh, material, rigid platen contact, 22 exclusive pair-owned original faces, remaining unified GC, FKN10, frictionless real set, all acceptance thresholds and independent extraction."
+}

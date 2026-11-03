@@ -1,0 +1,176 @@
+{
+  "converged_steps": [],
+  "execution_kind": "LICENSED_PAIR_DETECTION_TECHNICAL_CORRECTION_SETUP_ONLY",
+  "input_sha256": "5cd61861b091683dd239720ad506d92a0c7f23444c741d61f7f2b38eeadc50d3",
+  "observed_progress": [],
+  "process": {
+    "artifacts": {
+      "compression.err": {
+        "bytes": 80,
+        "sha256": "caeb538a867b3340c48851b56e3314209eb0e965bc45ddbd4af726eb1c33783c"
+      },
+      "compression.log": {
+        "bytes": 250,
+        "sha256": "b69e27d5ea48c5500fca3c4b6cd88dfaa22e730ad4d23c86d1dc78f2923e9ba5"
+      },
+      "contact_model_pair_unified.db": {
+        "bytes": 92930048,
+        "sha256": "339ce3960b29ffc588bb914ccddfceb8bef1bac691c188ccf3e754e06400419b"
+      },
+      "contact_types.txt": {
+        "bytes": 3272,
+        "sha256": "2a41ac6f288627883e99cd0f6af6a8121e155d3b96c9988ef19c2dc91caf30c8"
+      },
+      "input.inp": {
+        "bytes": 307,
+        "sha256": "5cd61861b091683dd239720ad506d92a0c7f23444c741d61f7f2b38eeadc50d3"
+      },
+      "launcher.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "simulation_manifest.json": {
+        "bytes": 602,
+        "sha256": "325aac22e1e6c39aea436a383d0425bfe0e4e9be32c1c3cf71fa5fa62446210a"
+      },
+      "solver.out": {
+        "bytes": 13077,
+        "sha256": "ed0fe065252968bd3f1fd578bc8ba69c5929034e3ad55f6d88b51506af89afb9"
+      }
+    },
+    "command": [
+      "C:\\Program Files\\ANSYS Inc\\v241\\ansys\\bin\\winx64\\ANSYS241.exe",
+      "-b",
+      "-smp",
+      "-np",
+      "2",
+      "-m",
+      "4096",
+      "-j",
+      "compression",
+      "-i",
+      "input.inp",
+      "-o",
+      "solver.out"
+    ],
+    "min_available_ram_bytes": 0,
+    "min_disk_free_bytes": 85899345920,
+    "native_signal_availability": [],
+    "paging_interpretation": "Page Reads/sec is system hard-fault disk-read proxy, not pagefile-only or per-process hard faults",
+    "peak_tree_rss_bytes": 358100992,
+    "resource_samples": [
+      {
+        "available_RAM_bytes": 44600664064,
+        "commit_fraction": 0.3841552418206411,
+        "commit_limit_bytes": 72698556416,
+        "commit_used_bytes": 27927531520,
+        "disk_free_bytes": 1242408128512,
+        "elapsed_seconds": 0.17356160003691912,
+        "native_markers_first_observed_seconds": {},
+        "output_file_bytes": {
+          "input.inp": 307,
+          "launcher.log": 0,
+          "simulation_manifest.json": 602
+        },
+        "owned_processes": [
+          {
+            "name": "ANSYS241.exe",
+            "pid": 2916,
+            "status": "running"
+          },
+          {
+            "name": "conhost.exe",
+            "pid": 17576,
+            "status": "running"
+          }
+        ],
+        "page_reads_per_second": 4273.220374283832,
+        "page_writes_per_second": 0.0,
+        "pagefile_usage_percent": 2.6930809020996094,
+        "pages_input_per_second": 546972.2079083305,
+        "physical_RAM_bytes": 68403589120,
+        "seconds_without_output_growth": 0.17356160003691912,
+        "system_memory_percent": 34.8,
+        "tree_rss_bytes": 9220096,
+        "windows_low_memory": false
+      }
+    ],
+    "returncode": 0,
+    "rss_limit_bytes": null,
+    "run_directory": "C:\\Users\\sd22446\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\YoungDawgs\\artifacts\\solver\\v068\\track_B_pair_unified_setup_001",
+    "runtime_seconds": 3.263367700157687,
+    "started_utc": "2026-11-03T19:37:37.537242+00:00",
+    "status": "PROCESS_EXITED",
+    "system_after": {
+      "available_RAM_bytes": 44566773760,
+      "commit_fraction": 0.38299453519646626,
+      "commit_limit_bytes": 72698556416,
+      "commit_used_bytes": 27843149824,
+      "disk_free_bytes": 1242315079680,
+      "elapsed_seconds": 3.261068900115788,
+      "native_markers_first_observed_seconds": {
+        "model_save": 3.261068900115788
+      },
+      "output_file_bytes": {
+        "compression.err": 80,
+        "compression.log": 250,
+        "contact_model_pair_unified.db": 92930048,
+        "contact_types.txt": 3272,
+        "input.inp": 307,
+        "launcher.log": 0,
+        "simulation_manifest.json": 602,
+        "solver.out": 13077
+      },
+      "owned_processes": [],
+      "page_reads_per_second": 23.248259221102767,
+      "page_writes_per_second": 0.0,
+      "pagefile_usage_percent": 2.6930809020996094,
+      "pages_input_per_second": 2784.224621930096,
+      "physical_RAM_bytes": 68403589120,
+      "seconds_without_output_growth": 0.0,
+      "system_memory_percent": 34.8,
+      "tree_rss_bytes": null,
+      "windows_low_memory": false
+    },
+    "system_before": {
+      "available_RAM_bytes": 44597379072,
+      "commit_fraction": 0.38312192501624487,
+      "commit_limit_bytes": 72698556416,
+      "commit_used_bytes": 27852410880,
+      "disk_free_bytes": 1242408128512,
+      "elapsed_seconds": 0,
+      "native_markers_first_observed_seconds": {},
+      "output_file_bytes": {
+        "input.inp": 307,
+        "simulation_manifest.json": 602
+      },
+      "owned_processes": [],
+      "page_reads_per_second": 4571.776897287412,
+      "page_writes_per_second": 0.0,
+      "pagefile_usage_percent": 2.6930809020996094,
+      "pages_input_per_second": 585187.4428527887,
+      "physical_RAM_bytes": 68403589120,
+      "seconds_without_output_growth": 0,
+      "system_memory_percent": 34.8,
+      "tree_rss_bytes": null,
+      "windows_low_memory": false
+    },
+    "system_health_policy": {
+      "available_reserve_bytes": 6442450944,
+      "commit_fraction": 0.98,
+      "commit_seconds": 15,
+      "critical_available_bytes": 1073741824,
+      "critical_seconds": 3,
+      "no_output_growth_seconds": 90,
+      "notification_seconds": 10,
+      "page_reads_per_second": 10000,
+      "paging_seconds": 60,
+      "reserve_seconds": 30
+    },
+    "timeout_seconds": 900
+  },
+  "solver_version": "2024 R1",
+  "status": "PROCESS_EXITED",
+  "warning_occurrences": 0,
+  "warnings": []
+}

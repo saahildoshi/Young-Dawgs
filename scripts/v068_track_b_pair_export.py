@@ -8,12 +8,15 @@ from scripts.v068_common import BASE,RUN,read,write_json,file_hash,copy_evidence
 
 def prepare(source_name,selection='last'):
     source=BASE/source_name;receipt=read(source/'execution_receipt.json')
-    setup=read(RUN/'track_B_contact_fixture/PAIR_SETUP_QUALIFICATION.json')
+    unified=source_name.startswith('track_B_pair5_')
+    setup=read(RUN/'track_B_contact_fixture'/('PAIR_UNIFIED5_SETUP_QUALIFICATION.json' if unified else 'PAIR_SETUP_QUALIFICATION.json'))
+    database=BASE/('track_B_pair_unified_setup_001/contact_model_pair_unified.db' if unified else 'track_B_pair_setup_002/contact_model_pair.db')
+    database_sha=setup['native_database_sha256'] if unified else setup['pair_database_sha256']
     manifest=read(source/'simulation_manifest.json')
     if (receipt['solver_version']!='2024 R1' or
         receipt['input_sha256']!=manifest['input_sha256'] or
         file_hash(source/'input.inp')!=manifest['input_sha256'] or
-        file_hash(BASE/'track_B_pair_setup_002/contact_model_pair.db')!=setup['pair_database_sha256']):
+        file_hash(database)!=database_sha):
         raise ValueError('Changed pair source or native model')
     telemetry=read(source/'nonlinear_telemetry.json')
     states=[{'load_step':row['load_step'],'substep':row['substep'],'time':row['pseudo_time']}
@@ -22,11 +25,12 @@ def prepare(source_name,selection='last'):
     if selection=='last':states=states[-1:]
     elif selection!='all':raise ValueError('Unsupported state selection')
     model=read(BASE/'track_B_setup_001/simulation_manifest.json')
+    topology_setup=read(RUN/'track_B_contact_fixture/PAIR_SETUP_QUALIFICATION.json')
     model.update(user_model_elements=read(RUN/'track_B_contact_fixture/SETUP_QUALIFICATION.json')['native_elements'],
-                 general_contact_elements=setup['native_exact_face_counts']['gc'],
+                 general_contact_elements=topology_setup['native_exact_face_counts']['gc'],
                  contact_elements=model['platen_contact_elements'])
     d=BASE/(source_name+'_post1_'+selection+'_v2');d.mkdir(parents=True,exist_ok=False)
-    deck=multi_export_input(BASE/'track_B_pair_setup_002/contact_model_pair.db',
+    deck=multi_export_input(database,
                             source/'compression',model,states,chunk_size=50000,farfield=True)
     lines=deck.splitlines();output=[];n=0
     for line in lines:
@@ -57,7 +61,7 @@ def prepare(source_name,selection='last'):
     m={'schema':'young-dawgs-v068-selected-pair-independent-POST1','source':str(source),
        'source_execution_receipt_sha256':file_hash(source/'execution_receipt.json'),
        'source_RST_sha256':file_hash(source/'compression.rst'),
-       'setup_database_sha256':setup['pair_database_sha256'],
+       'setup_database_sha256':database_sha,'unified_pair_detection':unified,
        'states':states,'selection':selection,'input_sha256':file_hash(d/'input.inp'),
        'read_only':True,'native_gate_diagnostic_only':True}
     write_json(d/'simulation_manifest.json',m)

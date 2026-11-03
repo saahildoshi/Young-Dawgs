@@ -15,10 +15,14 @@ from scripts.v068_common import BASE,RUN,read,write_json,file_hash,copy_evidence
 def prepare(source_name):
     source=BASE/source_name;post=BASE/(source_name+'_post1_last_v2')
     sr=read(source/'execution_receipt.json');pr=read(post/'execution_receipt.json')
-    pm=read(post/'simulation_manifest.json');setup=read(RUN/'track_B_contact_fixture/PAIR_SETUP_QUALIFICATION.json')
+    unified=source_name.startswith('track_B_pair5_')
+    pm=read(post/'simulation_manifest.json')
+    setup=read(RUN/'track_B_contact_fixture'/('PAIR_UNIFIED5_SETUP_QUALIFICATION.json' if unified else 'PAIR_SETUP_QUALIFICATION.json'))
+    database=BASE/('track_B_pair_unified_setup_001/contact_model_pair_unified.db' if unified else 'track_B_pair_setup_002/contact_model_pair.db')
+    database_sha=setup['native_database_sha256'] if unified else setup['pair_database_sha256']
     if (pr['process']['returncode']!=0 or file_hash(source/'compression.rst')!=pm['source_RST_sha256'] or
         pm['source_execution_receipt_sha256']!=file_hash(source/'execution_receipt.json') or
-        file_hash(BASE/'track_B_pair_setup_002/contact_model_pair.db')!=setup['pair_database_sha256']):
+        file_hash(database)!=database_sha):
         raise ValueError('Invalid native source for interface force proof')
     if len(pm['states'])!=1:raise ValueError('Interface force proof requires one selected state')
     state=pm['states'][0];key=(state['load_step'],state['substep'])
@@ -64,7 +68,7 @@ def prepare(source_name):
                 raise ValueError('Distinct contact components share physical nodes')
     d=BASE/(source_name+'_interface_force_001');d.mkdir(parents=True,exist_ok=False)
     with (d/'input.inp').open('w',encoding='utf-8',newline='\n') as f:
-        f.write('/BATCH\n/CLEAR,START\n'+database_resume(BASE/'track_B_pair_setup_002/contact_model_pair.db')+
+        f.write('/BATCH\n/CLEAR,START\n'+database_resume(database)+
                 '/FILNAME,readonly\n/PREP7\n')
         for i,p in enumerate(patches,1):
             component(f,f'PATCHA{i:03d}',p['native_node_ids_A'])
@@ -90,7 +94,7 @@ def prepare(source_name):
        'source_RST_sha256':file_hash(source/'compression.rst'),
        'source_post_receipt_sha256':file_hash(post/'execution_receipt.json'),
        'source_native_GC_fields_sha256':file_hash(post/(prefix+'_gc_fields.csv')),
-       'setup_database_sha256':setup['pair_database_sha256'],
+       'setup_database_sha256':database_sha,
        'selected_state':state,'components':patches,'input_sha256':file_hash(d/'input.inp'),
        'read_only':True,'force_interpretation':'All adjacent structural element nodal forces at physical interface nodes; selected GC-skin FSUM reported but not used as the complete two-sided balance.'}
     write_json(d/'simulation_manifest.json',m)

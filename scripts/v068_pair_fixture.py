@@ -91,8 +91,8 @@ def prepare():
     print('Prepared pair fixture',len(target),len(contact),flush=True)
 
 
-def execute():
-    d=BASE/'pair_internal_fixture_001'
+def execute(name='pair_internal_fixture_001'):
+    d=BASE/name
     r=run_progressive(d,timeout=300,no_progress_seconds=180,cores=2,disk_reserve=80*1024**3)
     target=copy_evidence(d,'track_B_native_results')
     for name in ['pair_inventory.txt','pair_contact.csv','patch_forces.csv','direct_history.csv']:
@@ -102,8 +102,8 @@ def execute():
     print('Pair fixture',r['status'],r['process']['returncode'],r['converged_steps'][-3:],flush=True)
 
 
-def qualify():
-    d=BASE/'pair_internal_fixture_001';m=read(d/'simulation_manifest.json');r=read(d/'execution_receipt.json')
+def qualify(name='pair_internal_fixture_001'):
+    d=BASE/name;m=read(d/'simulation_manifest.json');r=read(d/'execution_receipt.json')
     if r['solver_version']!='2024 R1' or r['process']['returncode']!=0 or file_hash(d/'input.inp')!=m['input_sha256']:
         raise ValueError('Native pair fixture failed')
     inventory=(d/'pair_inventory.txt').read_text(errors='replace')
@@ -137,7 +137,13 @@ def qualify():
             'native_pair_contact_sha256':file_hash(d/'pair_contact.csv'),
             'native_structural_force_sha256':file_hash(d/'patch_forces.csv'),
             'scope':'Validates explicit deformable pair formulation on small connected C-cell only; selected demonstrator still requires its own setup/solve gates.'}
-    write_json(RUN/'track_B_contact_fixture/PAIR_FIXTURE_QUALIFICATION.json',result)
+    result['installed_pair_detection_keyopt4']=m.get('detection_keyopt4',2)
+    if result['installed_pair_detection_keyopt4']==5:
+        if not re.search(r'ELEMENT TYPE\s+3 IS CONTA172[\s\S]*?KEYOPT\( 1- 6\)=\s*0\s+1\s+0\s+5',inventory):
+            raise ValueError('Unified explicit pair option absent in installed native fixture')
+        output='PAIR_UNIFIED5_FIXTURE_QUALIFICATION.json'
+    else:output='PAIR_FIXTURE_QUALIFICATION.json'
+    write_json(RUN/'track_B_contact_fixture'/output,result)
     print(result['status'],closed,pressure,penetration,opposition,flush=True)
 
 

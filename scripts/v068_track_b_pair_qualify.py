@@ -22,12 +22,15 @@ def qualify(source_name,selection='last'):
     source=BASE/source_name;post=BASE/(source_name+'_post1_'+selection+'_v2')
     sr=read(source/'execution_receipt.json');pr=read(post/'execution_receipt.json')
     sm=read(source/'simulation_manifest.json');pm=read(post/'simulation_manifest.json')
-    setup=read(RUN/'track_B_contact_fixture/PAIR_SETUP_QUALIFICATION.json')
+    unified=source_name.startswith('track_B_pair5_')
+    setup=read(RUN/'track_B_contact_fixture'/('PAIR_UNIFIED5_SETUP_QUALIFICATION.json' if unified else 'PAIR_SETUP_QUALIFICATION.json'))
+    topology_setup=read(RUN/'track_B_contact_fixture/PAIR_SETUP_QUALIFICATION.json')
+    database_sha=setup['native_database_sha256'] if unified else setup['pair_database_sha256']
     pair_protocol=read(RUN/'protocol/TRACK_B_LOCAL_PAIR_002.json')
     source_faces=set(pair_protocol['source_contact_faces_zero_based'])
     target_faces=set(pair_protocol['target_contact_faces_zero_based'])
     result={'schema':'young-dawgs-v068-track-b-prospective-qualification',
-            'source_name':source_name,'selection':selection,'model_variant':'V068_TRACK_B_CENTRAL256_LOCAL_PAIR_002',
+            'source_name':source_name,'selection':selection,'model_variant':sm.get('model_variant','V068_TRACK_B_CENTRAL256_LOCAL_PAIR_002'),
             'source_receipt_sha256':file_hash(source/'execution_receipt.json'),
             'post_receipt_sha256':file_hash(post/'execution_receipt.json'),
             'mechanical_mesh_convergence':'UNQUALIFIED','accepted':False,'failures':[],
@@ -39,7 +42,7 @@ def qualify(source_name,selection='last'):
             pr['input_sha256']!=pm['input_sha256'] or file_hash(post/'input.inp')!=pm['input_sha256'] or
             pm['source_execution_receipt_sha256']!=result['source_receipt_sha256'] or
             pm['source_RST_sha256']!=file_hash(source/'compression.rst') or
-            pm['setup_database_sha256']!=setup['pair_database_sha256']):
+            pm['setup_database_sha256']!=database_sha):
             raise ValueError('Native source/POST1 identity or process mismatch')
         for d,r,names in [(source,sr,['compression.rst','solver.out']),
                           (post,pr,['result_sets.txt','solver.out'])]:
@@ -52,7 +55,7 @@ def qualify(source_name,selection='last'):
             raise ValueError('Unsupported native POST1 field query')
         topology=read_table(BASE/'track_B_pair_setup_002/gc_topology.csv',
                             ['element','i','j','mid','type','section','real']).astype(np.int64)
-        if file_hash(BASE/'track_B_pair_setup_002/gc_topology.csv')!=setup['native_topology_sha256']['gc']:
+        if file_hash(BASE/'track_B_pair_setup_002/gc_topology.csv')!=topology_setup['native_topology_sha256']['gc']:
             raise ValueError('Native GC topology changed')
         by_face={tuple(row[1:4]):int(row[0]) for row in topology}
         eid_for_edge=np.array([by_face.get(tuple(face+1),0) for face in mesh.boundary])
@@ -68,7 +71,7 @@ def qualify(source_name,selection='last'):
         from metamaterial_eval.simulation.progressive_compression import result_sets
         sets={(r['load_step'],r['substep']) for r in result_sets(listing)}
         steps={(int(a),int(b)) for a,b in sr['converged_steps']}
-        results=[]
+        results=[];continuous_parent=True
         for index,state in enumerate(pm['states'],1):
             prefix=f'stage{index:03d}';key=(state['load_step'],state['substep'])
             row={'load_step':key[0],'substep':key[1],'requested_time':state['time'],'accepted':False,'failures':[]}
@@ -84,7 +87,9 @@ def qualify(source_name,selection='last'):
                       ['pseudo_time','load_step','substep','top_uy_mm','upper_rf_y_N','lower_rf_y_N'])
             if h.shape!=(1,6):raise ValueError('Incorrect history row count')
             t,ls,ss,uy,upper,lower=h[0]
-            if (int(ls),int(ss))!=key or abs(t-state['time'])>1e-8 or abs(uy+2.56*t)>1e-8:
+            # Nonlinear telemetry prints time to about seven significant digits;
+            # POST1 supplies the authoritative full-precision SET time.
+            if (int(ls),int(ss))!=key or abs(t-state['time'])>5e-8 or abs(uy+2.56*t)>1e-8:
                 row['failures'].append('Native checkpoint time/displacement mismatch')
             try:row['measurement']=force_metrics(t,uy,upper,lower,width=2.56,height=2.56,thickness=1)
             except ValueError as exc:row['failures'].append(str(exc))
@@ -221,15 +226,28 @@ def qualify(source_name,selection='last'):
                 else:
                     row['failures'].append('Internal opposing structural patch force proof pending or failed')
             if pair_closed:
-                proof_path=RUN/'track_B_contact_fixture'/(source_name+'_pair_force.json')
-                proof=read(proof_path) if proof_path.exists() else None
-                if (proof and proof['passed'] and proof['selected_state']['load_step']==key[0] and
-                    proof['selected_state']['substep']==key[1] and proof['selected_state']['time']==state['time']):
+                if selection=='all':
+                    proof_path=RUN/'track_B_contact_fixture'/(source_name+'_pair_force_scan.json')
+                    scan=read(proof_path) if proof_path.exists() else None
+                    proof=next((x for x in scan['states'] if (x['load_step'],x['substep'])==key),None) if scan else None
+                    force_pass=bool(proof and proof['passed_when_engaged'] and
+                                    abs(proof['native_time']-t)<=1e-10)
+                else:
+                    proof_path=RUN/'track_B_contact_fixture'/(source_name+'_pair_force.json')
+                    proof=read(proof_path) if proof_path.exists() else None
+                    force_pass=bool(proof and proof['passed'] and
+                                    proof['selected_state']['load_step']==key[0] and
+                                    proof['selected_state']['substep']==key[1] and
+                                    abs(proof['selected_state']['time']-state['time'])<=5e-8)
+                if force_pass:
                     row['localized_pair_contact']['force_opposition']='PASS_TWO_SIDED_NATIVE_STRUCTURAL_FORCE'
                     row['localized_pair_contact']['force_proof_sha256']=file_hash(proof_path)
                 else:row['failures'].append('Localized pair opposing structural force proof pending or failed')
             row['raw_field_sha256']={name:file_hash(post/name) for name in names}
+            if selection=='all' and not continuous_parent:
+                row['failures'].append('A prior native substep in this continuation failed independent qualification')
             row['accepted']=not row['failures'];results.append(row)
+            if selection=='all':continuous_parent=continuous_parent and row['accepted']
             del u,s,deformed
         result['states']=results
         result['max_native_converged_strain']=max((r['requested_time'] for r in results),default=None)
