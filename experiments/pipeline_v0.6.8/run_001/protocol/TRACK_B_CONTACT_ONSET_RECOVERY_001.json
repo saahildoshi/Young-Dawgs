@@ -1,0 +1,21 @@
+{
+  "schema": "young-dawgs-v068-track-b-single-evidence-directed-recovery",
+  "evidence": "The unified-contact primary continuation achieved native LS3SS1=.0105, SS2=.011 and SS3=.01175. Independent POST1 qualifies SS1/SS2. SS3 has two actual exterior-face crossings without a native pressure-bearing target-facet link; its internal-force proof is also pending. The subsequent trial failed at PLANE183 element 36996 with native highly-distorted-element error. At accepted .011, both crossing candidate face pairs have >.0015 mm independently certified quadratic separation.",
+  "parent_native_job": "track_B_to_020_001",
+  "parent_accepted_state": {"load_step": 3, "substep": 2, "engineering_strain": 0.011},
+  "rejected_state": {"load_step": 3, "substep": 3, "engineering_strain": 0.01175},
+  "hypothesis": "The .00075 strain increment crosses a rapidly closing crop-edge gap and outruns the native contact update. Reduce actual increments around onset while retaining the same mesh and contact formulation.",
+  "method": "Authenticated copy of native RDB/LDHI/Rnnn/RST, ANTYPE STATIC REST 3,2,ENDSTEP, then cumulative new load step. This exact ENDSTEP route was licensed/qualified on the existing small fixture in v0.6.6. No child state may inherit from rejected SS3.",
+  "unchanged": "Same central256 crop, TRI6, E1000MPa/nu.3/t1mm, platen nodal2 FKN100, general contact unified5 FKN10, NLGEOM, force CNVTOL .005, full Newton/line search, 40 Newton iterations, all original prospective Track B mechanical gates.",
+  "schedule": [
+    {"target": 0.0111, "initial": 0.00005, "maximum": 0.0001, "minimum": 0.000001},
+    {"target": 0.01125, "initial": 0.00005, "maximum": 0.0001, "minimum": 0.000001},
+    {"target": 0.0115, "initial": 0.00005, "maximum": 0.0001, "minimum": 0.000001},
+    {"target": 0.012, "initial": 0.0001, "maximum": 0.00025, "minimum": 0.000001},
+    {"target": 0.015, "initial": 0.00025, "maximum": 0.0005, "minimum": 0.000001},
+    {"target": 0.02, "initial": 0.0005, "maximum": 0.001, "minimum": 0.000001}
+  ],
+  "advance_rule": "Independently reopen and qualify each target, including actual signed reaction/forces, complete native fields, positive all-element quadratic mappings, and contact-explained exact boundary crossings, before preparing the next target. On any failure preserve the last qualified state and stop this one recovery branch.",
+  "finite_limits": {"native_jobs_per_schedule_target": 1, "stage_wall_seconds": 5400, "no_converged_progress_seconds": 1200, "health_policy": "v0.6.8 registered HealthPolicy; no RSS cap", "one_native_process_at_a_time": true},
+  "scope": "Distinct Track B demonstrator only; full 1024 specimen Track A thresholds and restart are unchanged."
+}
