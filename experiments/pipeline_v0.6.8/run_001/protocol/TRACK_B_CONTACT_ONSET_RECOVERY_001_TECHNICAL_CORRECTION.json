@@ -1,0 +1,22 @@
+{
+  "schema": "young-dawgs-v068-track-b-recovery-technical-source-correction",
+  "original_protocol": "TRACK_B_CONTACT_ONSET_RECOVERY_001.json",
+  "observed_failure": "ANSYS 2024 R1 returned 15 before any equilibrium iteration on the registered ENDSTEP clone of the interrupted 2% parent. Its traceback is restart_updt_rst/restartprepare/antyp and the fatal is a low-level memory-manager invalid free, despite low actual memory use. The original source and the failed attempt remain immutable.",
+  "technical_correction": "Use the clean fully qualified 1.0% native job track_B_to_010_001 as the restart parent. Continue its completed native load step, retaining the exact same mesh, material, unified5 contact, platen contact, and prospective mechanical gates. Apply the same smaller-onset-increment hypothesis before the next SOLVE and confirm actual native time increments from the log.",
+  "same_branch": true,
+  "no_changed_contact_algorithm_or_acceptance": true,
+  "parent_native_job": "track_B_to_010_001",
+  "parent_qualified_strain": 0.01,
+  "registered_schedule": [
+    {"target": 0.0105, "initial": 0.00005, "maximum": 0.0001, "minimum": 0.000001},
+    {"target": 0.011, "initial": 0.00005, "maximum": 0.0001, "minimum": 0.000001},
+    {"target": 0.0111, "initial": 0.00005, "maximum": 0.0001, "minimum": 0.000001},
+    {"target": 0.01125, "initial": 0.00005, "maximum": 0.0001, "minimum": 0.000001},
+    {"target": 0.0115, "initial": 0.00005, "maximum": 0.0001, "minimum": 0.000001},
+    {"target": 0.012, "initial": 0.0001, "maximum": 0.00025, "minimum": 0.000001},
+    {"target": 0.015, "initial": 0.00025, "maximum": 0.0005, "minimum": 0.000001},
+    {"target": 0.02, "initial": 0.0005, "maximum": 0.001, "minimum": 0.000001}
+  ],
+  "advance_rule": "Each complete new target must pass independent native POST1 and all original Track B gates before its child can be prepared. A native-converged but crossing state is not a parent.",
+  "finite_limit": "One attempt per scheduled target, same 5400-second stage and 1200-second no-progress bounds; stop this recovery branch on a mechanical failure."
+}
