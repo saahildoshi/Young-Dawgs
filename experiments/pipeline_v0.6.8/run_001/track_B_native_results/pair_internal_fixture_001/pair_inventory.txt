@@ -1,0 +1,53 @@
+
+ LIST ELEMENT TYPES FROM        1 TO        3 BY        1
+
+ *** MAPDL - ENGINEERING ANALYSIS SYSTEM  RELEASE 2024 R1          24.1     ***
+ Ansys Mechanical Enterprise Academic Research     
+ 00446375  VERSION=WINDOWS x64   13:55:32  NOV 03, 2026 CP=      0.391
+
+                                                                               
+
+
+
+ ELEMENT TYPE        1 IS PLANE183     2-D 6-NODE PLANE STRS SOLID 
+  KEYOPT( 1- 6)=        1      0      3        0      0      0
+  KEYOPT( 7-12)=        0      0      0        0      0      0
+  KEYOPT(13-18)=        0      0      0        0      0      0
+
+ ELEMENT TYPE        2 IS TARGE169     2-D TARGET SEGMENT          
+  KEYOPT( 1- 6)=        0      0      0        0      0      0
+  KEYOPT( 7-12)=        0      0      0        0      0      0
+  KEYOPT(13-18)=        0      0      0        0      0      0
+
+ ELEMENT TYPE        3 IS CONTA172     2D 3-NODE SURF-SURF CONTACT 
+  KEYOPT( 1- 6)=        0      1      0        2      0      0
+  KEYOPT( 7-12)=        0      0      0        0      0      0
+  KEYOPT(13-18)=        0      0      0        0      0      0
+
+ CURRENT NODAL DOF SET IS  UX    UY  
+  TWO-DIMENSIONAL MODEL
+
+ *** MAPDL - ENGINEERING ANALYSIS SYSTEM  RELEASE 2024 R1          24.1     ***
+ Ansys Mechanical Enterprise Academic Research     
+ 00446375  VERSION=WINDOWS x64   13:55:32  NOV 03, 2026 CP=      0.391
+
+                                                                               
+
+
+
+ LIST REAL SETS        1 TO        3 BY        1
+
+ REAL CONSTANT SET        1  ITEMS   1 TO   6
+    1.0000       0.0000       0.0000       0.0000       0.0000       0.0000    
+
+ REAL CONSTANT SET        3  ITEMS   1 TO   6
+    0.0000       0.0000       10.000     -0.50000E-04   0.0000       0.0000    
+
+ SELECT      COMPONENT PAIR_TARGET                                                                                                                                                                                                                                                     
+
+ *GET  NTARG     FROM  ELEM  ITEM=COUN           VALUE=  59.0000000    
+
+ SELECT      COMPONENT PAIR_CONTACT                                                                                                                                                                                                                                                    
+
+ *GET  NCONT     FROM  ELEM  ITEM=COUN           VALUE=  59.0000000    
+PAIR_COUNTS          59.          59.
