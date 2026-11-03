@@ -170,7 +170,17 @@ def qualify(source_name,selection='last'):
             if overlap['orientation_inverted_loops'] or overlap['edges_exceeding_requested_tolerance']:
                 row['failures'].append('Boundary loop orientation or quadratic chord bound failed')
             if closed:
-                row['failures'].append('Internal opposing structural patch force proof pending')
+                proof_path=RUN/'track_B_contact_fixture'/(source_name+'_interface_force.json')
+                proof=read(proof_path) if proof_path.exists() else None
+                if (proof and proof['passed'] and
+                    proof['selected_state']['load_step']==key[0] and
+                    proof['selected_state']['substep']==key[1] and
+                    proof['selected_state']['time']==state['time']):
+                    row['internal_contact']['force_opposition']='PASS_TWO_SIDED_NATIVE_STRUCTURAL_FORCE'
+                    row['internal_contact']['force_proof_sha256']=file_hash(proof_path)
+                    row['internal_contact']['force_components']=proof['components']
+                else:
+                    row['failures'].append('Internal opposing structural patch force proof pending or failed')
             row['raw_field_sha256']={name:file_hash(post/name) for name in names}
             row['accepted']=not row['failures'];results.append(row)
             del u,s,deformed
