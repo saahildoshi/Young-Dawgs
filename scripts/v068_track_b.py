@@ -9,7 +9,7 @@ from metamaterial_eval.simulation.config import CompressionConfig
 from metamaterial_eval.simulation.mesh_generation import Mesh
 from metamaterial_eval.simulation.contact_setup import platen_plan
 from metamaterial_eval.simulation.microstructure_import import component
-from metamaterial_eval.simulation.progressive_compression import run_progressive, load_commands
+from metamaterial_eval.simulation.progressive_compression import run_progressive, load_commands, authenticated_restart_copy
 from metamaterial_eval.simulation.microstructure_pilot import database_resume
 from metamaterial_eval.simulation.nonlinear_diagnostics import telemetry_commands
 from metamaterial_eval.simulation.reporting import mesh_hash
@@ -216,8 +216,66 @@ def execute_first():
     print('Track B first',receipt['status'],receipt['process']['returncode'],receipt['converged_steps'][-5:],flush=True)
 
 
+def next_name(target):
+    return f'track_B_to_{round(target*1000):03d}_001'
+
+
+def prepare_next(parent_name,target):
+    protocol=read(RUN/'protocol/TRACK_B.json')
+    if target not in protocol['targets'] or target<=.005:
+        raise ValueError('Unregistered Track B target')
+    parent_qualification=RUN/'track_B_progressive_compression'/(parent_name+'_qualification.json')
+    q=read(parent_qualification)
+    if not q['accepted'] or len(q['states'])!=1 or not q['states'][0]['accepted']:
+        raise ValueError('Cannot advance from an unqualified Track B parent')
+    prior=q['states'][0]['measurement']['engineering_compression_strain']
+    if protocol['targets'].index(target)!=protocol['targets'].index(prior)+1:
+        raise ValueError('Track B target sequence skipped')
+    state=q['states'][0];source=BASE/parent_name;name=next_name(target);d=BASE/name
+    inherited=authenticated_restart_copy(source,d,expected_mesh=read(RUN/'track_B_mesh/MESH_001.json')['semantic_sha256'])
+    if file_hash(source/'execution_receipt.json')!=q['source_receipt_sha256']:
+        raise ValueError('Track B qualified parent receipt changed')
+    model=inherited['model'];top=model['controls']['top'];bottom=model['controls']['bottom']
+    lines=['/BATCH','/CLEAR,START','RESUME,compression,rdb','/FILNAME,compression',
+           '/GOPR','/SOLU',f'ANTYPE,STATIC,REST,{state["load_step"]},{state["substep"]},CONTINUE']
+    lines+=telemetry_commands(top)+[f'NLHIST,NSOL,RFLOW,F,Y,{bottom}',
+                               'CNVTOL,F,,.005,2,1e-8']
+    lines+=load_commands(target,prior,top,2.56,
+                         initial=protocol['initial_strain_increment'],
+                         maximum=protocol['maximum_strain_increment'],
+                         minimum=protocol['minimum_strain_increment'])
+    lines.insert(lines.index('SOLVE'),'NEQIT,40')
+    lines+=['FINISH','SAVE,checkpoint,db,,MODEL','/EXIT,NOSAVE']
+    (d/'input.inp').write_text('\n'.join(lines)+'\n',encoding='utf-8',newline='\n')
+    m={'schema':'young-dawgs-v068-track-b-continuation','model_variant':'V068_TRACK_B_CENTRAL256_UNIFIED5',
+       'parent':parent_name,'parent_qualification_path':str(parent_qualification),
+       'parent_qualification_sha256':file_hash(parent_qualification),
+       'parent_execution_receipt_sha256':file_hash(source/'execution_receipt.json'),
+       'parent_RST_sha256':file_hash(source/'compression.rst'),
+       'restart_provenance_sha256':file_hash(d/'restart_provenance.json'),
+       'previous_engineering_strain':prior,'target_engineering_strain':target,
+       'target_displacement_mm':-2.56*target,
+       'mesh_semantic_sha256':inherited['mesh_semantic_sha256'],
+       'source_geometry_sha256':inherited['source_geometry_sha256'],
+       'model':model,'input_sha256':file_hash(d/'input.inp'),
+       'all_native_fields_all_substeps':True,'mechanical_mesh_convergence':'UNQUALIFIED'}
+    write_json(d/'simulation_manifest.json',m)
+    copy_evidence(d,'track_B_progressive_compression')
+    print('Prepared qualified-parent continuation',name,'from',parent_name,'to',target,flush=True)
+
+
+def execute_next(target):
+    name=next_name(target);d=BASE/name
+    r=run_progressive(d,timeout=5400,no_progress_seconds=1200,cores=8,disk_reserve=80*1024**3)
+    copy_evidence(d,'track_B_native_results')
+    print('Track B continuation',name,r['status'],r['process']['returncode'],r['converged_steps'][-5:],flush=True)
+
+
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('action',choices=['prepare-setup','execute-setup','verify-setup','prepare-first','execute-first'])
+    p=argparse.ArgumentParser();p.add_argument('action',choices=['prepare-setup','execute-setup','verify-setup','prepare-first','execute-first','prepare-next','execute-next'])
+    p.add_argument('--parent');p.add_argument('--target',type=float)
     a=p.parse_args()
     {'prepare-setup':prepare_setup,'execute-setup':execute_setup,'verify-setup':verify_setup,
-     'prepare-first':prepare_first,'execute-first':execute_first}[a.action]()
+     'prepare-first':prepare_first,'execute-first':execute_first,
+     'prepare-next':lambda:prepare_next(a.parent,a.target),
+     'execute-next':lambda:execute_next(a.target)}[a.action]()
