@@ -1,0 +1,161 @@
+{
+  "accepted": true,
+  "failures": [],
+  "max_native_converged_strain": 0.005,
+  "max_qualified_strain": 0.005,
+  "mechanical_mesh_convergence": "UNQUALIFIED",
+  "model_variant": "V068_TRACK_B_CENTRAL256_UNIFIED5",
+  "native_converged_states": [
+    [
+      1,
+      1
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      1,
+      3
+    ],
+    [
+      1,
+      4
+    ],
+    [
+      1,
+      5
+    ],
+    [
+      1,
+      6
+    ]
+  ],
+  "post_receipt_sha256": "16000056ca41b27e8b3adbca7b5e9dc697d9c178f9570f86823475e534f6a014",
+  "schema": "young-dawgs-v068-track-b-prospective-qualification",
+  "selection": "last",
+  "source_name": "track_B_first_001",
+  "source_receipt_sha256": "d89de64d4df0241e08bcef042a292aa57496c2912255e25f06eb04392c604509",
+  "states": [
+    {
+      "accepted": true,
+      "boundary_screen": {
+        "boundary_loops": 20,
+        "edges_exceeding_requested_tolerance": 0,
+        "examples": [],
+        "limitation": "Conservative spatial-index polygonal screen with exact quadratic chord-deviation bounds; uncertain near-contact points need separate native-contact/exact-curve verification.",
+        "maximum_exact_chord_error_bound_mm": 9.998004345504541e-07,
+        "minimum_area_ratio": 0.9883933380847524,
+        "minimum_near_sampled_distance_mm": null,
+        "minimum_separation_scope": "Only near pairs inside twice chord-error tolerance are queried; no exhaustive opposing-wall minimum claimed",
+        "orientation_inverted_loops": [],
+        "original_edges": 15408,
+        "passed": true,
+        "pore_loops": 19,
+        "status": "PASS_BOUNDED_QUADRATIC_BOUNDARY_SCREEN",
+        "subdivided_segments": 18629,
+        "suspicious_pair_count": 0,
+        "tolerance_mm": 1e-06
+      },
+      "failures": [],
+      "fields": {
+        "SEQV_MPa_percentiles": [
+          3.581987090628354e-09,
+          1.6320320824647443e-07,
+          1.075094677424908,
+          6.0441591778828325,
+          9.749587685280554,
+          29.469011535375
+        ],
+        "SYY_MPa_percentiles": [
+          -26.4941815131695,
+          -8.900820721877357,
+          -0.0293824368061843,
+          0.8007429531886184,
+          1.9607258914062786,
+          8.838022595416339
+        ],
+        "all_native_nodes": 174746,
+        "corner_stress_nodes": 47525,
+        "elastic_EYY_percentiles": [
+          -0.02187460451670942,
+          -0.00839947842305186,
+          -0.0001513267906385304,
+          0.0006588756094202973,
+          0.00153827075943769,
+          0.006123530676272763
+        ],
+        "invalid_quadratic_maps": 0,
+        "max_displacement_mm": 0.017655549578303252,
+        "minimum_analytic_map_determinant": 2.7382858686800972e-06,
+        "stress_location": "Native corner-node averages only"
+      },
+      "internal_contact": {
+        "closed_skins": 0,
+        "force_opposition": "NOT_APPLICABLE_OPEN",
+        "max_endpoint_penetration_mm": 0,
+        "max_pressure_MPa": 0,
+        "native_last_iteration_penetration_mm": 0,
+        "stored_skins": 0
+      },
+      "load_step": 1,
+      "measurement": {
+        "compression_displacement_mm": 0.0128,
+        "engineering_compression_strain": 0.005,
+        "lower_rf_y_N": 1.532859172266626,
+        "nominal_compression_stress_MPa": 0.5987653683106757,
+        "pseudo_time": 0.005,
+        "reaction_balance_relative": 1.2936212050554066e-05,
+        "upper_rf_y_N": -1.53283934287533
+      },
+      "native_explained_boundary_pairs": 0,
+      "platen_contact": [
+        {
+          "closed_elements": 223,
+          "contact_force_y_N": -1.53285917572,
+          "max_endpoint_penetration_mm": 9.4602157e-09,
+          "max_pressure_MPa": 5.5863724,
+          "native_stored_elements": 474,
+          "pair": "bottom",
+          "pilot_reaction_y_N": 1.532859172266626,
+          "signed_force_opposition_relative": 2.2528971308401642e-09
+        },
+        {
+          "closed_elements": 184,
+          "contact_force_y_N": 1.53283934688,
+          "max_endpoint_penetration_mm": 2.6519336e-08,
+          "max_pressure_MPa": 16.114908,
+          "native_stored_elements": 348,
+          "pair": "top",
+          "pilot_reaction_y_N": -1.53283934287533,
+          "signed_force_opposition_relative": 2.612582947858723e-09
+        }
+      ],
+      "platen_farfield": [
+        {
+          "minimum_certified_axis_separation_mm": null,
+          "native_farfield_elements": 0,
+          "pair": "bottom"
+        },
+        {
+          "minimum_certified_axis_separation_mm": null,
+          "native_farfield_elements": 0,
+          "pair": "top"
+        }
+      ],
+      "raw_field_sha256": {
+        "stage001_contact.csv": "bf68c27d3f57b78fc65a9bed190aae4d2e58be371ae0415be685d853ae9a9af2",
+        "stage001_contact_status.csv": "118cd4ddf95dbbae408fa18f27619b0d868a70c087d4097b428a3b49102794f8",
+        "stage001_displacements.csv": "92433f7ba7f0d4235176017c55a98194fd6dd20262933e058c643a810d3346d5",
+        "stage001_gate.txt": "4657d59d62613abac48dca78b89491a182ff8928e62e1f49eb9c02f058daed83",
+        "stage001_gc_fields.csv": "ada64ce6cc10dd69ed4006f41ad8c8db8150e12dafe1521d3397c851f7248363",
+        "stage001_gc_status.csv": "cf0892069683a775cd7f3d55b5e2941dc98fc1f4afcf9b8fb1e98744eabf8256",
+        "stage001_history.csv": "712d6e9dc6f99b5fab23c70126364e04e3e3fe3340e5d7c26bb5ae21d9661111",
+        "stage001_stress.csv": "fce7c33fbf3e7998728bf15a554b18e8fb5e91e19fce544de2bfb61df658193c"
+      },
+      "requested_time": 0.005,
+      "substep": 6
+    }
+  ],
+  "status": "PASS_TRACK_B_NATIVE_MECHANICAL"
+}
