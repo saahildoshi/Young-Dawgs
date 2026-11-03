@@ -1,0 +1,25 @@
+{
+  "ROI_centroid_mm": [
+    1.55,
+    2.4,
+    9.75,
+    10.24
+  ],
+  "candidate_budget_seconds": 5400,
+  "contact_candidates": [
+    "original nodal2 baseline",
+    "unified5 if native-qualified",
+    "one localized pair if defensible"
+  ],
+  "cut_motion": "Exact measured full-parent native displacement histories at every cut node for all 15 original states.",
+  "parent_gate": {
+    "core_SYY_SEQV_EYY_EXX_RMS_relative": 0.1,
+    "core_U_RMS_relative": 0.02,
+    "cut_displacement_max_mm": 1e-10,
+    "near_contact_gap": "Explicit signed quadratic gap difference; no inferred equality."
+  },
+  "reason": "Wider side and deeper bottom context than v0.6.7 ROI [1.70,2.24,9.95,10.24], surrounding the original contact-onset nanogap at about [1.97,10.22].",
+  "schema": "young-dawgs-v068-track-a-expanded-fixture-registration",
+  "scope": "Local fixture only; extrapolation beyond parent is diagnostic, never a full-specimen performance result.",
+  "selection": "Original canonical fine TRI6 element centroids in the fixed ROI; all original six nodes retained; no remesh or geometry edit."
+}
