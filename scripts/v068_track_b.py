@@ -10,6 +10,8 @@ from metamaterial_eval.simulation.mesh_generation import Mesh
 from metamaterial_eval.simulation.contact_setup import platen_plan
 from metamaterial_eval.simulation.microstructure_import import component
 from metamaterial_eval.simulation.progressive_compression import run_progressive, load_commands
+from metamaterial_eval.simulation.microstructure_pilot import database_resume
+from metamaterial_eval.simulation.nonlinear_diagnostics import telemetry_commands
 from metamaterial_eval.simulation.reporting import mesh_hash
 from scripts.v068_common import RUN, BASE, read, write_json, file_hash, copy_evidence
 
@@ -128,11 +130,94 @@ def execute_setup():
     receipt=run_progressive(d,timeout=900,no_progress_seconds=300,cores=2,disk_reserve=80*1024**3)
     receipt['execution_kind']='LICENSED_CONTACT_SETUP_ONLY'
     write_json(d/'execution_receipt.json',receipt)
-    copy_evidence(d,'track_B_contact_fixture')
+    copy_evidence(d,'track_B_native_results')
     print('Track B setup',receipt['status'],receipt['process']['returncode'],flush=True)
 
 
+def verify_setup():
+    mesh,plan,cfg,spec=mesh_and_plan()
+    d=BASE/'track_B_setup_001';receipt=read(d/'execution_receipt.json')
+    model=read(d/'simulation_manifest.json')
+    if (receipt['process']['returncode']!=0 or receipt['solver_version']!='2024 R1' or
+        receipt['input_sha256']!=model['input_sha256'] or
+        file_hash(d/'contact_model.db')!=receipt['process']['artifacts']['contact_model.db']['sha256'] or
+        file_hash(d/'gc_topology.csv')!=receipt['process']['artifacts']['gc_topology.csv']['sha256']):
+        raise ValueError('Track B native setup failed or artifacts changed')
+    out=(d/'solver.out').read_text(encoding='utf-8',errors='replace')
+    if 'NUMBER OF ERROR   MESSAGES ENCOUNTERED=          0' not in out:
+        raise ValueError('Native setup errors')
+    types=(d/'contact_types.txt').read_text(encoding='utf-8',errors='replace')
+    for pattern in [r'KEYOPT\( 1- 6\)=\s*1\s+0\s+3',
+                    r'KEYOPT\( 1- 6\)=\s*0\s+1\s+0\s+2',
+                    r'KEYOPT\( 1- 6\)=\s*0\s+1\s+0\s+5',
+                    r'ALL\s+SELF\s+SYMM\s+1\s+100']:
+        if not re.search(pattern,types):raise ValueError('Native installed contact property differs: '+pattern)
+    inv=(d/'model_inventory.txt').read_text(encoding='utf-8',errors='replace')
+    n=model['user_model_nodes'];e=model['user_model_elements_before_GC']+len(mesh.boundary)
+    if not re.search(rf'TRANSFER_COUNTS\s+{n}\.\s+{e}\.',inv):
+        raise ValueError('Native model node/element count mismatch')
+    for token in ['1000.000','0.3000000','REAL CONSTANT SET      100','10.000','-0.50000E-04']:
+        if token not in inv:raise ValueError('Native material/contact constant missing: '+token)
+    gc=np.loadtxt(d/'gc_topology.csv',delimiter=',',skiprows=1)
+    expected={tuple(int(v)+1 for v in row) for row in mesh.boundary}
+    actual={tuple(int(v) for v in row) for row in gc[:,1:4]}
+    if (len(gc)!=len(mesh.boundary) or len(actual)!=len(gc) or actual!=expected or
+        not np.all(gc[:,4:]==4)):
+        raise ValueError('Native GC skins do not cover each original oriented physical face exactly once')
+    result={'status':'PASS_NATIVE_TRACK_B_CONTACT_SETUP','solver_version':receipt['solver_version'],
+            'native_database_sha256':file_hash(d/'contact_model.db'),
+            'native_topology_sha256':file_hash(d/'gc_topology.csv'),
+            'native_nodes':n,'native_elements':e,'TRI6':len(mesh.triangles),
+            'oriented_GC_faces':len(gc),'all_GC_type_section_4':True,
+            'installed_general_contact_detection_keyopt4':5,
+            'installed_platen_detection_keyopt4':2,
+            'material_and_contact_constants_native_readback':True,
+            'source_mesh_semantic_sha256':spec['semantic_sha256'],
+            'setup_receipt_sha256':file_hash(d/'execution_receipt.json'),
+            'scope':'Native model and contact setup only; no mechanical result.'}
+    write_json(RUN/'track_B_contact_fixture/SETUP_QUALIFICATION.json',result)
+    return result
+
+
+def prepare_first():
+    setup=verify_setup();protocol=read(RUN/'protocol/TRACK_B.json')
+    model=read(BASE/'track_B_setup_001/simulation_manifest.json')
+    d=BASE/'track_B_first_001';d.mkdir(parents=True,exist_ok=False)
+    lines=['/BATCH','/CLEAR,START',database_resume(BASE/'track_B_setup_001/contact_model.db').strip(),
+           '/GOPR','/SOLU','ANTYPE,STATIC','NLGEOM,ON','EQSLV,SPARSE',
+           'NROPT,FULL','LNSRCH,ON','CNVTOL,F,,.005,2,1e-8']
+    lines+=telemetry_commands(model['controls']['top'])
+    lines+=load_commands(.005,0,model['controls']['top'],2.56,
+                         initial=protocol['initial_strain_increment'],
+                         maximum=protocol['maximum_strain_increment'],
+                         minimum=protocol['minimum_strain_increment'])
+    lines+=['NEQIT,40','FINISH','SAVE,checkpoint,db,,MODEL','/EXIT,NOSAVE']
+    # NEQIT must be active before SOLVE, not after it.
+    lines.remove('NEQIT,40');lines.insert(lines.index('SOLVE'),'NEQIT,40')
+    (d/'input.inp').write_text('\n'.join(lines)+'\n',encoding='utf-8',newline='\n')
+    manifest={'schema':'young-dawgs-v068-track-b-first-progressive','model_variant':'V068_TRACK_B_CENTRAL256_UNIFIED5',
+              'source_contact_setup_receipt_sha256':setup['setup_receipt_sha256'],
+              'source_contact_database_sha256':setup['native_database_sha256'],
+              'mesh_semantic_sha256':setup['source_mesh_semantic_sha256'],
+              'source_geometry_sha256':model['source_geometry_sha256'],
+              'model':{**model,'general_contact_elements':setup['oriented_GC_faces']},
+              'target_engineering_strain':.005,'target_displacement_mm':-.0128,
+              'all_native_fields_all_substeps':True,'input_sha256':file_hash(d/'input.inp'),
+              'mechanical_mesh_convergence':'UNQUALIFIED'}
+    write_json(d/'simulation_manifest.json',manifest)
+    copy_evidence(d,'track_B_progressive_compression')
+    print('Prepared first Track B 0.5% native stage',flush=True)
+
+
+def execute_first():
+    d=BASE/'track_B_first_001'
+    receipt=run_progressive(d,timeout=5400,no_progress_seconds=1200,cores=8,disk_reserve=80*1024**3)
+    copy_evidence(d,'track_B_native_results')
+    print('Track B first',receipt['status'],receipt['process']['returncode'],receipt['converged_steps'][-5:],flush=True)
+
+
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('action',choices=['prepare-setup','execute-setup'])
+    p=argparse.ArgumentParser();p.add_argument('action',choices=['prepare-setup','execute-setup','verify-setup','prepare-first','execute-first'])
     a=p.parse_args()
-    prepare_setup() if a.action=='prepare-setup' else execute_setup()
+    {'prepare-setup':prepare_setup,'execute-setup':execute_setup,'verify-setup':verify_setup,
+     'prepare-first':prepare_first,'execute-first':execute_first}[a.action]()
