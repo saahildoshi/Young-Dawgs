@@ -1,0 +1,31 @@
+
+ LIST ELEMENT TYPES FROM        1 TO        2 BY        1
+
+ *** MAPDL - ENGINEERING ANALYSIS SYSTEM  RELEASE 2024 R1          24.1     ***
+ Ansys Mechanical Enterprise Academic Research
+ 00446375  VERSION=WINDOWS x64   13:06:02  NOV 03, 2026 CP=     15.000
+
+
+
+
+
+ ELEMENT TYPE        1 IS PLANE183     2-D 6-NODE PLANE STRS SOLID
+  KEYOPT( 1- 6)=        1      0      3        0      0      0
+  KEYOPT( 7-12)=        0      0      0        0      0      0
+  KEYOPT(13-18)=        0      0      0        0      0      0
+
+ ELEMENT TYPE        2 IS CONTA172     2D 3-NODE SURF-SURF CONTACT
+  KEYOPT( 1- 6)=        0      1      0        5      0      0
+  KEYOPT( 7-12)=        0      0      0        0      1      0
+  KEYOPT(13-18)=        0      0      0        0      0      0
+
+ CURRENT NODAL DOF SET IS  UX    UY
+  TWO-DIMENSIONAL MODEL
+
+
+ GENERAL CONTACT PROPERTY OPTION = LIST       (COMPLETE)
+
+   Section1  Section2     Interaction   Material      Real
+  (contact)  (target)
+ ----------------------------------------------------------
+        ALL      SELF            SYMM          1       100
