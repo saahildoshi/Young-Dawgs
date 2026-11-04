@@ -1,0 +1,43 @@
+{
+  "arbitrary_RSS_cap": null,
+  "candidate_policy": "Baseline first. Diagnose discrete surface transition before one targeted candidate; no parameter sweep. Candidate config committed before native execution.",
+  "concurrent_native_processes": 1,
+  "disk_reserve_bytes": 85899345920,
+  "future_loading": [
+    0.012675,
+    0.015,
+    0.02,
+    0.05,
+    0.1,
+    0.2,
+    0.3,
+    0.4
+  ],
+  "geometry_material_mesh": "Exact v068 Track B unchanged; E1000MPa nu0.3 plane stress thickness1mm, exploratory",
+  "local_fixture": "Exact original TRI6 centroid ROI [2.35,2.56] x [2.05,2.45] mm; one element adjacency halo; measured cut U histories; artificial cuts excluded from contact",
+  "mechanics": {
+    "native_penetration_mm": 5e-05,
+    "opposing_force_relative": 0.01,
+    "positive_analytic_TRI6_maps": true,
+    "reaction_relative": 0.01,
+    "unexplained_continuous_crossing_allowed": false
+  },
+  "native_stage_seconds": 5400,
+  "parent_matching": {
+    "S_and_EPEL_relative_RMS": 0.1,
+    "U_relative_RMS": 0.02,
+    "all_measured_states_required": true,
+    "gap_absolute_mm": 1e-06,
+    "normal_angle_degrees": 2,
+    "reaction_relative": 0.01
+  },
+  "registered_utc": "2026-11-04T20:54:33.316572+00:00",
+  "schema": "young-dawgs-v069-prospective-contact-study",
+  "stall_seconds": 1200,
+  "starting_head": "77be86d9372da192a7251e5535a2b964aeeff0ac",
+  "stop": "No qualified local match => no specimen source solve; preserve failures and report",
+  "system_health_policy": "Existing progressive_compression defaults; no unrelated process termination",
+  "track_A_full_solve_authorized": false,
+  "track_B_continuation_gate": "Complete local parent matching and all-state native contact qualification first",
+  "wall_budget_seconds": 21600
+}
