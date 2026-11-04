@@ -82,7 +82,7 @@ def baseline():
         for n in z['nodes']:f.write(f'N,{n},{mesh.nodes[n-1,0]:.17g},{mesh.nodes[n-1,1]:.17g}\n')
         for eid,t in zip(z['eids'],z['triangles']):f.write(f'EN,{eid},'+','.join(str(n+1) for n in t)+'\n')
         component(f,'LOCAL_NODES',z['nodes']);component(f,'LOCAL_CORNERS',z['corners']);component(f,'LOCAL_SOLIDS',z['eids']);component(f,'CUT_NODES',z['cutnodes'])
-        f.write('ALLSEL,ALL\nGCGEN,NEW,42,0,PART,SELECT\nGCGEN,SELECT\nCM,ALL_GC,ELEM\nALLSEL,ALL\n')
+        f.write('ET,2,TARGE169\nET,3,CONTA172\nALLSEL,ALL\nGCGEN,NEW,42,0,PART,SELECT\nGCGEN,SELECT\nCM,ALL_GC,ELEM\nALLSEL,ALL\n')
         for face in np.vstack([z['cut']+1,topo[:,1:4],target[:,1:4]]):
             f.write('NSEL,NONE\n'+''.join(f'NSEL,A,NODE,,{n}\n' for n in face)+'ESLN,S,1,ALL\nCMSEL,R,ALL_GC\nEDELE,ALL\nALLSEL,ALL\n')
         f.write('CMSEL,S,ALL_GC\nCM,INTERNAL_GC,ELEM\nEMODIF,ALL,TYPE,4\nEMODIF,ALL,SECNUM,4\nALLSEL,ALL\nKEYOPT,4,2,1\nKEYOPT,4,4,5\nKEYOPT,4,10,0\nR,100,,,100,-5e-5\nGCDEF,SYMM,ALL,SELF,1,100\nET,5,TARGE169\nKEYOPT,5,2,0\nET,6,CONTA172\nKEYOPT,6,2,1\nKEYOPT,6,4,5\nKEYOPT,6,10,0\nR,6,,,10,-5e-5\n')
