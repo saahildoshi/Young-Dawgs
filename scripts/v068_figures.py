@@ -15,14 +15,20 @@ def lines(xy,faces):
     return np.concatenate([vertices[:,[0,2]],vertices[:,[2,1]]],axis=0)
 
 
-def make(source_name):
-    q=read(RUN/'track_B_progressive_compression'/(source_name+'_qualification.json'))
-    if not q['accepted'] or len(q['states'])!=1:raise ValueError('Only independently accepted state can be drawn as a result')
-    state=q['states'][0]
+def make(source_name,substep=None):
+    qpath=RUN/'track_B_progressive_compression'/(source_name+'_qualification.json')
+    q=read(qpath)
+    if substep is None:
+        if not q['accepted'] or len(q['states'])!=1:raise ValueError('Choose an independently accepted state')
+        state=q['states'][0];prefix='stage001';selection='last'
+    else:
+        matches=[(i,s) for i,s in enumerate(q['states'],1) if s['substep']==substep and s['accepted']]
+        if len(matches)!=1:raise ValueError('Selected substep is not independently accepted')
+        index,state=matches[0];prefix=f'stage{index:03d}';selection='all'
     mesh,_,_,_=mesh_and_plan()
-    post=BASE/(source_name+'_post1_last_v2')
-    u=np.loadtxt(post/'stage001_displacements.csv',delimiter=',',skiprows=1)
-    s=np.loadtxt(post/'stage001_stress.csv',delimiter=',',skiprows=1)
+    post=BASE/(source_name+'_post1_'+selection+'_v2')
+    u=np.loadtxt(post/(prefix+'_displacements.csv'),delimiter=',',skiprows=1)
+    s=np.loadtxt(post/(prefix+'_stress.csv'),delimiter=',',skiprows=1)
     if len(u)!=len(mesh.nodes) or not np.array_equal(u[:,0],np.arange(1,len(u)+1)):
         raise ValueError('Incomplete native displacement plot source')
     xy=mesh.nodes+u[:,1:3]
@@ -30,7 +36,7 @@ def make(source_name):
     # Full actual crop geometry at native 1:1 deformed scale.
     fig,ax=plt.subplots(1,2,figsize=(11,5.4),layout='constrained')
     for axis,points,title,color in [(ax[0],mesh.nodes,'Initial selected specimen','#34495e'),
-                                    (ax[1],xy,f'Native accepted {100*state["requested_time"]:.3f}%','#156f80')]:
+                                    (ax[1],xy,f'Native accepted {100*state["requested_time"]:.4f}%','#156f80')]:
         axis.add_collection(LineCollection(lines(points,mesh.boundary),colors=color,linewidths=.23,rasterized=True))
         axis.set_xlim(-.05,2.64);axis.set_ylim(-.12,2.66);axis.set_aspect('equal')
         axis.set_title(title);axis.set_xlabel('x (mm)');axis.set_ylabel('y (mm)')
@@ -47,7 +53,7 @@ def make(source_name):
         axis.set_xlim(2.515,2.585);axis.set_ylim(2.195,2.30);axis.set_aspect('equal')
         axis.set_title(title);axis.set_xlabel('x (mm)');axis.set_ylabel('y (mm)')
     ax[0].legend(loc='lower left',fontsize=8)
-    fig.suptitle(f'Track B selected exterior-arc pair, accepted {100*state["requested_time"]:.3f}%')
+    fig.suptitle(f'Track B selected exterior-arc pair, accepted {100*state["requested_time"]:.4f}%')
     path2=figdir/'TRACK_B_CONTACT_ONSET.png';fig.savefig(path2,dpi=230);plt.close(fig)
     # Native corner-node stress values, linearly interpolated across corner
     # triangles solely for plotting; reported extrema still come from nodes.
@@ -64,31 +70,43 @@ def make(source_name):
         fig.colorbar(im,ax=axis,shrink=.8,label='MPa')
         axis.set_xlim(-.05,2.64);axis.set_ylim(-.12,2.66);axis.set_aspect('equal')
         axis.set_title(title);axis.set_xlabel('x (mm)');axis.set_ylabel('y (mm)')
-    fig.suptitle(f'Track B native corner stresses at accepted {100*state["requested_time"]:.3f}% (visual interpolation)')
+    fig.suptitle(f'Track B native corner stresses at accepted {100*state["requested_time"]:.4f}% (visual interpolation)')
     path3=figdir/'TRACK_B_ACCEPTED_STRESS.png';fig.savefig(path3,dpi=220);plt.close(fig)
-    # Every pair-branch accepted checkpoint is shown as a discrete native result.
+    # Keep the nodal-pair and unified-pair response branches distinct.
     records=[]
-    for file in (RUN/'track_B_progressive_compression').glob('track_B_pair*_qualification.json'):
+    branch_glob=('track_B_pair5_*_qualification.json' if source_name.startswith('track_B_pair5_')
+                 else 'track_B_pair_*_qualification.json')
+    for file in (RUN/'track_B_progressive_compression').glob(branch_glob):
         item=read(file)
         if item.get('accepted') and len(item.get('states',[]))==1:
             m=item['states'][0]['measurement'];records.append((m['engineering_compression_strain'],m['nominal_compression_stress_MPa'],
                                                                 m['compression_displacement_mm'],abs(m['upper_rf_y_N'])))
+    if substep is not None:
+        for row in q['states']:
+            if not row['accepted'] or row['requested_time']>state['requested_time']:continue
+            m=row['measurement'];records.append((m['engineering_compression_strain'],m['nominal_compression_stress_MPa'],
+                                                 m['compression_displacement_mm'],abs(m['upper_rf_y_N'])))
     records=sorted(set(records))
     if not records:raise ValueError('No accepted native force curve')
     arr=np.array(records)
+    curve_csv=figdir/'TRACK_B_ACCEPTED_RESPONSE.csv'
+    np.savetxt(curve_csv,arr,delimiter=',',fmt='%.16g',
+               header='engineering_compression_strain,nominal_compression_stress_MPa,platen_travel_mm,upper_reaction_magnitude_N',comments='')
     fig,ax=plt.subplots(1,2,figsize=(10,4.1),layout='constrained')
     ax[0].plot(100*arr[:,0],arr[:,1],'-o',color='#156f80',markersize=4)
     ax[0].set_xlabel('Engineering compression (%)');ax[0].set_ylabel('Nominal stress (MPa)')
     ax[1].plot(arr[:,2],arr[:,3],'-o',color='#9c4c22',markersize=4)
     ax[1].set_xlabel('Upper-platen displacement magnitude (mm)');ax[1].set_ylabel('Upper reaction magnitude (N)')
     for a in ax:a.grid(alpha=.25)
-    fig.suptitle('Track B: independently accepted native checkpoints only')
+    fig.suptitle('Track B: independently accepted native checkpoints; one contact branch')
     path4=figdir/'TRACK_B_ACCEPTED_CURVES.png';fig.savefig(path4,dpi=230);plt.close(fig)
     m={'schema':'young-dawgs-v068-actual-native-figure-inventory','state_source':source_name,
-       'state_qualification_sha256':file_hash(RUN/'track_B_progressive_compression'/(source_name+'_qualification.json')),
-       'source_displacement_sha256':file_hash(post/'stage001_displacements.csv'),
-       'source_stress_sha256':file_hash(post/'stage001_stress.csv'),
-       'accepted_curve_points':len(records),
+       'state_qualification_sha256':file_hash(qpath),'selected_load_step':state['load_step'],
+       'selected_substep':state['substep'],'selected_engineering_strain':state['requested_time'],
+       'source_displacement_sha256':file_hash(post/(prefix+'_displacements.csv')),
+       'source_stress_sha256':file_hash(post/(prefix+'_stress.csv')),
+       'accepted_curve_points':len(records),'curve_branch':'unified_pair5' if source_name.startswith('track_B_pair5_') else 'nodal_pair2',
+       'response_csv_sha256':file_hash(curve_csv),
        'figures':{p.name:{'sha256':file_hash(p),'bytes':p.stat().st_size} for p in [path,path2,path3,path4]},
        'limitations':'2D assumed material, no mesh-convergence, corner-node stress averages, no deformation magnification, separate crop specimen.'}
     write_json(figdir/'FIGURE_INVENTORY.json',m)
@@ -96,4 +114,5 @@ def make(source_name):
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('source_name');make(p.parse_args().source_name)
+    p=argparse.ArgumentParser();p.add_argument('source_name');p.add_argument('--substep',type=int)
+    a=p.parse_args();make(a.source_name,a.substep)

@@ -12,17 +12,20 @@ from scripts.v068_common import BASE,RUN,read,write_json,file_hash,copy_evidence
 def prepare(source_name):
     source=BASE/source_name;post=BASE/(source_name+'_post1_all_v2')
     pm=read(post/'simulation_manifest.json');pr=read(post/'execution_receipt.json')
-    setup=read(RUN/'track_B_contact_fixture/PAIR_SETUP_QUALIFICATION.json')
+    unified=source_name.startswith('track_B_pair5_')
+    setup=read(RUN/'track_B_contact_fixture'/('PAIR_UNIFIED5_SETUP_QUALIFICATION.json' if unified else 'PAIR_SETUP_QUALIFICATION.json'))
+    database=BASE/('track_B_pair_unified_setup_001/contact_model_pair_unified.db' if unified else 'track_B_pair_setup_002/contact_model_pair.db')
+    database_sha=setup['native_database_sha256'] if unified else setup['pair_database_sha256']
     if (pr['process']['returncode']!=0 or pm['selection']!='all' or
         file_hash(source/'compression.rst')!=pm['source_RST_sha256'] or
-        file_hash(BASE/'track_B_pair_setup_002/contact_model_pair.db')!=setup['pair_database_sha256']):
+        file_hash(database)!=database_sha):
         raise ValueError('Changed or incomplete native all-state source')
     paths=[BASE/'track_B_pair_setup_002/target_topology.csv',BASE/'track_B_pair_setup_002/contact_topology.csv']
     nodes=[np.unique(np.loadtxt(p,delimiter=',',skiprows=1,ndmin=2)[:,1:4].astype(int)) for p in paths]
     if np.intersect1d(*nodes).size:raise ValueError('Source and target structural patches overlap')
     d=BASE/(source_name+'_pair_force_scan_001');d.mkdir(parents=True,exist_ok=False)
     with (d/'input.inp').open('w',encoding='utf-8',newline='\n') as f:
-        f.write('/BATCH\n/CLEAR,START\n'+database_resume(BASE/'track_B_pair_setup_002/contact_model_pair.db')+
+        f.write('/BATCH\n/CLEAR,START\n'+database_resume(database)+
                 '/FILNAME,readonly\n/PREP7\n')
         component(f,'PATCH_TARGET',nodes[0]);component(f,'PATCH_SOURCE',nodes[1])
         f.write('FINISH\n/POST1\n'+"FILE,'"+(source/'compression').resolve().as_posix()+"',rst\n"+
@@ -42,7 +45,7 @@ def prepare(source_name):
     m={'schema':'young-dawgs-v068-all-onset-pair-structural-forces','source':source_name,
        'source_RST_sha256':file_hash(source/'compression.rst'),
        'source_post_receipt_sha256':file_hash(post/'execution_receipt.json'),
-       'pair_database_sha256':setup['pair_database_sha256'],
+       'pair_database_sha256':database_sha,
        'states':pm['states'],'target_nodes':len(nodes[0]),'source_nodes':len(nodes[1]),
        'input_sha256':file_hash(d/'input.inp'),'read_only':True}
     write_json(d/'simulation_manifest.json',m)

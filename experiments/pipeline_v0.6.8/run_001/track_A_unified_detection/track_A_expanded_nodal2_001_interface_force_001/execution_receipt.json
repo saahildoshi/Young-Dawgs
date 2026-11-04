@@ -1,0 +1,179 @@
+{
+  "converged_steps": [],
+  "execution_kind": "INDEPENDENT_READ_ONLY_POST1",
+  "input_sha256": "cfb2d03da7da0f06414b17c72b8759cb8d8478d4a9fb58a1db140d824c924bec",
+  "observed_progress": [],
+  "process": {
+    "artifacts": {
+      "input.inp": {
+        "bytes": 3390,
+        "sha256": "cfb2d03da7da0f06414b17c72b8759cb8d8478d4a9fb58a1db140d824c924bec"
+      },
+      "launcher.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "readonly.err": {
+        "bytes": 80,
+        "sha256": "ecb8dd71bbcc2fabd130b4249bbc1e974ff5a6d2f5c656e5872b06f24ae8c493"
+      },
+      "readonly.log": {
+        "bytes": 250,
+        "sha256": "4a9a2f17a062ec6986b10f03c2d258019d0882fe2b3c44151fc9550d0e27989d"
+      },
+      "simulation_manifest.json": {
+        "bytes": 1603,
+        "sha256": "abffd2b90def68a52f3de0e88bd1c03baf317bdb657324aaf97446ad4c50c1a2"
+      },
+      "solver.out": {
+        "bytes": 44523,
+        "sha256": "6c41f94f98a4ecb4abdd4c1c1d24f45ffa272b82bee8cd6cb3864c02391d090e"
+      },
+      "state016_interface.csv": {
+        "bytes": 391,
+        "sha256": "c71c580bb9728c78fed69f1e4088df6a431cac8d59c4c323ad7210e5ea4f0830"
+      },
+      "state017_interface.csv": {
+        "bytes": 391,
+        "sha256": "1e39d3d01794383f11d58fa26dbd0147efb5f77a50c3f93839c0592a0756bb3a"
+      },
+      "state018_interface.csv": {
+        "bytes": 391,
+        "sha256": "cdd43ddb440124b36427a33cf5ca138ad2d73df367d76cebb4a27e6882be9179"
+      }
+    },
+    "command": [
+      "C:\\Program Files\\ANSYS Inc\\v241\\ansys\\bin\\winx64\\ANSYS241.exe",
+      "-b",
+      "-smp",
+      "-np",
+      "2",
+      "-m",
+      "4096",
+      "-j",
+      "readonly",
+      "-i",
+      "input.inp",
+      "-o",
+      "solver.out"
+    ],
+    "min_available_ram_bytes": 0,
+    "min_disk_free_bytes": 85899345920,
+    "native_signal_availability": [],
+    "paging_interpretation": "Page Reads/sec is system hard-fault disk-read proxy, not pagefile-only or per-process hard faults",
+    "peak_tree_rss_bytes": 242167808,
+    "resource_samples": [
+      {
+        "available_RAM_bytes": 43476606976,
+        "commit_fraction": 0.39352123885782775,
+        "commit_limit_bytes": 72698556416,
+        "commit_used_bytes": 28608425984,
+        "disk_free_bytes": 1231057997824,
+        "elapsed_seconds": 0.14957279991358519,
+        "native_markers_first_observed_seconds": {},
+        "output_file_bytes": {
+          "input.inp": 3390,
+          "launcher.log": 0,
+          "simulation_manifest.json": 1603
+        },
+        "owned_processes": [
+          {
+            "name": "ANSYS241.exe",
+            "pid": 2352,
+            "status": "running"
+          },
+          {
+            "name": "conhost.exe",
+            "pid": 23124,
+            "status": "running"
+          }
+        ],
+        "page_reads_per_second": 0.0,
+        "page_writes_per_second": 0.0,
+        "pagefile_usage_percent": 0.9963035583496094,
+        "pages_input_per_second": 0.0,
+        "physical_RAM_bytes": 68403589120,
+        "seconds_without_output_growth": 0.14957279991358519,
+        "system_memory_percent": 36.4,
+        "tree_rss_bytes": 8777728,
+        "windows_low_memory": false
+      }
+    ],
+    "returncode": 0,
+    "rss_limit_bytes": null,
+    "run_directory": "C:\\Users\\sd22446\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\YoungDawgs\\artifacts\\solver\\v068\\track_A_expanded_nodal2_001_interface_force_001",
+    "runtime_seconds": 2.919170199893415,
+    "started_utc": "2026-11-04T20:18:42.251168+00:00",
+    "status": "PROCESS_EXITED",
+    "system_after": {
+      "available_RAM_bytes": 43459584000,
+      "commit_fraction": 0.39286749976941937,
+      "commit_limit_bytes": 72698556416,
+      "commit_used_bytes": 28560900096,
+      "disk_free_bytes": 1231057911808,
+      "elapsed_seconds": 2.9169103000313044,
+      "native_markers_first_observed_seconds": {},
+      "output_file_bytes": {
+        "input.inp": 3390,
+        "launcher.log": 0,
+        "readonly.err": 80,
+        "readonly.log": 250,
+        "simulation_manifest.json": 1603,
+        "solver.out": 44523,
+        "state016_interface.csv": 391,
+        "state017_interface.csv": 391,
+        "state018_interface.csv": 391
+      },
+      "owned_processes": [],
+      "page_reads_per_second": 6.553742527413668,
+      "page_writes_per_second": 0.0,
+      "pagefile_usage_percent": 0.9963035583496094,
+      "pages_input_per_second": 76.82442629357132,
+      "physical_RAM_bytes": 68403589120,
+      "seconds_without_output_growth": 0.0,
+      "system_memory_percent": 36.5,
+      "tree_rss_bytes": null,
+      "windows_low_memory": false
+    },
+    "system_before": {
+      "available_RAM_bytes": 43486371840,
+      "commit_fraction": 0.3924891615828588,
+      "commit_limit_bytes": 72698556416,
+      "commit_used_bytes": 28533395456,
+      "disk_free_bytes": 1231057997824,
+      "elapsed_seconds": 0,
+      "native_markers_first_observed_seconds": {},
+      "output_file_bytes": {
+        "input.inp": 3390,
+        "simulation_manifest.json": 1603
+      },
+      "owned_processes": [],
+      "page_reads_per_second": 0.0,
+      "page_writes_per_second": 0.0,
+      "pagefile_usage_percent": 0.9963035583496094,
+      "pages_input_per_second": 0.0,
+      "physical_RAM_bytes": 68403589120,
+      "seconds_without_output_growth": 0,
+      "system_memory_percent": 36.4,
+      "tree_rss_bytes": null,
+      "windows_low_memory": false
+    },
+    "system_health_policy": {
+      "available_reserve_bytes": 6442450944,
+      "commit_fraction": 0.98,
+      "commit_seconds": 15,
+      "critical_available_bytes": 1073741824,
+      "critical_seconds": 3,
+      "no_output_growth_seconds": 90,
+      "notification_seconds": 10,
+      "page_reads_per_second": 10000,
+      "paging_seconds": 60,
+      "reserve_seconds": 30
+    },
+    "timeout_seconds": 600
+  },
+  "solver_version": "2024 R1",
+  "status": "PROCESS_EXITED",
+  "warning_occurrences": 0,
+  "warnings": []
+}
