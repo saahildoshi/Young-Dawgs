@@ -61,6 +61,10 @@ def qualify(label):
         pressure=float(contact[:,2:5].max()) if len(contact) else 0
         closed=int(np.sum(contact[:,1]>=2)) if len(contact) else 0
         penetration=max(0,float(contact[:,5:7].max())) if len(contact) else 0
+        proof_path=RUN/'track_A_local_fixture'/(label+'_interface_force.json')
+        force_q=read(proof_path) if closed and proof_path.exists() else None
+        force_state=next((x for x in force_q['states'] if (x['load_step'],x['substep'])==key),None) if force_q else None
+        force_pass=bool(force_state and force_state['passed']) if closed else True
         force_error=float(np.linalg.norm(forces[:,1:3].sum(axis=0))/max(np.linalg.norm(forces[:,1:3],axis=1).sum(),1e-12))
         geometry_error=None
         try:
@@ -77,9 +81,10 @@ def qualify(label):
                 'positive_all_TRI6':positive,'max_endpoint_penetration_mm':penetration,
                 'max_native_pressure_MPa':pressure,'signed_reaction_residual_relative':force_error,
                 'closed_GC_skins':closed,
-                'two_sided_interface_force':'PENDING_NATIVE_PROOF' if closed else 'NOT_APPLICABLE_OPEN',
+                'two_sided_interface_force':('PASS_NATIVE_STRUCTURAL_FORCE' if force_pass else 'PENDING_OR_FAILED_NATIVE_PROOF') if closed else 'NOT_APPLICABLE_OPEN',
+                'two_sided_force_proof_sha256':file_hash(proof_path) if closed and force_pass else None,
                 'boundary_candidates':overlap['suspicious_pair_count'],'geometry_failure':geometry_error,
-                'local_mechanical_gates_passed':bool(positive and penetration<=1e-5 and force_error<=.01 and geometry_error is None and not closed),
+                'local_mechanical_gates_passed':bool(positive and penetration<=1e-5 and force_error<=.01 and geometry_error is None and force_pass),
                 'extrapolated_cut_motion':state['load_step']>len(measured)}
         if state['load_step']<=len(measured):
             snapshot=spec['source_snapshots'][state['load_step']-1]
