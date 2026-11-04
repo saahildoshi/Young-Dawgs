@@ -60,7 +60,7 @@ Verification completed with **799 active tests**, **475 archived replay checks a
 
 ## O. Git history
 
-Changes were committed after coherent implementation and evidence phases. The full hashes and messages through the final reporting phase are listed in the [handoff](V0_6_8_HANDOFF.md) and the final response. No push was made. Historical source files and previously rejected results were preserved.
+Changes were committed after coherent implementation and evidence phases. The [handoff](V0_6_8_HANDOFF.md) lists full hashes and messages through the evidence phase; the final reporting commit hash is supplied in the terminal handoff. No push was made. Historical source files and previously rejected results were preserved.
 
 ## P. Next milestone
 
