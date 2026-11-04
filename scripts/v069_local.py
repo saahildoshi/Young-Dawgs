@@ -52,9 +52,27 @@ def extract():
 def export_fields(f,prefix):
     for comp,label,quantities in [('LOCAL_NODES','u',[('UX','U','X'),('UY','U','Y')]),
       ('LOCAL_CORNERS','fields',[('SX','S','X'),('SY','S','Y'),('SXY','S','XY'),('SEQ','S','EQV'),('EX','EPEL','X'),('EY','EPEL','Y'),('EXY','EPEL','XY')])]:
-        f.write(f'ALLSEL,ALL\nCMSEL,S,{comp}\n*GET,NN,NODE,0,COUNT\n*CFOPEN,{prefix}_{label},csv\nNI=0\n*DO,J,1,NN\nNI=NDNEXT(NI)\n')
-        for var,item,sub in quantities:f.write(f'*GET,{var},NODE,NI,{item},{sub}\n')
-        f.write('*VWRITE,NI,'+','.join(q[0] for q in quantities)+'\n'+f"(F12.0,{len(quantities)}(',',E24.16))\n*ENDDO\n*CFCLOS\nALLSEL,ALL\n")
+        f.write(f'ALLSEL,ALL\n*GET,NMAX,NODE,0,NUM,MAX\nCMSEL,S,{comp}\n')
+        arrays=['IDS','MASKV']+[q[0]+'V' for q in quantities]
+        for a in arrays:f.write(f'*DIM,{a},ARRAY,NMAX\n')
+        f.write('*VFILL,IDS(1),RAMP,1,1\n*VGET,MASKV(1),NODE,1,NSEL\n')
+        for var,item,sub in quantities:f.write(f'*VLEN,NMAX\n*VMASK,MASKV(1)\n*VGET,{var}V(1),NODE,1,{item},{sub}\n')
+        f.write(f'*CFOPEN,{prefix}_{label},csv\n*VLEN,NMAX\n*VMASK,MASKV(1)\n*VWRITE,IDS(1),'+','.join(q[0]+'V(1)' for q in quantities)+'\n'+f"(F12.0,{len(quantities)}(',',E24.16))\n*CFCLOS\nALLSEL,ALL\n")
+        for a in arrays:f.write(f'*DEL,{a}\n')
+
+
+def vector_readback():
+    manifest=read(BASE/'parent_local_readback_001/simulation_manifest.json');z=np.load(BASE/'local_source_001/source.npz')
+    d=BASE/'parent_local_readback_002';d.mkdir(exist_ok=False)
+    with (d/'input.inp').open('w',newline='\n') as f:
+        f.write('/BATCH\n/CLEAR,START\n'+database_resume(OLD/'track_B_pair_unified_setup_001/contact_model_pair_unified.db')+'/FILNAME,readonly\n/PREP7\n')
+        for comp,key in [('LOCAL_NODES','nodes'),('LOCAL_CORNERS','corners'),('LOCAL_SOLIDS','eids'),('CUT_NODES','cutnodes')]:component(f,comp,z[key])
+        f.write('FINISH\n/POST1\n')
+        for i,s in enumerate(manifest['states'],1):
+            f.write("FILE,'"+(OLD/s['source']/'compression').as_posix()+f"',rst\nSET,{s['load_step']},{s['substep']}\n")
+            export_fields(f,f'state{i:03d}')
+        f.write('FINISH\n/EXIT,NOSAVE\n')
+    write_json(d/'simulation_manifest.json',{**manifest,'input_sha256':file_hash(d/'input.inp'),'extraction':'masked-native-vector-v2','boundary_force_comparison':'pending separate native patch extraction'})
 
 
 def execute(name):
@@ -65,14 +83,16 @@ def execute(name):
     write_json(d/'preflight.json',{'available_RAM':psutil.virtual_memory().available,'free_disk':shutil.disk_usage(BASE).free,
        'estimated_RSS_bytes':2*2**30,'estimated_disk_bytes':3*2**30,'native_processes':active,'timeout_s':5400})
     r=run_progressive(d,timeout=5400,no_progress_seconds=1200,solve='readback' not in name,cores=2,disk_reserve=80*2**30)
-    target=RUN/'native'/name;target.mkdir(parents=True,exist_ok=True);compact(d,target)
+    target=RUN/'native'/name
+    if target.exists():target=target/'evidence'
+    compact(d,target)
     print(name,r['status'],r['process']['returncode'],flush=True)
 
 
 def baseline():
     mesh,_,_,_=mesh_and_plan();source=BASE/'local_source_001/source.npz';z=np.load(source)
-    manifest=read(BASE/'parent_local_readback_001/simulation_manifest.json')
-    assert read(BASE/'parent_local_readback_001/execution_receipt.json')['process']['returncode']==0
+    manifest=read(BASE/'parent_local_readback_002/simulation_manifest.json')
+    assert read(BASE/'parent_local_readback_002/execution_receipt.json')['process']['returncode']==0
     d=BASE/'local_baseline_001';d.mkdir(exist_ok=False)
     topo=np.loadtxt(OLD/'track_B_pair_setup_002/contact_topology.csv',delimiter=',',skiprows=1).astype(int)
     target=np.loadtxt(OLD/'track_B_pair_setup_002/target_topology.csv',delimiter=',',skiprows=1).astype(int)
@@ -93,7 +113,7 @@ def baseline():
             f.write(f'ESEL,S,TYPE,,{typ}\nCM,{label},ELEM\nALLSEL,ALL\n')
         f.write('/GOPR\n/OUTPUT,inventory,txt\nETLIST,ALL\nRLIST,ALL\nGCDEF,LIST\n/OUTPUT\nFINISH\nSAVE,initial,db\n/SOLU\nANTYPE,STATIC\nNLGEOM,ON\nEQSLV,SPARSE\nNROPT,FULL\nLNSRCH,ON\nCNVTOL,F,,.005,2,1e-8\nNEQIT,40\nAUTOTS,ON\nOUTRES,ALL,ALL\nOUTRES,NLOAD,ALL\nNLDIAG,CONT,ITER\nRESCONTROL,DEFINE,ALL,1,-1,,3\n')
         for i,s in enumerate(manifest['states'],1):
-            u=np.loadtxt(BASE/f'parent_local_readback_001/state{i:03d}_u.csv',delimiter=',');assert np.array_equal(u[:,0],z['nodes'])
+            u=np.loadtxt(BASE/f'parent_local_readback_002/state{i:03d}_u.csv',delimiter=',');assert np.array_equal(u[:,0],z['nodes'])
             values={int(r[0]):r[1:] for r in u}
             f.write(f'TIME,{s["time"]:.17g}\nNSUBST,1,128,1\n')
             for n in z['cutnodes']:f.write(f'D,{n},UX,{values[n][0]:.17g}\nD,{n},UY,{values[n][1]:.17g}\n')
@@ -104,6 +124,6 @@ def baseline():
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('action',choices=['extract','execute','baseline']);p.add_argument('--name');a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('action',choices=['extract','execute','baseline','vector_readback']);p.add_argument('--name');a=p.parse_args()
     if a.action=='execute':execute(a.name)
     else:globals()[a.action]()
