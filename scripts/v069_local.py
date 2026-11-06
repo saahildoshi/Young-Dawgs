@@ -8,11 +8,13 @@ from metamaterial_eval.simulation.microstructure_pilot import database_resume
 from metamaterial_eval.simulation.microstructure_import import component
 from scripts.v066_restart import compact
 
+ROI=[2.35,2.56,2.05,2.45]
+
 
 def extract():
     mesh,_,_,spec=mesh_and_plan();xy=mesh.nodes
     centers=xy[mesh.triangles[:,:3]].mean(axis=1)
-    keep=(centers[:,0]>=2.35)&(centers[:,1]>=2.05)&(centers[:,1]<=2.45)
+    keep=(centers[:,0]>=ROI[0])&(centers[:,0]<=ROI[1])&(centers[:,1]>=ROI[2])&(centers[:,1]<=ROI[3])
     vertices=np.unique(mesh.triangles[keep]);keep|=np.any(np.isin(mesh.triangles,vertices),axis=1)
     eids=np.flatnonzero(keep)+1;tri=mesh.triangles[keep];nodes=np.unique(tri)+1
     edges={}
@@ -44,7 +46,7 @@ def extract():
         f.write('FINISH\n/EXIT,NOSAVE\n')
     manifest={'schema':'v069-exact-original-mesh-local-history','states':states,'nodes':len(nodes),'elements':len(eids),
        'cut_nodes':len(cutnodes),'source_archive_sha256':file_hash(local/'source.npz'),'mesh_semantic_sha256':spec['semantic_sha256'],
-       'native_sources':{s['source']:file_hash(OLD/s['source']/'compression.rst') for s in states},'input_sha256':file_hash(d/'input.inp')}
+       'ROI_mm':ROI,'native_sources':{name:file_hash(OLD/name/'compression.rst') for name in sorted({s['source'] for s in states})},'input_sha256':file_hash(d/'input.inp')}
     write_json(d/'simulation_manifest.json',manifest);write_json(RUN/'local/SOURCE.json',manifest)
     print('Prepared',len(nodes),len(eids),len(states),'native local-history readback')
 
