@@ -36,7 +36,7 @@ def extract():
     d=BASE/'parent_local_readback_001';d.mkdir(exist_ok=False)
     with (d/'input.inp').open('w',newline='\n') as f:
         f.write('/BATCH\n/CLEAR,START\n'+database_resume(OLD/'track_B_pair_unified_setup_001/contact_model_pair_unified.db')+'/FILNAME,readonly\n/PREP7\n')
-        component(f,'LOCAL_NODES',nodes);component(f,'LOCAL_CORNERS',corners);component(f,'LOCAL_SOLIDS',eids);component(f,'CUT_NODES',cutnodes)
+        component(f,'LOCAL_NODES',nodes);component(f,'LOCAL_CORNERS',corners);component(f,'LOCAL_SOLIDS',eids,entity='ELEM');component(f,'CUT_NODES',cutnodes)
         f.write('FINISH\n/POST1\n')
         for i,s in enumerate(states,1):
             prefix=f'state{i:03d}'
@@ -68,7 +68,7 @@ def vector_readback():
     d=BASE/'parent_local_readback_002';d.mkdir(exist_ok=False)
     with (d/'input.inp').open('w',newline='\n') as f:
         f.write('/BATCH\n/CLEAR,START\n'+database_resume(OLD/'track_B_pair_unified_setup_001/contact_model_pair_unified.db')+'/FILNAME,readonly\n/PREP7\n')
-        for comp,key in [('LOCAL_NODES','nodes'),('LOCAL_CORNERS','corners'),('LOCAL_SOLIDS','eids'),('CUT_NODES','cutnodes')]:component(f,comp,z[key])
+        for comp,key in [('LOCAL_NODES','nodes'),('LOCAL_CORNERS','corners'),('LOCAL_SOLIDS','eids'),('CUT_NODES','cutnodes')]:component(f,comp,z[key],entity='ELEM' if key=='eids' else 'NODE')
         f.write('FINISH\n/POST1\n')
         for i,s in enumerate(manifest['states'],1):
             f.write("FILE,'"+(OLD/s['source']/'compression').as_posix()+f"',rst\nSET,{s['load_step']},{s['substep']}\n")
@@ -103,7 +103,7 @@ def baseline():
         f.write('/BATCH\n/CLEAR,START\n/FILNAME,compression\n/NOPR\n/PREP7\nET,1,PLANE183\nKEYOPT,1,1,1\nKEYOPT,1,3,3\nR,1,1\nMP,EX,1,1000\nMP,PRXY,1,.3\nMP,MU,1,0\nTYPE,1\nREAL,1\nMAT,1\n')
         for n in z['nodes']:f.write(f'N,{n},{mesh.nodes[n-1,0]:.17g},{mesh.nodes[n-1,1]:.17g}\n')
         for eid,t in zip(z['eids'],z['triangles']):f.write(f'EN,{eid},'+','.join(str(n+1) for n in t)+'\n')
-        component(f,'LOCAL_NODES',z['nodes']);component(f,'LOCAL_CORNERS',z['corners']);component(f,'LOCAL_SOLIDS',z['eids']);component(f,'CUT_NODES',z['cutnodes'])
+        component(f,'LOCAL_NODES',z['nodes']);component(f,'LOCAL_CORNERS',z['corners']);component(f,'LOCAL_SOLIDS',z['eids'],entity='ELEM');component(f,'CUT_NODES',z['cutnodes'])
         f.write('ET,2,TARGE169\nET,3,CONTA172\nALLSEL,ALL\nGCGEN,NEW,42,0,PART,SELECT\nGCGEN,SELECT\nCM,ALL_GC,ELEM\nALLSEL,ALL\n')
         for face in np.vstack([z['cut']+1,topo[:,1:4],target[:,1:4]]):
             f.write('NSEL,NONE\n'+''.join(f'NSEL,A,NODE,,{n}\n' for n in face)+'ESLN,S,1,ALL\nCMSEL,R,ALL_GC\nEDELE,ALL\nALLSEL,ALL\n')
@@ -133,6 +133,7 @@ def post():
     d=BASE/'local_baseline_readback_001';d.mkdir(exist_ok=False)
     with (d/'input.inp').open('w',newline='\n') as f:
         f.write('/BATCH\n/CLEAR,START\n'+database_resume(source/'initial.db')+'/FILNAME,readonly\n/PREP7\n')
+        z=np.load(BASE/'local_source_001/source.npz');component(f,'LOCAL_SOLIDS',z['eids'],entity='ELEM')
         for name,filename in [('PATCH_SOURCE','contact'),('PATCH_TARGET','target')]:
             topo=np.loadtxt(OLD/f'track_B_pair_setup_002/{filename}_topology.csv',delimiter=',',skiprows=1).astype(int)
             component(f,name,np.unique(topo[:,1:4]))
