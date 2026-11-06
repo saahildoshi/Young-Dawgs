@@ -123,7 +123,54 @@ def baseline():
     compact(d,RUN/'local/local_baseline_001');print('Prepared exact-element baseline',flush=True)
 
 
+def post():
+    source=BASE/'local_baseline_001';r=read(source/'execution_receipt.json')
+    states=read(source/'simulation_manifest.json')['states'];available={}
+    for s in read(source/'nonlinear_telemetry.json')['converged_substeps']:
+        if s.get('substep')!=999999:available[s['load_step']]=s
+    d=BASE/'local_baseline_readback_001';d.mkdir(exist_ok=False)
+    with (d/'input.inp').open('w',newline='\n') as f:
+        f.write('/BATCH\n/CLEAR,START\n'+database_resume(source/'initial.db')+'/FILNAME,readonly\n/POST1\n'+"FILE,'"+(source/'compression').as_posix()+"',rst\n")
+        selected=[]
+        for i,s in enumerate(states,1):
+            if i not in available:continue
+            a=available[i]
+            if abs(a.get('pseudo_time',-1)-s['time'])>1e-9:continue
+            selected.append({'index':i,**a})
+            f.write(f'SET,{i},{a["substep"]}\n');export_fields(f,f'state{i:03d}')
+        f.write('FINISH\n/EXIT,NOSAVE\n')
+    write_json(d/'simulation_manifest.json',{'states':selected,'source_RST_sha256':file_hash(source/'compression.rst'),
+       'input_sha256':file_hash(d/'input.inp'),'source_receipt_sha256':file_hash(source/'execution_receipt.json')})
+    print('Prepared baseline independent readback',len(selected),flush=True)
+
+
+def qualify():
+    mesh,_,_,_=mesh_and_plan();z=np.load(BASE/'local_source_001/source.npz')
+    d=BASE/'local_baseline_readback_001';m=read(d/'simulation_manifest.json');r=read(d/'execution_receipt.json')
+    assert r['process']['returncode']==0 and file_hash(BASE/'local_baseline_001/compression.rst')==m['source_RST_sha256']
+    rows=[]
+    cutxy=mesh.nodes[z['cutnodes']-1]
+    for state in m['states']:
+        i=state['index'];local=np.loadtxt(d/f'state{i:03d}_u.csv',delimiter=',');parent=np.loadtxt(BASE/f'parent_local_readback_002/state{i:03d}_u.csv',delimiter=',')
+        sf=np.loadtxt(d/f'state{i:03d}_fields.csv',delimiter=',');pf=np.loadtxt(BASE/f'parent_local_readback_002/state{i:03d}_fields.csv',delimiter=',')
+        assert np.array_equal(local[:,0],parent[:,0]) and np.array_equal(sf[:,0],pf[:,0])
+        def core(ids):
+            pts=mesh.nodes[ids.astype(int)-1]
+            return np.min(np.linalg.norm(pts[:,None,:]-cutxy[None,:,:],axis=2),axis=1)>.025
+        cm=core(local[:,0]);sm=core(sf[:,0])
+        def error(a,b,floor):return float(np.sqrt(np.mean((a-b)**2))/max(np.sqrt(np.mean(b*b)),floor))
+        ur=error(local[cm,1:],parent[cm,1:],1e-12)
+        sr=[error(sf[sm,j],pf[sm,j],1e-8 if j<=4 else 1e-11) for j in range(1,8)]
+        rows.append({'index':i,'time':state['pseudo_time'],'U_RMS_relative':ur,'SXX_SYY_SXY_SEQV_EXX_EYY_EXY_RMS_relative':sr,
+                     'field_match':ur<=.02 and max(sr)<=.10})
+    q={'schema':'v069-local-parent-field-comparison','states':rows,'all_fields_pass':bool(rows) and all(s['field_match'] for s in rows),
+       'complete_measured_history':len(rows)==72,'full_local_gate':'HOLD_PENDING_REACTIONS_CONTACT_GAPS_NORMALS_MAPPING_AND_PATH',
+       'crop_continuation_authorized':False,'source_post_receipt_sha256':file_hash(d/'execution_receipt.json')}
+    write_json(RUN/'local/BASELINE_FIELD_COMPARISON.json',q)
+    print('Field match',q['all_fields_pass'],'states',len(rows),'first failures',[(s['index'],s['SXX_SYY_SXY_SEQV_EXX_EYY_EXY_RMS_relative']) for s in rows if not s['field_match']][:3],flush=True)
+
+
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('action',choices=['extract','execute','baseline','vector_readback']);p.add_argument('--name');a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('action',choices=['extract','execute','baseline','vector_readback','post','qualify']);p.add_argument('--name');a=p.parse_args()
     if a.action=='execute':execute(a.name)
     else:globals()[a.action]()
