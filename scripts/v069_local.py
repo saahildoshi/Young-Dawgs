@@ -130,7 +130,11 @@ def post():
         if s.get('substep')!=999999:available[s['load_step']]=s
     d=BASE/'local_baseline_readback_001';d.mkdir(exist_ok=False)
     with (d/'input.inp').open('w',newline='\n') as f:
-        f.write('/BATCH\n/CLEAR,START\n'+database_resume(source/'initial.db')+'/FILNAME,readonly\n/POST1\n'+"FILE,'"+(source/'compression').as_posix()+"',rst\n")
+        f.write('/BATCH\n/CLEAR,START\n'+database_resume(source/'initial.db')+'/FILNAME,readonly\n/PREP7\n')
+        for name,filename in [('PATCH_SOURCE','contact'),('PATCH_TARGET','target')]:
+            topo=np.loadtxt(OLD/f'track_B_pair_setup_002/{filename}_topology.csv',delimiter=',',skiprows=1).astype(int)
+            component(f,name,np.unique(topo[:,1:4]))
+        f.write('/OUTPUT,inventory,txt\nETLIST,ALL\nRLIST,ALL\nGCDEF,LIST\n/OUTPUT\nFINISH\n/POST1\n'+"FILE,'"+(source/'compression').as_posix()+"',rst\n")
         selected=[]
         for i,s in enumerate(states,1):
             if i not in available:continue
@@ -138,6 +142,12 @@ def post():
             if abs(a.get('pseudo_time',-1)-s['time'])>1e-9:continue
             selected.append({'index':i,**a})
             f.write(f'SET,{i},{a["substep"]}\n');export_fields(f,f'state{i:03d}')
+            f.write('ESEL,S,ENAME,,172\nETABLE,ERAS\nETABLE,CST,NMISC,19\nCMSEL,S,LOCAL_PAIR_CONTACT\n*GET,NC,ELEM,0,COUNT\n'+f'*CFOPEN,state{i:03d}_contact,csv\nIE=0\n*DO,K,1,NC\nIE=ELNEXT(IE)\n'+
+                '*GET,NI,ELEM,IE,NODE,1\n*GET,NJ,ELEM,IE,NODE,2\n*GET,NM,ELEM,IE,NODE,3\n*GET,ST,ELEM,IE,ETAB,CST\nPI=0\nPJ=0\nGI=0\nGJ=0\n*IF,ST,GT,0,THEN\n*GET,PI,ELEM,IE,SMISC,1\n*GET,PJ,ELEM,IE,SMISC,2\n*GET,GI,ELEM,IE,NMISC,5\n*GET,GJ,ELEM,IE,NMISC,6\n*ENDIF\n*VWRITE,IE,NI,NJ,NM,ST,PI,PJ,GI,GJ\n'+"(5(F12.0,','),4(E24.16,','))\n*ENDDO\n*CFCLOS\nALLSEL,ALL\n")
+            f.write(f'*CFOPEN,state{i:03d}_patch_forces,csv\n')
+            for side,comp in [(1,'PATCH_TARGET'),(2,'PATCH_SOURCE')]:
+                f.write(f'CMSEL,S,{comp}\nCMSEL,S,LOCAL_SOLIDS,ELEM\nFSUM\n*GET,FX,FSUM,0,ITEM,FX\n*GET,FY,FSUM,0,ITEM,FY\n*VWRITE,{side},FX,FY\n'+"(F4.0,2(',',E24.16))\nALLSEL,ALL\n")
+            f.write('*CFCLOS\n')
         f.write('FINISH\n/EXIT,NOSAVE\n')
     write_json(d/'simulation_manifest.json',{'states':selected,'source_RST_sha256':file_hash(source/'compression.rst'),
        'input_sha256':file_hash(d/'input.inp'),'source_receipt_sha256':file_hash(source/'execution_receipt.json')})
