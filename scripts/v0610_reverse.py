@@ -9,6 +9,7 @@ def configure():
     common.RUN=root/'reverse';common.RUN.mkdir(exist_ok=True)
     if not (common.RUN/'protocol/PROTOCOL.json').exists():common.write_json(common.RUN/'protocol/PROTOCOL.json',common.read(root/'protocol/PROTOCOL.json'))
     crop.BASE=common.BASE;crop.RUN=common.RUN;crop.ROLE_REVERSED=True
+    crop.FORCE_TOL=.00001;crop.INITIAL_PRE=.0001;crop.MAXIMUM_PRE=.0005
 
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('action',choices=['prepare','setup-run','verify-setup','prepare-unified','unified-run','verify-unified','prepare-trial','trial-run','export-prepare','export-run','force-prepare','force-run','qualify']);a=p.parse_args();configure()
