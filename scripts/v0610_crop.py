@@ -7,6 +7,9 @@ from scripts.v068_track_b import mesh_and_plan
 
 TRIAL='track_B_pair5_arc_trial_001'
 ROLE_REVERSED=False
+FORCE_TOL=.005
+INITIAL_PRE=.0005
+MAXIMUM_PRE=.0025
 
 
 def bind():
@@ -59,21 +62,39 @@ def prepare_trial():
     q=read(RUN/'track_B_contact_fixture/PAIR_UNIFIED5_SETUP_QUALIFICATION.json')
     model=read(BASE/'track_B_setup_001/simulation_manifest.json');top=model['controls']['top'];bottom=model['controls']['bottom']
     d=BASE/TRIAL;d.mkdir(exist_ok=False)
-    lines=['/BATCH','/CLEAR,START',database_resume(BASE/'track_B_pair_unified_setup_001/contact_model_pair_unified.db').strip(),'/FILNAME,compression','/GOPR','/SOLU','ANTYPE,STATIC','NLGEOM,ON','EQSLV,SPARSE','NROPT,FULL','LNSRCH,ON','CNVTOL,F,,.005,2,1e-8',f'NLHIST,NSOL,RFLOW,F,Y,{bottom}']
+    lines=['/BATCH','/CLEAR,START',database_resume(BASE/'track_B_pair_unified_setup_001/contact_model_pair_unified.db').strip(),'/FILNAME,compression','/GOPR','/SOLU','ANTYPE,STATIC','NLGEOM,ON','EQSLV,SPARSE','NROPT,FULL','LNSRCH,ON',f'CNVTOL,F,,{FORCE_TOL:.17g},2,1e-8',f'NLHIST,NSOL,RFLOW,F,Y,{bottom}']
     lines+=telemetry_commands(top)
     previous=0;targets=[.005,.01,.0115,.012,.012575,.012675,.015]
     for t in targets:
-        controls=load_commands(t,previous,top,2.56,initial=.00005 if t>.01 else .0005,maximum=.0001 if t>.01 else .0025,minimum=1e-6)
+        controls=load_commands(t,previous,top,2.56,initial=.00005 if t>.01 else INITIAL_PRE,maximum=.0001 if t>.01 else MAXIMUM_PRE,minimum=1e-6)
         i=controls.index('OUTRES,ERASE');j=controls.index('OUTPR,ALL,NONE');controls[i:j]=['OUTRES,ALL,ALL','OUTRES,NLOAD,ALL'];controls.insert(controls.index('SOLVE'),'NEQIT,40')
         lines+=controls;previous=t
     lines+=['FINISH','SAVE,checkpoint,db,,MODEL','/EXIT,NOSAVE']
     (d/'input.inp').write_text('\n'.join(lines)+'\n',encoding='utf-8',newline='\n')
-    write_json(d/'simulation_manifest.json',{'schema':'young-dawgs-v0610-direct-crop-contact-trial','model_variant':'V0610_E1000_EXTENDED_ARC_UNIFIED'+('_REVERSED_ROLES' if ROLE_REVERSED else ''),'model':model,'material_identity':'CROP_LINEAR_ELASTIC_E1000_V068','target_engineering_strain':.015,'targets':targets,'source_setup_sha256':q['native_database_sha256'],'all_native_fields_all_substeps':True,'input_sha256':file_hash(d/'input.inp')})
+    write_json(d/'simulation_manifest.json',{'schema':'young-dawgs-v0610-direct-crop-contact-trial','model_variant':'V0610_E1000_EXTENDED_ARC_UNIFIED'+('_REVERSED_ROLES' if ROLE_REVERSED else ''),'model':model,'material_identity':'CROP_LINEAR_ELASTIC_E1000_V068','force_convergence_tolerance':FORCE_TOL,'initial_precontact_strain_increment':INITIAL_PRE,'maximum_precontact_strain_increment':MAXIMUM_PRE,'target_engineering_strain':.015,'targets':targets,'source_setup_sha256':q['native_database_sha256'],'all_native_fields_all_substeps':True,'input_sha256':file_hash(d/'input.inp')})
     copy_evidence(d,'crop_contact_trials')
 
 
 def export_prepare():
     *_,export,qualify,force=bind();export.prepare(TRIAL,'all')
+
+
+def prepare_recovery():
+    from metamaterial_eval.simulation.progressive_compression import authenticated_restart_copy,load_commands
+    from metamaterial_eval.simulation.nonlinear_diagnostics import telemetry_commands
+    parent='track_B_pair5_arc_trial_001';qpath=RUN/'track_B_progressive_compression'/(parent+'_qualification.json');q=read(qpath)
+    if not q['accepted'] or not all(s['accepted'] for s in q['states']):raise ValueError('Recovery requires every saved parent state to pass')
+    assert file_hash(BASE/parent/'execution_receipt.json')==q['source_receipt_sha256']
+    state=q['states'][-1];previous=state['measurement']['engineering_compression_strain'];d=BASE/'track_B_pair5_arc_recovery_001'
+    m=authenticated_restart_copy(BASE/parent,d)
+    model=m['model'];top=model['controls']['top'];bottom=model['controls']['bottom']
+    lines=['/BATCH','/CLEAR,START','RESUME,compression,rdb','/FILNAME,compression','/GOPR','/SOLU',f'ANTYPE,STATIC,REST,{state["load_step"]},{state["substep"]},CONTINUE','NLGEOM,ON','EQSLV,SPARSE','NROPT,FULL','LNSRCH,ON','CNVTOL,F,,.005,2,1e-8',f'NLHIST,NSOL,RFLOW,F,Y,{bottom}']+telemetry_commands(top)
+    for target in [.012,.012575,.012675,.015]:
+        controls=load_commands(target,previous,top,2.56,initial=.000025,maximum=.0001,minimum=1e-6)
+        i=controls.index('OUTRES,ERASE');j=controls.index('OUTPR,ALL,NONE');controls[i:j]=['OUTRES,ALL,ALL','OUTRES,NLOAD,ALL'];controls.insert(controls.index('SOLVE'),'NEQIT,40');lines+=controls;previous=target
+    lines+=['FINISH','SAVE,checkpoint,db,,MODEL','/EXIT,NOSAVE'];(d/'input.inp').write_text('\n'.join(lines)+'\n',encoding='utf-8',newline='\n')
+    write_json(d/'simulation_manifest.json',{**m,'schema':'young-dawgs-v0610-native-cutback-technical-recovery','parent':parent,'parent_qualification_sha256':file_hash(qpath),'parent_execution_receipt_sha256':q['source_receipt_sha256'],'restart_state':[state['load_step'],state['substep']],'previous_engineering_strain':state['measurement']['engineering_compression_strain'],'mesh_semantic_sha256':read(RUN/'track_B_mesh/MESH_001.json')['semantic_sha256'],'supervision_protocol_sha256':file_hash(RUN/'protocol/ADAPTIVE_SUPERVISION_001.json'),'input_sha256':file_hash(d/'input.inp')})
+    copy_evidence(d,'crop_contact_trials');print('Prepared authenticated recovery',state['load_step'],state['substep'],flush=True)
 
 
 def force_prepare():
@@ -85,7 +106,9 @@ def qualify():
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('action',choices=['prepare','setup-run','verify-setup','prepare-unified','unified-run','verify-unified','prepare-trial','trial-run','export-prepare','export-run','force-prepare','force-run','qualify']);a=p.parse_args()
-    actions={'setup-run':lambda:execute('track_B_pair_setup_002',timeout=900),'verify-setup':verify_setup,'prepare-unified':prepare_unified,'unified-run':lambda:execute('track_B_pair_unified_setup_001',timeout=900),'verify-unified':verify_unified,'prepare-trial':prepare_trial,'trial-run':lambda:execute(TRIAL,cores=8),'export-prepare':export_prepare,'export-run':lambda:execute(TRIAL+'_post1_all_v2',solve=False,timeout=1800),'force-prepare':force_prepare,'force-run':lambda:execute(TRIAL+'_pair_force_scan_001',solve=False,timeout=900)}
+    p=argparse.ArgumentParser();p.add_argument('action',choices=['prepare','setup-run','verify-setup','prepare-unified','unified-run','verify-unified','prepare-trial','prepare-recovery','trial-run','export-prepare','export-run','force-prepare','force-run','qualify']);p.add_argument('--recovery',action='store_true');p.add_argument('--strict',action='store_true');a=p.parse_args()
+    if a.recovery:TRIAL='track_B_pair5_arc_recovery_001'
+    if a.strict:TRIAL='track_B_pair5_arc_strict_001';FORCE_TOL=.00001;INITIAL_PRE=.0001;MAXIMUM_PRE=.0005
+    actions={'setup-run':lambda:execute('track_B_pair_setup_002',timeout=900),'verify-setup':verify_setup,'prepare-unified':prepare_unified,'unified-run':lambda:execute('track_B_pair_unified_setup_001',timeout=900),'verify-unified':verify_unified,'prepare-trial':prepare_trial,'prepare-recovery':prepare_recovery,'trial-run':lambda:execute(TRIAL,cores=8),'export-prepare':export_prepare,'export-run':lambda:execute(TRIAL+'_post1_all_v2',solve=False,timeout=1800),'force-prepare':force_prepare,'force-run':lambda:execute(TRIAL+'_pair_force_scan_001',solve=False,timeout=900)}
     if a.action in actions:actions[a.action]()
     else:globals()[a.action.replace('-','_')]()
