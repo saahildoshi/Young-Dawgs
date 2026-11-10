@@ -2,6 +2,7 @@
 from datetime import datetime,timezone
 from pathlib import Path
 import hashlib
+import re
 import shutil
 import psutil
 from scripts.v068_common import REPO,BASE as OLD,RUN as V068,read,file_hash
@@ -25,7 +26,12 @@ def copy_evidence(d,category='native_results'):
     compact(d,target)
     for name in ['gc_topology.csv','target_topology.csv','contact_topology.csv','contact_types.txt','material_inventory.txt']:
         p=d/name
-        if p.exists() and p.stat().st_size<2**20:shutil.copyfile(p,target/name)
+        if p.exists() and p.stat().st_size<2**20:
+            if p.suffix=='.txt':
+                text=re.sub(r'(?m)^\s*\d{6,}\s+(VERSION=)',r'[customer identifier omitted] \1',p.read_text(errors='replace'))
+                (target/name).write_text('\n'.join(line.rstrip() for line in text.splitlines())+'\n',encoding='utf-8',newline='\n')
+                write_json(target/(name+'.source.json'),{'raw_native_sha256':file_hash(p),'formatting':'Trailing spaces removed; customer identifier omitted. Native option and material records unchanged.'})
+            else:shutil.copyfile(p,target/name)
     return target
 
 
