@@ -1,0 +1,182 @@
+{
+  "converged_steps": [],
+  "execution_kind": "LICENSED_SOURCE_SOLVE",
+  "input_sha256": "b8e8c0088cbc5c5d23554396f0b1f7326108117aaf150478c21c6329628e968e",
+  "observed_progress": [],
+  "process": {
+    "artifacts": {
+      "contact_model_pair_unified.db": {
+        "bytes": 92930048,
+        "sha256": "6e434fd26455e22d92e6128462468ba62803b8d39983c697170ba9c2f5581e4c"
+      },
+      "contact_types.txt": {
+        "bytes": 3272,
+        "sha256": "111ac96d2eba70d669699d6eeda35598863d6e66f2bb8e9127441a43e4d7f3d0"
+      },
+      "input.inp": {
+        "bytes": 316,
+        "sha256": "b8e8c0088cbc5c5d23554396f0b1f7326108117aaf150478c21c6329628e968e"
+      },
+      "launcher.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "preflight.json": {
+        "bytes": 199,
+        "sha256": "00b50943535b4cd4c099a5034ce92fc6032c7552951ca1078c3a8eee4ea7e180"
+      },
+      "simulation_manifest.json": {
+        "bytes": 602,
+        "sha256": "57d1606e22976b2ed978def3ccd716d03d6f14dfd644a88ec62107c8481b37d2"
+      },
+      "solver.out": {
+        "bytes": 13130,
+        "sha256": "cbddbc652b8660627f01eeb27f30b54c4e7ee126144725d8279ceb6eefcc0cd6"
+      },
+      "v610_2a3d4c5e9564.err": {
+        "bytes": 80,
+        "sha256": "5596bc37a1d4cb1c61dde2b3de4bade67c5167b54f1ca13cdf3ee59447c683a6"
+      },
+      "v610_2a3d4c5e9564.log": {
+        "bytes": 250,
+        "sha256": "44f4189ae93e8f593945ed6c5dcea78b2c3310dc588b55a186795dcfa8e15623"
+      }
+    },
+    "command": [
+      "C:\\Program Files\\ANSYS Inc\\v241\\ansys\\bin\\winx64\\ANSYS241.exe",
+      "-b",
+      "-smp",
+      "-np",
+      "2",
+      "-m",
+      "4096",
+      "-j",
+      "v610_2a3d4c5e9564",
+      "-i",
+      "input.inp",
+      "-o",
+      "solver.out"
+    ],
+    "min_available_ram_bytes": 0,
+    "min_disk_free_bytes": 85899345920,
+    "native_signal_availability": [],
+    "paging_interpretation": "Page Reads/sec is system hard-fault disk-read proxy, not pagefile-only or per-process hard faults",
+    "peak_tree_rss_bytes": 357920768,
+    "resource_samples": [
+      {
+        "available_RAM_bytes": 47602155520,
+        "commit_fraction": 0.34823131264307056,
+        "commit_limit_bytes": 72698556416,
+        "commit_used_bytes": 25315913728,
+        "disk_free_bytes": 1201944547328,
+        "elapsed_seconds": 0.14284290000068722,
+        "native_markers_first_observed_seconds": {},
+        "output_file_bytes": {
+          "input.inp": 316,
+          "launcher.log": 0,
+          "preflight.json": 199,
+          "simulation_manifest.json": 602
+        },
+        "owned_processes": [
+          {
+            "name": "ANSYS241.exe",
+            "pid": 18424,
+            "status": "running"
+          },
+          {
+            "name": "conhost.exe",
+            "pid": 34952,
+            "status": "running"
+          }
+        ],
+        "page_reads_per_second": 0.0,
+        "page_writes_per_second": 0.0,
+        "pagefile_usage_percent": 2.117443084716797,
+        "pages_input_per_second": 0.0,
+        "physical_RAM_bytes": 68403589120,
+        "seconds_without_output_growth": 0.14284290000068722,
+        "system_memory_percent": 30.4,
+        "tree_rss_bytes": 7004160,
+        "windows_low_memory": false
+      }
+    ],
+    "returncode": 0,
+    "rss_limit_bytes": null,
+    "run_directory": "C:\\Users\\sd22446\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\YoungDawgs\\artifacts\\solver\\v0610\\reverse\\track_B_pair_unified_setup_001",
+    "runtime_seconds": 3.102714400003606,
+    "started_utc": "2026-11-10T19:02:58.493530+00:00",
+    "status": "PROCESS_EXITED",
+    "system_after": {
+      "available_RAM_bytes": 47494680576,
+      "commit_fraction": 0.34754416260237175,
+      "commit_limit_bytes": 72698556416,
+      "commit_used_bytes": 25265958912,
+      "disk_free_bytes": 1201851498496,
+      "elapsed_seconds": 3.1008361999993213,
+      "native_markers_first_observed_seconds": {
+        "model_save": 3.1008361999993213
+      },
+      "output_file_bytes": {
+        "contact_model_pair_unified.db": 92930048,
+        "contact_types.txt": 3272,
+        "input.inp": 316,
+        "launcher.log": 0,
+        "preflight.json": 199,
+        "simulation_manifest.json": 602,
+        "solver.out": 13130,
+        "v610_2a3d4c5e9564.err": 80,
+        "v610_2a3d4c5e9564.log": 250
+      },
+      "owned_processes": [],
+      "page_reads_per_second": 31.29947954408906,
+      "page_writes_per_second": 0.0,
+      "pagefile_usage_percent": 2.074909210205078,
+      "pages_input_per_second": 148.33231610024814,
+      "physical_RAM_bytes": 68403589120,
+      "seconds_without_output_growth": 0.0,
+      "system_memory_percent": 30.6,
+      "tree_rss_bytes": null,
+      "windows_low_memory": false
+    },
+    "system_before": {
+      "available_RAM_bytes": 47601717248,
+      "commit_fraction": 0.3472162507266037,
+      "commit_limit_bytes": 72698556416,
+      "commit_used_bytes": 25242120192,
+      "disk_free_bytes": 1201944547328,
+      "elapsed_seconds": 0,
+      "native_markers_first_observed_seconds": {},
+      "output_file_bytes": {
+        "input.inp": 316,
+        "preflight.json": 199,
+        "simulation_manifest.json": 602
+      },
+      "owned_processes": [],
+      "page_reads_per_second": 0.0,
+      "page_writes_per_second": 0.0,
+      "pagefile_usage_percent": 2.117443084716797,
+      "pages_input_per_second": 0.0,
+      "physical_RAM_bytes": 68403589120,
+      "seconds_without_output_growth": 0,
+      "system_memory_percent": 30.4,
+      "tree_rss_bytes": null,
+      "windows_low_memory": false
+    },
+    "system_health_policy": {
+      "available_reserve_bytes": 6442450944,
+      "commit_fraction": 0.98,
+      "commit_seconds": 15,
+      "critical_available_bytes": 1073741824,
+      "critical_seconds": 3,
+      "no_output_growth_seconds": 90,
+      "notification_seconds": 10,
+      "page_reads_per_second": 10000,
+      "paging_seconds": 60,
+      "reserve_seconds": 30
+    },
+    "timeout_seconds": 900
+  },
+  "solver_version": "2024 R1",
+  "status": "PROCESS_EXITED",
+  "unique_launcher_job": "v610_2a3d4c5e9564"
+}
