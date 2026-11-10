@@ -82,7 +82,7 @@ def export_prepare():
 def prepare_recovery():
     from metamaterial_eval.simulation.progressive_compression import authenticated_restart_copy,load_commands
     from metamaterial_eval.simulation.nonlinear_diagnostics import telemetry_commands
-    parent='track_B_pair5_arc_trial_001';qpath=RUN/'track_B_progressive_compression'/(parent+'_qualification.json');q=read(qpath)
+    parent='track_B_pair5_arc_trial_001';qpath=RUN/'track_B_progressive_compression'/(parent+'_mechanical_qualification.json');q=read(qpath)
     if not q['accepted'] or not all(s['accepted'] for s in q['states']):raise ValueError('Recovery requires every saved parent state to pass')
     assert file_hash(BASE/parent/'execution_receipt.json')==q['source_receipt_sha256']
     state=q['states'][-1];previous=state['measurement']['engineering_compression_strain'];d=BASE/'track_B_pair5_arc_recovery_001'

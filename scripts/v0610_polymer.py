@@ -32,7 +32,7 @@ def prepare_setup():
     candidates=[(ROOT_BASE,ROOT_RUN,'track_B_pair5_arc_strict_001'),(ROOT_BASE/'reverse',ROOT_RUN/'reverse','track_B_pair5_arc_trial_001')]
     accepted=[]
     for base,run,name in candidates:
-        p=run/'track_B_progressive_compression'/(name+'_qualification.json')
+        p=run/'track_B_progressive_compression'/(name+'_mechanical_qualification.json')
         if p.exists():
             q=common.read(p)
             extent=qualified_onset_prefix(q)
@@ -64,7 +64,7 @@ def verify_setup():
 def prepare_loading(parent=None,target=None):
     model=common.read(common.BASE/'track_B_setup_001/simulation_manifest.json');top=model['controls']['top'];bottom=model['controls']['bottom']
     if parent:
-        path=common.RUN/'track_B_progressive_compression'/(parent+'_qualification.json');q=common.read(path)
+        path=common.RUN/'track_B_progressive_compression'/(parent+'_mechanical_qualification.json');q=common.read(path)
         if not q['accepted'] or not all(s['accepted'] for s in q['states']):raise ValueError('Cannot continue invalid polymer path')
         parent_manifest=common.read(common.BASE/parent/'simulation_manifest.json');schedule=[.015,.02,.05,.10,.15,.20,.25,.30,.35,.40]
         if target not in schedule or schedule.index(target)!=schedule.index(parent_manifest['target_engineering_strain'])+1:raise ValueError('Unregistered or skipped polymer target')
