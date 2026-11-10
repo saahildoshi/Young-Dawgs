@@ -69,14 +69,19 @@ def qualify(source,branch=''):
     base=BASE/branch;run=RUN/branch;native_path=run/'track_B_progressive_compression'/(source+'_qualification.json');q=read(native_path)
     mesh,_,_,_=mesh_and_plan();p=read(run/'protocol/TRACK_B_LOCAL_PAIR_002.json');src=np.array(p['source_contact_faces_zero_based']);tgt=np.array(p['target_contact_faces_zero_based'])
     topology=[patch_topology(mesh,src),patch_topology(mesh,tgt)];post=base/(source+'_post1_all_v2');records=[];states=[];continuous=not q.get('failures')
+    native_targets=set(np.loadtxt(base/'track_B_pair_setup_002/target_topology.csv',delimiter=',',skiprows=1,ndmin=2)[:,0].astype(int))
     for i,state in enumerate(q['states'],1):
         raw=post/f'stage{i:03d}_displacements.csv';a=np.loadtxt(raw,delimiter=',',skiprows=1)
         if len(a)!=len(mesh.nodes) or not np.array_equal(a[:,0],np.arange(1,len(a)+1)):raise ValueError('Incomplete original-node displacement sequence')
         xy=mesh.nodes+a[:,1:3];record={'load_step':state['load_step'],'substep':state['substep'],'time':state['requested_time'],'passed':False}
+        contact=np.loadtxt(post/f'stage{i:03d}_pair_contact.csv',delimiter=',',skiprows=1,ndmin=2)
+        links=all(int(row[7+j]) in native_targets for row in contact if row[1]>=2 for j in [0,1] if row[2+j]>0)
+        record['native_pressure_target_ids_verified']=links
         try:
             source_patch=mapped_patch(mesh,xy,topology[0]);target_patch=mapped_patch(mesh,xy,topology[1])
             bounds=[directional_bound(xy,mesh.boundary[src],target_patch),directional_bound(xy,mesh.boundary[tgt],source_patch)]
             record.update(directions=bounds,maximum_continuous_bound_mm=max(b['continuous_depth_upper_bound_mm'] for b in bounds),passed=all(b['continuous_depth_upper_bound_mm']<=LIMIT for b in bounds))
+            if not links:record.update(passed=False,failure='Pressure-bearing native endpoint refers outside selected target inventory')
         except ValueError as exc:record['failure']=str(exc)
         records.append(record);row={**state,'failures':list(state['failures']),'continuous_geometry_passed':record['passed']}
         if not record['passed']:row['failures'].append('Continuous quadratic selected-arc geometry bound failed or uncertified')
