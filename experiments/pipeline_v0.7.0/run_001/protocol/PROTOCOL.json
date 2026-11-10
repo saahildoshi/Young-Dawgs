@@ -1,0 +1,181 @@
+{
+  "baseline": "Human/Codex-authored explicitly non-experimental-LLM baseline, source not shown to experimental ChatGPT",
+  "campaign_limits": {
+    "max_feedback_per_C_trial": 1,
+    "new_ANSYS_jobs": 0,
+    "repair_calls": 0,
+    "wall_hours": 8
+  },
+  "conditions": [
+    "A_image_only",
+    "B_image_descriptors",
+    "C_image_descriptors_one_feedback"
+  ],
+  "development_seeds": [
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109
+  ],
+  "diversity": [
+    "unique_array_hashes",
+    "pairwise_foreground_Jaccard_distance",
+    "pairwise_Hamming_fraction",
+    "rotation_translation_canonical_component_shape_hashes"
+  ],
+  "dtype": "uint8",
+  "families": [
+    "particle",
+    "fiber"
+  ],
+  "feedback_confound": "Additional interaction/iteration opportunity; no equal-attempt no-feedback control in this pilot",
+  "feedback_revisions": 1,
+  "feedback_same_chat_as_C_initial": true,
+  "fresh_chat_per_initial_trial": true,
+  "generation_timeout_seconds_per_seed": 10,
+  "generator_dependencies": [
+    "numpy",
+    "scipy",
+    "skimage",
+    "PIL",
+    "math",
+    "random",
+    "collections",
+    "itertools"
+  ],
+  "hard_validity": {
+    "all_fibers_instance_identifiable_required": false,
+    "both_families": [
+      "shape256x256",
+      "uint8",
+      "labels0and1",
+      "nonempty_both_phases",
+      "matrix_largest_component_fraction>=0.99",
+      "matrix_percolates_x_and_y",
+      "reinforcement_components>=2"
+    ],
+    "boundary": "finite_nonperiodic",
+    "connectivity": 4,
+    "reinforcement_percolation_required": false
+  },
+  "heldout_extra_seeds_reserved_not_used": [
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+  ],
+  "heldout_seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "holdout_metrics": {
+    "fiber": [
+      "S2_x_8",
+      "S2_y_8",
+      "interface_density",
+      "branched_component_fraction",
+      "matrix_lcc"
+    ],
+    "particle": [
+      "nearest_neighbor_mean_px",
+      "nearest_neighbor_cv",
+      "interface_density",
+      "S2_x_8",
+      "S2_y_8"
+    ]
+  },
+  "independent_trials_per_family_condition": 2,
+  "initial_calls": 12,
+  "initial_working_tree_clean": false,
+  "maximum_calls": 16,
+  "mode": "REGULAR_CHATGPT_CHAT_ONLY_NO_CODEX_NO_WORK",
+  "model_identity": "Record exposed UI identity; no inference of backend/version",
+  "module_memory_limit": "No arbitrary cap; bounded small arrays and supervised worker timeout",
+  "module_timeout_seconds": 180,
+  "normalization_scales": {
+    "S2_x_8": 0.2,
+    "S2_y_8": 0.2,
+    "alignment": 1,
+    "aspect_mean": 2,
+    "axial_mean_deg": 90,
+    "branched_component_fraction": 1,
+    "component_span_mean_px": 60,
+    "component_width_mean_px": 8,
+    "diameter_mean_px": 20,
+    "diameter_std_px": 5,
+    "fraction": 0.2,
+    "interface_density": 0.1,
+    "matrix_lcc": 1,
+    "nearest_neighbor_cv": 1,
+    "nearest_neighbor_mean_px": 40,
+    "object_count": 40
+  },
+  "phases": {
+    "0": {
+      "physical_solid": true,
+      "role": "matrix"
+    },
+    "1": {
+      "physical_solid": true,
+      "role": "reinforcement"
+    }
+  },
+  "physical_pixel_scale": null,
+  "protected": [
+    "historical experiments",
+    "canonical data",
+    "porous generators",
+    "frozen evaluator",
+    "native mechanics",
+    "Git history"
+  ],
+  "push": false,
+  "reasoning": "Keep initial visible configuration constant; record it",
+  "reference_kind": "EXPLICIT_SYNTHETIC_PROCEDURAL_PILOT_NOT_EXPERIMENTAL",
+  "registered_utc": "2026-11-10T20:27:29.888087+00:00",
+  "request_sha256": "61e1226f137540f3d0b0d330368ae8a98ffa982a7239187c3f6583440eaefd9e",
+  "runtime_parameters": {},
+  "scoring": "Per-metric absolute error / frozen scale; axial error shortest modulo180. Equal-weight mean within visible and hidden groups; missing required metric makes group unavailable with coverage reported. Validity separate.",
+  "shape": [
+    256,
+    256
+  ],
+  "starting_head": "c28f251cc5aef9bc3afb3c238ce575a59d9056ab",
+  "statistical_unit": "Independent LLM generated script; seeds nested; descriptive pilot only; no p values",
+  "visible_metrics": {
+    "fiber": [
+      "fraction",
+      "axial_mean_deg",
+      "alignment",
+      "component_span_mean_px",
+      "component_width_mean_px"
+    ],
+    "particle": [
+      "fraction",
+      "object_count",
+      "diameter_mean_px",
+      "diameter_std_px",
+      "aspect_mean"
+    ]
+  }
+}
