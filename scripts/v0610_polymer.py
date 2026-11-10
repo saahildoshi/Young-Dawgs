@@ -29,6 +29,8 @@ def configure():
 
 def prepare_setup():
     if common.read(ROOT_RUN/'material_coupon/QUALIFICATION.json')['status']!='PASS':raise ValueError('Native material coupon not qualified')
+    material=common.read(ROOT_RUN/'material_selection/MATERIAL.json')
+    if material['identity']!=IDENTITY or abs(material['mu_MPa']-MU)>1e-12 or abs(material['d_inverse_MPa']-D)>1e-12:raise ValueError('Material configuration drift from verified coupon')
     candidates=[(ROOT_BASE,ROOT_RUN,'track_B_pair5_arc_strict_001'),(ROOT_BASE/'reverse',ROOT_RUN/'reverse','track_B_pair5_arc_trial_001')]
     accepted=[]
     for base,run,name in candidates:
@@ -51,7 +53,7 @@ def prepare_setup():
     d=common.BASE/'track_B_pair_unified_setup_001';d.mkdir(exist_ok=False)
     deck='/BATCH\n/CLEAR,START\n'+database_resume(source)+'/FILNAME,compression\n/PREP7\nMPDELE,EX,1\nMPDELE,PRXY,1\nKEYOPT,1,6,0\nTB,HYPER,1,,,NEO\n'+f'TBDATA,1,{MU:.17g},{D:.17g}\n'+ '/OUTPUT,contact_types,txt\nETLIST,ALL\nRLIST,ALL\nTBLIST,ALL\nGCDEF,LIST\n/OUTPUT\nFINISH\nSAVE,contact_model_pair_unified,db,,MODEL\n/EXIT,NOSAVE\n'
     (d/'input.inp').write_text(deck,encoding='utf-8',newline='\n')
-    common.write_json(d/'simulation_manifest.json',{'material_identity':IDENTITY,'mu_MPa':MU,'d_inverse_MPa':D,'source_unloaded_database_sha256':common.file_hash(source),'contact_path_qualification':str(proof),'contact_qualified_through':extent,'contact_path_qualification_sha256':common.file_hash(proof),'coupon_qualification_sha256':common.file_hash(ROOT_RUN/'material_coupon/QUALIFICATION.json'),'input_sha256':common.file_hash(d/'input.inp'),'fresh_zero_state_material_change':True})
+    common.write_json(d/'simulation_manifest.json',{'material_identity':IDENTITY,'material_configuration_sha256':common.file_hash(ROOT_RUN/'material_selection/MATERIAL.json'),'mu_MPa':MU,'d_inverse_MPa':D,'source_unloaded_database_sha256':common.file_hash(source),'contact_path_qualification':str(proof),'contact_qualified_through':extent,'contact_path_qualification_sha256':common.file_hash(proof),'coupon_qualification_sha256':common.file_hash(ROOT_RUN/'material_coupon/QUALIFICATION.json'),'input_sha256':common.file_hash(d/'input.inp'),'fresh_zero_state_material_change':True})
 
 
 def verify_setup():

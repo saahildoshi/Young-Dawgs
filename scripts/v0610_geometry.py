@@ -69,9 +69,13 @@ def qualify(source,branch=''):
     base=BASE/branch;run=RUN/branch;native_path=run/'track_B_progressive_compression'/(source+'_qualification.json');q=read(native_path)
     mesh,_,_,_=mesh_and_plan();p=read(run/'protocol/TRACK_B_LOCAL_PAIR_002.json');src=np.array(p['source_contact_faces_zero_based']);tgt=np.array(p['target_contact_faces_zero_based'])
     topology=[patch_topology(mesh,src),patch_topology(mesh,tgt)];post=base/(source+'_post1_all_v2');records=[];states=[];continuous=not q.get('failures')
+    if q['source_receipt_sha256']!=file_hash(base/source/'execution_receipt.json') or q['post_receipt_sha256']!=file_hash(post/'execution_receipt.json'):raise ValueError('Native qualification receipt binding changed')
+    rst_sha=file_hash(base/source/'compression.rst')
+    if rst_sha!=read(post/'simulation_manifest.json')['source_RST_sha256']:raise ValueError('Source RST changed after independent extraction')
     native_targets=set(np.loadtxt(base/'track_B_pair_setup_002/target_topology.csv',delimiter=',',skiprows=1,ndmin=2)[:,0].astype(int))
     for i,state in enumerate(q['states'],1):
         raw=post/f'stage{i:03d}_displacements.csv';a=np.loadtxt(raw,delimiter=',',skiprows=1)
+        if file_hash(raw)!=state['raw_field_sha256'][raw.name]:raise ValueError('Native displacement field changed after qualification')
         if len(a)!=len(mesh.nodes) or not np.array_equal(a[:,0],np.arange(1,len(a)+1)):raise ValueError('Incomplete original-node displacement sequence')
         xy=mesh.nodes+a[:,1:3];record={'load_step':state['load_step'],'substep':state['substep'],'time':state['requested_time'],'passed':False}
         contact=np.loadtxt(post/f'stage{i:03d}_pair_contact.csv',delimiter=',',skiprows=1,ndmin=2)
@@ -88,7 +92,7 @@ def qualify(source,branch=''):
         if not continuous:row['failures'].append('Earlier final mechanical gate failed')
         row['accepted']=bool(continuous and state['accepted'] and record['passed']);continuous=continuous and row['accepted'];states.append(row)
     geometry_path=run/'track_B_progressive_compression'/(source+'_continuous_geometry.json')
-    write_json(geometry_path,{'schema':'v0610-additional-continuous-selected-arc-bound','limit_mm':LIMIT,'source_native_qualification_sha256':file_hash(native_path),'source_RST_sha256':file_hash(base/source/'compression.rst'),'scope':'Both selected arcs against exact original-element opposing patch. All other boundaries still require unchanged native whole-boundary crossing gate. Distance bound uses exact source curves, chord-bounded target geometry, arclength Lipschitz margin and certified artificial-cut clearance.','states':records})
+    write_json(geometry_path,{'schema':'v0610-additional-continuous-selected-arc-bound','extractor_sha256':file_hash(__file__),'protocol_sha256':file_hash(RUN/'protocol/CONTINUOUS_ARC_GEOMETRY_001.json'),'limit_mm':LIMIT,'source_native_qualification_sha256':file_hash(native_path),'source_RST_sha256':rst_sha,'scope':'Both selected arcs against exact original-element opposing patch. All other boundaries still require unchanged native whole-boundary crossing gate. Distance bound uses exact source curves, chord-bounded target geometry, arclength Lipschitz margin and certified artificial-cut clearance.','states':records})
     final={**q,'schema':'v0610-final-native-and-continuous-geometry-qualification','native_qualification_sha256':file_hash(native_path),'continuous_geometry_sha256':file_hash(geometry_path),'states':states,'accepted':bool(states) and all(s['accepted'] for s in states),'max_qualified_strain':max((s['requested_time'] for s in states if s['accepted']),default=None)}
     final['status']='PASS_COMPLETE_CROP_MECHANICAL_PATH' if final['accepted'] else 'HOLD_FINAL_CROP_MECHANICAL_GATE'
     write_json(run/'track_B_progressive_compression'/(source+'_mechanical_qualification.json'),final)
