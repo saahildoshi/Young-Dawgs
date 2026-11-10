@@ -23,6 +23,9 @@ def copy_evidence(d,category='native_results'):
     target=RUN/category/d.name
     if target.exists():target=target/('receipt_'+file_hash(d/'execution_receipt.json')[:8])
     compact(d,target)
+    for name in ['gc_topology.csv','target_topology.csv','contact_topology.csv','contact_types.txt','material_inventory.txt']:
+        p=d/name
+        if p.exists() and p.stat().st_size<2**20:shutil.copyfile(p,target/name)
     return target
 
 

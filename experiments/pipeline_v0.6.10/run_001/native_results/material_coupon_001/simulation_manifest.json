@@ -1,0 +1,72 @@
+{
+  "input_sha256": "d665ff44b274acfa6fa7742643f8d000de361f3048d8aa5a37140722a98b96ce",
+  "material": {
+    "ANSYS_TB": "TB,HYPER,1,,,NEO; TBDATA,1,mu,d (mu is NOT C10)",
+    "PLANE183_KEYOPT6": 0,
+    "bulk_MPa": 33.33333333333334,
+    "calibrated": false,
+    "class": "generic flexible elastomeric polymer idealization; no commercial identity",
+    "d_inverse_MPa": 0.059999999999999984,
+    "grade": null,
+    "identity": "CROP_POLYMER_V0610_NEO_E10_NU045",
+    "mu_MPa": 3.4482758620689657,
+    "plane_stress": true,
+    "rationale": "Simple objective finite-strain law with moderate compressibility nu0.45. E10MPa sets illustrative force scale; neither parameter is fitted. No rate, hysteresis, plasticity or damage.",
+    "small_strain_E_MPa": 10.0,
+    "small_strain_nu": 0.45,
+    "sources": [
+      "https://ansyshelp.ansys.com/public/Views/Secured/corp/v242/en/ans_mat/aQw8sq22dldm.html",
+      "https://ansyshelp.ansys.com/public/Views/Secured/corp/v251/en/ans_elem/Hlp_E_PLANE183.html"
+    ],
+    "status": "ILLUSTRATIVE_UNCALIBRATED_POLYMER_MODEL",
+    "strain_energy": "W=mu/2*(I1bar-3)+(J-1)^2/d",
+    "thickness_mm": 1,
+    "version_authority": "Native v241 coupon and native TBLIST/ETLIST required, web references are adjacent release explanations."
+  },
+  "plane_stress_and_thickness_verification_required": true,
+  "reference_nodes": [
+    [
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0
+    ],
+    [
+      1.0,
+      1.0
+    ],
+    [
+      0.0,
+      1.0
+    ],
+    [
+      0.5,
+      0.0
+    ],
+    [
+      1.0,
+      0.5
+    ],
+    [
+      0.5,
+      0.5
+    ],
+    [
+      0.5,
+      1.0
+    ],
+    [
+      0.0,
+      0.5
+    ]
+  ],
+  "strains": [
+    0.01,
+    0.1,
+    0.2,
+    0.3,
+    0.4
+  ]
+}

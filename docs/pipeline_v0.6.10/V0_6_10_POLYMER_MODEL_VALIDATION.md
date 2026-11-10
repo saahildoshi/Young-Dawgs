@@ -1,0 +1,7 @@
+# Licensed polymer coupon verification
+
+The installed ANSYS2024R1 PLANE183 TRI6 plane-stress coupon converged at1%,10%,20%,30%,40% compression using KEYOPT(3)=3,KEYOPT(6)=0 and1mm reference thickness. Native ETLIST,RLIST and TBLIST are retained. Independent read-only POST1 confirms force units and thickness by agreement with the homogeneous analytical compressible Neo-Hookean nominal force. Maximum relative force error at these points is below3e-7, against the registered1% gate. At40%,force is7.2950141N on1mm² reference area; native Cauchy SYY is−4.587456MPa, compared with−4.587455MPa analytically. Native SZZ is approximatelyzero. Lateral stretch1.26103477 matches1.26103493 analytically.
+
+Native EPEL_YY=−0.51082563 agrees with log(0.6); it is not engineering strain−0.4. Native stress agrees with Cauchy stress, while the reaction/reference-area curve is nominal stress. Out-of-plane logarithmic strain is0.23193283, consistent with transverse thickness stretch. All final deformed in-plane TRI6 analytic mappings are positive and analytical three-dimensional J=0.95412545>0. A homogeneous coupon does not establish locking-free performance of every crop deformation or experimental material validity.
+
+The model remains ILLUSTRATIVE_UNCALIBRATED_POLYMER_MODEL. The selected representative class is a flexible elastomeric polyurethane-like idealization, without a measured grade. This is constitutive/numerical verification, not calibration, strut-network compression or proof of30–40% crop feasibility.
