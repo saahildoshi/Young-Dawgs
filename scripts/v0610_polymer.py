@@ -10,6 +10,15 @@ from metamaterial_eval.simulation.nonlinear_diagnostics import telemetry_command
 ROOT_BASE=common.BASE;ROOT_RUN=common.RUN
 FIRST='track_B_pair5_polymer_first_001'
 
+def qualified_onset_prefix(q):
+    if q.get('failures'):return None
+    prefix=[]
+    for state in q.get('states',[]):
+        if not state.get('accepted'):break
+        prefix.append(state)
+    if not prefix or max(s['requested_time'] for s in prefix)<.012675-1e-10:return None
+    return prefix[-1]['requested_time']
+
 
 def configure():
     common.BASE=ROOT_BASE/'polymer';common.RUN=ROOT_RUN/'polymer'
@@ -26,21 +35,23 @@ def prepare_setup():
         p=run/'track_B_progressive_compression'/(name+'_qualification.json')
         if p.exists():
             q=common.read(p)
-            if q['accepted'] and q['max_qualified_strain']>=.015:accepted.append((base,run,p))
-    if not accepted:raise ValueError('No complete direct crop contact path qualified through1.5%; polymer branch is gated')
-    source_base,source_run,proof=accepted[0];source=source_base/'track_B_pair_unified_setup_001/contact_model_pair_unified.db'
+            extent=qualified_onset_prefix(q)
+            if extent is not None:accepted.append((base,run,p,extent))
+    if not accepted:raise ValueError('No continuous direct crop path qualified through1.2675%; polymer branch is gated')
+    source_base,source_run,proof,extent=accepted[0];source=source_base/'track_B_pair_unified_setup_001/contact_model_pair_unified.db'
     oldq=common.read(source_run/'track_B_contact_fixture/PAIR_UNIFIED5_SETUP_QUALIFICATION.json');assert common.file_hash(source)==oldq['native_database_sha256']
     for category,names in [('track_B_contact_fixture',['PAIR_SETUP_QUALIFICATION.json','PAIR_UNIFIED5_SETUP_QUALIFICATION.json','SETUP_QUALIFICATION.json']),('track_B_mesh',['MESH_001.json']),('protocol',['TRACK_B.json','TRACK_B_LOCAL_PAIR_002.json'])]:
         for name in names:
             target=common.RUN/category/name;target.parent.mkdir(exist_ok=True,parents=True);shutil.copyfile(source_run/category/name,target)
     for name in ['gc_topology.csv','target_topology.csv','contact_topology.csv']:
         target=common.BASE/'track_B_pair_setup_002'/name;target.parent.mkdir(exist_ok=True);shutil.copyfile(source_base/'track_B_pair_setup_002'/name,target)
+    p=common.read(common.RUN/'protocol/TRACK_B_LOCAL_PAIR_002.json');p['material_identity']=IDENTITY;p['contact_path_previously_qualified_through']=extent;p['new_material_requires_independent_complete_path']=True;common.write_json(common.RUN/'protocol/TRACK_B_LOCAL_PAIR_002.json',p)
     model=common.read(source_base/'track_B_setup_001/simulation_manifest.json');model['config'].update(young_modulus=E,poisson_ratio=NU,material=IDENTITY);model['material_identity']=IDENTITY
     common.write_json(common.BASE/'track_B_setup_001/simulation_manifest.json',model)
     d=common.BASE/'track_B_pair_unified_setup_001';d.mkdir(exist_ok=False)
     deck='/BATCH\n/CLEAR,START\n'+database_resume(source)+'/FILNAME,compression\n/PREP7\nMPDELE,EX,1\nMPDELE,PRXY,1\nKEYOPT,1,6,0\nTB,HYPER,1,,,NEO\n'+f'TBDATA,1,{MU:.17g},{D:.17g}\n'+ '/OUTPUT,contact_types,txt\nETLIST,ALL\nRLIST,ALL\nTBLIST,ALL\nGCDEF,LIST\n/OUTPUT\nFINISH\nSAVE,contact_model_pair_unified,db,,MODEL\n/EXIT,NOSAVE\n'
     (d/'input.inp').write_text(deck,encoding='utf-8',newline='\n')
-    common.write_json(d/'simulation_manifest.json',{'material_identity':IDENTITY,'mu_MPa':MU,'d_inverse_MPa':D,'source_unloaded_database_sha256':common.file_hash(source),'contact_path_qualification':str(proof),'contact_path_qualification_sha256':common.file_hash(proof),'coupon_qualification_sha256':common.file_hash(ROOT_RUN/'material_coupon/QUALIFICATION.json'),'input_sha256':common.file_hash(d/'input.inp'),'fresh_zero_state_material_change':True})
+    common.write_json(d/'simulation_manifest.json',{'material_identity':IDENTITY,'mu_MPa':MU,'d_inverse_MPa':D,'source_unloaded_database_sha256':common.file_hash(source),'contact_path_qualification':str(proof),'contact_qualified_through':extent,'contact_path_qualification_sha256':common.file_hash(proof),'coupon_qualification_sha256':common.file_hash(ROOT_RUN/'material_coupon/QUALIFICATION.json'),'input_sha256':common.file_hash(d/'input.inp'),'fresh_zero_state_material_change':True})
 
 
 def verify_setup():
