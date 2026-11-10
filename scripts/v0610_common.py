@@ -31,6 +31,9 @@ def copy_evidence(d,category='native_results'):
 
 def execute(name,solve=True,timeout=5400,cores=2):
     d=BASE/name
+    protocol=read(RUN/'protocol/PROTOCOL.json')
+    if (datetime.now(timezone.utc)-datetime.fromisoformat(protocol['registered_utc'])).total_seconds()>protocol['campaign_wall_seconds']:
+        raise RuntimeError('Registered campaign clock exhausted; native launch refused')
     if any((p.info['name'] or '').lower() in ['ansys.exe','ansys241.exe'] for p in psutil.process_iter(['name'])):raise RuntimeError('Native process already active')
     write_json(d/'preflight.json',{'available_RAM_bytes':psutil.virtual_memory().available,'disk_free_bytes':shutil.disk_usage(BASE).free,'estimated_RSS_bytes':6*2**30,'estimated_disk_bytes':8*2**30,'timeout_s':timeout,'rss_cap':None})
     monitor=ProgressMonitor(no_progress_seconds=1200)
