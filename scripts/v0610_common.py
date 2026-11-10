@@ -36,7 +36,7 @@ def execute(name,solve=True,timeout=5400,cores=2):
         raise RuntimeError('Registered campaign clock exhausted; native launch refused')
     if any((p.info['name'] or '').lower() in ['ansys.exe','ansys241.exe'] for p in psutil.process_iter(['name'])):raise RuntimeError('Native process already active')
     write_json(d/'preflight.json',{'available_RAM_bytes':psutil.virtual_memory().available,'disk_free_bytes':shutil.disk_usage(BASE).free,'estimated_RSS_bytes':6*2**30,'estimated_disk_bytes':8*2**30,'timeout_s':timeout,'rss_cap':None})
-    monitor=ProgressMonitor(no_progress_seconds=1200)
+    monitor=ProgressMonitor(no_progress_seconds=1200,stop_on_trial_error=False)
     job='v610_'+hashlib.sha256(str(d.resolve()).encode()).hexdigest()[:12]
     p=bounded_run([str(discover_solver()),'-b','-smp','-np',str(cores),'-m','4096','-j',job,'-i','input.inp','-o','solver.out'],d,prepared=True,timeout=timeout,rss_limit=None,min_disk_free=80*2**30,min_available_ram=0,resource_sample_seconds=5,health_policy=HealthPolicy(),stop_check=monitor if solve else None)
     out=(d/'solver.out').read_text(errors='replace');telemetry=parse_solver_log(out)

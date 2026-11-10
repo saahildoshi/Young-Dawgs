@@ -141,6 +141,7 @@ class ProgressMonitor:
     no_progress_seconds:float=1800
     diagnostic_bytes:int=2*1024**3
     max_cutbacks_without_progress:int=10
+    stop_on_trial_error:bool=True
 
     def __post_init__(self):
         self.start=time.monotonic();self.last_progress=self.start;self.last_key=None;self.last_check=-1e30
@@ -160,7 +161,8 @@ class ProgressMonitor:
         if not log.exists():return None
         with log.open('rb') as stream:
             stream.seek(max(0,log.stat().st_size-512000));text=stream.read().decode(errors='replace')
-        if re.search(r'^\s*\*\*\*\s*(?:ERROR|FATAL)\s*\*\*\*|element.*highly distorted',text,re.M|re.I):return 'NATIVE_SOLVER_ERROR_OR_DISTORTION'
+        if re.search(r'^\s*\*\*\*\s*FATAL\s*\*\*\*',text,re.M|re.I):return 'NATIVE_SOLVER_ERROR_OR_DISTORTION'
+        if self.stop_on_trial_error and re.search(r'^\s*\*\*\*\s*ERROR\s*\*\*\*|element.*highly distorted',text,re.M|re.I):return 'NATIVE_SOLVER_ERROR_OR_DISTORTION'
         parsed=parse_solver_log(text)
         if parsed['converged_substeps']:
             latest=parsed['converged_substeps'][-1]
