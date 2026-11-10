@@ -6,6 +6,7 @@ from scripts.v0610_common import BASE,RUN,DOC,OLD,V068,read,write_json,file_hash
 from scripts.v068_track_b import mesh_and_plan
 
 TRIAL='track_B_pair5_arc_trial_001'
+ROLE_REVERSED=False
 
 
 def bind():
@@ -18,6 +19,7 @@ def bind():
 
 def prepare():
     mesh,_,_,_=mesh_and_plan();source=np.arange(2128,2152);target=np.arange(2628,2650)
+    if ROLE_REVERSED:source,target=target,source
     assert not np.intersect1d(mesh.boundary[source],mesh.boundary[target]).size
     for subdir in ['track_B_mesh','track_B_contact_fixture','protocol']: (RUN/subdir).mkdir(exist_ok=True)
     for name in ['MESH_001.json']:shutil.copyfile(V068/'track_B_mesh'/name,RUN/'track_B_mesh'/name)
@@ -25,7 +27,7 @@ def prepare():
         q=read(V068/'track_B_contact_fixture'/name);q['inherited_fixture_or_unchanged_mesh_evidence']=True
         write_json(RUN/'track_B_contact_fixture'/name,q)
     oldp=read(V068/'protocol/TRACK_B_LOCAL_PAIR_002.json')
-    p={**oldp,'model_variant':'V0610_E1000_EXTENDED_CONTIGUOUS_ARC','source_contact_faces_zero_based':source.tolist(),'target_contact_faces_zero_based':target.tolist(),'hypothesis':'Contiguous coverage beyond both original patch endpoints may retain intended interaction as contact migrates across adjoining faces. No FKN,friction,normal algorithm or solid geometry change.','new_faces':{'source':24,'target':22},'material_identity':'CROP_LINEAR_ELASTIC_E1000_V068'}
+    p={**oldp,'model_variant':'V0610_E1000_EXTENDED_CONTIGUOUS_ARC'+('_REVERSED_ROLES' if ROLE_REVERSED else ''),'source_contact_faces_zero_based':source.tolist(),'target_contact_faces_zero_based':target.tolist(),'hypothesis':('Exchange source/target roles to test directional detection bias at the sharp lower corner, retaining both extended physical arcs.' if ROLE_REVERSED else 'Contiguous coverage beyond both original patch endpoints may retain intended interaction as contact migrates across adjoining faces.')+' No FKN,friction,normal algorithm or solid geometry change.','new_faces':{'source':len(source),'target':len(target)},'material_identity':'CROP_LINEAR_ELASTIC_E1000_V068'}
     write_json(RUN/'protocol/TRACK_B_LOCAL_PAIR_002.json',p)
     shutil.copyfile(V068/'protocol/TRACK_B.json',RUN/'protocol/TRACK_B.json')
     write_json(RUN/'protocol/TRACK_B_PAIR_UNIFIED5_TECHNICAL_CORRECTION_003.json',{'scope':'v0610 extended pair; inherited supported unified detection, fresh setup','protocol_sha256':file_hash(RUN/'protocol/PROTOCOL.json')})
@@ -34,7 +36,7 @@ def prepare():
         shutil.copyfile(OLD/'track_B_setup_001'/name,d/name)
     assert file_hash(d/'contact_model.db')==read(V068/'track_B_contact_fixture/SETUP_QUALIFICATION.json')['native_database_sha256']
     pair,*_=bind();pair.prepare_setup()
-    write_json(RUN/'contact_forensics/ARC_EXTENSION.json',{'source_original':list(range(2134,2146)),'target_original':list(range(2634,2644)),'source_extended':source.tolist(),'target_extended':target.tolist(),'no_shared_source_target_nodes':True,'geometry_unchanged':True,'removed_GC_faces':46,'remaining_GC_faces':15362,'old_opening_skin':95927,'old_adjacent_loaded_skin':95928,'old_target_skin':95916,'normal_rotation_degrees':[.0864,.1115,.0379],'interpretation':'Corner pressure redistribution; no proven abrupt normal flip. Coverage hypothesis requires direct crop test.'})
+    write_json(RUN/'contact_forensics/ARC_EXTENSION.json',{'source_original':list(range(2134,2146)),'target_original':list(range(2634,2644)),'source_extended':source.tolist(),'target_extended':target.tolist(),'roles_reversed':ROLE_REVERSED,'no_shared_source_target_nodes':True,'geometry_unchanged':True,'removed_GC_faces':46,'remaining_GC_faces':15362,'old_opening_skin':95927,'old_adjacent_loaded_skin':95928,'old_target_skin':95916,'normal_rotation_degrees':[.0864,.1115,.0379],'interpretation':'Corner pressure redistribution; no proven abrupt normal flip. Coverage hypothesis requires direct crop test.'})
     print('Prepared extended-arc candidate',flush=True)
 
 
@@ -66,7 +68,7 @@ def prepare_trial():
         lines+=controls;previous=t
     lines+=['FINISH','SAVE,checkpoint,db,,MODEL','/EXIT,NOSAVE']
     (d/'input.inp').write_text('\n'.join(lines)+'\n',encoding='utf-8',newline='\n')
-    write_json(d/'simulation_manifest.json',{'schema':'young-dawgs-v0610-direct-crop-contact-trial','model_variant':'V0610_E1000_EXTENDED_ARC_UNIFIED','model':model,'material_identity':'CROP_LINEAR_ELASTIC_E1000_V068','target_engineering_strain':.015,'targets':targets,'source_setup_sha256':q['native_database_sha256'],'all_native_fields_all_substeps':True,'input_sha256':file_hash(d/'input.inp')})
+    write_json(d/'simulation_manifest.json',{'schema':'young-dawgs-v0610-direct-crop-contact-trial','model_variant':'V0610_E1000_EXTENDED_ARC_UNIFIED'+('_REVERSED_ROLES' if ROLE_REVERSED else ''),'model':model,'material_identity':'CROP_LINEAR_ELASTIC_E1000_V068','target_engineering_strain':.015,'targets':targets,'source_setup_sha256':q['native_database_sha256'],'all_native_fields_all_substeps':True,'input_sha256':file_hash(d/'input.inp')})
     copy_evidence(d,'crop_contact_trials')
 
 
