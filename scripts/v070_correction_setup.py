@@ -1,5 +1,6 @@
 """Additive correction audit; no new model invocation or target freeze is allowed."""
 from datetime import datetime,timezone
+from pathlib import Path
 import subprocess
 from scripts.v070_protocol import REPO,RUN,read,write,sha
 
@@ -9,9 +10,7 @@ DOC=REPO/'docs/pipeline_v0.7.0/reference_correction_001'
 
 def register():
     CORRECTION.mkdir(exist_ok=False);DOC.mkdir(parents=True,exist_ok=False)
-    request=REPO.parent.parent/'.codex/attachments/61dca7f5-8d02-44c3-bad2-de4250565e67/Pasted text.txt'
-    # Explicit user attachment is outside the active checkout.
-    request=__import__('pathlib').Path(r'C:\Users\sd22446\.codex\attachments\61dca7f5-8d02-44c3-bad2-de4250565e67\Pasted text.txt')
+    request=Path(r'C:\Users\sd22446\.codex\attachments\61dca7f5-8d02-44c3-bad2-de4250565e67\Pasted text.txt')
     write(CORRECTION/'protocol/CORRECTION.json',{'registered_utc':datetime.now(timezone.utc).isoformat(),'starting_head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip(),
         'starting_status':subprocess.check_output(['git','status','--porcelain'],cwd=REPO,text=True).strip(),'request_sha256':sha(request),
         'scope':'Audit prior synthetic pilot;inspect actual downloaded microscopy;prepare unapproved visual candidates;STOP for user selection',

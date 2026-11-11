@@ -1,0 +1,104 @@
+{
+  "all_source_labels_retained_in_crop": true,
+  "annotation_quality": "Human annotation;gradient/phase-boundary uncertainty and augmentation dependence remain.",
+  "attribution": "Mutahar Safdar(2025),Zenodo17315241,CC BY4.0",
+  "boundary_touching_labels_in_proposed_roi": [
+    1,
+    3,
+    4,
+    5
+  ],
+  "candidate_id": "P1_NiWC_multiphase",
+  "crop_xyxy_end_exclusive": [
+    136,
+    80,
+    392,
+    336
+  ],
+  "family": "particle",
+  "image_member_sha256": "388cdb6310e1eb0770f308b51b9b9798eb0f2d5bbe5d80155e99ce49a7d802d2",
+  "interpretation": "Ni-WC particle degradation morphology with multiple annotated material regions",
+  "mask_member_sha256": "cbec240e4b7aef9c8a52981ea6b3b09f4601ec8b65fd55482542cf42d3b08604",
+  "material": "Directed-energy-deposited Ni-WC metal matrix composite",
+  "phase_map": {
+    "0": {
+      "display_color": "#ff00ff",
+      "meaning": "Unassigned / unknown"
+    },
+    "1": {
+      "display_color": "#d6d9df",
+      "meaning": "Ni matrix"
+    },
+    "2": {
+      "display_color": "#161616",
+      "meaning": "Porosity / void"
+    },
+    "3": {
+      "display_color": "#168f83",
+      "meaning": "WC particles"
+    },
+    "4": {
+      "display_color": "#e5ad35",
+      "meaning": "Dilution band"
+    },
+    "5": {
+      "display_color": "#8c58b1",
+      "meaning": "Reprecipitated carbides"
+    }
+  },
+  "phase_mapping_evidence": "Raw1..5 alignment with publication class order is inferred and visually checked;author export legend absent. Raw0 retained unknown.",
+  "physical_um_per_pixel": null,
+  "primary_target": false,
+  "processing": "Exact same native pixel crop for image and categorical annotation;no resizing,no intensity threshold,no cleanup,no label merging",
+  "proposed_phase_fractions": {
+    "1": 0.450347900390625,
+    "2": 0.0149078369140625,
+    "3": 0.272003173828125,
+    "4": 0.14111328125,
+    "5": 0.1216278076171875
+  },
+  "proposed_phase_pixels": {
+    "1": 29514,
+    "2": 977,
+    "3": 17826,
+    "4": 9248,
+    "5": 7971
+  },
+  "proposed_shape": [
+    256,
+    256
+  ],
+  "representativeness_limit": "Single field/crop is not certified as an RVE or independent specimen;no LLM accuracy result is being selected.",
+  "scale_evidence": "No calibrated physical pixel scale established from the supplied tile/metadata. Pixel ruler only;do not infer scale from magnification or fiber radius.",
+  "selection_rationale": "P11 in45-tile review:interior annotated pore and matrix,carbide,dilution,reprecipitate all present. Among8px-grid native256 crops retaining every source label,this ROI minimizes L1 source-to-ROI phase-fraction change (0.0827713). Only one partial coarse carbide is sampled;not a size-distribution/RVE reference.",
+  "source_augmentation": "Supplied HorizontalFlip version;no elastic/grid transform",
+  "source_dataset": "https://zenodo.org/records/17315241",
+  "source_image_archive": "C:\\Users\\sd22446\\Downloads\\AugmentedImages.zip",
+  "source_image_member": "AugmentedImages/sem1000_x768_y256_HorizontalFlip.bmp",
+  "source_image_shape": [
+    512,
+    512,
+    3
+  ],
+  "source_label_shape": [
+    512,
+    512
+  ],
+  "source_mask_archive": "C:\\Users\\sd22446\\Downloads\\AugmentedMasks.zip",
+  "source_mask_member": "AugmentedMasks/sem1000_x768_y256_HorizontalFlip.bmp",
+  "source_phase_fractions": {
+    "1": 0.44970703125,
+    "2": 0.00492095947265625,
+    "3": 0.2742118835449219,
+    "4": 0.11035537719726562,
+    "5": 0.16080474853515625
+  },
+  "source_phase_pixels": {
+    "1": 117888,
+    "2": 1290,
+    "3": 71883,
+    "4": 28929,
+    "5": 42154
+  },
+  "status": "PROPOSED_NOT_APPROVED_NOT_FROZEN"
+}

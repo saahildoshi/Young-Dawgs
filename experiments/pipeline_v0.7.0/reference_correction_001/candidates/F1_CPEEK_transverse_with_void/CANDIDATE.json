@@ -1,0 +1,83 @@
+{
+  "all_source_labels_retained_in_crop": true,
+  "annotation_quality": "Semi-automatic perfect-radius circle fiber masks and minimum-threshold voids;approximate,not true exact contours.",
+  "attribution": "Merit Fernhout(2023),4TU,CC0_1.0",
+  "boundary_touching_labels_in_proposed_roi": [
+    0,
+    1,
+    2
+  ],
+  "candidate_id": "F1_CPEEK_transverse_with_void",
+  "crop_xyxy_end_exclusive": [
+    0,
+    0,
+    256,
+    256
+  ],
+  "family": "fiber",
+  "image_member_sha256": "f7a4eb4c3e2be14c7e6043438b565884996d5715a0799b3b077260cb88f6a3ef",
+  "interpretation": "Transverse fiber sections;no longitudinal fiber length/orientation inference",
+  "mask_member_sha256": "0ad662958b510652e6e408b4f74c92a2a4c164232b6bc4bc4a8db9b9cc75155a",
+  "material": "Carbon-fiber reinforced PEEK (DatasetI explicitly identified as C/PEEK in author README)",
+  "phase_map": {
+    "0": {
+      "display_color": "#d6d9df",
+      "meaning": "Polymer matrix"
+    },
+    "1": {
+      "display_color": "#168f83",
+      "meaning": "Carbon fiber cross-sections"
+    },
+    "2": {
+      "display_color": "#161616",
+      "meaning": "Void"
+    }
+  },
+  "phase_mapping_evidence": "Explicit author READ ME.txt:0=matrix,1=fiber,2=void",
+  "physical_um_per_pixel": null,
+  "primary_target": false,
+  "processing": "Exact same native pixel crop for image and categorical annotation;no resizing,no intensity threshold,no cleanup,no label merging",
+  "proposed_phase_fractions": {
+    "0": 0.5277252197265625,
+    "1": 0.45269775390625,
+    "2": 0.0195770263671875
+  },
+  "proposed_phase_pixels": {
+    "0": 34585,
+    "1": 29668,
+    "2": 1283
+  },
+  "proposed_shape": [
+    256,
+    256
+  ],
+  "representativeness_limit": "Single field/crop is not certified as an RVE or independent specimen;no LLM accuracy result is being selected.",
+  "scale_evidence": "No calibrated physical pixel scale established from the supplied tile/metadata. Pixel ruler only;do not infer scale from magnification or fiber radius.",
+  "selection_rationale": "K01 inknown-material screening. Unaugmented DatasetI tile closest to median phase-fraction vector among0.5%-10%void fields. Known polymer identity;many small transverse sections and nonzero pore annotation. Entire native256 field retained;3px nominal fiber radius limits contour detail.",
+  "source_augmentation": "Original unaugmented dataset tile",
+  "source_dataset": "https://doi.org/10.4121/bf11171a-1f57-4a8a-9768-757850d13665",
+  "source_image_archive": "C:\\Users\\sd22446\\Downloads\\Annotated images of microscopy images from carbon fibre composites_1_all\\Data sets.zip",
+  "source_image_member": "Data set I/Original data set/Images/2_3_2_L_cut_128_15616.tif",
+  "source_image_shape": [
+    256,
+    256,
+    3
+  ],
+  "source_label_shape": [
+    256,
+    256
+  ],
+  "source_mask_archive": "C:\\Users\\sd22446\\Downloads\\Annotated images of microscopy images from carbon fibre composites_1_all\\Data sets.zip",
+  "source_mask_member": "Data set I/Original data set/Masks/2_3_2_L_cut_128_15616.png",
+  "source_phase_fractions": {
+    "0": 0.5277252197265625,
+    "1": 0.45269775390625,
+    "2": 0.0195770263671875
+  },
+  "source_phase_pixels": {
+    "0": 34585,
+    "1": 29668,
+    "2": 1283
+  },
+  "status": "PROPOSED_NOT_APPROVED_NOT_FROZEN"
+}
