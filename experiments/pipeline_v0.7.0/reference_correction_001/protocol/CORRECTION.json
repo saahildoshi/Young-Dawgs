@@ -1,0 +1,27 @@
+{
+  "candidate_sources": {
+    "fiber": "https://doi.org/10.4121/bf11171a-1f57-4a8a-9768-757850d13665",
+    "particle": "https://zenodo.org/records/17315241"
+  },
+  "main_experiment_authorized_to_start": false,
+  "new_ANSYS_jobs": 0,
+  "new_LLM_calls": 0,
+  "new_synthetic_primary_targets_allowed": false,
+  "previous_evidence": "Preserve run_001 without rewriting committed scripts,prompts,references or results. Existing uncommitted A02 submission metadata is preserved as a preceding-turn record.",
+  "primary_candidate_rules": [
+    "Use supplied scientific microscopy and supplied corresponding annotations",
+    "Keep all source phase labels,including void and uncertain classes",
+    "No nonuniform resizing",
+    "Prefer original unaugmented fiber images;geometry-preserving Ni-WC augmentation only when original absent",
+    "No physical pixel calibration inferred from magnification or nominal fiber diameter",
+    "Crop recommendation is an explicit proposal,not frozen target",
+    "Document annotation errors,representation and train/test/augmentation dependence"
+  ],
+  "references_approved": false,
+  "registered_utc": "2026-11-11T19:04:47.861344+00:00",
+  "request_sha256": "48ea2914666f36886a72d88440faad75341cbe555091763a94262a2472f0de4b",
+  "scope": "Audit prior synthetic pilot;inspect actual downloaded microscopy;prepare unapproved visual candidates;STOP for user selection",
+  "starting_head": "b6c94955886b49385c623c09005d32832dd82a9b",
+  "starting_status": "M experiments/pipeline_v0.7.0/run_001/llm_trials/particle_A_02/manifest.json\n?? scripts/v070_correction_setup.py",
+  "stop": "Present paired micrograph/segmentation/phase legend/ROI and obtain explicit user approval before preparing executable approved-reference trial prompts"
+}
