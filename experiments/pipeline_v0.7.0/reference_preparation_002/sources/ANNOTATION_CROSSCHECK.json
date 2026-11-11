@@ -1,0 +1,39 @@
+{
+  "url": "https://github.com/Mutahar-Safdar/SEM_Segmentation_ViTs/blob/main/Segformer%20%2B%20ViT.ipynb",
+  "git_blob_sha": "167fd9f3680ee9faf958151a4679496bcdc36c07",
+  "reviewed_not_executed": true,
+  "cell": 0,
+  "extract": [
+    {
+      "line": 22,
+      "text": "cfg.model.decode_head.num_classes = 5"
+    },
+    {
+      "line": 54,
+      "text": "    dict(type='LoadAnnotations', reduce_zero_label=True),  # Update here"
+    },
+    {
+      "line": 65,
+      "text": "    dict(type='LoadAnnotations', reduce_zero_label=True),  # Update here"
+    }
+  ],
+  "limitation": "Custom MyCustomDataset METAINFO class names and raw-ID export legend absent; reduction supports one-based raw IDs but does not independently establish their chemical meanings.",
+  "paper": "https://doi.org/10.1016/j.matchar.2025.115645",
+  "paper_class_order": [
+    "matrix",
+    "porosity",
+    "carbide particles",
+    "dilution band",
+    "reprecipitated carbides"
+  ],
+  "paper_training_porosity_index": 1,
+  "mmsegmentation_label_reduction": "https://mmsegmentation.readthedocs.io/en/latest/notes/faq.html#functionality-of-reduce-zero-label",
+  "raw_to_training_id": {
+    "1": 0,
+    "2": 1,
+    "3": 2,
+    "4": 3,
+    "5": 4
+  },
+  "no_void_ignore_in_our_experiment": true
+}

@@ -1,0 +1,52 @@
+{
+  "all_annotation_regions": 9,
+  "annotation_semantics_verified_by": {
+    "basis": "Dataset explicitly pairs Ni-WC optical images with ground truths; publication Figure1 identifies white ground-truth pixels as WC.",
+    "dataset": "https://data.mendeley.com/datasets/2wmbc95xy9/1",
+    "publication": "https://doi.org/10.1016/j.commatsci.2022.111391"
+  },
+  "archive_path": "C:\\Users\\sd22446\\Projects\\Young-Dawgs-VSCode\\.artifacts\\reference_sources\\Ni_WC_Optical_Microscopy_Data.zip",
+  "attribution": "Dylan Rose (2022), University of Alberta",
+  "boundary_censored_regions": 3,
+  "candidate_id": "P4_NiWC_optical_WC_annotations",
+  "complete_regions_at_least_100px2": 5,
+  "crop_xyxy_end_exclusive": [
+    128,
+    96,
+    384,
+    352
+  ],
+  "dataset": "https://data.mendeley.com/datasets/2wmbc95xy9/1",
+  "doi": "10.17632/2wmbc95xy9.1",
+  "fraction": 0.1880645751953125,
+  "image_member": "data/training_images/img_19_crop9/img_19_crop9.jpg",
+  "image_member_sha256": "5f4c46798743f36c29ee592544c905f09ea41bd5466b633666516fd1ebdb15b8",
+  "image_pixels_sha256": "4472f65dced3362475088e41b079768f26ab6e96ec8932eaac2ecd4ccfdbc70a",
+  "largest_region_fraction_of_WC": 0.3054766734279919,
+  "license": "CC BY4.0",
+  "limitation": "Only WC/non-WC annotated. No separate void, internal inclusion or matrix-subphase ground truth. Non-WC is not verified as entirely solid matrix; no pore-free or mechanics-ready claim. Optical blur and contour uncertainty remain. Dataset training/test designation concerns its original segmentation study, not independent LLM trials.",
+  "llm_mask_attachment": false,
+  "local_archive_sha256_verified": "ab14dffa6714647562790260bfb3d29ea091cc6e9853c51c8d26a929d3d437df",
+  "mask_encoding": "JPEG ground truth with dark/light compression values. Decode grayscale>127 to WC1; otherwise non-WC0. This thresholds the supplied annotation encoding, never the scientific micrograph.",
+  "mask_encoding_minmax": [
+    0,
+    255
+  ],
+  "mask_member": "data/training_images/img_19_crop9/mask/img_19_crop9_mask.jpg",
+  "mask_member_sha256": "3f4b7def2f087fcb46d4de2ed04060cee38270b2375a2c4ccce88cd59b811f06",
+  "new_LLM_calls": 0,
+  "no_mask_cleanup_or_phase_merging": true,
+  "phase_map": {
+    "0": "non-WC background (NiCrBSi matrix region in author binary task)",
+    "1": "WC reinforcement"
+  },
+  "physical_um_per_pixel": null,
+  "pixel_count": {
+    "0": 53211,
+    "1": 12325
+  },
+  "published_archive_sha256": "ab14dffa6714647562790260bfb3d29ea091cc6e9853c51c8d26a929d3d437df",
+  "source_kind": "Dataset optical micrograph and corresponding ground truth; no augmentation indicated by archive/file naming or dataset description. Native image crop, not annotation visualization.",
+  "status": "PROPOSED_VERIFIED_WC_ANNOTATION_NOT_APPROVED",
+  "threshold64_vs192_changed_pixels": 0
+}
