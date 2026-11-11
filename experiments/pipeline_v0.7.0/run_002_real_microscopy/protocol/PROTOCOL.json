@@ -1,0 +1,169 @@
+{
+  "F1_approval": "Original C/PEEK with matrix0 fiber1 void2, transverse descriptors and approximate circle uncertainty",
+  "P3_approval": "User explicitly accepts provisional label5 and HorizontalFlip augmentation; morphology-based selection bias disclosed; not unbiased RVE",
+  "P3_derived_working_mapping": {
+    "1": 0,
+    "5": 1
+  },
+  "automatic_push": false,
+  "chat_folder": "Pipeline Tests",
+  "conditions": [
+    "A_image_only",
+    "B_image_plus_descriptors",
+    "C_B_plus_one_development_feedback"
+  ],
+  "development_seeds": [
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109
+  ],
+  "dtype": "uint8",
+  "error_definition": "Absolute difference/fixed scale; equal mean within visible/hidden groups; any missing required value makes full group unavailable; coverage and partial diagnostic separately reported. No overall composite success score.",
+  "feedback_calls_per_C": 1,
+  "feedback_confound": "C receives extra interaction; no equal-attempt no-feedback control, so feedback-only causal claims are unsupported",
+  "fresh_initial_chat": true,
+  "hard_validity": [
+    "ndarray",
+    "shape256x256",
+    "uint8",
+    "only_family_native_labels",
+    "all_target_phases_nonempty",
+    "repeat_seed_determinism"
+  ],
+  "heldout_policy": "Do not execute final heldout seeds until every script and revision is frozen; feedback uses development only",
+  "heldout_seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "hidden_metrics": {
+    "F1": [
+      "fiber_nearest_neighbor_mean_px",
+      "fiber_S2_x_8",
+      "fiber_S2_y_8",
+      "matrix_fiber_interface",
+      "matrix_lcc",
+      "void_regions",
+      "void_diameter_mean_px",
+      "void_S2_x_8"
+    ],
+    "P3": [
+      "nearest_neighbor_mean_px",
+      "nearest_neighbor_cv",
+      "interface_density",
+      "S2_x_8",
+      "S2_y_8",
+      "matrix_lcc"
+    ]
+  },
+  "independent_scripts_per_family_condition": 2,
+  "initial_calls": 12,
+  "matrix_connectivity_hard_requirement": false,
+  "maximum_calls": 16,
+  "mechanical_properties": null,
+  "mode": "ORDINARY_CHATGPT_CHAT_NOT_WORK_OR_CODEX",
+  "module_timeout_seconds": 240,
+  "native_labels": {
+    "F1": [
+      0,
+      1,
+      2
+    ],
+    "P3": [
+      1,
+      5
+    ]
+  },
+  "normalization_scales": {
+    "F1": {
+      "complete_fiber_regions": 600,
+      "fiber_S2_x_8": 0.2,
+      "fiber_S2_y_8": 0.2,
+      "fiber_diameter_mean_px": 6,
+      "fiber_diameter_std_px": 6,
+      "fiber_fraction": 0.2,
+      "fiber_nearest_neighbor_mean_px": 10,
+      "matrix_fiber_interface": 0.25,
+      "matrix_lcc": 0.25,
+      "void_S2_x_8": 0.05,
+      "void_diameter_mean_px": 20,
+      "void_fraction": 0.05,
+      "void_regions": 10
+    },
+    "P3": {
+      "S2_x_8": 0.2,
+      "S2_y_8": 0.2,
+      "aspect_mean": 1.5,
+      "complete_regions": 60,
+      "diameter_mean_px": 20,
+      "diameter_std_px": 15,
+      "interface_density": 0.15,
+      "matrix_lcc": 0.25,
+      "nearest_neighbor_cv": 1,
+      "nearest_neighbor_mean_px": 20,
+      "reinforcement_fraction": 0.2
+    }
+  },
+  "order": [
+    "P3_A_01",
+    "F1_A_01",
+    "P3_A_02",
+    "F1_A_02",
+    "P3_B_01",
+    "F1_B_01",
+    "P3_B_02",
+    "F1_B_02",
+    "P3_C_01",
+    "F1_C_01",
+    "P3_C_02",
+    "F1_C_02"
+  ],
+  "organization": "Initial chats outside project; file completed chats in Pipeline Tests afterward when feasible. Account memory/personalization/backend routing not independently controlled.",
+  "physical_um_per_pixel": null,
+  "references": [
+    "P3",
+    "F1"
+  ],
+  "registered_utc": "2026-11-11T20:06:52.152410+00:00",
+  "repair_calls": 0,
+  "seed_timeout_seconds": 30,
+  "shape": [
+    256,
+    256
+  ],
+  "single_realization_requested_seconds": 10,
+  "solver_jobs": 0,
+  "starting_head": "80b92bff09f695b050ad55bf07aa664b8945179b",
+  "status": "APPROVED_REFERENCES_FROZEN_BEFORE_MODEL_OUTCOMES",
+  "unit": "Independently returned LLM script; seeds nested; C revision paired to parent script, not an independent trial",
+  "visible_metrics": {
+    "F1": [
+      "fiber_fraction",
+      "void_fraction",
+      "complete_fiber_regions",
+      "fiber_diameter_mean_px",
+      "fiber_diameter_std_px"
+    ],
+    "P3": [
+      "reinforcement_fraction",
+      "complete_regions",
+      "diameter_mean_px",
+      "diameter_std_px",
+      "aspect_mean"
+    ]
+  }
+}
