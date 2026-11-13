@@ -96,7 +96,10 @@ def extraction_commands(m,steps):
     for col,(lab,item,comp) in enumerate(fields,2):
         out += [f'ETABLE,{lab},{item},{comp}',f'*VGET,EVAL(1,{col}),ELEM,1,ETAB,{lab}']
     out += ['*CFOPEN,fields,csv','*VWRITE,EIDS(1),'+','.join(f'EVAL(1,{c})' for c in range(1,12)),
-            "(F12.0,11(',',E24.16))",'*CFCLOS','*DEL,EIDS','*DEL,EVAL',
+            "(F12.0,11(',',E24.16))",'*CFCLOS','*DEL,EVAL',f'*DIM,ECON,ARRAY,{ne},4']
+    for c in range(1,5):out += [f'*VGET,ECON(1,{c}),ELEM,1,NODE,{c}']
+    out += ['*CFOPEN,connectivity,csv','*VWRITE,EIDS(1),ECON(1,1),ECON(1,2),ECON(1,3),ECON(1,4)',
+            "(F12.0,4(',',F12.0))",'*CFCLOS','*DEL,EIDS','*DEL,ECON',
             '*CFOPEN,native_counts,csv','*VWRITE,NSETS,NNAT,ENAT',"(3(F16.0,','))",'*CFCLOS','FINISH']
     return out
 
