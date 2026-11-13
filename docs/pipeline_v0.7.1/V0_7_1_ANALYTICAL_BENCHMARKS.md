@@ -1,16 +1,13 @@
-# Licensed analytical qualification
+# Licensed analytical benchmarks
 
-The actual ANSYS2024R1 homogeneous control passed all registered checks. Fitted modulus=1000.0000000000126MPa (analytical1000MPa), with five native0.1â€“0.5% checkpoints. Final force is5N and elastic energy0.0125Nmm within registered tolerance. Reactions balance, horizontal pin force is negligible, Poisson lateral displacement and plane-stress constitutive fields agree. Two separate native read-only processes reopened the original RST; repeated common exports match exactly. The second export also corroborates every native quadrilateral connectivity entry.
+| Native control/attempt | Analytical E (MPa) | Native E (MPa) | Relative error | Accepted |
+|---|---:|---:|---:|---|
+| M0_matrix_H1_attempt001 | 1000.00000000 | 1000.00000000 | 1.2619e-14 | True |
+| M1_equal_H1_attempt001 | 1000.00000000 | 93.95433940 | 0.90605 | False |
+| M1_equal_H1_attempt002 | 1000.00000000 | 1000.00000000 | 7.4931e-13 | True |
+| M1_parallel_H1_attempt001 | 5500.00000000 | 5499.99999992 | 1.4535e-11 | True |
+| M1_series_H1_attempt001 | 1818.18181818 | 1818.18181797 | 1.1383e-10 | True |
 
-Native ETLIST reports PLANE182 plane-stress, KEYOPT(1)=0, KEYOPT(3)=3, KEYOPT(6)=0; RLIST gives thickness1. Both installed material definitions match the intended inputs. No installed R1 element manual was available; the adjacent-release official manual was checked and the actual R1 settings/behavior verified natively. Both layered controls and the recovered equal-material P3 control now pass. No actual contrast-10 P3 mechanics has been accepted yet.
+All accepted controls use five actual native result sets and independent read-only RST export. The nu=0 parallel/series controls isolate analytically tractable load sharing; they do not replace nu = 0.30 in the P3 comparison. Native 2024 R1 ETLIST/RLIST/MPLIST, exact connectivity, material IDs, constraints, displacement fields, constitutive stress/strain relations, reactions and integrated energy are verified.
 
-A Python boolean serialization defect occurred after successful solve/readback. It was corrected and preserved in verification/SERIALIZATION_DIAGNOSTIC.json; qualification reused native evidence without rerunning or altering the solver result.
-
-| Control | Analytical E (MPa) | Native fitted E (MPa) | Accepted |
-|---|---:|---:|---|
-| M0_matrix attempt1 | 1000 | 1000 | PASS |
-| M1_parallel attempt1 | 5500 | 5499.99999992 | PASS |
-| M1_series attempt1 | 1818.18182 | 1818.18181797 | PASS |
-| M1_equal attempt2 | 1000 | 999.999999999 | PASS |
-
-The first equal-material P3 attempt failed mechanical qualification despite native process completion. Default coordinate-selection tolerance selected three constrained y rows instead of two (771 UY constraints versus514). The corrected mesh writer selects exact node-ID ranges, and native DLIST inventory must now match every intended boundary constraint. Attempt002 passed at999.999999999MPa. Every failed input, native result, export and qualification is retained; no tolerance, morphology or material was changed to obtain acceptance.
+The first dense equal-material attempt is rejected. Default coordinate NSEL tolerance included an interior row, producing771 UY constraints instead of514. The corrected exact node-ID boundary sets and native DLIST gate recovered the control without changing morphology, materials or tolerances. The failed input, RST, exports and rejection remain preserved. A separate Python boolean-serialization failure was fixed by reprocessing existing native data; no fabricated solver output or unnecessary rerun was used.

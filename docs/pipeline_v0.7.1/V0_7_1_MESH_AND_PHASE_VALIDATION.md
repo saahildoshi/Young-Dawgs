@@ -1,7 +1,15 @@
-# Structured mesh and phase validation
+# Mesh and phase validation
 
-Ten focused software checks passed, including independent asymmetric-fixture orientation, shared material-edge nodes, full-domain counts, exact phase areas, refinement and rejected porous/undefined labels. Actual reference H1 and H2 meshes have66049/65536 and263169/262144 nodes/elements. Each of the four selected generated seed0 arrays also passed H1 mesh validation. Native1 is material1 matrix-like solid, native5 is material2 reinforcement-like solid. No pixel is removed and no contact joins phases. Image row0 remains at physical y near1mm; element nodes are counterclockwise from the bottom-left corner.
+H1:66049 nodes and65536 counterclockwise PLANE182 quads. H2:263169 nodes and262144 quads. Every native element connectivity and material ID matches the authenticated categorical source, and every native coordinate matches the structured grid. No holes, duplicate interface nodes, removed matrix pixels or separate contact bodies occur. Native1→material1 and native5→material2 are both solids. Shared nodes enforce ideal bonded displacement compatibility. Exact native boundary inventories contain only top/bottom UY and one bottom-left UX pin.
 
-Refinement subdivides pixels without changing the staircase interface. Mesh archives and individual proof manifests retain source hashes, material counts, boundary sets and mesh identities. Native import/material/field qualification follows the analytical benchmark stage; software checks alone are not licensed solver evidence.
+Image row0 stays at the physical top. Refinement subdivides each pixel without averaging labels. All exact phase fractions survive H1/H2. The reference H1/H2 difference is0.664115%, below the prospectively fixed2% gate. H1 is the common initial production mesh.
 
-Native reference H1 and H2 both passed exact connectivity, material, coordinate and constraint readback. The H1/H2 effective moduli are1693.288604578MPa and1682.117418456MPa; relative difference=0.006641145261296723 (0.664115% approximately), below the prospectively fixed2% gate. H1 is the preliminary production mesh for the initial reference/generated comparison. This does not establish asymptotic convergence or segmentation resolution.
+| Specimen | H1 E (MPa) | H2 E (MPa) | Difference relative to H2 |
+|---|---:|---:|---:|
+| M2_reference | 1693.288605 | 1682.117418 | 0.66411% |
+| M3_A01 | 1739.043969 | 1728.407955 | 0.61536% |
+| M4_B02 | 1691.405496 | 1681.045842 | 0.61626% |
+| M5_C02_r1 | 1723.642834 | 1713.561814 | 0.58831% |
+| M6_C02_r0 | 1676.206734 | 1667.538868 | 0.51980% |
+
+Native tables compare phase-average stress, stress percentiles, energy, reactions, runtime and memory at both levels. This is preliminary two-level FE sensitivity; asymptotic convergence, pixel-resolution adequacy and physical interface geometry remain unqualified.
