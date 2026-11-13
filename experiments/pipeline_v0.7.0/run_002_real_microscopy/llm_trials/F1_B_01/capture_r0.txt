@@ -1,0 +1,118 @@
+import numpy as np
+from scipy.ndimage import gaussian_filter, label
+
+SIZE = 256
+FIBER_FRACTION = 0.45269775390625
+VOID_FRACTION = 0.0195770263671875
+
+
+def make_voids(rng):
+    y, x = np.mgrid[:SIZE, :SIZE]
+    field = np.full((SIZE, SIZE), -np.inf)
+    weights = np.array([0.43, 0.22, 0.15, 0.09, 0.07, 0.04])
+    weights *= rng.uniform(0.65, 1.35, len(weights))
+    weights /= weights.sum()
+    for w in weights:
+        cx, cy = rng.uniform(-3, SIZE + 3, 2)
+        theta = rng.uniform(0, 2 * np.pi)
+        aspect = rng.uniform(1.0, 2.1)
+        r = np.sqrt(w * VOID_FRACTION * SIZE**2 / np.pi)
+        u = ((x - cx) * np.cos(theta) + (y - cy) * np.sin(theta))
+        v = (-(x - cx) * np.sin(theta) + (y - cy) * np.cos(theta))
+        u /= r * np.sqrt(aspect)
+        v /= r / np.sqrt(aspect)
+        angle = np.arctan2(v, u)
+        roughness = np.ones_like(angle)
+        for k in range(3, 9):
+            roughness += rng.uniform(0.025, 0.10) * np.cos(
+                k * angle + rng.uniform(0, 2 * np.pi))
+        field = np.maximum(field, 1 - np.hypot(u, v) / roughness)
+    count = round(VOID_FRACTION * SIZE**2)
+    indices = np.argpartition(field.ravel(), -count)[-count:]
+    void = np.zeros(SIZE**2, dtype=bool)
+    void[indices] = True
+    return void.reshape(SIZE, SIZE)
+
+
+def pack_fibers(rng, void, mean_r, cluster_probability, spacing):
+    density = gaussian_filter(rng.normal(size=(SIZE, SIZE)), 13)
+    density = (density - density.mean()) / (density.std() + 1e-12)
+    probability = 0.25 + 0.75 / (1 + np.exp(-1.3 * density))
+    fibers = np.zeros_like(void)
+    centers = np.empty((1500, 2))
+    radii = np.empty(1500)
+    target = round(FIBER_FRACTION * SIZE**2)
+    n = area = 0
+    for _ in range(8500):
+        if area >= target or n >= len(centers):
+            break
+        r = np.clip(rng.normal(mean_r, 0.40), 2.6, 4.6)
+        clustered = n > 0 and rng.random() < cluster_probability
+        if clustered:
+            j = rng.integers(n)
+            angle = rng.uniform(0, 2 * np.pi)
+            distance = r + radii[j] + rng.uniform(-0.85, 0.35)
+            x, y = centers[j] + distance * np.array(
+                [np.cos(angle), np.sin(angle)])
+            minimum = 5.8
+        else:
+            x, y = rng.uniform(-4, SIZE + 4, 2)
+            ix = int(np.clip(x, 0, SIZE - 1))
+            iy = int(np.clip(y, 0, SIZE - 1))
+            if rng.random() > probability[iy, ix]:
+                continue
+            minimum = spacing
+        if not (-4 <= x <= SIZE + 4 and -4 <= y <= SIZE + 4):
+            continue
+        d = centers[:n] - (x, y)
+        limit = minimum + 0.45 * (r + radii[:n] - 2 * mean_r)
+        if np.any(np.einsum('ij,ij->i', d, d) < limit**2):
+            continue
+        x0, x1 = max(0, int(np.floor(x-r))), min(SIZE, int(np.ceil(x+r))+1)
+        y0, y1 = max(0, int(np.floor(y-r))), min(SIZE, int(np.ceil(y+r))+1)
+        if x1 <= x0 or y1 <= y0:
+            continue
+        yy, xx = np.ogrid[y0:y1, x0:x1]
+        disk = (xx-x)**2 + (yy-y)**2 <= r*r
+        patch = fibers[y0:y1, x0:x1]
+        if np.any(disk & void[y0:y1, x0:x1]):
+            continue
+        added = np.count_nonzero(disk & ~patch)
+        if not added:
+            continue
+        patch |= disk
+        centers[n], radii[n] = (x, y), r
+        n += 1
+        area += added
+    return fibers
+
+
+def generate_microstructure(seed, parameters):
+    rng = np.random.default_rng(seed)
+    void = make_voids(rng)
+    best, best_score = None, np.inf
+    for radius, clustering, spacing in [(3.45, .40, 7.8), (3.55, .34, 8.0),
+                                        (3.65, .29, 8.1), (3.75, .24, 8.2)]:
+        fibers = pack_fibers(rng, void, radius, clustering, spacing)
+        regions, _ = label(fibers)
+        areas = np.bincount(regions.ravel())
+        border = np.unique(np.concatenate([regions[0], regions[-1],
+                                           regions[:, 0], regions[:, -1]]))
+        areas[border] = 0
+        areas[0] = 0
+        diameters = 2 * np.sqrt(areas[areas > 0] / np.pi)
+        if not len(diameters):
+            continue
+        score = (((len(diameters)-464)/35)**2
+                 + ((diameters.mean()-7.90493)/0.45)**2
+                 + ((diameters.std()-2.81210)/0.55)**2
+                 + ((fibers.mean()-FIBER_FRACTION)/0.012)**2)
+        if score < best_score:
+            best, best_score = fibers, score
+    result = np.zeros((SIZE, SIZE), dtype=np.uint8)
+    if best is not None:
+        result[best] = 1
+    else:
+        result.flat[np.flatnonzero(~void)[0]] = 1
+    result[void] = 2
+    return result
