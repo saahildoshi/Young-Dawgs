@@ -1,0 +1,94 @@
+import numpy as np
+from scipy.ndimage import gaussian_filter, distance_transform_edt
+
+
+def generate_microstructure(seed, parameters):
+    rng = np.random.default_rng(seed)
+    n, pad = 256, 12
+    m = n + 2 * pad
+    Y, X = np.mgrid[:m, :m]
+    void = np.zeros((m, m), dtype=bool)
+
+    def add_void(cx, cy, a, b):
+        angle = rng.uniform(0, 2 * np.pi)
+        c, s = np.cos(angle), np.sin(angle)
+        u = ((X - cx) * c + (Y - cy) * s) / a
+        v = (-(X - cx) * s + (Y - cy) * c) / b
+        theta = np.arctan2(v, u)
+        boundary = np.ones_like(theta)
+        for k in (3, 5, 7, 11):
+            boundary += rng.uniform(0.06, 0.18) * np.cos(
+                k * theta + rng.uniform(0, 2 * np.pi))
+        void[:] |= np.hypot(u, v) < boundary
+
+    # Sparse irregular void clusters, including occasional edge clipping.
+    for i in range(rng.integers(2, 4)):
+        lo, hi = (pad + 10, m - pad - 10) if i == 0 else (pad - 5, m - pad + 5)
+        cx, cy = rng.uniform(lo, hi, 2)
+        a, b = rng.uniform(10, 19), rng.uniform(6, 12)
+        add_void(cx, cy, a, b)
+        for _ in range(rng.integers(1, 5)):
+            t = rng.uniform(0, 2 * np.pi)
+            d = rng.uniform(0.65, 1.35)
+            add_void(cx + d * a * np.cos(t), cy + d * b * np.sin(t),
+                     rng.uniform(2, 5), rng.uniform(1.5, 4))
+
+    for _ in range(rng.integers(3, 9)):
+        cx, cy = rng.uniform(pad - 3, m - pad + 3, 2)
+        add_void(cx, cy, rng.uniform(1.8, 5), rng.uniform(1.3, 3.5))
+
+    clearance = distance_transform_edt(~void)
+
+    # Smooth packing-density variation and localized matrix-rich pockets.
+    field = gaussian_filter(rng.normal(size=(m, m)), rng.uniform(9, 15))
+    field = (field - field.mean()) / (field.std() + 1e-12)
+    depletion = np.zeros((m, m))
+    for _ in range(rng.integers(7, 13)):
+        cx, cy = rng.uniform(0, m, 2)
+        a, b = rng.uniform(5, 13), rng.uniform(5, 12)
+        t = rng.uniform(0, 2 * np.pi)
+        u = (X - cx) * np.cos(t) + (Y - cy) * np.sin(t)
+        v = -(X - cx) * np.sin(t) + (Y - cy) * np.cos(t)
+        pocket = np.exp(-0.5 * ((u / a)**2 + (v / b)**2))
+        depletion = np.maximum(depletion, pocket * rng.uniform(0.7, 1))
+
+    acceptance = np.clip(0.82 + 0.13 * field - 0.94 * depletion, 0.015, 1)
+    spacing = np.clip(-0.16 * field + 1.65 * depletion, -0.4, 1.8)
+
+    # Inhomogeneous hard-core packing of nearly monodisperse circles.
+    cell = 8
+    nc = (m + cell - 1) // cell
+    grid = [[[] for _ in range(nc)] for _ in range(nc)]
+    centers = []
+    target = int(m * m * rng.uniform(0.0215, 0.0230))
+    proposals = rng.uniform(0, m, size=(50000, 2))
+    radii = np.clip(rng.normal(2.55, 0.20, len(proposals)), 2.05, 3.05)
+    draws = rng.random(len(proposals))
+
+    for (cx, cy), r, draw in zip(proposals, radii, draws):
+        ix, iy = int(cx), int(cy)
+        if draw > acceptance[iy, ix] or clearance[iy, ix] < 0.85 * r + 0.3:
+            continue
+        g = spacing[iy, ix]
+        gx, gy = ix // cell, iy // cell
+        neighbors = (p for j in range(max(0, gy-1), min(nc, gy+2))
+                     for k in range(max(0, gx-1), min(nc, gx+2))
+                     for p in grid[j][k])
+        if any((cx-x)**2 + (cy-y)**2 < (0.92*(r+q)+0.18+0.5*(g+h))**2
+               for x, y, q, h in neighbors):
+            continue
+        p = (cx, cy, r, g)
+        grid[gy][gx].append(p)
+        centers.append(p)
+        if len(centers) >= target:
+            break
+
+    labels = np.zeros((m, m), dtype=np.uint8)
+    for cx, cy, r, _ in centers:
+        x0, x1 = max(0, int(cx-r)), min(m, int(cx+r)+2)
+        y0, y1 = max(0, int(cy-r)), min(m, int(cy+r)+2)
+        yy, xx = np.ogrid[y0:y1, x0:x1]
+        labels[y0:y1, x0:x1][(xx-cx)**2 + (yy-cy)**2 <= r*r] = 1
+
+    labels[void] = 2
+    return labels[pad:pad+n, pad:pad+n].copy()
