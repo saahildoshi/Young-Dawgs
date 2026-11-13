@@ -84,7 +84,8 @@ def render(family,partition,rows):
     for ax,(picture,title) in zip(axes.ravel(),panels):ax.imshow(picture,interpolation='nearest');ax.set_title(title,fontsize=10)
     fig.suptitle(f'{family}: actual independent LLM scripts — {partition} comparison',fontsize=14)
     fig.text(.5,.025,'Native256px grids; physical scale unknown. Phase displays are evaluation figures, never model inputs.\n'+('P3 native1 matrix /5 provisional secondary carbide; microscopy source is HorizontalFlip.' if family=='P3' else 'F1 matrix0 / transverse fiber1 / void2; circle-based contours are approximate.'),ha='center',fontsize=9)
-    fig.tight_layout(rect=[0,.08,1,.94]);name=f'{family}_{partition}_REFERENCE_GENERATED.png';fig.savefig(RUN/'analysis'/name,dpi=150);plt.close(fig)
+    fig.tight_layout(rect=[0,.08,1,.94]);fig.subplots_adjust(hspace=.28)
+    name=f'{family}_{partition}_REFERENCE_GENERATED.png';fig.savefig(RUN/'analysis'/name,dpi=150);plt.close(fig)
     return name
 
 

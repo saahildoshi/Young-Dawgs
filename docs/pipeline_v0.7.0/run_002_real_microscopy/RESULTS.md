@@ -1,6 +1,6 @@
 # P3 + F1 real microscopy LLM pilot
 
-Actual independently returned initial scripts: **4**; paired feedback revisions: **0**. Submission events: 5. Prepared initial packets: 12; unexecuted packets are not trials.
+Actual independently returned initial scripts: **5**; paired feedback revisions: **0**. Submission events: 6. Prepared initial packets: 12; unexecuted packets are not trials.
 
 | Script | Revision | Seeds | Valid / requested | Failures | Visible error | Hidden error | Hamming diversity |
 |---|---:|---|---:|---:|---:|---:|---:|
@@ -8,6 +8,7 @@ Actual independently returned initial scripts: **4**; paired feedback revisions:
 | F1_A_02 | 0 | dev | 10/10 | 0 | 0.1996 | 0.2488 | 0.5141 |
 | P3_A_01 | 0 | dev | 10/10 | 0 | 0.1466 | 0.101 | 0.4168 |
 | P3_A_02 | 0 | dev | 10/10 | 0 | 0.1902 | 0.08583 | 0.4156 |
+| P3_B_01 | 0 | dev | 10/10 | 0 | 0.04088 | 0.08736 | 0.3941 |
 
 Errors are absolute descriptor differences divided by prospectively fixed scales, averaged equally within each group; lower is closer, not percentage accuracy. A script mean is NA unless every requested output has a complete group score. Validity and execution failures remain separate. Hamming distance measures variation among nested seeds, not reference accuracy.
 
@@ -37,6 +38,17 @@ Errors are absolute descriptor differences divided by prospectively fixed scales
 | P3_A_02/r0/dev | S2_x_8 (hidden) | 0.1624 | 0.146 ± 0.01084 | 10/10 |
 | P3_A_02/r0/dev | S2_y_8 (hidden) | 0.1529 | 0.1438 ± 0.01181 | 10/10 |
 | P3_A_02/r0/dev | matrix_lcc (hidden) | 0.9906 | 0.9931 ± 0.006897 | 10/10 |
+| P3_B_01/r0/dev | reinforcement_fraction (visible) | 0.3163 | 0.287 ± 0.007229 | 10/10 |
+| P3_B_01/r0/dev | complete_regions (visible) | 57 | 57 ± 0 | 10/10 |
+| P3_B_01/r0/dev | diameter_mean_px (visible) | 15.71 | 15.7 ± 0.01326 | 10/10 |
+| P3_B_01/r0/dev | diameter_std_px (visible) | 8.893 | 8.873 ± 0.04451 | 10/10 |
+| P3_B_01/r0/dev | aspect_mean (visible) | 1.916 | 1.951 ± 0.08883 | 10/10 |
+| P3_B_01/r0/dev | nearest_neighbor_mean_px (hidden) | 19.45 | 21.54 ± 0.6951 | 10/10 |
+| P3_B_01/r0/dev | nearest_neighbor_cv (hidden) | 0.487 | 0.3317 ± 0.02725 | 10/10 |
+| P3_B_01/r0/dev | interface_density (hidden) | 0.1126 | 0.09942 ± 0.001245 | 10/10 |
+| P3_B_01/r0/dev | S2_x_8 (hidden) | 0.1624 | 0.1445 ± 0.007143 | 10/10 |
+| P3_B_01/r0/dev | S2_y_8 (hidden) | 0.1529 | 0.1425 ± 0.006711 | 10/10 |
+| P3_B_01/r0/dev | matrix_lcc (hidden) | 0.9906 | 0.9994 ± 0.0007057 | 10/10 |
 
 ## F1 descriptor comparison
 
