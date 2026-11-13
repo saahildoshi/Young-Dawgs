@@ -1,0 +1,115 @@
+import numpy as np
+from scipy import ndimage as ndi
+from scipy.special import ndtri
+from skimage.draw import polygon
+
+SIZE = 256
+FRACTION = 0.3163299560546875
+N_COMPLETE = 57
+D_MEAN = 15.706688295952011
+D_STD = 8.893419110493891
+
+
+def _particle(rng, area):
+    """Generate an irregular, angular, approximately equiaxed or elongated region."""
+    n = int(rng.integers(12, 23))
+    t = (np.arange(n) + rng.uniform(-0.28, 0.28, n)) * 2 * np.pi / n
+    noise = rng.normal(0, 0.23, n)
+    r = np.clip(1 + noise + 0.25 * np.roll(noise, 1), 0.48, 1.55)
+    if area > 90 and rng.random() < 0.65:
+        for _ in range(int(rng.integers(1, 4))):
+            r[rng.integers(n)] *= rng.uniform(0.35, 0.72)
+    aspect = np.clip(rng.lognormal(np.log(1.75), 0.34), 1.05, 3.8)
+    x = r * np.cos(t) * np.sqrt(aspect)
+    y = r * np.sin(t) / np.sqrt(aspect)
+    a = rng.uniform(0, np.pi)
+    x, y = x * np.cos(a) - y * np.sin(a), x * np.sin(a) + y * np.cos(a)
+    base = abs(np.sum(x * np.roll(y, -1) - y * np.roll(x, -1))) / 2
+    scale = np.sqrt(area / max(base, 0.01))
+    for _ in range(3):
+        xx, yy = x * scale, y * scale
+        xx, yy = xx - xx.min() + 2, yy - yy.min() + 2
+        mask = np.zeros((int(np.ceil(yy.max())) + 3,
+                         int(np.ceil(xx.max())) + 3), dtype=bool)
+        rr, cc = polygon(yy, xx, shape=mask.shape)
+        mask[rr, cc] = True
+        lab, count = ndi.label(mask)
+        if count:
+            sizes = np.bincount(lab.ravel())[1:]
+            mask = lab == (1 + np.argmax(sizes))
+        scale *= np.sqrt(area / max(mask.sum(), 1))
+    rows, cols = np.where(mask)
+    return mask[rows.min():rows.max()+1, cols.min():cols.max()+1]
+
+
+def _place(rng, canvas, shape, field, boundary=False, target=0):
+    h, w = shape.shape
+    blocked = ndi.binary_dilation(canvas)
+    best, best_score = None, -np.inf
+    for _ in range(220):
+        if boundary:
+            edge = int(rng.integers(4))
+            x = int(rng.integers(-w//3, SIZE - 2*w//3))
+            y = int(rng.integers(-h//3, SIZE - 2*h//3))
+            if edge < 2:
+                cut = int(rng.uniform(0, 0.72) * h)
+                y = -cut if edge == 0 else SIZE - h + cut
+            else:
+                cut = int(rng.uniform(0, 0.72) * w)
+                x = -cut if edge == 2 else SIZE - w + cut
+        else:
+            x = int(rng.integers(1, SIZE - w))
+            y = int(rng.integers(1, SIZE - h))
+        x0, x1 = max(0, x), min(SIZE, x + w)
+        y0, y1 = max(0, y), min(SIZE, y + h)
+        p = shape[y0-y:y1-y, x0-x:x1-x]
+        if not p.any() or np.any(blocked[y0:y1, x0:x1] & p):
+            continue
+        score = field[(y0+y1)//2, (x0+x1)//2] + rng.gumbel()
+        if boundary:
+            touches = ((x0 == 0 and p[:, 0].any()) or
+                       (x1 == SIZE and p[:, -1].any()) or
+                       (y0 == 0 and p[0].any()) or
+                       (y1 == SIZE and p[-1].any()))
+            if not touches:
+                continue
+            score = 0.20 * score - 6 * abs(np.log(p.sum() / target))
+        if score > best_score:
+            best, best_score = (y0, y1, x0, x1, p), score
+    if best is not None:
+        y0, y1, x0, x1, p = best
+        canvas[y0:y1, x0:x1] |= p
+        return int(p.sum())
+    return 0
+
+
+def generate_microstructure(seed, parameters):
+    rng = np.random.default_rng(seed)
+    canvas = np.zeros((SIZE, SIZE), dtype=bool)
+
+    # Correlated spatial intensity produces clusters and matrix-rich gaps.
+    field = ndi.gaussian_filter(rng.normal(size=canvas.shape), 19, mode="reflect")
+    field /= max(field.std(), 1e-8)
+    fine = ndi.gaussian_filter(rng.normal(size=canvas.shape), 7, mode="reflect")
+    field += 0.45 * fine / max(fine.std(), 1e-8)
+
+    # Sample the complete-region diameter distribution.
+    q = (np.arange(N_COMPLETE) + rng.uniform(0.15, 0.85, N_COMPLETE)) / N_COMPLETE
+    d = np.exp(0.53 * ndtri(q))
+    d = np.maximum(3.5, D_MEAN + D_STD * (d - d.mean()) / d.std())
+    particles = [_particle(rng, np.pi * v*v / 4) for v in d[::-1]]
+
+    # Allocate the remaining annotation area to boundary-clipped regions.
+    remaining = FRACTION * SIZE**2 - sum(p.sum() for p in particles)
+    weights = rng.lognormal(0, 0.55, int(rng.integers(20, 25)))
+    for i, weight in enumerate(weights):
+        target = max(12, remaining * weight / weights[i:].sum())
+        shape = _particle(rng, target * rng.uniform(1.45, 1.95))
+        remaining -= _place(rng, canvas, shape, field, True, target)
+
+    for shape in particles:
+        _place(rng, canvas, shape, field)
+
+    if not canvas.any():
+        canvas[SIZE//2, SIZE//2] = True
+    return np.where(canvas, 5, 1).astype(np.uint8)
