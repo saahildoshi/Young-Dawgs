@@ -14,6 +14,34 @@ def fmt(value):
     return 'NA' if value is None else f'{value:.4g}'
 
 
+def condition_summary(rows):
+    """Average script means, with revisions kept separate from parent trials."""
+    groups=[];paired=[]
+    for family,condition,revision,partition in sorted({(r['family'],r['condition'],r['revision'],r['partition']) for r in rows}):
+        subset=[r for r in rows if (r['family'],r['condition'],r['revision'],r['partition'])==(family,condition,revision,partition)]
+        group={'family':family,'condition':condition,'revision':revision,'partition':partition,
+               'independent_parent_scripts':len(subset),'scripts':[r['trial_id'] for r in subset],
+               'valid_outputs':sum(r['valid_outputs'] for r in subset),
+               'requested_outputs':sum(r['requested_seeds'] for r in subset),
+               'execution_failures':sum(r['execution_failures'] for r in subset)}
+        for key in ['visible_error_mean','hidden_error_mean','categorical_hamming_diversity']:
+            values=[r[key] for r in subset if r[key] is not None]
+            group[key]=float(np.mean(values)) if len(values)==len(subset) else None
+            group[key+'_scored_scripts']=len(values)
+            group[key+'_script_sd']=float(np.std(values)) if len(values)==len(subset) else None
+        groups.append(group)
+    lookup={(r['trial_id'],r['revision'],r['partition']):r for r in rows}
+    for r in rows:
+        before=lookup.get((r['trial_id'],0,r['partition']))
+        if r['revision']!=1 or before is None:continue
+        pair={'trial_id':r['trial_id'],'partition':r['partition'],
+              'valid_before':before['valid_outputs'],'valid_after':r['valid_outputs']}
+        for key in ['visible_error_mean','hidden_error_mean','categorical_hamming_diversity']:
+            pair[key+'_delta']=r[key]-before[key] if r[key] is not None and before[key] is not None else None
+        paired.append(pair)
+    return groups,paired
+
+
 def summarize():
     rows=[];metrics=[]
     for path in sorted(RUN.glob('llm_trials/*/evaluation_r*_*/*EXECUTION.json')):
@@ -42,7 +70,9 @@ def summarize():
                'evaluated_seed_outputs':sum(r['requested_seeds']-r['execution_failures'] for r in rows),
                'independent_unit':'Returned initial script; seed realizations and paired feedback revisions are not additional independent trials'}
     out=RUN/'analysis';out.mkdir(exist_ok=True);DOC.mkdir(parents=True,exist_ok=True)
+    groups,paired=condition_summary(rows)
     write(out/'SCRIPT_LEVEL_COMPARISON.json',rows);write(out/'METRIC_COMPARISON.json',metrics);write(out/'GENUINE_TRIAL_INVENTORY.json',inventory)
+    write(out/'CONDITION_COMPARISON.json',groups);write(out/'PAIRED_FEEDBACK_COMPARISON.json',paired)
     figures=[]
     for family in ['P3','F1']:
         for partition in ['dev','held']:
@@ -55,6 +85,15 @@ def summarize():
     for r in rows:
         text+=f"| {r['trial_id']} | {r['revision']} | {r['partition']} | {r['valid_outputs']}/{r['requested_seeds']} | {r['execution_failures']} | {fmt(r['visible_error_mean'])} | {fmt(r['hidden_error_mean'])} | {fmt(r['categorical_hamming_diversity'])} |\n"
     text+='\nErrors are absolute descriptor differences divided by prospectively fixed scales, averaged equally within each group; lower is closer, not percentage accuracy. A script mean is NA unless every requested output has a complete group score. Validity and execution failures remain separate. Hamming distance measures variation among nested seeds, not reference accuracy.\n\n'
+    text+='## Descriptive condition comparison\n\n| Family | Condition/revision | Partition | Parent scripts | Valid/requested | Visible error | Hidden error | Hamming diversity |\n|---|---|---|---:|---:|---:|---:|---:|\n'
+    for r in groups:
+        text+=f"| {r['family']} | {r['condition']}/r{r['revision']} | {r['partition']} | {r['independent_parent_scripts']} | {r['valid_outputs']}/{r['requested_outputs']} | {fmt(r['visible_error_mean'])} | {fmt(r['hidden_error_mean'])} | {fmt(r['categorical_hamming_diversity'])} |\n"
+    text+='\nCondition values average script means equally. C/r0 and C/r1 share the same parent trials; they cannot be added as independent samples. Any missing script score makes its condition score unavailable. JSON tables retain scoring coverage and descriptive between-script SD; this small pilot does not support significance claims.\n\n'
+    if paired:
+        text+='| Paired parent | Partition | Valid before/after | Visible error change | Hidden error change | Diversity change |\n|---|---|---:|---:|---:|---:|\n'
+        for r in paired:
+            text+=f"| {r['trial_id']} | {r['partition']} | {r['valid_before']}/{r['valid_after']} | {fmt(r['visible_error_mean_delta'])} | {fmt(r['hidden_error_mean_delta'])} | {fmt(r['categorical_hamming_diversity_delta'])} |\n"
+        text+='\nChanges are revised minus initial script means. Negative error change is closer agreement; diversity change has no reference-accuracy interpretation.\n\n'
     for family in ['P3','F1']:
         text+=f'## {family} descriptor comparison\n\n| Script/revision/partition | Descriptor | Target | Generated seed mean ± SD | Available outputs |\n|---|---|---:|---:|---:|\n'
         for r in metrics:
