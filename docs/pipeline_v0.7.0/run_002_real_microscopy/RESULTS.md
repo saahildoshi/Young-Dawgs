@@ -1,14 +1,16 @@
 # P3 + F1 real microscopy LLM pilot
 
-Actual independently returned initial scripts: **5**; paired feedback revisions: **0**. Submission events: 6. Prepared initial packets: 12; unexecuted packets are not trials.
+Actual independently returned initial scripts: **7**; paired feedback revisions: **0**. Submission events: 8. Prepared initial packets: 12; unexecuted packets are not trials.
 
 | Script | Revision | Seeds | Valid / requested | Failures | Visible error | Hidden error | Hamming diversity |
 |---|---:|---|---:|---:|---:|---:|---:|
 | F1_A_01 | 0 | dev | 10/10 | 0 | 0.3322 | 0.2804 | 0.5009 |
 | F1_A_02 | 0 | dev | 10/10 | 0 | 0.1996 | 0.2488 | 0.5141 |
+| F1_B_01 | 0 | dev | 10/10 | 0 | 0.3239 | 0.2183 | 0.5162 |
 | P3_A_01 | 0 | dev | 10/10 | 0 | 0.1466 | 0.101 | 0.4168 |
 | P3_A_02 | 0 | dev | 10/10 | 0 | 0.1902 | 0.08583 | 0.4156 |
 | P3_B_01 | 0 | dev | 10/10 | 0 | 0.04088 | 0.08736 | 0.3941 |
+| P3_B_02 | 0 | dev | 10/10 | 0 | 0.01202 | 0.07537 | 0.4246 |
 
 Errors are absolute descriptor differences divided by prospectively fixed scales, averaged equally within each group; lower is closer, not percentage accuracy. A script mean is NA unless every requested output has a complete group score. Validity and execution failures remain separate. Hamming distance measures variation among nested seeds, not reference accuracy.
 
@@ -49,6 +51,17 @@ Errors are absolute descriptor differences divided by prospectively fixed scales
 | P3_B_01/r0/dev | S2_x_8 (hidden) | 0.1624 | 0.1445 ± 0.007143 | 10/10 |
 | P3_B_01/r0/dev | S2_y_8 (hidden) | 0.1529 | 0.1425 ± 0.006711 | 10/10 |
 | P3_B_01/r0/dev | matrix_lcc (hidden) | 0.9906 | 0.9994 ± 0.0007057 | 10/10 |
+| P3_B_02/r0/dev | reinforcement_fraction (visible) | 0.3163 | 0.3162 ± 0.0006491 | 10/10 |
+| P3_B_02/r0/dev | complete_regions (visible) | 57 | 57 ± 0 | 10/10 |
+| P3_B_02/r0/dev | diameter_mean_px (visible) | 15.71 | 15.69 ± 0.01084 | 10/10 |
+| P3_B_02/r0/dev | diameter_std_px (visible) | 8.893 | 8.901 ± 0.01371 | 10/10 |
+| P3_B_02/r0/dev | aspect_mean (visible) | 1.916 | 1.985 ± 0.06485 | 10/10 |
+| P3_B_02/r0/dev | nearest_neighbor_mean_px (hidden) | 19.45 | 20.43 ± 0.717 | 10/10 |
+| P3_B_02/r0/dev | nearest_neighbor_cv (hidden) | 0.487 | 0.3216 ± 0.05668 | 10/10 |
+| P3_B_02/r0/dev | interface_density (hidden) | 0.1126 | 0.0964 ± 0.00183 | 10/10 |
+| P3_B_02/r0/dev | S2_x_8 (hidden) | 0.1624 | 0.1671 ± 0.002483 | 10/10 |
+| P3_B_02/r0/dev | S2_y_8 (hidden) | 0.1529 | 0.1658 ± 0.005394 | 10/10 |
+| P3_B_02/r0/dev | matrix_lcc (hidden) | 0.9906 | 0.9994 ± 0.0006211 | 10/10 |
 
 ## F1 descriptor comparison
 
@@ -80,6 +93,19 @@ Errors are absolute descriptor differences divided by prospectively fixed scales
 | F1_A_02/r0/dev | void_regions (hidden) | 4 | 11.6 ± 3.441 | 10/10 |
 | F1_A_02/r0/dev | void_diameter_mean_px (hidden) | 21.9 | 9.139 ± 2.549 | 10/10 |
 | F1_A_02/r0/dev | void_S2_x_8 (hidden) | 0.01148 | 0.01069 ± 0.003731 | 10/10 |
+| F1_B_01/r0/dev | fiber_fraction (visible) | 0.4527 | 0.4529 ± 0.0001593 | 10/10 |
+| F1_B_01/r0/dev | void_fraction (visible) | 0.01958 | 0.01958 ± 0 | 10/10 |
+| F1_B_01/r0/dev | complete_fiber_regions (visible) | 464 | 159.3 ± 11.32 | 10/10 |
+| F1_B_01/r0/dev | fiber_diameter_mean_px (visible) | 7.905 | 10.98 ± 0.2024 | 10/10 |
+| F1_B_01/r0/dev | fiber_diameter_std_px (visible) | 2.812 | 6.403 ± 0.4668 | 10/10 |
+| F1_B_01/r0/dev | fiber_nearest_neighbor_mean_px (hidden) | 8.346 | 12.46 ± 0.4146 | 10/10 |
+| F1_B_01/r0/dev | fiber_S2_x_8 (hidden) | 0.2296 | 0.2089 ± 0.004351 | 10/10 |
+| F1_B_01/r0/dev | fiber_S2_y_8 (hidden) | 0.2138 | 0.2113 ± 0.004322 | 10/10 |
+| F1_B_01/r0/dev | matrix_fiber_interface (hidden) | 0.3951 | 0.2533 ± 0.006774 | 10/10 |
+| F1_B_01/r0/dev | matrix_lcc (hidden) | 0.93 | 0.957 ± 0.01212 | 10/10 |
+| F1_B_01/r0/dev | void_regions (hidden) | 4 | 6 ± 0 | 10/10 |
+| F1_B_01/r0/dev | void_diameter_mean_px (hidden) | 21.9 | 15.94 ± 0.9728 | 10/10 |
+| F1_B_01/r0/dev | void_S2_x_8 (hidden) | 0.01148 | 0.009429 ± 0.0008175 | 10/10 |
 
 ## Figures and interpretation
 
