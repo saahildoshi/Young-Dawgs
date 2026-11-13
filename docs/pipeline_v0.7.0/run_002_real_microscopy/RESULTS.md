@@ -1,12 +1,13 @@
 # P3 + F1 real microscopy LLM pilot
 
-Actual independently returned initial scripts: **7**; paired feedback revisions: **0**. Submission events: 8. Prepared initial packets: 12; unexecuted packets are not trials.
+Actual independently returned initial scripts: **8**; paired feedback revisions: **0**. Submission events: 8. Prepared initial packets: 12; unexecuted packets are not trials.
 
 | Script | Revision | Seeds | Valid / requested | Failures | Visible error | Hidden error | Hamming diversity |
 |---|---:|---|---:|---:|---:|---:|---:|
 | F1_A_01 | 0 | dev | 10/10 | 0 | 0.3322 | 0.2804 | 0.5009 |
 | F1_A_02 | 0 | dev | 10/10 | 0 | 0.1996 | 0.2488 | 0.5141 |
 | F1_B_01 | 0 | dev | 10/10 | 0 | 0.3239 | 0.2183 | 0.5162 |
+| F1_B_02 | 0 | dev | 10/10 | 0 | 0.03205 | 0.1056 | 0.5139 |
 | P3_A_01 | 0 | dev | 10/10 | 0 | 0.1466 | 0.101 | 0.4168 |
 | P3_A_02 | 0 | dev | 10/10 | 0 | 0.1902 | 0.08583 | 0.4156 |
 | P3_B_01 | 0 | dev | 10/10 | 0 | 0.04088 | 0.08736 | 0.3941 |
@@ -106,6 +107,19 @@ Errors are absolute descriptor differences divided by prospectively fixed scales
 | F1_B_01/r0/dev | void_regions (hidden) | 4 | 6 ± 0 | 10/10 |
 | F1_B_01/r0/dev | void_diameter_mean_px (hidden) | 21.9 | 15.94 ± 0.9728 | 10/10 |
 | F1_B_01/r0/dev | void_S2_x_8 (hidden) | 0.01148 | 0.009429 ± 0.0008175 | 10/10 |
+| F1_B_02/r0/dev | fiber_fraction (visible) | 0.4527 | 0.4503 ± 0.005837 | 10/10 |
+| F1_B_02/r0/dev | void_fraction (visible) | 0.01958 | 0.01854 ± 0.003588 | 10/10 |
+| F1_B_02/r0/dev | complete_fiber_regions (visible) | 464 | 475 ± 19.09 | 10/10 |
+| F1_B_02/r0/dev | fiber_diameter_mean_px (visible) | 7.905 | 7.902 ± 0.0842 | 10/10 |
+| F1_B_02/r0/dev | fiber_diameter_std_px (visible) | 2.812 | 2.805 ± 0.1927 | 10/10 |
+| F1_B_02/r0/dev | fiber_nearest_neighbor_mean_px (hidden) | 8.346 | 8.513 ± 0.08785 | 10/10 |
+| F1_B_02/r0/dev | fiber_S2_x_8 (hidden) | 0.2296 | 0.2133 ± 0.006397 | 10/10 |
+| F1_B_02/r0/dev | fiber_S2_y_8 (hidden) | 0.2138 | 0.2124 ± 0.004388 | 10/10 |
+| F1_B_02/r0/dev | matrix_fiber_interface (hidden) | 0.3951 | 0.3305 ± 0.005095 | 10/10 |
+| F1_B_02/r0/dev | matrix_lcc (hidden) | 0.93 | 0.9874 ± 0.002568 | 10/10 |
+| F1_B_02/r0/dev | void_regions (hidden) | 4 | 4 ± 0.6325 | 10/10 |
+| F1_B_02/r0/dev | void_diameter_mean_px (hidden) | 21.9 | 20.28 ± 3.187 | 10/10 |
+| F1_B_02/r0/dev | void_S2_x_8 (hidden) | 0.01148 | 0.009895 ± 0.002932 | 10/10 |
 
 ## Figures and interpretation
 
