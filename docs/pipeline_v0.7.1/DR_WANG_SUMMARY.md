@@ -1,0 +1,9 @@
+# Research summary for Dr. Wang
+
+The real-microscopy LLM pilot generated P3 and F1 microstructures from independently returned procedural scripts. We have now connected the selected P3 geometries to a verified two-phase mechanical workflow in licensed ANSYS.
+
+Both P3 phases are solid materials with shared nodes and ideal bonded interfaces. Homogeneous, parallel-layer, series-layer and equal-material controls matched their analytical elastic responses. We obtained five actual stress–strain checkpoints through 0.5% compression for the reference and selected generated specimens, independently reopened the native results, and compared effective stiffness and phase stress distributions.
+
+Using illustrative matrix/reinforcement moduli of 1000/10000 MPa, the reference apparent modulus was 1693.29 MPa. The selected image-only, descriptor-informed and revised-feedback examples gave 1739.04, 1691.41 and 1723.64 MPa. The descriptor-informed example was closest, although its small difference is below observed mesh sensitivity. The same-parent initial C02 example gave 1676.21 MPa; the revision's measured stiffness error increased on both mesh levels. That is an exploratory observation, not a causal conclusion, and the exact-seed morphology results differ from the previous script-average trend.
+
+The study shows that generated geometry can be mechanically evaluated reliably and that morphology scores alone do not establish mechanical agreement. The material values are numerical assumptions, not calibrated Ni–WC properties; the selected augmented crop is not an RVE. A logical next step is a controlled multi-realization mechanical dataset followed by a registered LLM mechanical-feedback experiment at fixed composition, with independent evaluation seeds and a suitable control. No optimization or new high-strain contact campaign was performed here.
