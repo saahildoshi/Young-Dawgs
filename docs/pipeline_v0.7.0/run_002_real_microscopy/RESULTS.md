@@ -1,6 +1,6 @@
 # P3 + F1 real microscopy LLM pilot
 
-Actual independently returned initial scripts: **10**; paired feedback revisions: **1**. Submission events: 12. Prepared initial packets: 12; unexecuted packets are not trials.
+Actual independently returned initial scripts: **11**; paired feedback revisions: **2**. Submission events: 14. Prepared initial packets: 12; unexecuted packets are not trials.
 
 | Script | Revision | Seeds | Valid / requested | Failures | Visible error | Hidden error | Hamming diversity |
 |---|---:|---|---:|---:|---:|---:|---:|
@@ -9,12 +9,14 @@ Actual independently returned initial scripts: **10**; paired feedback revisions
 | F1_B_01 | 0 | dev | 10/10 | 0 | 0.3239 | 0.2183 | 0.5162 |
 | F1_B_02 | 0 | dev | 10/10 | 0 | 0.03205 | 0.1056 | 0.5139 |
 | F1_C_01 | 0 | dev | 10/10 | 0 | 0.01807 | 0.1748 | 0.5141 |
+| F1_C_01 | 1 | dev | 10/10 | 0 | 0.01276 | 0.1806 | 0.5148 |
 | P3_A_01 | 0 | dev | 10/10 | 0 | 0.1466 | 0.101 | 0.4168 |
 | P3_A_02 | 0 | dev | 10/10 | 0 | 0.1902 | 0.08583 | 0.4156 |
 | P3_B_01 | 0 | dev | 10/10 | 0 | 0.04088 | 0.08736 | 0.3941 |
 | P3_B_02 | 0 | dev | 10/10 | 0 | 0.01202 | 0.07537 | 0.4246 |
 | P3_C_01 | 0 | dev | 10/10 | 0 | 0.01544 | 0.1013 | 0.4297 |
 | P3_C_01 | 1 | dev | 10/10 | 0 | 0.01518 | 0.1081 | 0.4233 |
+| P3_C_02 | 0 | dev | 10/10 | 0 | 0.007566 | 0.07921 | 0.4235 |
 
 Errors are absolute descriptor differences divided by prospectively fixed scales, averaged equally within each group; lower is closer, not percentage accuracy. A script mean is NA unless every requested output has a complete group score. Validity and execution failures remain separate. Hamming distance measures variation among nested seeds, not reference accuracy.
 
@@ -25,15 +27,17 @@ Errors are absolute descriptor differences divided by prospectively fixed scales
 | F1 | A/r0 | dev | 2 | 20/20 | 0.2659 | 0.2646 | 0.5075 |
 | F1 | B/r0 | dev | 2 | 20/20 | 0.178 | 0.162 | 0.5151 |
 | F1 | C/r0 | dev | 1 | 10/10 | 0.01807 | 0.1748 | 0.5141 |
+| F1 | C/r1 | dev | 1 | 10/10 | 0.01276 | 0.1806 | 0.5148 |
 | P3 | A/r0 | dev | 2 | 20/20 | 0.1684 | 0.0934 | 0.4162 |
 | P3 | B/r0 | dev | 2 | 20/20 | 0.02645 | 0.08136 | 0.4093 |
-| P3 | C/r0 | dev | 1 | 10/10 | 0.01544 | 0.1013 | 0.4297 |
+| P3 | C/r0 | dev | 2 | 20/20 | 0.0115 | 0.09023 | 0.4266 |
 | P3 | C/r1 | dev | 1 | 10/10 | 0.01518 | 0.1081 | 0.4233 |
 
 Condition values average script means equally. C/r0 and C/r1 share the same parent trials; they cannot be added as independent samples. Any missing script score makes its condition score unavailable. JSON tables retain scoring coverage and descriptive between-script SD; this small pilot does not support significance claims.
 
 | Paired parent | Partition | Valid before/after | Visible error change | Hidden error change | Diversity change |
 |---|---|---:|---:|---:|---:|
+| F1_C_01 | dev | 10/10 | -0.005314 | 0.005771 | 0.0007626 |
 | P3_C_01 | dev | 10/10 | -0.0002628 | 0.006885 | -0.006406 |
 
 Changes are revised minus initial script means. Negative error change is closer agreement; diversity change has no reference-accuracy interpretation.
@@ -108,6 +112,17 @@ Changes are revised minus initial script means. Negative error change is closer 
 | P3_C_01/r1/dev | S2_x_8 (hidden) | 0.1624 | 0.1744 ± 0.005294 | 10/10 |
 | P3_C_01/r1/dev | S2_y_8 (hidden) | 0.1529 | 0.1724 ± 0.003065 | 10/10 |
 | P3_C_01/r1/dev | matrix_lcc (hidden) | 0.9906 | 0.9997 ± 0.000589 | 10/10 |
+| P3_C_02/r0/dev | reinforcement_fraction (visible) | 0.3163 | 0.316 ± 0.002337 | 10/10 |
+| P3_C_02/r0/dev | complete_regions (visible) | 57 | 57 ± 0 | 10/10 |
+| P3_C_02/r0/dev | diameter_mean_px (visible) | 15.71 | 15.71 ± 0.002156 | 10/10 |
+| P3_C_02/r0/dev | diameter_std_px (visible) | 8.893 | 8.893 ± 0.002692 | 10/10 |
+| P3_C_02/r0/dev | aspect_mean (visible) | 1.916 | 1.883 ± 0.06145 | 10/10 |
+| P3_C_02/r0/dev | nearest_neighbor_mean_px (hidden) | 19.45 | 20.7 ± 0.7872 | 10/10 |
+| P3_C_02/r0/dev | nearest_neighbor_cv (hidden) | 0.487 | 0.3156 ± 0.03008 | 10/10 |
+| P3_C_02/r0/dev | interface_density (hidden) | 0.1126 | 0.09392 ± 0.002733 | 10/10 |
+| P3_C_02/r0/dev | S2_x_8 (hidden) | 0.1624 | 0.1656 ± 0.007505 | 10/10 |
+| P3_C_02/r0/dev | S2_y_8 (hidden) | 0.1529 | 0.1615 ± 0.005616 | 10/10 |
+| P3_C_02/r0/dev | matrix_lcc (hidden) | 0.9906 | 0.9998 ± 0.0004851 | 10/10 |
 
 ## F1 descriptor comparison
 
@@ -178,6 +193,19 @@ Changes are revised minus initial script means. Negative error change is closer 
 | F1_C_01/r0/dev | void_regions (hidden) | 4 | 6.2 ± 0.8718 | 10/10 |
 | F1_C_01/r0/dev | void_diameter_mean_px (hidden) | 21.9 | 12.71 ± 3.325 | 10/10 |
 | F1_C_01/r0/dev | void_S2_x_8 (hidden) | 0.01148 | 0.009621 ± 0.001343 | 10/10 |
+| F1_C_01/r1/dev | fiber_fraction (visible) | 0.4527 | 0.4528 ± 0.002403 | 10/10 |
+| F1_C_01/r1/dev | void_fraction (visible) | 0.01958 | 0.0193 ± 0.000854 | 10/10 |
+| F1_C_01/r1/dev | complete_fiber_regions (visible) | 464 | 468 ± 6.841 | 10/10 |
+| F1_C_01/r1/dev | fiber_diameter_mean_px (visible) | 7.905 | 7.895 ± 0.1082 | 10/10 |
+| F1_C_01/r1/dev | fiber_diameter_std_px (visible) | 2.812 | 2.873 ± 0.09454 | 10/10 |
+| F1_C_01/r1/dev | fiber_nearest_neighbor_mean_px (hidden) | 8.346 | 8.694 ± 0.1084 | 10/10 |
+| F1_C_01/r1/dev | fiber_S2_x_8 (hidden) | 0.2296 | 0.2113 ± 0.0045 | 10/10 |
+| F1_C_01/r1/dev | fiber_S2_y_8 (hidden) | 0.2138 | 0.2111 ± 0.005313 | 10/10 |
+| F1_C_01/r1/dev | matrix_fiber_interface (hidden) | 0.3951 | 0.3121 ± 0.005023 | 10/10 |
+| F1_C_01/r1/dev | matrix_lcc (hidden) | 0.93 | 0.9869 ± 0.003953 | 10/10 |
+| F1_C_01/r1/dev | void_regions (hidden) | 4 | 6.3 ± 0.9 | 10/10 |
+| F1_C_01/r1/dev | void_diameter_mean_px (hidden) | 21.9 | 12.57 ± 3.517 | 10/10 |
+| F1_C_01/r1/dev | void_S2_x_8 (hidden) | 0.01148 | 0.009725 ± 0.001331 | 10/10 |
 
 ## Figures and interpretation
 
