@@ -1,6 +1,6 @@
 # P3 + F1 real microscopy LLM pilot
 
-Actual independently returned initial scripts: **9**; paired feedback revisions: **1**. Submission events: 11. Prepared initial packets: 12; unexecuted packets are not trials.
+Actual independently returned initial scripts: **10**; paired feedback revisions: **1**. Submission events: 12. Prepared initial packets: 12; unexecuted packets are not trials.
 
 | Script | Revision | Seeds | Valid / requested | Failures | Visible error | Hidden error | Hamming diversity |
 |---|---:|---|---:|---:|---:|---:|---:|
@@ -8,6 +8,7 @@ Actual independently returned initial scripts: **9**; paired feedback revisions:
 | F1_A_02 | 0 | dev | 10/10 | 0 | 0.1996 | 0.2488 | 0.5141 |
 | F1_B_01 | 0 | dev | 10/10 | 0 | 0.3239 | 0.2183 | 0.5162 |
 | F1_B_02 | 0 | dev | 10/10 | 0 | 0.03205 | 0.1056 | 0.5139 |
+| F1_C_01 | 0 | dev | 10/10 | 0 | 0.01807 | 0.1748 | 0.5141 |
 | P3_A_01 | 0 | dev | 10/10 | 0 | 0.1466 | 0.101 | 0.4168 |
 | P3_A_02 | 0 | dev | 10/10 | 0 | 0.1902 | 0.08583 | 0.4156 |
 | P3_B_01 | 0 | dev | 10/10 | 0 | 0.04088 | 0.08736 | 0.3941 |
@@ -23,6 +24,7 @@ Errors are absolute descriptor differences divided by prospectively fixed scales
 |---|---|---|---:|---:|---:|---:|---:|
 | F1 | A/r0 | dev | 2 | 20/20 | 0.2659 | 0.2646 | 0.5075 |
 | F1 | B/r0 | dev | 2 | 20/20 | 0.178 | 0.162 | 0.5151 |
+| F1 | C/r0 | dev | 1 | 10/10 | 0.01807 | 0.1748 | 0.5141 |
 | P3 | A/r0 | dev | 2 | 20/20 | 0.1684 | 0.0934 | 0.4162 |
 | P3 | B/r0 | dev | 2 | 20/20 | 0.02645 | 0.08136 | 0.4093 |
 | P3 | C/r0 | dev | 1 | 10/10 | 0.01544 | 0.1013 | 0.4297 |
@@ -163,6 +165,19 @@ Changes are revised minus initial script means. Negative error change is closer 
 | F1_B_02/r0/dev | void_regions (hidden) | 4 | 4 ± 0.6325 | 10/10 |
 | F1_B_02/r0/dev | void_diameter_mean_px (hidden) | 21.9 | 20.28 ± 3.187 | 10/10 |
 | F1_B_02/r0/dev | void_S2_x_8 (hidden) | 0.01148 | 0.009895 ± 0.002932 | 10/10 |
+| F1_C_01/r0/dev | fiber_fraction (visible) | 0.4527 | 0.4528 ± 0.003842 | 10/10 |
+| F1_C_01/r0/dev | void_fraction (visible) | 0.01958 | 0.01916 ± 0.00128 | 10/10 |
+| F1_C_01/r0/dev | complete_fiber_regions (visible) | 464 | 475.7 ± 9.403 | 10/10 |
+| F1_C_01/r0/dev | fiber_diameter_mean_px (visible) | 7.905 | 7.797 ± 0.0715 | 10/10 |
+| F1_C_01/r0/dev | fiber_diameter_std_px (visible) | 2.812 | 2.864 ± 0.06057 | 10/10 |
+| F1_C_01/r0/dev | fiber_nearest_neighbor_mean_px (hidden) | 8.346 | 8.67 ± 0.095 | 10/10 |
+| F1_C_01/r0/dev | fiber_S2_x_8 (hidden) | 0.2296 | 0.2104 ± 0.005517 | 10/10 |
+| F1_C_01/r0/dev | fiber_S2_y_8 (hidden) | 0.2138 | 0.2111 ± 0.004072 | 10/10 |
+| F1_C_01/r0/dev | matrix_fiber_interface (hidden) | 0.3951 | 0.3133 ± 0.00502 | 10/10 |
+| F1_C_01/r0/dev | matrix_lcc (hidden) | 0.93 | 0.9816 ± 0.007317 | 10/10 |
+| F1_C_01/r0/dev | void_regions (hidden) | 4 | 6.2 ± 0.8718 | 10/10 |
+| F1_C_01/r0/dev | void_diameter_mean_px (hidden) | 21.9 | 12.71 ± 3.325 | 10/10 |
+| F1_C_01/r0/dev | void_S2_x_8 (hidden) | 0.01148 | 0.009621 ± 0.001343 | 10/10 |
 
 ## Figures and interpretation
 
@@ -173,5 +188,7 @@ Changes are revised minus initial script means. Negative error change is closer 
 Each figure shows the fixed first seed of its partition (development100 or heldout0), chosen prospectively rather than for appearance. The original microscopy image is the model input; phase-colored target panels are evaluator-only. Generated panels come from captured ChatGPT scripts, without researcher repairs.
 
 The small pilot supports descriptive comparisons between independent scripts on two selected fields. Seeds are nested, not independent LLM trials. Condition C receives extra interaction; there is no equal-attempt control for a causal feedback-only claim. Fresh initial ordinary chats were used, but account personalization, memory, connected context and hidden model routing are not controlled; the home screen surfaced project-related suggestions. Only ChatGPT and High effort are exposed; exact backend/version, tokens and cost are unavailable.
+
+Source review found explicit boundary-area allocation in P3_B_01 and P3_B_02, separating border-clipped annotations from complete-region counts. F1_B_01, F1_B_02 and F1_C_01 internally select among multiple stochastic candidates using supplied descriptors. These model-authored behaviors remain unedited. Close supplied-descriptor agreement can reflect fitting the measurement definitions; it does not establish physical fidelity. Internal candidates are nested within one script, and computational effort is not matched across scripts.
 
 P3 is a morphology-selected, horizontally flipped SEM augmentation. Native IDs1/5 are retained; label5 is only provisionally reprecipitated carbide. This is not an unbiased RVE or fully verified chemical map. F1 is original C/PEEK transverse microscopy with distinct matrix0/fiber1/void2; mean-radius circle and void-threshold annotation uncertainty limits region geometry and physical instance interpretation. Both targets lack physical pixel calibration. No mechanical properties, ANSYS results, cross-material generalization, p-values or optimization claims are inferred. Heldout results remain locked until all scripts/revisions are frozen.
