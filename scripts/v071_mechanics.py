@@ -117,6 +117,10 @@ def qualify(source,post):
     checks['native_element_ids_and_materials']=bool(np.array_equal(fields[:,0],np.arange(1,len(fields)+1)) and np.array_equal(fields[:,1],m['materials']))
     constraints=constraint_inventory((source/'inventory.txt').read_text(errors='replace'),m)
     checks['exact_native_constraint_inventory']=constraints['passed']
+    inventory=(source/'inventory.txt').read_text(errors='replace')
+    keyopts=re.search(r'KEYOPT\(\s*1-\s*6\)=([^\n]+)',inventory)
+    checks['native_plane182_options']=bool('PLANE182' in inventory and 'RELEASE 2024 R1' in inventory and keyopts and list(map(int,keyopts[1].split()))==[0,0,3,0,0,0])
+    checks['authenticated_native_inputs_unchanged']=bool(file_hash(source/'input.inp')==meta['input_sha256'] and file_hash(source/'mesh.inp')==meta['mesh_input_sha256'])
     connectivity=np.loadtxt(post/'connectivity.csv',delimiter=',')
     checks['native_element_connectivity']=bool(connectivity.shape==(len(m['quads']),5) and np.array_equal(connectivity[:,0],np.arange(1,len(m['quads'])+1)) and np.array_equal(connectivity[:,1:],m['quads']+1))
     achieved=np.abs(curve[:,2])/m['height'];force=np.abs(curve[:,5]);stress=force/m['width']
@@ -149,6 +153,8 @@ def qualify(source,post):
                              'elastic_energy_Nmm':float(a[:,10].sum()),'elastic_energy_fraction':float(a[:,10].sum()/fields[:,10].sum()),'constitutive_relative_error':error}
     checks['native_plane_stress_constitutive_and_engineering_shear']=bool(max(constitutive)<=tol['constitutive_field_relative'] and np.max(np.abs(fields[:,9]))<1e-8)
     checks['summed_element_energy']=bool(abs(fields[:,10].sum()-curve[-1,8])/curve[-1,8]<=tol['energy_relative'])
+    mean_axial=float(np.average(fields[:,3],weights=fields[:,11]))
+    checks['volume_mean_axial_stress_vs_boundary_reaction']=bool(abs(mean_axial-curve[-1,5]/m['width'])/stress[-1]<=tol['reaction_balance_relative'])
     checks['native_phase_area_inventory']=bool(all(abs(phase[str(k)]['volume_fraction']-np.mean(m['materials']==k))<1e-8 for k in [1,2] if np.any(m['materials']==k)))
     benchmark_error=None if expected is None else abs(slope-expected)/expected
     if expected is not None:checks['analytical_modulus']=benchmark_error<=tol['benchmark_relative']
