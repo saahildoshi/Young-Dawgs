@@ -1,7 +1,7 @@
 """Categorical semantics and topology checks, independent of licensed qualification."""
 import numpy as np
 import pytest
-from metamaterial_eval.simulation.composite_elastic import structured_mesh,validate_mesh,source_input,readonly_input
+from metamaterial_eval.simulation.composite_elastic import structured_mesh,validate_mesh,source_input,readonly_input,constraint_inventory
 
 
 def test_asymmetric_image_orientation_and_solid_materials():
@@ -65,3 +65,12 @@ def test_connectivity_corruption_is_rejected():
     m=structured_mesh(np.array([[1,5],[1,1]],dtype=np.uint8))
     m['quads'][1]=m['quads'][1][::-1]
     with pytest.raises(AssertionError):validate_mesh(m)
+
+
+def test_extra_loaded_row_is_rejected_by_native_constraint_inventory():
+    m=structured_mesh(np.ones((4,4),dtype=np.uint8))
+    text='1 UX 0.00000000\n'+''.join(f'{n+1} UY 0.00000000\n' for edge in ['top','bottom'] for n in m[edge])
+    assert constraint_inventory(text,m)['passed']
+    bad=text+'16 UY -0.00500000\n'
+    assert not constraint_inventory(bad,m)['passed']
+    assert constraint_inventory(bad,m)['unexpected']==[(16,'UY')]

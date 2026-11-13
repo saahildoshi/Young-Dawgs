@@ -9,7 +9,7 @@ import numpy as np
 import psutil
 from scripts.v071_register import RUN,BASE,DOC
 from scripts.v070_protocol import REPO,read,write,sha
-from metamaterial_eval.simulation.composite_elastic import structured_mesh,validate_mesh,write_mesh,source_input,readonly_input
+from metamaterial_eval.simulation.composite_elastic import structured_mesh,validate_mesh,write_mesh,source_input,readonly_input,constraint_inventory
 from metamaterial_eval.simulation.windows_ansys import bounded_run,installations
 from metamaterial_eval.simulation.system_health import HealthPolicy
 from metamaterial_eval.simulation.solver_execution import solver_release,file_hash
@@ -115,6 +115,8 @@ def qualify(source,post):
     if not checks['complete_finite_fields']:raise ValueError('Missing/nonfinite actual native fields')
     checks['native_node_ids_and_coordinates']=bool(np.array_equal(nodes[:,0],np.arange(1,len(nodes)+1)) and np.allclose(nodes[:,1:3],m['nodes'],atol=1e-12,rtol=0))
     checks['native_element_ids_and_materials']=bool(np.array_equal(fields[:,0],np.arange(1,len(fields)+1)) and np.array_equal(fields[:,1],m['materials']))
+    constraints=constraint_inventory((source/'inventory.txt').read_text(errors='replace'),m)
+    checks['exact_native_constraint_inventory']=constraints['passed']
     connectivity=np.loadtxt(post/'connectivity.csv',delimiter=',')
     checks['native_element_connectivity']=bool(connectivity.shape==(len(m['quads']),5) and np.array_equal(connectivity[:,0],np.arange(1,len(m['quads'])+1)) and np.array_equal(connectivity[:,1:],m['quads']+1))
     achieved=np.abs(curve[:,2])/m['height'];force=np.abs(curve[:,5]);stress=force/m['width']
@@ -165,6 +167,7 @@ def qualify(source,post):
             'phase_results':phase,'field_columns':FIELDS,'field_location':'ETABLE average element centroid, no cross-material nodal averaging; percentiles over equal-volume elements',
             'mesh':meta['mesh_validation'],'material_properties':properties,'physical_calibration':False,'RVE_qualified':False,
             'execution':{'runtime_seconds':read(source/'EXECUTION.json')['process']['runtime_seconds'],'peak_tree_rss_bytes':read(source/'EXECUTION.json')['process']['peak_tree_rss_bytes']}}
+    result['constraint_inventory']=constraints
     write(source/'QUALIFICATION.json',result)
     write(RUN/'mechanical_response'/f'{source.name}.json',result)
     out=RUN/'native_result_manifests'/source.name

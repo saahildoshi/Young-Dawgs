@@ -2,6 +2,7 @@
 from pathlib import Path
 import hashlib
 import json
+import re
 import numpy as np
 
 
@@ -62,8 +63,9 @@ def write_mesh(m,path):
         for i,(quad,material) in enumerate(zip(m['quads'],m['materials']),1):
             if material!=current:f.write(f'MAT,{material}\n');current=material
             f.write('EN,'+str(i)+','+','.join(str(int(v)+1) for v in quad)+'\n')
-        for key,axis,value in [('BOTTOM','Y',0),('TOP','Y',m['height']),('LEFT','X',0),('RIGHT','X',m['width'])]:
-            f.write(f'NSEL,S,LOC,{axis},{value:.17g}\nCM,{key},NODE\n')
+        for key in ['bottom','top','left','right']:
+            ids=m[key]+1;stride=1 if key in ['bottom','top'] else m['nx']+1
+            f.write(f'NSEL,S,NODE,,{ids[0]},{ids[-1]},{stride}\nCM,{key.upper()},NODE\n')
         f.write('ALLSEL,ALL\n/GOPR\nFINISH\n')
 
 
@@ -114,6 +116,14 @@ def source_input(m,materials,steps,thickness=1.):
     for strain in steps:lines += [f'TIME,{strain:.17g}',f'D,TOP,UY,{-strain*m["height"]:.17g}','SOLVE']
     lines += ['FINISH','SAVE,model,db']+extraction_commands(m,steps)+['/EXIT,NOSAVE']
     return '\n'.join(lines)+'\n'
+
+
+def constraint_inventory(text,m):
+    rows=re.findall(r'^\s*(\d+)\s+(UX|UY)\s+([+\-\d.Ee]+)',text,re.M)
+    actual={(int(node),axis) for node,axis,value in rows}
+    expected={(int(node)+1,'UY') for key in ['bottom','top'] for node in m[key]}|{(m['pin']+1,'UX')}
+    return {'passed':actual==expected and len(rows)==len(expected),'native_constraint_count':len(rows),
+            'expected_constraint_count':len(expected),'unexpected':sorted(actual-expected),'missing':sorted(expected-actual)}
 
 
 def readonly_input(m,steps,source):

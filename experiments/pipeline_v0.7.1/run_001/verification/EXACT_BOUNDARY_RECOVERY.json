@@ -1,0 +1,16 @@
+{
+  "cause": "Default coordinate NSEL tolerance at y=1 selected row255 as well as row256. H1 pixel spacing1/256 is smaller than default tolerance0.005.",
+  "effect": "Prescribed additional interior row caused incomplete exterior-only force sum and spurious lateral behavior. Failed force, energy and modulus checks blocked promotion.",
+  "expected_UY_constraints": 514,
+  "failed_attempt": "M1_equal_H1_attempt001",
+  "fix": "Use exact node-ID arithmetic progressions for all four boundary components; verify complete native DLIST inventory against registered top/bottom plus one UX pin.",
+  "geometry_material_tolerances_changed": false,
+  "native_UY_constraints": 771,
+  "native_grid_rows_constrained": [
+    0,
+    255,
+    256
+  ],
+  "original_native_failure_preserved": true,
+  "recovery_attempt": "M1_equal_H1_attempt002"
+}
