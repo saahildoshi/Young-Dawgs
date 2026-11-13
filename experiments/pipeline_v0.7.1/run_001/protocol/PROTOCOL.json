@@ -1,0 +1,126 @@
+{
+  "F1_mechanics": "DEFERRED",
+  "H1_elements": 65536,
+  "H1_nodes": 66049,
+  "H2_elements": 262144,
+  "H2_nodes": 263169,
+  "NLGEOM": "OFF",
+  "RVE_qualification": false,
+  "artifact_root": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts",
+  "controls": {
+    "M0_matrix": {
+      "E_expected_MPa": 1000,
+      "geometry": "all matrix",
+      "nu": 0.3
+    },
+    "M1_equal": {
+      "E_expected_MPa": 1000,
+      "geometry": "P3 exact source labels, both E1000 nu0.3",
+      "nu": 0.3
+    },
+    "M1_parallel": {
+      "E_expected_MPa": 5500,
+      "geometry": "left matrix/right reinforcement, equal widths",
+      "nu": 0.0
+    },
+    "M1_series": {
+      "E_expected_MPa": 1818.1818181818182,
+      "geometry": "bottom matrix/top reinforcement, equal heights",
+      "nu": 0.0
+    }
+  },
+  "element": {
+    "KEYOPT1": 0,
+    "KEYOPT3": 3,
+    "KEYOPT6": 0,
+    "integration": "2x2, full integration B-bar; no uniform reduced integration/hourglass control",
+    "name": "PLANE182",
+    "real_constant_THK_mm": 1.0
+  },
+  "image_mapping": "row0 top; FE y=(height-row)/height; nodes indexed bottom to top; element ordering CCW",
+  "initial_tree_clean": true,
+  "loading": "UYbottom0, UYtop=-strain*H, UXbottomleft0; other UX free; sides traction free",
+  "local_fields": "ETABLE element-associated averaged centroid components; no cross-material nodal averaging. SENE summed once per element. EXY checked against SXY/G.",
+  "material": {
+    "constitutive_model": "small-strain isotropic linear elasticity",
+    "id": "ILLUSTRATIVE_TWO_PHASE_ELASTIC_CONTRAST_10",
+    "interface": "perfectly bonded shared nodes, no contact",
+    "materials": {
+      "1": {
+        "E_MPa": 1000.0,
+        "nu": 0.3
+      },
+      "2": {
+        "E_MPa": 10000.0,
+        "nu": 0.3
+      }
+    },
+    "physical_calibration": false,
+    "raw_to_material": {
+      "1": 1,
+      "5": 2
+    },
+    "units": "mm N MPa"
+  },
+  "mechanical_LLM_feedback": "NOT_EXECUTED",
+  "modulus_fit": "Unconstrained least squares slope+intercept over five actual native points; report secant and residuals",
+  "native_base": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v071\\run_001",
+  "no_extra_seeds": true,
+  "no_second_axis": true,
+  "optimization": "NOT_IMPLEMENTED",
+  "optional_order": [
+    "M6 paired source",
+    "H2 checks of selected generated sources to assess unresolved differences"
+  ],
+  "physical_calibration": false,
+  "push": false,
+  "reference_mesh_levels": [
+    1,
+    2
+  ],
+  "refinement": "subdivide every source pixel into k*k elements, same label; no resampling",
+  "registered_utc": "2026-11-13T19:37:32.937706+00:00",
+  "request_sha256": "92a7ba6940fedf0faf5d0e0756a648ecd95aed3a8802fa4cd7869c045965bc3d",
+  "required_generated": [
+    "M3_A01",
+    "M4_B02",
+    "M5_C02_r1"
+  ],
+  "resource_limits": {
+    "cores": 2,
+    "disk_reserve_bytes": 53687091200,
+    "health_policy": "existing HealthPolicy defaults;6GiB sustained available reserve",
+    "maximum_native_jobs": 32,
+    "native_campaign_seconds": 10800,
+    "one_native_job": true,
+    "readback_timeout_s": 900,
+    "rss_cap": null,
+    "solve_timeout_s": 1800
+  },
+  "specimens": [
+    "M2_reference",
+    "M3_A01",
+    "M4_B02",
+    "M5_C02_r1",
+    "M6_C02_r0"
+  ],
+  "starting_head": "913fe29351e457df1c03d70d125f27150b379d18",
+  "strain_checkpoints": [
+    0.001,
+    0.002,
+    0.003,
+    0.004,
+    0.005
+  ],
+  "tolerances": {
+    "benchmark_relative": 0.001,
+    "constitutive_field_relative": 1e-05,
+    "energy_relative": 0.001,
+    "horizontal_pin_relative": 0.001,
+    "linear_fit_relative_residual": 1e-05,
+    "mesh_modulus_relative": 0.02,
+    "native_displacement_absolute_mm": 1e-09,
+    "native_volume_relative": 1e-08,
+    "reaction_balance_relative": 0.001
+  }
+}

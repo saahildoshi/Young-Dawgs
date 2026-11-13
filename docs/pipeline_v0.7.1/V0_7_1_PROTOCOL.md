@@ -1,0 +1,13 @@
+# P3 controlled elastic benchmark: prospective protocol
+
+Compare the exact P3 annotation with user-selected P3_A_01/r0, P3_B_02/r0 and P3_C_02/r1 saved held-out seed0 arrays. Optional paired P3_C_02/r0 seed0 follows the primary study. This exploratory selection uses known morphology outcomes, never mechanical outcomes. Preserve every prior source, script and result.
+
+Native labels1 and5 map explicitly to solid materials1 and2. Both fill the domain, sharing nodes at interfaces. E=1000/10000MPa, nu=0.30 are illustrative numerical properties, not calibrated Ni–WC properties. The1mm square and1mm thickness are computational choices, not microscopy calibration. P3 phase5 identity remains provisional, the source is HorizontalFlip augmentation, and the crop is morphology-selected, not an RVE.
+
+Use PLANE182 with KEYOPT(1)=0 (2x2 full integration B-bar), KEYOPT(3)=3 (plane stress with real thickness), KEYOPT(6)=0, NLGEOM OFF. Native2024R1 inventories and analytical controls must verify behavior; only adjacent-release official documentation was retrievable. Homogeneous E1000/nu0.3, parallel and series half-layer nu0 benchmarks, and an equal-material P3 control precede P3 mechanics. No contact is used.
+
+H1 uses65536 quads/66049 nodes; H2 subdivides each pixel into four unchanged-label quads (262144/263169). Image row0 stays at the physical top. Bottom UY=0, top UY=-strain*H, and one bottom-left UX pin; other horizontal motion is free. Solve and save five actual native checkpoints0.1–0.5%. Fit slope and intercept without forcing the origin; an unsolved origin is labeled analytical only.
+
+Before outcomes, register0.1% analytical modulus/reaction/energy/equilibrium tolerances,1e-9mm displacement tolerance,1e-5 relative linear-fit residual, and2% H1/H2 modulus difference. The latter is preliminary sensitivity, not asymptotic convergence or segmentation-resolution qualification. Interpret differences comparable to observed mesh sensitivity as unresolved. Retain element-associated native fields and phase identities; stress percentiles are secondary, pixel-corner maxima exploratory.
+
+Reuse the existing supervised launcher and health monitor, one native job at a time, two cores, no fixed RSS cap,50GiB disk reserve,1800s source/900s readback limits,10800s aggregate native budget and32 native calls maximum. Independently reopen every accepted RST and repeat final-reference extraction. Raw binaries remain under the configured external artifact root; Git retains compact evidence and manifests. No old contact campaign, F1 mechanics, extra seeds, second-axis campaign,3D work or LLM optimization.
