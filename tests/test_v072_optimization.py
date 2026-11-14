@@ -55,3 +55,25 @@ def test_partitions_do_not_overlap_or_enter_old_seed_set():
     assert not set(s['development'])&set(s['heldout'])
     assert not set(s['development']+s['heldout'])&set(p['history_seed_collision_check']['historical_P3_seed_ids'])
     assert s['H2']==s['heldout'][:3]
+
+
+def test_full_curve_native_route_preserves_registered_qualifier():
+    from scripts.v072_mechanics import inherited
+    module=inherited()
+    assert module.qualify.__code__.co_filename.replace('\\','/').endswith('/scripts/v071_mechanics.py')
+    p=read(RUN/'protocol/PROTOCOL.json')
+    assert p['strain_checkpoints']==[.001,.002,.003,.004,.005]
+    assert p['material']['materials']['2']['E_MPa']==10000
+
+
+def test_prompt_difference_is_exactly_mechanical_packet():
+    if not (RUN/'feedback_packets/PROMPTS_FROZEN.json').exists():
+        import pytest
+        pytest.skip('Packets not yet frozen at feasibility registration stage')
+    mf=(RUN/'llm_trials/P3_OPT_MF_01/prompt.txt').read_text()
+    nf=(RUN/'llm_trials/P3_OPT_NF_01/prompt.txt').read_text()
+    assert mf.startswith(nf)
+    assert 'MEASURED MECHANICAL FEEDBACK' in mf[len(nf):]
+    assert 'development_mechanics' not in nf and 'baseline_variability' not in nf
+    assert mf==(RUN/'llm_trials/P3_OPT_MF_02/prompt.txt').read_text()
+    assert nf==(RUN/'llm_trials/P3_OPT_NF_02/prompt.txt').read_text()

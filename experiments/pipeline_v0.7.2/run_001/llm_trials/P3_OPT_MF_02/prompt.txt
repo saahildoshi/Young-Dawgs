@@ -1,0 +1,855 @@
+Revise the supplied stochastic P3 microstructure generator to increase apparent VERTICAL elastic stiffness under the stated numerical model while maintaining the common composition and dispersed-inclusion constraints. Return ONE complete Python module in ONE python code block, code only, preferably <=250 lines. One revision opportunity, no repairs or subsequent feedback.
+
+Required interface: generate_microstructure(seed, parameters), parameters={}, returning numpy ndarray shape(256,256), dtype uint8, native labels {1,5}, both phases nonempty. Use local numpy.random.default_rng(seed); identical seed reproduces exactly, different seeds must change configuration beyond global rigid translation/rotation. Finite nonperiodic boundaries, with boundary-censored regions. Do not embed any reference raster, fixed coordinate tracing, seed-specific arrays or mechanical-result cache. No file/network/API/subprocess access, plotting, imports outside the allowed list, printing/demos/tests or generation at import. Module scope only imports, function definitions, literal constants. No tools or browsing. Do not implement a solver. Bounded geometry-only candidate selection is permitted under the common runtime/search limits. Respect all hard constraints; exact reinforcement count is preferred, but the same stated tolerance applies to every arm and the baseline. No evaluator postprocessing will repair your output.
+
+You may alter placement, shapes, orientation, size distribution and spacing within the frozen feasibility envelope. Complete-region metrics use four-connected annotations excluding all border-touching regions; equivalent diameter=2*sqrt(area/pi), mean aspect=major/minor region axis lengths. Matrix/reinforcement largest fractions are fractions of their own phase area. Reinforcement spanning is forbidden under both four- and eight-connectivity. Singleton noise fraction is singleton-region area divided by total reinforcement area. The evaluator will test ten unseen seeds, preserving failures, and separately assess stochastic diversity. Equal seed IDs need not imply the same particle identities across algorithms. Do not invent simulation results or physical performance claims.
+
+COMMON INPUTS (identical in both revision conditions):
+{
+  "allowed_dependencies": [
+    "numpy",
+    "scipy",
+    "skimage",
+    "PIL",
+    "math",
+    "random",
+    "collections",
+    "itertools"
+  ],
+  "baseline_development_structure": [
+    {
+      "descriptors": {
+        "S2_x_8": 0.16587386592741934,
+        "S2_y_8": 0.1669134324596774,
+        "all_regions": 80,
+        "aspect_mean": 1.9424976235949378,
+        "boundary_censored_regions": 23,
+        "complete_regions": 57,
+        "diameter_mean_px": 15.68552642509569,
+        "diameter_std_px": 8.901879472541184,
+        "interface_density": 0.0997467041015625,
+        "matrix_lcc": 0.9997099444432049,
+        "nearest_neighbor_cv": 0.3084257645288937,
+        "nearest_neighbor_mean_px": 20.33959705207602,
+        "reinforcement_fraction": 0.3161163330078125
+      },
+      "generation_seconds": 0.14864359999774024,
+      "phase_counts": {
+        "1": 44819,
+        "5": 20717
+      },
+      "seed": 1000,
+      "structurally_feasible": true,
+      "topology": {
+        "matrix_1": {
+          "largest_fraction": 0.9997099444432049,
+          "one_pixel_area_fraction": 0.00011155982953658047,
+          "regions": 8,
+          "spans_x": true,
+          "spans_y": true
+        },
+        "matrix_2": {
+          "largest_fraction": 1.0,
+          "one_pixel_area_fraction": 0.0,
+          "regions": 1,
+          "spans_x": true,
+          "spans_y": true
+        },
+        "reinforcement_1": {
+          "largest_fraction": 0.08596804556644302,
+          "one_pixel_area_fraction": 0.0,
+          "regions": 80,
+          "spans_x": false,
+          "spans_y": false
+        },
+        "reinforcement_2": {
+          "largest_fraction": 0.09422213640971183,
+          "one_pixel_area_fraction": 0.0,
+          "regions": 73,
+          "spans_x": false,
+          "spans_y": false
+        }
+      }
+    },
+    {
+      "descriptors": {
+        "S2_x_8": 0.16297568044354838,
+        "S2_y_8": 0.1717017389112903,
+        "all_regions": 78,
+        "aspect_mean": 1.8259690303971243,
+        "boundary_censored_regions": 21,
+        "complete_regions": 57,
+        "diameter_mean_px": 15.692649565891715,
+        "diameter_std_px": 8.91691498038082,
+        "interface_density": 0.0947113037109375,
+        "matrix_lcc": 0.9987275649611572,
+        "nearest_neighbor_cv": 0.3366446267047928,
+        "nearest_neighbor_mean_px": 21.020013650154905,
+        "reinforcement_fraction": 0.31646728515625
+      },
+      "generation_seconds": 0.1380152000056114,
+      "phase_counts": {
+        "1": 44796,
+        "5": 20740
+      },
+      "seed": 1001,
+      "structurally_feasible": true,
+      "topology": {
+        "matrix_1": {
+          "largest_fraction": 0.9987275649611572,
+          "one_pixel_area_fraction": 2.23234217340834e-05,
+          "regions": 3,
+          "spans_x": true,
+          "spans_y": true
+        },
+        "matrix_2": {
+          "largest_fraction": 0.9987498883828914,
+          "one_pixel_area_fraction": 0.0,
+          "regions": 2,
+          "spans_x": true,
+          "spans_y": true
+        },
+        "reinforcement_1": {
+          "largest_fraction": 0.09879459980713597,
+          "one_pixel_area_fraction": 0.0,
+          "regions": 78,
+          "spans_x": false,
+          "spans_y": false
+        },
+        "reinforcement_2": {
+          "largest_fraction": 0.09879459980713597,
+          "one_pixel_area_fraction": 0.0,
+          "regions": 74,
+          "spans_x": false,
+          "spans_y": false
+        }
+      }
+    },
+    {
+      "descriptors": {
+        "S2_x_8": 0.1612115675403226,
+        "S2_y_8": 0.1714654737903226,
+        "all_regions": 78,
+        "aspect_mean": 1.8981858078507436,
+        "boundary_censored_regions": 21,
+        "complete_regions": 57,
+        "diameter_mean_px": 15.691795964557757,
+        "diameter_std_px": 8.910899918452396,
+        "interface_density": 0.098052978515625,
+        "matrix_lcc": 0.999732232511436,
+        "nearest_neighbor_cv": 0.2661006039611539,
+        "nearest_neighbor_mean_px": 21.996058951824832,
+        "reinforcement_fraction": 0.3161773681640625
+      },
+      "generation_seconds": 0.1405021999962628,
+      "phase_counts": {
+        "1": 44815,
+        "5": 20721
+      },
+      "seed": 1002,
+      "structurally_feasible": true,
+      "topology": {
+        "matrix_1": {
+          "largest_fraction": 0.999732232511436,
+          "one_pixel_area_fraction": 4.462791476068281e-05,
+          "regions": 5,
+          "spans_x": true,
+          "spans_y": true
+        },
+        "matrix_2": {
+          "largest_fraction": 0.9999553720852393,
+          "one_pixel_area_fraction": 0.0,
+          "regions": 2,
+          "spans_x": true,
+          "spans_y": true
+        },
+        "reinforcement_1": {
+          "largest_fraction": 0.08759229766903141,
+          "one_pixel_area_fraction": 0.0,
+          "regions": 78,
+          "spans_x": false,
+          "spans_y": false
+        },
+        "reinforcement_2": {
+          "largest_fraction": 0.08759229766903141,
+          "one_pixel_area_fraction": 0.0,
+          "regions": 75,
+          "spans_x": false,
+          "spans_y": false
+        }
+      }
+    },
+    {
+      "descriptors": {
+        "S2_x_8": 0.1617155997983871,
+        "S2_y_8": 0.17111895161290322,
+        "all_regions": 80,
+        "aspect_mean": 2.157125151792749,
+        "boundary_censored_regions": 23,
+        "complete_regions": 57,
+        "diameter_mean_px": 15.703657561906018,
+        "diameter_std_px": 8.883695708938662,
+        "interface_density": 0.0991058349609375,
+        "matrix_lcc": 0.999598142525451,
+        "nearest_neighbor_cv": 0.301680685258485,
+        "nearest_neighbor_mean_px": 20.054389462239545,
+        "reinforcement_fraction": 0.3165283203125
+      },
+      "generation_seconds": 0.14432380002108403,
+      "phase_counts": {
+        "1": 44792,
+        "5": 20744
+      },
+      "seed": 1003,
+      "structurally_feasible": true,
+      "topology": {
+        "matrix_1": {
+          "largest_fraction": 0.999598142525451,
+          "one_pixel_area_fraction": 0.0001786033220217896,
+          "regions": 13,
+          "spans_x": true,
+          "spans_y": true
+        },
+        "matrix_2": {
+          "largest_fraction": 1.0,
+          "one_pixel_area_fraction": 0.0,
+          "regions": 1,
+          "spans_x": true,
+          "spans_y": true
+        },
+        "reinforcement_1": {
+          "largest_fraction": 0.08363864249903587,
+          "one_pixel_area_fraction": 0.0,
+          "regions": 80,
+          "spans_x": false,
+          "spans_y": false
+        },
+        "reinforcement_2": {
+          "largest_fraction": 0.10832047821056691,
+          "one_pixel_area_fraction": 0.0,
+          "regions": 72,
+          "spans_x": false,
+          "spans_y": false
+        }
+      }
+    },
+    {
+      "descriptors": {
+        "S2_x_8": 0.16714969758064516,
+        "S2_y_8": 0.16329070060483872,
+        "all_regions": 77,
+        "aspect_mean": 1.9483517875071112,
+        "boundary_censored_regions": 20,
+        "complete_regions": 57,
+        "diameter_mean_px": 15.690134949505895,
+        "diameter_std_px": 8.905049155685319,
+        "interface_density": 0.098968505859375,
+        "matrix_lcc": 0.9999106185198426,
+        "nearest_neighbor_cv": 0.3170575523691611,
+        "nearest_neighbor_mean_px": 20.322198148508505,
+        "reinforcement_fraction": 0.317138671875
+      },
+      "generation_seconds": 0.13758839998627082,
+      "phase_counts": {
+        "1": 44752,
+        "5": 20784
+      },
+      "seed": 1004,
+      "structurally_feasible": true,
+      "topology": {
+        "matrix_1": {
+          "largest_fraction": 0.9999106185198426,
+          "one_pixel_area_fraction": 4.46907400786557e-05,
+          "regions": 4,
+          "spans_x": true,
+          "spans_y": true
+        },
+        "matrix_2": {
+          "largest_fraction": 0.9999553092599214,
+          "one_pixel_area_fraction": 0.0,
+          "regions": 2,
+          "spans_x": true,
+          "spans_y": true
+        },
+        "reinforcement_1": {
+          "largest_fraction": 0.09704580446497306,
+          "one_pixel_area_fraction": 0.0,
+          "regions": 77,
+          "spans_x": false,
+          "spans_y": false
+        },
+        "reinforcement_2": {
+          "largest_fraction": 0.09863356428021555,
+          "one_pixel_area_fraction": 0.0,
+          "regions": 72,
+          "spans_x": false,
+          "spans_y": false
+        }
+      }
+    },
+    {
+      "descriptors": {
+        "S2_x_8": 0.17078818044354838,
+        "S2_y_8": 0.1660943800403226,
+        "all_regions": 78,
+        "aspect_mean": 1.9852156468563782,
+        "boundary_censored_regions": 21,
+        "complete_regions": 57,
+        "diameter_mean_px": 15.734914840762386,
+        "diameter_std_px": 8.862306623737277,
+        "interface_density": 0.099029541015625,
+        "matrix_lcc": 0.9998660774072586,
+        "nearest_neighbor_cv": 0.40567913079002377,
+        "nearest_neighbor_mean_px": 20.919585612156926,
+        "reinforcement_fraction": 0.316375732421875
+      },
+      "generation_seconds": 0.15682689999812283,
+      "phase_counts": {
+        "1": 44802,
+        "5": 20734
+      },
+      "seed": 1005,
+      "structurally_feasible": true,
+      "topology": {
+        "matrix_1": {
+          "largest_fraction": 0.9998660774072586,
+          "one_pixel_area_fraction": 0.00013392259274139549,
+          "regions": 7,
+          "spans_x": true,
+          "spans_y": true
+        },
+        "matrix_2": {
+          "largest_fraction": 1.0,
+          "one_pixel_area_fraction": 0.0,
+          "regions": 1,
+          "spans_x": true,
+          "spans_y": true
+        },
+        "reinforcement_1": {
+          "largest_fraction": 0.08126748336066364,
+          "one_pixel_area_fraction": 0.0,
+          "regions": 78,
+          "spans_x": false,
+          "spans_y": false
+        },
+        "reinforcement_2": {
+          "largest_fraction": 0.08126748336066364,
+          "one_pixel_area_fraction": 0.0,
+          "regions": 73,
+          "spans_x": false,
+          "spans_y": false
+        }
+      }
+    }
+  ],
+  "composition": {
+    "absolute_fraction_tolerance": 0.0009765625,
+    "absolute_pixel_tolerance": 64,
+    "target_count": 20731,
+    "target_fraction": 0.3163299560546875
+  },
+  "connectivity_policy": "4-connected matrix must span x/y; reinforcement prohibited from spanning under both 4 and 8 connectivity. Largest reinforcement fraction <=0.15 under both. Corner contacts retained as mesh artifact, never claimed physical bonds.",
+  "diversity_policy": {
+    "all_arrays_unique": true,
+    "minimum_median_hamming": 0.1,
+    "minimum_unique_rigid_invariant_signatures": "ceil(number_outputs/2)"
+  },
+  "domain": "Computational 1 mm x 1 mm, thickness 1 mm; native shared-node 256x256 quadrilateral H1, pixel-preserving H2. Unknown physical microscopy scale.",
+  "generation_parameters": {},
+  "internal_search_limit": "At most 1000 full-domain candidate arrays per output; bounded geometry-only scoring, no mechanics/cache access; wall limit applies to all",
+  "limitations": "Illustrative linear isotropic constituents, ideal bonded pixel interfaces; finite-domain vertical apparent modulus only. Provisional chemistry, selected augmented microscopy crop, no physical calibration or RVE claim. Pixel corner contacts are not established physical reinforcement bonds.",
+  "mechanical_assumptions": {
+    "NLGEOM": "OFF",
+    "element": {
+      "KEYOPT1": 0,
+      "KEYOPT3": 3,
+      "KEYOPT6": 0,
+      "integration": "2x2, full integration B-bar; no uniform reduced integration/hourglass control",
+      "name": "PLANE182",
+      "real_constant_THK_mm": 1.0
+    },
+    "loading": "UYbottom0, UYtop=-strain*H, UXbottomleft0; other UX free; sides traction free",
+    "material": {
+      "constitutive_model": "small-strain isotropic linear elasticity",
+      "id": "ILLUSTRATIVE_TWO_PHASE_ELASTIC_CONTRAST_10",
+      "interface": "perfectly bonded shared nodes, no contact",
+      "materials": {
+        "1": {
+          "E_MPa": 1000.0,
+          "nu": 0.3
+        },
+        "2": {
+          "E_MPa": 10000.0,
+          "nu": 0.3
+        }
+      },
+      "physical_calibration": false,
+      "raw_to_material": {
+        "1": 1,
+        "5": 2
+      },
+      "units": "mm N MPa"
+    },
+    "strain_checkpoints": [
+      0.001,
+      0.002,
+      0.003,
+      0.004,
+      0.005
+    ]
+  },
+  "morphology_guardrails": {
+    "descriptor_ranges": {
+      "all_regions": [
+        50,
+        125
+      ],
+      "aspect_mean": [
+        1.2,
+        3.0
+      ],
+      "boundary_censored_regions": [
+        5,
+        50
+      ],
+      "complete_regions": [
+        40,
+        75
+      ],
+      "diameter_mean_px": [
+        12,
+        20
+      ]
+    },
+    "matrix_lcc_minimum": 0.95,
+    "reinforcement_largest_fraction_maximum": 0.15,
+    "single_pixel_reinforcement_fraction_maximum": 0.001
+  },
+  "objective": "maximize J = apparent vertical elastic modulus / 1000 MPa",
+  "phase_definitions": {
+    "1": "matrix-like solid",
+    "5": "reinforcement-like solid, provisional carbide chemistry"
+  },
+  "single_output_runtime_limit_seconds": 30,
+  "starting_generator_id": "P3_B_02/r0",
+  "starting_generator_sha256": "6917ffb0ca4f22fa5f8276d04484fdd3208978a0610cb43f3684b24cc18d270d"
+}
+
+FROZEN STARTING MODULE (identical in all trials):
+```python
+import numpy as np
+from scipy import ndimage as ndi
+from scipy.special import ndtri
+from skimage.draw import polygon
+
+SIZE = 256
+FRACTION = 0.3163299560546875
+N_COMPLETE = 57
+D_MEAN = 15.706688295952011
+D_STD = 8.893419110493891
+
+
+def _particle(rng, area):
+    """Generate an irregular, angular, approximately equiaxed or elongated region."""
+    n = int(rng.integers(12, 23))
+    t = (np.arange(n) + rng.uniform(-0.28, 0.28, n)) * 2 * np.pi / n
+    noise = rng.normal(0, 0.23, n)
+    r = np.clip(1 + noise + 0.25 * np.roll(noise, 1), 0.48, 1.55)
+    if area > 90 and rng.random() < 0.65:
+        for _ in range(int(rng.integers(1, 4))):
+            r[rng.integers(n)] *= rng.uniform(0.35, 0.72)
+    aspect = np.clip(rng.lognormal(np.log(1.75), 0.34), 1.05, 3.8)
+    x = r * np.cos(t) * np.sqrt(aspect)
+    y = r * np.sin(t) / np.sqrt(aspect)
+    a = rng.uniform(0, np.pi)
+    x, y = x * np.cos(a) - y * np.sin(a), x * np.sin(a) + y * np.cos(a)
+    base = abs(np.sum(x * np.roll(y, -1) - y * np.roll(x, -1))) / 2
+    scale = np.sqrt(area / max(base, 0.01))
+    for _ in range(3):
+        xx, yy = x * scale, y * scale
+        xx, yy = xx - xx.min() + 2, yy - yy.min() + 2
+        mask = np.zeros((int(np.ceil(yy.max())) + 3,
+                         int(np.ceil(xx.max())) + 3), dtype=bool)
+        rr, cc = polygon(yy, xx, shape=mask.shape)
+        mask[rr, cc] = True
+        lab, count = ndi.label(mask)
+        if count:
+            sizes = np.bincount(lab.ravel())[1:]
+            mask = lab == (1 + np.argmax(sizes))
+        scale *= np.sqrt(area / max(mask.sum(), 1))
+    rows, cols = np.where(mask)
+    return mask[rows.min():rows.max()+1, cols.min():cols.max()+1]
+
+
+def _place(rng, canvas, shape, field, boundary=False, target=0):
+    h, w = shape.shape
+    blocked = ndi.binary_dilation(canvas)
+    best, best_score = None, -np.inf
+    for _ in range(220):
+        if boundary:
+            edge = int(rng.integers(4))
+            x = int(rng.integers(-w//3, SIZE - 2*w//3))
+            y = int(rng.integers(-h//3, SIZE - 2*h//3))
+            if edge < 2:
+                cut = int(rng.uniform(0, 0.72) * h)
+                y = -cut if edge == 0 else SIZE - h + cut
+            else:
+                cut = int(rng.uniform(0, 0.72) * w)
+                x = -cut if edge == 2 else SIZE - w + cut
+        else:
+            x = int(rng.integers(1, SIZE - w))
+            y = int(rng.integers(1, SIZE - h))
+        x0, x1 = max(0, x), min(SIZE, x + w)
+        y0, y1 = max(0, y), min(SIZE, y + h)
+        p = shape[y0-y:y1-y, x0-x:x1-x]
+        if not p.any() or np.any(blocked[y0:y1, x0:x1] & p):
+            continue
+        score = field[(y0+y1)//2, (x0+x1)//2] + rng.gumbel()
+        if boundary:
+            touches = ((x0 == 0 and p[:, 0].any()) or
+                       (x1 == SIZE and p[:, -1].any()) or
+                       (y0 == 0 and p[0].any()) or
+                       (y1 == SIZE and p[-1].any()))
+            if not touches:
+                continue
+            score = 0.20 * score - 6 * abs(np.log(p.sum() / target))
+        if score > best_score:
+            best, best_score = (y0, y1, x0, x1, p), score
+    if best is not None:
+        y0, y1, x0, x1, p = best
+        canvas[y0:y1, x0:x1] |= p
+        return int(p.sum())
+    return 0
+
+
+def generate_microstructure(seed, parameters):
+    rng = np.random.default_rng(seed)
+    canvas = np.zeros((SIZE, SIZE), dtype=bool)
+
+    # Correlated spatial intensity produces clusters and matrix-rich gaps.
+    field = ndi.gaussian_filter(rng.normal(size=canvas.shape), 19, mode="reflect")
+    field /= max(field.std(), 1e-8)
+    fine = ndi.gaussian_filter(rng.normal(size=canvas.shape), 7, mode="reflect")
+    field += 0.45 * fine / max(fine.std(), 1e-8)
+
+    # Sample the complete-region diameter distribution.
+    q = (np.arange(N_COMPLETE) + rng.uniform(0.15, 0.85, N_COMPLETE)) / N_COMPLETE
+    d = np.exp(0.53 * ndtri(q))
+    d = np.maximum(3.5, D_MEAN + D_STD * (d - d.mean()) / d.std())
+    particles = [_particle(rng, np.pi * v*v / 4) for v in d[::-1]]
+
+    # Allocate the remaining annotation area to boundary-clipped regions.
+    remaining = FRACTION * SIZE**2 - sum(p.sum() for p in particles)
+    weights = rng.lognormal(0, 0.55, int(rng.integers(20, 25)))
+    for i, weight in enumerate(weights):
+        target = max(12, remaining * weight / weights[i:].sum())
+        shape = _particle(rng, target * rng.uniform(1.45, 1.95))
+        remaining -= _place(rng, canvas, shape, field, True, target)
+
+    for shape in particles:
+        _place(rng, canvas, shape, field)
+
+    if not canvas.any():
+        canvas[SIZE//2, SIZE//2] = True
+    return np.where(canvas, 5, 1).astype(np.uint8)
+```
+
+MEASURED MECHANICAL FEEDBACK (actual development ANSYS results):
+{
+  "baseline_variability": {
+    "aggregate_curve_note": "Mean of six independently solved specimens at corresponding actual checkpoints, not a single directly solved specimen",
+    "coefficient_of_variation": 0.011644750428764023,
+    "maximum_modulus_MPa": 1744.5193624992648,
+    "mean_actual_checkpoint_stress_MPa": [
+      1.7155614779904775,
+      3.4311229559809515,
+      5.146684433971543,
+      6.862245911961903,
+      8.577807389952687
+    ],
+    "mean_modulus_MPa": 1715.5614779905366,
+    "mean_normalized_objective": 1.7155614779905366,
+    "median_modulus_MPa": 1710.9036845723958,
+    "minimum_modulus_MPa": 1691.103048079377,
+    "n": 6,
+    "reinforcement_counts": [
+      20717,
+      20740,
+      20721,
+      20744,
+      20784,
+      20734
+    ],
+    "sample_sd_actual_checkpoint_stress_MPa": [
+      0.019977285256399396,
+      0.03995457051280529,
+      0.05993185576919228,
+      0.07990914102561061,
+      0.09988642628200392
+    ],
+    "sample_standard_deviation_MPa": 19.97728525640134,
+    "sample_standard_deviation_normalized_objective": 0.019977285256401342
+  },
+  "development_mechanics": [
+    {
+      "actual_nominal_compressive_stress_MPa": [
+        1.733723478661335,
+        3.467446957322671,
+        5.201170435984311,
+        6.934893914645341,
+        8.668617393307313
+      ],
+      "actual_signed_lower_reaction_N": [
+        1.733723478662717,
+        3.467446957325434,
+        5.201170435988146,
+        6.934893914650869,
+        8.668617393313575
+      ],
+      "actual_signed_upper_reaction_N": [
+        -1.733723478661335,
+        -3.467446957322671,
+        -5.201170435984311,
+        -6.934893914645341,
+        -8.668617393307313
+      ],
+      "actual_solved_strain": [
+        0.001,
+        0.002,
+        0.003,
+        0.004,
+        0.005
+      ],
+      "actual_top_UY_mm": [
+        -0.001,
+        -0.002,
+        -0.003,
+        -0.004,
+        -0.005
+      ],
+      "apparent_modulus_MPa": 1733.7234786614622,
+      "maximum_relative_reaction_imbalance": 7.971315137985482e-13,
+      "mechanically_accepted": true,
+      "native_RST_sha256": "3d1997cf3ce617a439e5529e3082d749d8cdca38e0c2b003b19480e516a504a3",
+      "normalized_objective": 1.7337234786614621,
+      "seed": 1000
+    },
+    {
+      "actual_nominal_compressive_stress_MPa": [
+        1.744519362499235,
+        3.489038724998471,
+        5.233558087497553,
+        6.978077449996942,
+        8.722596812496326
+      ],
+      "actual_signed_lower_reaction_N": [
+        1.744519362500989,
+        3.489038725001978,
+        5.233558087502948,
+        6.978077450003957,
+        8.722596812504937
+      ],
+      "actual_signed_upper_reaction_N": [
+        -1.744519362499235,
+        -3.489038724998471,
+        -5.233558087497553,
+        -6.978077449996942,
+        -8.722596812496326
+      ],
+      "actual_solved_strain": [
+        0.001,
+        0.002,
+        0.003,
+        0.004,
+        0.005
+      ],
+      "actual_top_UY_mm": [
+        -0.001,
+        -0.002,
+        -0.003,
+        -0.004,
+        -0.005
+      ],
+      "apparent_modulus_MPa": 1744.5193624992648,
+      "maximum_relative_reaction_imbalance": 1.0309781241499946e-12,
+      "mechanically_accepted": true,
+      "native_RST_sha256": "1ed052f435588ed25064edfb374ff26f29c4fc9488b48ac8dfb66b156532bf36",
+      "normalized_objective": 1.7445193624992648,
+      "seed": 1001
+    },
+    {
+      "actual_nominal_compressive_stress_MPa": [
+        1.702215609558189,
+        3.40443121911637,
+        5.106646828675001,
+        6.80886243823274,
+        8.511078047791631
+      ],
+      "actual_signed_lower_reaction_N": [
+        1.702215609559426,
+        3.404431219118853,
+        5.106646828678268,
+        6.808862438237707,
+        8.511078047797149
+      ],
+      "actual_signed_upper_reaction_N": [
+        -1.702215609558189,
+        -3.40443121911637,
+        -5.106646828675001,
+        -6.80886243823274,
+        -8.511078047791631
+      ],
+      "actual_solved_strain": [
+        0.001,
+        0.002,
+        0.003,
+        0.004,
+        0.005
+      ],
+      "actual_top_UY_mm": [
+        -0.001,
+        -0.002,
+        -0.003,
+        -0.004,
+        -0.005
+      ],
+      "apparent_modulus_MPa": 1702.215609558325,
+      "maximum_relative_reaction_imbalance": 7.294454496648958e-13,
+      "mechanically_accepted": true,
+      "native_RST_sha256": "7927a3839c2512036c91727fa242d30329c82ad08a1dcd1ef53ec3fe3a70d1e7",
+      "normalized_objective": 1.702215609558325,
+      "seed": 1002
+    },
+    {
+      "actual_nominal_compressive_stress_MPa": [
+        1.708989891152871,
+        3.417979782305734,
+        5.126969673458456,
+        6.835959564611468,
+        8.544949455764218
+      ],
+      "actual_signed_lower_reaction_N": [
+        1.708989891152845,
+        3.41797978230569,
+        5.126969673458531,
+        6.83595956461138,
+        8.544949455764213
+      ],
+      "actual_signed_upper_reaction_N": [
+        -1.708989891152871,
+        -3.417979782305734,
+        -5.126969673458456,
+        -6.835959564611468,
+        -8.544949455764218
+      ],
+      "actual_solved_strain": [
+        0.001,
+        0.002,
+        0.003,
+        0.004,
+        0.005
+      ],
+      "actual_top_UY_mm": [
+        -0.001,
+        -0.002,
+        -0.003,
+        -0.004,
+        -0.005
+      ],
+      "apparent_modulus_MPa": 1708.9898911528428,
+      "maximum_relative_reaction_imbalance": 1.5201505234594038e-14,
+      "mechanically_accepted": true,
+      "native_RST_sha256": "9dad7de7005e5c057bc1f7550430f6d2a9e665877bfc6067adb722316bf8015f",
+      "normalized_objective": 1.7089898911528427,
+      "seed": 1003
+    },
+    {
+      "actual_nominal_compressive_stress_MPa": [
+        1.71281747799191,
+        3.42563495598383,
+        5.138452433976122,
+        6.851269911967661,
+        8.564087389959742
+      ],
+      "actual_signed_lower_reaction_N": [
+        1.712817477995435,
+        3.425634955990871,
+        5.138452433986296,
+        6.851269911981743,
+        8.564087389977166
+      ],
+      "actual_signed_upper_reaction_N": [
+        -1.71281747799191,
+        -3.42563495598383,
+        -5.138452433976122,
+        -6.851269911967661,
+        -8.564087389959742
+      ],
+      "actual_solved_strain": [
+        0.001,
+        0.002,
+        0.003,
+        0.004,
+        0.005
+      ],
+      "actual_top_UY_mm": [
+        -0.001,
+        -0.002,
+        -0.003,
+        -0.004,
+        -0.005
+      ],
+      "apparent_modulus_MPa": 1712.817477991949,
+      "maximum_relative_reaction_imbalance": 2.0579881677278872e-12,
+      "mechanically_accepted": true,
+      "native_RST_sha256": "ab2c9f08ab5096abcd24a118fb2bfecd615627702d01fc04ad2a271e49f71ba8",
+      "normalized_objective": 1.7128174779919492,
+      "seed": 1004
+    },
+    {
+      "actual_nominal_compressive_stress_MPa": [
+        1.691103048079326,
+        3.382206096158633,
+        5.073309144237811,
+        6.764412192317265,
+        8.455515240396895
+      ],
+      "actual_signed_lower_reaction_N": [
+        1.691103048082647,
+        3.382206096165294,
+        5.073309144247953,
+        6.764412192330589,
+        8.455515240413233
+      ],
+      "actual_signed_upper_reaction_N": [
+        -1.691103048079326,
+        -3.382206096158633,
+        -5.073309144237811,
+        -6.764412192317265,
+        -8.455515240396895
+      ],
+      "actual_solved_strain": [
+        0.001,
+        0.002,
+        0.003,
+        0.004,
+        0.005
+      ],
+      "actual_top_UY_mm": [
+        -0.001,
+        -0.002,
+        -0.003,
+        -0.004,
+        -0.005
+      ],
+      "apparent_modulus_MPa": 1691.103048079377,
+      "maximum_relative_reaction_imbalance": 1.9991112479465175e-12,
+      "mechanically_accepted": true,
+      "native_RST_sha256": "1246f6fc2398e9b39f444f82bd593a85916296926787607fb31171dbfcce06dc",
+      "normalized_objective": 1.691103048079377,
+      "seed": 1005
+    }
+  ],
+  "experiment_id": "v0.7.2/run_001",
+  "numerical_notes": "All measurements use H1 and five independently extracted native checkpoints. Each source RST was independently reopened. Pixel-preserving H2 checks are prospectively reserved for final confirmation; no current development H2 uncertainty estimate. Differences near numerical sensitivity require confirmation. No causal geometry interpretation supplied."
+}
