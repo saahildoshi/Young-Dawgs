@@ -77,3 +77,17 @@ def test_prompt_difference_is_exactly_mechanical_packet():
     assert 'development_mechanics' not in nf and 'baseline_variability' not in nf
     assert mf==(RUN/'llm_trials/P3_OPT_MF_02/prompt.txt').read_text()
     assert nf==(RUN/'llm_trials/P3_OPT_NF_02/prompt.txt').read_text()
+
+
+def test_missing_mechanics_is_not_a_zero_objective_or_a_valid_pair():
+    from scripts.v072_analysis import paired,stats
+    result=paired({1:20.,2:None,3:50.},{1:10.,2:10.,3:None})
+    assert result['gain_summary']['n']==1 and result['gain_summary']['mean']==1.
+    assert stats([None,None])['mean'] is None
+
+
+def test_pairing_uses_each_seed_own_baseline_then_script_mean():
+    from scripts.v072_analysis import paired
+    result=paired({1:20.,2:20.},{1:10.,2:20.})
+    assert result['gain_summary']['mean']==.5
+    assert result['positive_gain_fraction']==.5

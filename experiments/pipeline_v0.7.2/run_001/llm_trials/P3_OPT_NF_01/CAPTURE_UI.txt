@@ -1,0 +1,4 @@
+												15999 text (heading) ChatGPT said:
+												16482 button Copy code
+												16003 button Run code
+														16485 text field (edit) (settable, string) Edit code Value: import numpy as np SIZE = 256 TARGET_COUNT = 20731 N_PRIMARY = 4 N_SECONDARY = 2 PRIMARY_SEGMENTS = 4 SECONDARY_SEGMENTS = 21 PRIMARY_WIDTH_MIN = 16 PRIMARY_WIDTH_MAX = 22 PRIMARY_WIDTH_SUM = 73 SECONDARY_WIDTH = 5 MIN_LANE_GAP = 4 VERTICAL_GAP = 1 def _primary_widths(rng): """Randomize primary inclusion widths at fixed total nominal width.""" widths = np.full(N_PRIMARY, PRIMARY_WIDTH_SUM // N_PRIMARY, dtype=int) remainder = PRIMARY_WIDTH_SUM - int(widths.sum()) for i in rng.permutation(N_PRIMARY)[:remainder]: widths[i] += 1 for _ in range(24): i, j = rng.choice(N_PRIMARY, size=2, replace=False) if widths[i] > 17 and widths[j] < 20: widths[i] -= 1 widths[j] += 1 return widths

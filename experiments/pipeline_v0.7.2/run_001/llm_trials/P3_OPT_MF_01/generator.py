@@ -1,0 +1,397 @@
+import numpy as np
+from scipy import ndimage as ndi
+from skimage.measure import regionprops
+
+SIZE = 256
+TARGET = 20731
+N_CANDIDATES = 20
+
+# Geometry-only revision: align separated inclusions into vertical chains.
+# Long, relatively wide inclusions carry most reinforcement area, while
+# smaller inclusions maintain the dispersed-region morphology envelope.
+# Thin matrix ligaments interrupt every chain; no reinforcement spans.
+# The selection score is a geometric heuristic, not a mechanical prediction.
+
+
+def _partition(rng, total, weights):
+    """Randomized integer allocation with an exact prescribed sum."""
+    raw = total * weights / np.sum(weights)
+    lengths = np.floor(raw).astype(int)
+    remainder = total - int(lengths.sum())
+    order = np.argsort(-(raw - lengths))
+    lengths[order[:remainder]] += 1
+    return lengths
+
+
+def _widths(rng, safe):
+    """Allocate reinforcement between broad and narrow vertical chains."""
+    if safe:
+        widths = np.array([14, 14, 14, 14, 7, 7, 7, 7])
+        broad = np.array([True] * 4 + [False] * 4)
+    else:
+        n_large = 4
+        n_small = int(rng.integers(3, 5))
+        small = rng.integers(6, 9, size=n_small)
+
+        large_total = 84 - int(small.sum())
+        large = np.full(n_large, 10, dtype=int)
+        weights = rng.uniform(0.65, 1.35, n_large)
+
+        for _ in range(large_total - 10 * n_large):
+            available = large < 21
+            p = weights * available
+            j = rng.choice(n_large, p=p / p.sum())
+            large[j] += 1
+
+        widths = np.concatenate((large, small))
+        broad = np.concatenate((
+            np.ones(n_large, dtype=bool),
+            np.zeros(n_small, dtype=bool)
+        ))
+
+    order = rng.permutation(len(widths))
+    return widths[order], broad[order]
+
+
+def _positions(rng, widths):
+    """Place nonperiodic chains in separated, randomly spaced envelopes."""
+    n = len(widths)
+
+    # Each chain reserves two pixels of lateral shape variation per side.
+    envelope_widths = widths + 4
+    minimum_gaps = np.full(n + 1, 3, dtype=int)
+    free = SIZE - int(envelope_widths.sum()) - int(minimum_gaps.sum())
+
+    weights = rng.gamma(2.2, 1.0, n + 1)
+    gaps = minimum_gaps + _partition(rng, free, weights)
+
+    positions = []
+    x = int(gaps[0])
+
+    for j, w in enumerate(envelope_widths):
+        positions.append(x + 2)
+        x += int(w + gaps[j + 1])
+
+    return positions
+
+
+def _particle_edges(rng, x, w, h, safe):
+    """Rasterized angular sidewalls with a common vertical interior core."""
+    if safe:
+        return (np.full(h, x, dtype=int),
+                np.full(h, x + w, dtype=int))
+
+    knots = np.linspace(0, h - 1, int(rng.integers(3, 7)))
+    rows = np.arange(h)
+
+    # Independent low-frequency sidewall variation produces polygonal
+    # inclusions without severing their four-connected interiors.
+    shift = int(rng.choice([-1, 0, 0, 0, 1]))
+    left_noise = rng.uniform(-1.35, 1.35, len(knots))
+    right_noise = rng.uniform(-1.35, 1.35, len(knots))
+
+    left = x + shift + np.rint(
+        np.interp(rows, knots, left_noise)
+    ).astype(int)
+
+    right = x + w + shift + np.rint(
+        np.interp(rows, knots, right_noise)
+    ).astype(int)
+
+    # Modest angular taper at particle ends, retaining aligned central cores.
+    if h >= 8:
+        k = min(3, max(1, h // 10))
+        if rng.random() < 0.60:
+            left[:k] += 1
+        if rng.random() < 0.60:
+            right[-k:] -= 1
+        if rng.random() < 0.30:
+            right[:k] -= 1
+        if rng.random() < 0.30:
+            left[-k:] += 1
+
+    left = np.clip(left, x - 2, x + 2)
+    right = np.clip(right, x + w - 2, x + w + 2)
+
+    return left, right
+
+
+def _make_particles(rng, safe=False):
+    """Construct separated reinforcement regions, including clipped ends."""
+    widths, broad = _widths(rng, safe)
+    positions = _positions(rng, widths)
+    particles = []
+
+    for x, w, large in zip(positions, widths, broad):
+        w = int(w)
+        x = int(x)
+
+        if safe:
+            n = 6 if large else 15
+            gaps = np.ones(n - 1, dtype=int)
+            weights = rng.uniform(0.95, 1.05, n)
+            weights[[0, -1]] *= rng.uniform(0.82, 0.94, 2)
+        else:
+            if large:
+                # Large particles have high vertical aspect ratios and
+                # relatively few axial interruptions.
+                nominal = SIZE / (3.9 * w)
+                n = int(np.clip(np.rint(nominal) + 1, 4, 7))
+                if rng.random() < 0.25:
+                    n = min(7, n + 1)
+            else:
+                # Numerous shorter inclusions control complete-region
+                # count, mean aspect ratio and mean equivalent diameter.
+                nominal = SIZE / (2.45 * w)
+                n = int(np.clip(np.rint(nominal) + 1, 12, 16))
+
+            # At least one full matrix row separates successive particles,
+            # preventing both edge and corner reinforcement connections.
+            gaps = 1 + (rng.random(n - 1) < 0.10).astype(int)
+
+            weights = rng.uniform(0.76, 1.24, n)
+            weights[[0, -1]] *= rng.uniform(0.52, 0.95, 2)
+
+        lengths = _partition(rng, SIZE - int(gaps.sum()), weights)
+
+        y = 0
+        for j, h in enumerate(lengths):
+            h = int(h)
+            left, right = _particle_edges(rng, x, w, h, safe)
+
+            # The first and last regions represent boundary-censored
+            # particles of an otherwise finite, nonperiodic chain.
+            boundary = j == 0 or j == n - 1
+            particles.append((y, x, w, left, right, boundary))
+
+            y += h
+            if j < n - 1:
+                y += int(gaps[j])
+
+    return particles
+
+
+def _area(particles):
+    return sum(int(np.sum(p[4] - p[3])) for p in particles)
+
+
+def _modify_side(rng, particle, delta, side, limited=True):
+    """Change area using contiguous lateral ribbons, preserving topology."""
+    _, x, w, left, right, _ = particle
+
+    adding = delta > 0
+
+    if side == 0:
+        edge = left
+        step = -1 if adding else 1
+        eligible = left > x - 2 if adding else left < x + 2
+    else:
+        edge = right
+        step = 1 if adding else -1
+        eligible = right < x + w + 2 if adding else right > x + w - 2
+
+    transitions = np.flatnonzero(
+        np.diff(np.concatenate(([False], eligible, [False])))
+    )
+
+    if len(transitions) == 0:
+        return delta
+
+    starts = transitions[::2]
+    stops = transitions[1::2]
+    lengths = stops - starts
+
+    # Prefer long contiguous edits to isolated pixel-scale modifications.
+    j = int(rng.choice(len(lengths), p=lengths / lengths.sum()))
+    length = min(abs(delta), int(lengths[j]))
+
+    if limited:
+        length = min(length, int(rng.integers(6, 23)))
+
+    start = int(rng.integers(starts[j], stops[j] - length + 1))
+    edge[start:start + length] += step
+
+    return delta - length if adding else delta + length
+
+
+def _exact_composition(rng, particles, safe):
+    """Reach the native target count without merging or splitting regions."""
+    delta = TARGET - _area(particles)
+
+    # In the guaranteed fallback, preserve all complete-region shapes
+    # exactly by restricting composition adjustments to censored regions.
+    indices = [
+        i for i, p in enumerate(particles)
+        if not safe or p[5]
+    ]
+
+    for _ in range(8):
+        for i in rng.permutation(indices):
+            if delta == 0:
+                return True
+
+            particle = particles[int(i)]
+            side = int(rng.integers(2))
+            delta = _modify_side(rng, particle, delta, side)
+
+            if delta:
+                delta = _modify_side(rng, particle, delta, 1 - side)
+
+    # Exhaust any remaining lateral capacity. Every row retains the
+    # common interior core, including during these final exact edits.
+    for _ in range(4):
+        for i in rng.permutation(indices):
+            _, x, w, left, right, _ = particles[int(i)]
+
+            for side in rng.permutation(2):
+                if delta == 0:
+                    return True
+
+                adding = delta > 0
+
+                if side == 0:
+                    edge = left
+                    step = -1 if adding else 1
+                    good = left > x - 2 if adding else left < x + 2
+                else:
+                    edge = right
+                    step = 1 if adding else -1
+                    good = right < x + w + 2 if adding else right > x + w - 2
+
+                rows = np.flatnonzero(good)
+                count = min(abs(delta), len(rows))
+
+                if count:
+                    chosen = rng.permutation(rows)[:count]
+                    edge[chosen] += step
+                    delta += -count if adding else count
+
+    return delta == 0
+
+
+def _rasterize(particles):
+    mask = np.zeros((SIZE, SIZE), dtype=bool)
+
+    for y, _, _, left, right, _ in particles:
+        for j, (a, b) in enumerate(zip(left, right)):
+            mask[y + j, a:b] = True
+
+    return mask
+
+
+def _spans(labels, axis):
+    if axis == 0:
+        shared = np.intersect1d(labels[0], labels[-1])
+    else:
+        shared = np.intersect1d(labels[:, 0], labels[:, -1])
+    return bool(np.any(shared > 0))
+
+
+def _feasible(mask):
+    area = int(mask.sum())
+    if area != TARGET:
+        return False
+
+    labels, n = ndi.label(mask)
+    if not 50 <= n <= 125:
+        return False
+
+    counts = np.bincount(labels.ravel())[1:]
+    if counts.max() / area > 0.15:
+        return False
+    if np.count_nonzero(counts == 1) / area > 0.001:
+        return False
+    if _spans(labels, 0) or _spans(labels, 1):
+        return False
+
+    borders = np.unique(np.concatenate((
+        labels[0], labels[-1], labels[:, 0], labels[:, -1]
+    )))
+    censored = set(int(v) for v in borders if v != 0)
+    complete = [p for p in regionprops(labels) if p.label not in censored]
+
+    if not 5 <= len(censored) <= 50 or not 40 <= len(complete) <= 75:
+        return False
+
+    diameter = np.mean([2 * np.sqrt(p.area / np.pi) for p in complete])
+    aspect = np.mean([
+        p.axis_major_length / max(p.axis_minor_length, 1e-12)
+        for p in complete
+    ])
+    if not 12 <= diameter <= 20 or not 1.2 <= aspect <= 3.0:
+        return False
+
+    labels8, _ = ndi.label(mask, structure=np.ones((3, 3), dtype=int))
+    counts8 = np.bincount(labels8.ravel())[1:]
+    if counts8.max() / area > 0.15:
+        return False
+    if _spans(labels8, 0) or _spans(labels8, 1):
+        return False
+
+    matrix, _ = ndi.label(~mask)
+    matrix_counts = np.bincount(matrix.ravel())[1:]
+
+    return (
+        matrix_counts.max() / (SIZE * SIZE - area) >= 0.95
+        and _spans(matrix, 0)
+        and _spans(matrix, 1)
+    )
+
+
+def _score(mask):
+    """Favor axially persistent reinforcement with aligned load paths."""
+    columns = mask.sum(axis=0, dtype=float) / SIZE
+
+    # Concentrating reinforcement into highly occupied vertical columns
+    # favors axial continuity over isotropic clustering.
+    column_alignment = np.sum(columns**2) / np.sum(columns)
+
+    # Nonperiodic vertical overlap at several length scales.
+    persistence = 0.0
+    for lag, weight in ((4, 0.20), (12, 0.30), (32, 0.30), (64, 0.20)):
+        overlap = np.count_nonzero(mask[:-lag] & mask[lag:])
+        persistence += weight * overlap * SIZE / ((SIZE - lag) * TARGET)
+
+    # Prefer uninterrupted axial interiors, without rewarding reinforcement
+    # connectivity across the matrix separation rows.
+    vertical_interfaces = np.count_nonzero(mask[1:] != mask[:-1])
+    axial_interruption = vertical_interfaces / TARGET
+
+    return (
+        0.55 * column_alignment
+        + 0.45 * persistence
+        - 0.30 * axial_interruption
+    )
+
+
+def generate_microstructure(seed, parameters):
+    rng = np.random.default_rng(seed)
+    best = None
+    best_score = -np.inf
+
+    # Bounded geometry-only search; no mechanical solver or cached results.
+    for _ in range(N_CANDIDATES):
+        particles = _make_particles(rng)
+
+        if not _exact_composition(rng, particles, safe=False):
+            continue
+
+        mask = _rasterize(particles)
+        if not _feasible(mask):
+            continue
+
+        score = _score(mask)
+        if score > best_score:
+            best = mask
+            best_score = score
+
+    if best is None:
+        # Conservative constructive fallback: eight independently placed
+        # chains, 84 regions, 68 complete regions, 16 censored regions.
+        # Its initial count is 20832; removing 101 pixels exclusively from
+        # boundary particles preserves complete-region morphology.
+        particles = _make_particles(rng, safe=True)
+        _exact_composition(rng, particles, safe=True)
+        best = _rasterize(particles)
+
+    return np.where(best, 5, 1).astype(np.uint8)
