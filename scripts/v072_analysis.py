@@ -274,4 +274,9 @@ def final_figures(rows,summaries,comparison,mesh):
         'phase_colors':{'1':'#440154','5':'#fde725'},'illustrative_materials_MPa':[1000,10000],'unknown_microscopy_pixel_scale':True})
 
 
-if __name__=='__main__':baseline_figures()
+if __name__=='__main__':
+    import argparse
+    parser=argparse.ArgumentParser();parser.add_argument('action',choices=['baseline','final'],nargs='?',default='baseline')
+    action=parser.parse_args().action
+    baseline_figures()
+    if action=='final':final_figures(*analyse())
