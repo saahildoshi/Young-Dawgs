@@ -1,0 +1,141 @@
+{
+  "H2_selection": "First three registered held-out seeds, every script including BASE; no outcome-based subset; no optional expansion in this run",
+  "NLGEOM": "OFF",
+  "RVE_qualification": false,
+  "allowed_dependencies": [
+    "numpy",
+    "scipy",
+    "skimage",
+    "PIL",
+    "math",
+    "random",
+    "collections",
+    "itertools"
+  ],
+  "composition_maximum_absolute_fraction_tolerance": 0.001,
+  "development_seeds": [
+    1000,
+    1001,
+    1002,
+    1003,
+    1004,
+    1005
+  ],
+  "element": {
+    "KEYOPT1": 0,
+    "KEYOPT3": 3,
+    "KEYOPT6": 0,
+    "integration": "2x2, full integration B-bar; no uniform reduced integration/hourglass control",
+    "name": "PLANE182",
+    "real_constant_THK_mm": 1.0
+  },
+  "full_curve_selection": "All feasible development, H1 heldout, and H2 confirmation geometries",
+  "generator_parameters": {},
+  "generator_timeout_seconds": 30,
+  "generator_total_worker_timeout_seconds": 700,
+  "heldout_policy": "No final generation before all four authentic responses and frozen scripts; evaluator-only seeds never enter prompts",
+  "heldout_seed_manifest": "protocol/EVALUATOR_ONLY_SEEDS.json",
+  "history_seed_collision_check": {
+    "historical_P3_seed_ids": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109
+    ],
+    "new_partitions_disjoint": true
+  },
+  "human_submission_gate_if_unavailable": true,
+  "independent_trials_per_arm": 2,
+  "internal_search_limit": "At most 1000 full-domain candidate arrays per output; bounded geometry-only scoring, no mechanics/cache access; wall limit applies to all",
+  "loading": "UYbottom0, UYtop=-strain*H, UXbottomleft0; other UX free; sides traction free",
+  "material": {
+    "constitutive_model": "small-strain isotropic linear elasticity",
+    "id": "ILLUSTRATIVE_TWO_PHASE_ELASTIC_CONTRAST_10",
+    "interface": "perfectly bonded shared nodes, no contact",
+    "materials": {
+      "1": {
+        "E_MPa": 1000.0,
+        "nu": 0.3
+      },
+      "2": {
+        "E_MPa": 10000.0,
+        "nu": 0.3
+      }
+    },
+    "physical_calibration": false,
+    "raw_to_material": {
+      "1": 1,
+      "5": 2
+    },
+    "units": "mm N MPa"
+  },
+  "mechanical_protocol_sha256": "48784e95fd0e61b9e57a1efdbc5ccfefe9d060594ba81aa976af4b43d09c7132",
+  "mechanical_protocol_source": "experiments/pipeline_v0.7.1/run_001/protocol/PROTOCOL.json",
+  "mechanics_route": "Five actual native checkpoints and independent RST reopening for EVERY accepted geometry; no separate one-point-only screening route",
+  "model_policy": "Independent ordinary ChatGPT chats, consistent exposed configuration; backend/memory routing not inferred",
+  "native_base": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v072\\run_001",
+  "objective": "maximize J = apparent vertical elastic modulus / 1000 MPa",
+  "physical_calibration": false,
+  "previous_native_artifact_root": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v071\\run_001",
+  "push": false,
+  "reference_count": 20731,
+  "reference_fraction": 0.3163299560546875,
+  "registered_utc": "2026-11-14T20:30:33.530802+00:00",
+  "repair_calls": 0,
+  "request_sha256": "e0f9e6b85f31702b68d22e3bc8eec89549fcacbfe33ba0761995af1bf31d8cbb",
+  "resource_limits": {
+    "cores": 2,
+    "disk_reserve_bytes": 53687091200,
+    "maximum_native_jobs": 150,
+    "native_campaign_seconds": 10800,
+    "one_native_job": true,
+    "raw_storage_budget_bytes": 128849018880,
+    "readback_timeout_s": 900,
+    "rss_cap": null,
+    "solve_timeout_s": 1800
+  },
+  "response_budget_per_trial": 1,
+  "secant_confirmation_relative_tolerance": 1e-05,
+  "starting_generator_policy": "B02 preferred; C02/r1 fallback based only on development structural feasibility; explicit common adaptation only if neither feasible",
+  "starting_head": "182ca9721569f018d347e75c4e3472cb41828dda",
+  "strain_checkpoints": [
+    0.001,
+    0.002,
+    0.003,
+    0.004,
+    0.005
+  ],
+  "tolerances": {
+    "benchmark_relative": 0.001,
+    "constitutive_field_relative": 1e-05,
+    "energy_relative": 0.001,
+    "horizontal_pin_relative": 0.001,
+    "linear_fit_relative_residual": 1e-05,
+    "mesh_modulus_relative": 0.02,
+    "native_displacement_absolute_mm": 1e-09,
+    "native_volume_relative": 1e-08,
+    "reaction_balance_relative": 0.001
+  },
+  "trial_order": [
+    "P3_OPT_MF_01",
+    "P3_OPT_NF_01",
+    "P3_OPT_NF_02",
+    "P3_OPT_MF_02"
+  ]
+}
