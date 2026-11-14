@@ -11,6 +11,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 import numpy as np
 from scipy import ndimage as ndi
+from scipy.spatial.distance import pdist
+from skimage.measure import regionprops
 from PIL import Image
 from scripts.v070_protocol import REPO, read, write, sha
 from scripts.v070_experiment import audit
@@ -108,6 +110,78 @@ def observe(a):
         'topology':{f'{phase}_{conn}':topology(a==value,conn) for phase,value in [('matrix',1),('reinforcement',5)] for conn in [1,2]}}
 
 
+def feasibility(row,policy):
+    if row.get('status')!='GENERATED':return {'passed':False,'failures':['generation_or_output_contract_failed']}
+    d,t=row['descriptors'],row['topology'];rules=policy['guardrails']
+    checks={'phase_count':abs(row['phase_counts']['5']-policy['target_count'])<=policy['absolute_pixel_tolerance'],
+        'both_phases':all(row['phase_counts'][str(k)]>0 for k in [1,5]),
+        'runtime':row['generation_seconds']<=policy['single_generation_timeout_seconds'],
+        'deterministic':row['deterministic'],
+        'matrix_lcc':t['matrix_1']['largest_fraction']>=rules['matrix_lcc_minimum'],
+        'matrix_spans_both':t['matrix_1']['spans_x'] and t['matrix_1']['spans_y'],
+        'no_reinforcement_4_spanning':not(t['reinforcement_1']['spans_x'] or t['reinforcement_1']['spans_y']),
+        'no_reinforcement_8_spanning':not(t['reinforcement_2']['spans_x'] or t['reinforcement_2']['spans_y']),
+        'no_dominant_4_region':t['reinforcement_1']['largest_fraction']<=rules['reinforcement_largest_fraction_maximum'],
+        'no_dominant_8_region':t['reinforcement_2']['largest_fraction']<=rules['reinforcement_largest_fraction_maximum'],
+        'single_pixel_noise':t['reinforcement_1']['one_pixel_area_fraction']<=rules['single_pixel_reinforcement_fraction_maximum']}
+    for metric,bounds in rules['descriptor_ranges'].items():
+        value=d.get(metric);checks[metric]=value is not None and bounds[0]<=value<=bounds[1]
+    return {'passed':all(checks.values()),'checks':checks,'failures':[k for k,v in checks.items() if not v]}
+
+
+def arrangement_signature(a):
+    lab,_=ndi.label(a==5)
+    regions=regionprops(lab)
+    centers=np.array([r.centroid for r in regions])
+    signature={'areas':sorted(int(r.area) for r in regions),'pairwise_centroid_distances':np.round(np.sort(pdist(centers)),5).tolist()}
+    return hashlib.sha256(str(signature).encode()).hexdigest()
+
+
+def diversity(arrays,policy):
+    n=len(arrays);hashes=[hashlib.sha256(a.tobytes()).hexdigest() for a in arrays]
+    distances=[float(np.mean(a!=b)) for a,b in itertools.combinations(arrays,2)]
+    signatures=[arrangement_signature(a) for a in arrays]
+    return {'outputs':n,'unique_arrays':len(set(hashes)),'unique_arrangement_signatures':len(set(signatures)),
+        'median_pairwise_hamming':float(np.median(distances)) if distances else None,
+        'minimum_pairwise_hamming':min(distances) if distances else None,
+        'passed':bool(n>=2 and len(set(hashes))==n and len(set(signatures))>=int(np.ceil(n/2)) and np.median(distances)>=policy['diversity']['minimum_median_hamming']),
+        'signature_limitation':'Region areas and pairwise centroid distances are rigid-motion invariants; boundary clipping and region merging can alter signatures. Diagnostic, not proof of distributional diversity.'}
+
+
+def freeze_feasibility():
+    path=RUN/'protocol/FEASIBILITY_FROZEN.json';assert not path.exists()
+    p=read(RUN/'protocol/PROTOCOL.json')
+    policy={'frozen_utc':now(),'target_count':p['reference_count'],'target_fraction':p['reference_fraction'],
+        'absolute_pixel_tolerance':64,'absolute_fraction_tolerance':64/65536,
+        'composition_rationale':'Unchanged B02 development counts deviate at most 53 pixels; 64-pixel ceiling is below the requested 0.001 maximum. No post-generation count correction. Exact counts preferred for revisions but identical acceptance for all arms.',
+        'single_generation_timeout_seconds':30,'generator_acceptance':'10/10 held-out outputs feasible and diversity passes; partial validity reported with denominator',
+        'guardrails':{'matrix_lcc_minimum':.95,'reinforcement_largest_fraction_maximum':.15,
+            'single_pixel_reinforcement_fraction_maximum':.001,
+            'descriptor_ranges':{'complete_regions':[40,75],'all_regions':[50,125],'boundary_censored_regions':[5,50],
+                'diameter_mean_px':[12,20],'aspect_mean':[1.2,3.0]}},
+        'connectivity_policy':'4-connected matrix must span x/y; reinforcement prohibited from spanning under both 4 and 8 connectivity. Largest reinforcement fraction <=0.15 under both. Corner contacts retained as mesh artifact, never claimed physical bonds.',
+        'diversity':{'all_arrays_unique':True,'minimum_median_hamming':.1,'minimum_unique_rigid_invariant_signatures':'ceil(number_outputs/2)'},
+        'selection':'Unchanged captured P3_B_02/r0; no fallback or adaptation needed',
+        'selection_basis':'Six development structural observations and reference only, before any new mechanics or revisions',
+        'guardrail_rationale':'Reference complete/all/boundary counts57/78/21, diameter15.7067px, aspect1.916, matrixLCC0.9906. B02 six development complete57, all77-80, boundary20-23, diameter15.6855-15.7349px, aspect1.826-2.157. Broad ranges allow meaningful rearrangement and shape changes without bands/noise.',
+        'composition_claim_limit':'Residual count variation forbids strong geometry-only attribution without separately registered exact-composition confirmation or numerical composition sensitivity. No guessed correction.'}
+    rows=read(RUN/'baseline_development/OBSERVATIONS.json')
+    for row in rows:
+        row['feasibility']=feasibility(row,policy)
+        assert row['feasibility']['passed'],row
+        write(RUN/f'baseline_development/seed_{row["seed"]}.json',row)
+    arrays=[np.load(RUN/f'baseline_development/seed_{r["seed"]}.npy',allow_pickle=False) for r in rows]
+    div=diversity(arrays,policy);assert div['passed']
+    write(RUN/'baseline_development/OBSERVATIONS.json',rows);write(RUN/'baseline_development/DIVERSITY.json',div)
+    write(path,policy)
+    auth=read(RUN/'starting_generator/CANDIDATE_AUTHENTICATION.json')
+    write(RUN/'starting_generator/COMMON_STARTING_POINT_FROZEN.json',{'frozen_utc':now(),**auth,
+        'selected_id':'P3_B_02/r0','parameters':{},'composition_morphology_sha256':sha(path),
+        'protocol_sha256':sha(RUN/'protocol/PROTOCOL.json'),'evaluator_only_seed_partition_sha256':sha(RUN/'protocol/EVALUATOR_ONLY_SEEDS.json'),
+        'source_code_file':'starting_generator/generator.py','independent_scripts':4,'heldout_evaluation_started':False})
+    print('FROZEN baseline feasibility6/6; diversity',div,'tolerance64 pixels',flush=True)
+
+
 def generate(source,destination,seeds):
     destination=Path(destination);destination.mkdir(parents=True,exist_ok=False)
     review=audit(Path(source).read_text(encoding='utf-8-sig'));write(destination/'CODE_AUDIT.json',review)
@@ -136,3 +210,4 @@ if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('action');p.add_argument('args',nargs='*');a=p.parse_args()
     if a.action=='register':register()
     elif a.action=='generate':generate(Path(a.args[0]),Path(a.args[1]),list(map(int,a.args[2].split(','))))
+    elif a.action=='freeze_feasibility':freeze_feasibility()

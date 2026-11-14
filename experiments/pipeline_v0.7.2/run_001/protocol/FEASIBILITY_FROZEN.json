@@ -1,0 +1,47 @@
+{
+  "absolute_fraction_tolerance": 0.0009765625,
+  "absolute_pixel_tolerance": 64,
+  "composition_claim_limit": "Residual count variation forbids strong geometry-only attribution without separately registered exact-composition confirmation or numerical composition sensitivity. No guessed correction.",
+  "composition_rationale": "Unchanged B02 development counts deviate at most 53 pixels; 64-pixel ceiling is below the requested 0.001 maximum. No post-generation count correction. Exact counts preferred for revisions but identical acceptance for all arms.",
+  "connectivity_policy": "4-connected matrix must span x/y; reinforcement prohibited from spanning under both 4 and 8 connectivity. Largest reinforcement fraction <=0.15 under both. Corner contacts retained as mesh artifact, never claimed physical bonds.",
+  "diversity": {
+    "all_arrays_unique": true,
+    "minimum_median_hamming": 0.1,
+    "minimum_unique_rigid_invariant_signatures": "ceil(number_outputs/2)"
+  },
+  "frozen_utc": "2026-11-14T20:32:17.875439+00:00",
+  "generator_acceptance": "10/10 held-out outputs feasible and diversity passes; partial validity reported with denominator",
+  "guardrail_rationale": "Reference complete/all/boundary counts57/78/21, diameter15.7067px, aspect1.916, matrixLCC0.9906. B02 six development complete57, all77-80, boundary20-23, diameter15.6855-15.7349px, aspect1.826-2.157. Broad ranges allow meaningful rearrangement and shape changes without bands/noise.",
+  "guardrails": {
+    "descriptor_ranges": {
+      "all_regions": [
+        50,
+        125
+      ],
+      "aspect_mean": [
+        1.2,
+        3.0
+      ],
+      "boundary_censored_regions": [
+        5,
+        50
+      ],
+      "complete_regions": [
+        40,
+        75
+      ],
+      "diameter_mean_px": [
+        12,
+        20
+      ]
+    },
+    "matrix_lcc_minimum": 0.95,
+    "reinforcement_largest_fraction_maximum": 0.15,
+    "single_pixel_reinforcement_fraction_maximum": 0.001
+  },
+  "selection": "Unchanged captured P3_B_02/r0; no fallback or adaptation needed",
+  "selection_basis": "Six development structural observations and reference only, before any new mechanics or revisions",
+  "single_generation_timeout_seconds": 30,
+  "target_count": 20731,
+  "target_fraction": 0.3163299560546875
+}
