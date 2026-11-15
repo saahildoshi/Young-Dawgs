@@ -1,0 +1,3926 @@
+# YOUNG DAWGS — PIPELINE v0.7.3
+# Morphology-Constrained Mechanical Inverse Design and Informative LLM Feedback
+# P3 Target-Modulus Optimization | Exact Composition | Matched Experimental Controls
+# Secondary Extension: F1 Three-Phase Mechanical Benchmarking
+
+---
+
+# 1. ROLE AND MISSION
+
+You are acting as a senior computational materials researcher, composite micromechanics specialist, finite-element engineer, scientific experimental-design researcher, ANSYS Mechanical APDL expert, and LLM-based inverse-design researcher.
+
+You are continuing the Young Dawgs research project under Dr. Xianqiao Wang.
+
+Your assignment is to implement and execute:
+
+**Pipeline v0.7.3 — Morphology-Constrained Mechanical Inverse Design and Informative LLM Feedback.**
+
+The project has completed three major scientific milestones:
+
+- v0.7.0: Genuine LLM generation of stochastic microstructures from real microscopy references belonging to different material systems.
+- v0.7.1: Qualified exploratory mechanical analysis of reference and LLM-generated P3 microstructures using actual licensed ANSYS simulations.
+- v0.7.2: The first controlled LLM mechanical-feedback experiment, demonstrating substantial numerical stiffness improvement but no measured-feedback advantage over an equal-attempt control.
+
+The next milestone must address the limitations revealed by v0.7.2.
+
+Specifically:
+
+1. The previous LLM revisions achieved approximately 100% stiffness improvement by organizing reinforcement into segmented vertical lanes.
+2. These designs passed the registered numerical constraints but departed substantially from the intended irregular particle-composite morphology.
+3. Mechanical feedback containing baseline stress–strain curves did not produce better arm-average optimization performance than an objective-only control.
+4. The feedback described the existing baseline response but contained limited information about how changes in morphology affect mechanical properties.
+5. The previous maximization objective admitted a relatively obvious structural strategy: align stiff material with the loading direction.
+
+The new scientific objective is more challenging:
+
+**Determine whether an LLM can use informative, measured geometry–mechanics relationships to generate microstructures that achieve a prescribed mechanical property while remaining within a defensible reference-like morphology family.**
+
+This is a controlled inverse-design experiment.
+
+It is not simply another stiffness-maximization exercise.
+
+---
+
+# 2. PRIMARY RESEARCH QUESTION
+
+Investigate:
+
+**Can LLMs revise a stochastic microstructure generator to achieve a specified apparent elastic modulus while preserving exact composition, stochastic diversity, and substantially more reference-like morphology?**
+
+Also investigate:
+
+**Does providing actual mechanical responses for controlled morphology variations improve target-property inverse design relative to providing the same geometry information, mechanical assumptions, and target objective without measured mechanical responses?**
+
+The second question is essential.
+
+The completed v0.7.2 experiment established LLM optimization capability under its original envelope.
+
+It did not establish that measured mechanical feedback improves the LLM's optimization performance.
+
+Do not assume that additional feedback is automatically beneficial.
+
+This milestone should test whether a more informative feedback representation changes that result.
+
+---
+
+# 3. LONG-TERM RESEARCH DIRECTION
+
+Dr. Wang's research direction is:
+
+1. Use LLMs to generate different material microstructure families.
+2. Evaluate structural accuracy and validity.
+3. Perform mechanical simulations.
+4. Obtain stress–strain curves and quantitative material-response descriptors.
+5. Provide those responses to the LLM.
+6. Request revised generators targeting desired mechanical properties.
+7. Determine whether the LLM can achieve those properties.
+8. Eventually establish a reliable, controlled, iterative computational inverse-design workflow.
+
+The project has already completed meaningful evidence for steps 1–6.
+
+The new milestone should advance steps 6 and 7.
+
+Do not implement an autonomous multi-generation optimization system yet.
+
+Do not create a generic agent architecture.
+
+Do not build a large unrelated database.
+
+The objective is a scientifically controlled experiment with genuine LLM responses and independently verified mechanical outcomes.
+
+---
+
+# 4. REQUIRED OUTCOME
+
+The minimum successful scientific campaign should establish:
+
+1. An authenticated P3 reference and starting generator.
+2. An exact-composition baseline generator.
+3. A prospectively registered morphology-feasibility envelope that detects the lane-forming behavior observed in v0.7.2.
+4. Independent validation of the new morphology descriptors.
+5. A small, controlled geometry–mechanics development dataset.
+6. Actual ANSYS stress–strain responses for those controlled variations.
+7. A meaningful, attainable target apparent modulus selected through a registered rule.
+8. Genuine independent LLM inverse-design trials receiving informative mechanical feedback.
+9. Genuine independent matched control trials without measured mechanical feedback.
+10. New held-out stochastic realizations.
+11. Exact composition and morphology feasibility evaluation.
+12. Actual mechanical evaluation of feasible outputs.
+13. Refined-mesh verification of important mechanical conclusions.
+14. A comparison of target-property accuracy, structural feasibility, and stochastic diversity.
+15. A scientifically defensible conclusion about the value of the new feedback intervention.
+
+A negative result is acceptable.
+
+If neither experimental arm can achieve the prescribed modulus while satisfying the stronger morphology constraints, that is a scientifically meaningful result.
+
+Do not relax the constraints or change the target after observing returned generators.
+
+---
+
+# 5. PERMANENT GIT COMMIT POLICY
+
+The Young Dawgs repository has a permanent requirement:
+
+**Create a descriptive Git commit after every coherent set of completed repository changes.**
+
+Continue enforcing it.
+
+Before editing:
+
+1. Run `git status`.
+2. Identify the active branch.
+3. Record starting HEAD.
+4. Read `AGENTS.md` and applicable repository instructions.
+5. Identify unrelated user changes.
+6. Preserve all existing work.
+
+After each completed implementation phase:
+
+1. Review the exact diff.
+2. Run relevant verification.
+3. Stage only intended files.
+4. Create a descriptive commit.
+5. Record the complete commit hash.
+6. Verify the working-tree state.
+
+Suggested commit messages:
+
+- `docs(inverse-design): register v0.7.3 morphology-constrained target-property experiment`
+- `feat(morphology): add area-weighted shape and spatial-organization descriptors`
+- `test(morphology): distinguish dispersed inclusions from segmented reinforcement lanes`
+- `feat(generator): establish exact-composition optimization starting point`
+- `feat(mechanics): measure controlled morphology-property relationships`
+- `docs(experiment): freeze target modulus and matched feedback intervention`
+- `feat(llm): ingest authentic target-property inverse-design responses`
+- `feat(mechanics): evaluate held-out morphology-constrained generators`
+- `feat(results): compare target accuracy and refined-mesh evidence`
+- `feat(f1): qualify exploratory three-phase transverse composite benchmark`
+- `docs(research): deliver v0.7.3 inverse-design findings and limitations`
+
+Do not push automatically.
+
+Do not force-push.
+
+Do not rewrite historical commits.
+
+Do not amend historical scientific evidence.
+
+Do not commit secrets, license files, or unnecessarily large native ANSYS binaries.
+
+Report all actual commit hashes and exact messages.
+
+---
+
+# 6. REPOSITORY AND ENVIRONMENT
+
+Expected repository:
+
+`C:/Users/sd22446/Projects/Young-Dawgs-VSCode`
+
+Expected branch:
+
+`master`
+
+Reported final v0.7.2 commit:
+
+`c5cffd3885b90a2c1ef25de48b5b3f6ff7b83ad4`
+
+Commit message:
+
+`docs(research): close v0.7.2 controlled mechanical-feedback pilot with qualified native evidence`
+
+Verify actual repository state.
+
+Do not reset or rewrite Git history if HEAD has advanced.
+
+Use the existing:
+
+- Windows workstation.
+- Python environment.
+- Licensed ANSYS Mechanical APDL 2024 R1.
+- Structured phase-preserving mesh builder.
+- P3 mechanical evaluator.
+- Morphology evaluator.
+- Native result extraction.
+- Resource monitoring.
+- Experiment orchestration.
+- ChatGPT response-capture and ingestion workflow.
+- Artifact-root configuration.
+
+Discover the current `YD_ARTIFACT_ROOT`.
+
+Use a new versioned artifact directory for v0.7.3.
+
+Never overwrite previous raw solver outputs or historical experiment directories.
+
+---
+
+# 7. AUTHORITATIVE v0.7.2 RESULTS
+
+Read and authenticate the completed v0.7.2 experiment.
+
+Expected documentation:
+
+`docs/pipeline_v0.7.2/`
+
+Expected experiment:
+
+`experiments/pipeline_v0.7.2/run_001/`
+
+Locate the actual handoff, registered protocols, frozen scripts, prompt packets, generated arrays, native mechanical results, figures, and refined-mesh verification.
+
+The reported final scientific status is:
+
+`CONTROLLED_LLM_MECHANICAL_FEEDBACK_EXPERIMENT_COMPLETE__NUMERICAL_STIFFENING_UNDER_FROZEN_ENVELOPE__NF_HIGHER_OR_EQUAL__MORPHOLOGY_FAMILY_DRIFT__ILLUSTRATIVE_MATERIALS`
+
+The common starting generator was:
+
+`P3_B_02/r0`
+
+SHA-256:
+
+`6917ffb0ca4f22fa5f8276d04484fdd3208978a0610cb43f3684b24cc18d270d`
+
+It was an unchanged genuine captured LLM script.
+
+The registered reference composition was:
+
+- Total pixels: 65,536.
+- Reinforcement pixels: 20,731.
+- Reinforcement fraction: 0.3163299560546875.
+
+The previous common composition tolerance was ±64 pixels.
+
+All 40 revised final outputs had exactly 20,731 reinforcement pixels.
+
+The baseline outputs remained within the ±64-pixel tolerance.
+
+Reported held-out mechanical results:
+
+| Script | H1 mean modulus, MPa | Sample SD, MPa | Mean paired gain |
+|---|---:|---:|---:|
+| BASE | 1692.509 | 20.719 | 0% |
+| MF_01 | 3282.328 | 13.686 | 93.960% |
+| MF_02 | 3446.853 | 3.471 | 103.682% |
+| NF_01 | 3478.258 | 3.231 | 105.537% |
+| NF_02 | 3347.538 | 28.049 | 97.810% |
+
+Mechanical-feedback arm mean gain:
+
+`98.821%`
+
+No-feedback arm mean gain:
+
+`101.673%`
+
+MF minus NF:
+
+`-2.852 percentage points`
+
+All 50 held-out structures passed the previously registered constraints.
+
+The 15 H2 refinement simulations produced 12 revision-versus-BASE confirmation comparisons.
+
+All 12 retained positive gains larger than the conservative observed mesh-change diagnostic.
+
+The earlier experiment therefore demonstrated substantial numerical stiffness improvement under its registered envelope.
+
+It did not demonstrate an advantage of measured mechanical feedback.
+
+Verify these numbers from actual experiment records.
+
+Do not reconstruct historical data from this prompt if the original authoritative files are available.
+
+---
+
+# 8. THE MORPHOLOGY LIMITATION
+
+The v0.7.2 revisions formed strongly vertical segmented reinforcement lanes.
+
+They passed the old:
+
+- Reinforcement connectivity restrictions.
+- Largest-component restrictions.
+- Region-count restrictions.
+- Mean equivalent-diameter limits.
+- Mean aspect-ratio limits.
+- Composition tolerance.
+- Stochastic diversity checks.
+
+However, the old envelope did not prevent:
+
+- Highly elongated reinforcement regions.
+- Strong area-weighted alignment.
+- Persistent reinforcement lanes.
+- Near-continuous vertical load paths separated by thin matrix ligaments.
+- Long-range spatial organization inconsistent with the irregular reference.
+
+This is an important scientific finding.
+
+**Do not retroactively invalidate v0.7.2.**
+
+The old revisions satisfied their registered experiment.
+
+The new constraints are a prospective refinement of the scientific question.
+
+Preserve the historical lane-forming scripts and arrays.
+
+Use them as known challenging morphology controls when validating the new descriptors.
+
+Do not use the historical high-stiffness designs as the common starting generator for v0.7.3.
+
+---
+
+# 9. THE NEW MECHANICAL OBJECTIVE
+
+Do not continue maximizing vertical stiffness.
+
+The new primary objective is:
+
+**Match a prescribed apparent vertical elastic modulus while preserving exact composition and reference-like morphology.**
+
+Define:
+
+`J = E_y_app / E_matrix`
+
+where:
+
+- `E_y_app` is the apparent vertical modulus under the registered P3 finite-domain mechanical protocol.
+- `E_matrix = 1000 MPa`.
+
+Let the prospectively registered target be:
+
+`J_target`
+
+Equivalently:
+
+`E_target = J_target * E_matrix`
+
+For an accepted realization:
+
+`target_error = abs(J - J_target) / J_target`
+
+Lower error is better.
+
+Also report signed error:
+
+`signed_target_error = (J - J_target) / J_target`
+
+A positive signed error means the specimen is too stiff.
+
+A negative signed error means it is too compliant.
+
+Do not reward excessive stiffness merely because it exceeds the target.
+
+The purpose is target-property inverse design, not unconstrained maximization.
+
+---
+
+# 10. TARGET ACCURACY AT GENERATOR LEVEL
+
+The generator produces a stochastic family, not one deterministic specimen.
+
+Therefore, distinguish:
+
+## A. Mean-property matching
+
+`mean_bias = abs(mean(J) - J_target) / J_target`
+
+This measures whether the generator's expected apparent modulus is near the target.
+
+## B. Typical realization accuracy
+
+`mean_absolute_target_error = mean(abs(J_i - J_target) / J_target)`
+
+This measures how closely individual generated realizations approach the target.
+
+## C. Mechanical variability
+
+Report:
+
+- Sample standard deviation.
+- Coefficient of variation.
+- Minimum and maximum.
+- Median target error.
+- Target-hit rate.
+
+A generator could obtain the correct mean while producing individual specimens far above and below the target.
+
+Do not classify that as equivalent to consistently generating near-target specimens.
+
+Use mean absolute target error across held-out realizations as the primary numerical performance metric for comparing revision scripts.
+
+Report mean-property bias and variability as additional outcomes.
+
+Register this metric hierarchy before collecting LLM responses.
+
+---
+
+# 11. TARGET SELECTION MUST BE DATA-DRIVEN
+
+Do not arbitrarily select a target such as 2000 MPa before understanding what is attainable under the new morphology constraints.
+
+The previous lane-forming results cannot establish the attainable modulus range of the new reference-like family.
+
+First:
+
+1. Establish the exact-composition starting generator.
+2. Register the stronger morphology envelope.
+3. Evaluate the baseline on new development seeds.
+4. Construct a small set of prospectively defined controlled morphology variations.
+5. Verify that those variations satisfy the same exact composition and morphology rules.
+6. Measure their actual mechanical responses.
+7. Estimate a practically attainable modulus interval under the registered model.
+
+Only then select the target.
+
+The target should:
+
+- Differ meaningfully from the baseline mean.
+- Be supported by observed feasible mechanical responses.
+- Not require the previously observed artificial reinforcement lanes.
+- Be numerically distinguishable from ordinary mesh sensitivity.
+- Be difficult enough to make inverse design meaningful.
+- Not be chosen after seeing any experimental MF/NF responses.
+
+A suggested prospective target-selection rule is provided in a later section.
+
+---
+
+# 12. PRIMARY SPECIMEN FAMILY — P3
+
+Use P3 for the primary experiment.
+
+P3 is the microscopy-derived dispersed-inclusion field used in the previous morphology and mechanics studies.
+
+Its native labels are:
+
+- 1: matrix-like solid.
+- 5: reinforcement-like solid, provisionally interpreted as secondary reprecipitated carbide.
+
+Both phases are solid.
+
+The source:
+
+- Is a native 256 × 256 field.
+- Has no explicitly annotated void phase.
+- Has unknown physical pixel calibration.
+- Is morphology-selected rather than an unbiased representative volume element.
+- Uses a supplied horizontal-flip microscopy augmentation.
+- Has a provisional phase-5 chemical interpretation.
+
+Preserve all these scientific limitations.
+
+Do not claim the mechanics represent experimentally calibrated Ni–WC properties.
+
+The P3 experiment concerns an idealized two-phase composite with controlled material contrast and different spatial geometries.
+
+---
+
+# 13. EXACT COMPOSITION REQUIREMENT
+
+The previous ±64-pixel tolerance was sufficient for the initial optimization study, but v0.7.3 should remove that remaining composition confounder.
+
+Require:
+
+`N_total = 65536`
+
+`N_reinforcement = 20731`
+
+`N_matrix = 44805`
+
+`reinforcement_fraction = 20731 / 65536`
+
+Every mechanically accepted primary P3 realization must contain exactly the registered reinforcement count.
+
+This includes:
+
+- BASE.
+- Researcher-designed controlled morphology variations.
+- MF revisions.
+- NF revisions.
+- Any optional additional control.
+
+Do not use a composition tolerance for the primary exact-composition experiment.
+
+Do not permit a candidate to achieve improved mechanics by increasing reinforcement fraction.
+
+The evaluation harness must not repair generated outputs.
+
+Do not add or remove pixels after generation to make an otherwise infeasible candidate pass.
+
+The generator itself may implement a scientifically defensible bounded count-calibration procedure, provided that procedure is part of the frozen returned module and obeys every morphology requirement.
+
+---
+
+# 14. EXACT-COMPOSITION COMMON STARTING GENERATOR
+
+The original P3_B_02/r0 starting generator is an authenticated captured LLM script.
+
+However, its baseline outputs in v0.7.2 were accepted under ±64-pixel composition tolerance rather than exact composition.
+
+Inspect whether its existing implementation already supports exact composition.
+
+If exact composition is achieved for all registered development seeds without modification, preserve the original code unchanged.
+
+Otherwise, establish one transparently documented common exact-composition adaptation.
+
+Preferred approach:
+
+- Preserve the original procedural morphology strategy.
+- Modify only the necessary generation logic to achieve the exact reinforcement pixel count.
+- Use bounded geometry-preserving count adjustment within the generator.
+- Avoid introducing isolated pixel noise.
+- Avoid systematically creating new alignment or clustering.
+- Preserve finite nonperiodic boundaries.
+- Preserve stochastic diversity.
+- Independently evaluate the adapted output morphology.
+
+Do not modify the historical captured B02 file.
+
+Create a new versioned starting-generator file.
+
+Label it accurately, for example:
+
+`P3_B02_EXACT_COMPOSITION_RESEARCHER_ADAPTATION_V073`
+
+If manually adapted, explicitly state that the optimization starting point is researcher-prepared from an earlier LLM-generated script.
+
+Do not call the adaptation an unedited ordinary-ChatGPT response.
+
+Both experimental arms must receive exactly the same adapted source.
+
+No condition-specific composition correction is permitted.
+
+---
+
+# 15. STARTING-GENERATOR ACCEPTANCE
+
+Before using the starting generator in the inverse-design experiment, establish:
+
+1. Exact source provenance.
+2. Correct phase labels.
+3. Correct 256 × 256 `uint8` output.
+4. Exact composition.
+5. Same-seed determinism.
+6. Genuine between-seed variation.
+7. Reference-like morphology.
+8. Compliance with the new morphology envelope.
+9. Bounded runtime.
+10. No reference-array leakage.
+11. No mechanical solver calls.
+12. No dependence on hidden evaluator outputs.
+
+The starting generator must remain feasible on the registered development seeds.
+
+If the exact-composition adaptation materially changes the morphology distribution, investigate and document that change before freezing it.
+
+Do not search numerous starting generators using mechanical results and then select the weakest baseline to exaggerate optimization improvement.
+
+The starting point should be selected for structural feasibility and continuity with the completed research.
+
+---
+
+# 16. NEW MORPHOLOGY DESCRIPTORS
+
+Implement the smallest defensible set of additional descriptors needed to distinguish irregular dispersed particles from highly organized reinforcement lanes.
+
+Reuse existing validated categorical descriptors wherever appropriate.
+
+Add the following principal descriptor families.
+
+## A. Area-weighted shape statistics
+
+For each measurable connected reinforcement region:
+
+- Region area.
+- Major-axis length.
+- Minor-axis length.
+- Aspect ratio.
+- Principal orientation.
+
+Report:
+
+- Existing unweighted mean aspect ratio.
+- Area-weighted mean aspect ratio.
+- Area-weighted upper-tail aspect ratio.
+- Area fraction contained in highly elongated regions.
+- Largest-region shape statistics.
+
+The area-weighted quantities are essential.
+
+A small number of large elongated regions should not disappear statistically because many small regions have low aspect ratios.
+
+## B. Orientation organization
+
+Measure axial orientation using the correct 180-degree equivalence.
+
+Potential descriptors:
+
+- Area-weighted orientation tensor.
+- Axial alignment order parameter.
+- Preferred orientation angle.
+- Area fraction associated with strongly vertical orientations.
+- Vertical orientation tensor component.
+
+Handle nearly circular regions carefully.
+
+Their principal-axis orientation may be numerically unstable and should not dominate the orientation statistic.
+
+Define an appropriate shape or anisotropy weighting.
+
+## C. Directional spatial correlations
+
+Measure reinforcement two-point correlation along horizontal and vertical directions at several registered distances.
+
+Include short, intermediate, and long ranges.
+
+Use finite-domain normalization.
+
+Do not wrap the image periodically.
+
+A useful diagnostic is the difference between vertical and horizontal correlation:
+
+`S2_y(r) - S2_x(r)`
+
+Use a registered aggregate of these differences.
+
+## D. Reinforcement occupancy organization
+
+Measure:
+
+- Reinforcement occupancy of each image column.
+- Reinforcement occupancy of each image row.
+- Variation in column and row occupancy.
+- Occupancy variation in wider strips.
+- Long-range persistence of reinforcement-rich vertical strips.
+
+Do not rely on a single strip width.
+
+A segmented lane pattern may evade a descriptor that examines only individual columns.
+
+## E. Gap-tolerant connectivity
+
+Investigate descriptors that detect nearly connected reinforcement paths even when the reinforcement remains formally disconnected.
+
+Examples:
+
+- Largest-component growth under small geometric dilation.
+- Near-spanning reinforcement paths after a one-pixel or two-pixel gap closure.
+- Directional continuity under a registered limited-gap criterion.
+
+These are diagnostic transformations used by the evaluator.
+
+Do not modify the actual mechanical specimen.
+
+Do not automatically interpret dilated connectivity as a genuine physical reinforcement connection.
+
+The purpose is to detect the nearly continuous spatial organization that the old connectivity policy missed.
+
+## F. Spatial dispersion and clustering
+
+Reuse or extend:
+
+- Nearest-neighbor spacing.
+- Spacing coefficient of variation.
+- Centroid spatial distribution.
+- Pair-distance statistics.
+- Local area-fraction variation.
+- Interface density.
+
+Do not add redundant descriptors without a clear scientific purpose.
+
+---
+
+# 17. BOUNDARY-CENSORED REGION HANDLING
+
+The P3 reference contains both complete and boundary-censored reinforcement regions.
+
+Shape and orientation statistics must account for this.
+
+For complete regions:
+
+- Equivalent diameter.
+- Principal-axis geometry.
+- Aspect ratio.
+- Orientation.
+
+For boundary-censored regions:
+
+- Preserve their existence.
+- Measure available observed geometry.
+- Do not pretend the clipped region is the complete physical particle.
+
+Report complete-region and all-observed-region statistics separately where appropriate.
+
+A generator must not evade shape-tail constraints by placing extremely elongated regions against the image boundary so that they are excluded from complete-region statistics.
+
+Therefore, include at least one full-field diagnostic that remains sensitive to boundary-clipped lanes, such as directional correlations, strip occupancy, or gap-tolerant spatial organization.
+
+Do not require all features to lie completely inside the domain.
+
+Finite nonperiodic boundaries and clipped particles are physically appropriate for a cropped microstructure field.
+
+---
+
+# 18. VALIDATE NEW MORPHOLOGY DESCRIPTORS
+
+Use independent analytical and digital fixtures.
+
+Required examples:
+
+1. Circular inclusions with no preferred orientation.
+2. Identical horizontal ellipses.
+3. Identical vertical ellipses.
+4. Balanced horizontal and vertical ellipses.
+5. A mixture of many small circular particles and one large elongated particle.
+6. Dispersed irregular inclusions.
+7. Segmented vertical reinforcement lanes.
+8. Segmented horizontal lanes.
+9. A near-spanning chain separated by thin matrix gaps.
+10. Boundary-censored elongated reinforcement.
+11. A clustered but non-lane-forming particle field.
+12. A field with known column and row occupancy.
+13. A rigidly rotated or reflected configuration.
+
+Verify:
+
+- Correct axial-angle conventions.
+- Correct image-axis conventions.
+- Correct area weighting.
+- Correct treatment of circular regions.
+- Correct finite-boundary handling.
+- Appropriate descriptor response to lane organization.
+- Correct behavior on disconnected reinforcement.
+- Deterministic descriptor computation.
+- Explicit handling of undefined metrics.
+
+Do not accept a descriptor solely because it produces plausible numbers on real images.
+
+Validate its meaning.
+
+---
+
+# 19. HISTORICAL CHALLENGE CONTROLS
+
+Use the frozen v0.7.2 output arrays as a known challenge set.
+
+Required comparison categories:
+
+- P3 target annotation.
+- Historical B02 baseline.
+- MF_01 lane-forming designs.
+- MF_02 lane-forming designs.
+- NF_01 lane-forming designs.
+- NF_02 lane-forming designs.
+
+Evaluate the proposed new descriptors on these actual stored arrays.
+
+The expected scientific behavior is that the new descriptors reveal substantially more spatial organization in the historical lane-forming revisions than in the target and original baseline.
+
+However, do not assume every descriptor will successfully distinguish them.
+
+Document actual discrimination performance.
+
+These controls are historical, already-observed examples.
+
+Using them to design the new envelope is appropriate for a new prospective experiment.
+
+Do not represent performance against them as a blind validation of the new envelope.
+
+Do not alter their original v0.7.2 acceptance status.
+
+---
+
+# 20. REGISTER A STRONGER MORPHOLOGY ENVELOPE
+
+The new envelope should include both hard structural requirements and quantitative morphology constraints.
+
+Preserve the scientifically appropriate parts of the previous envelope.
+
+At minimum require:
+
+- Native labels 1 and 5.
+- Both phases nonempty.
+- Correct shape and dtype.
+- Exact reinforcement composition.
+- Matrix-like phase connected sufficiently to support the intended family.
+- No reinforcement spanning path under the registered connectivity definitions.
+- No single dominant reinforcement component.
+- Plausible complete and boundary-censored particle populations.
+- No isolated reinforcement noise used solely to satisfy composition.
+- Preserved stochastic diversity.
+
+Add morphology constraints addressing:
+
+1. Area-weighted particle aspect ratio.
+2. Shape-tail behavior.
+3. Area-weighted orientation alignment.
+4. Long-range directional correlation.
+5. Vertical and horizontal occupancy organization.
+6. Near-spanning segmented reinforcement.
+7. Relevant clustering or spacing behavior.
+
+Do not choose arbitrary final thresholds without examining the reference and baseline data.
+
+---
+
+# 21. MORPHOLOGY THRESHOLD CALIBRATION
+
+Calibrate the new envelope prospectively using:
+
+- The authenticated P3 target.
+- A new development ensemble from the exact-composition common starting generator.
+- Independent analytical fixtures.
+- The frozen historical lane-forming challenge designs.
+
+Use the following principles:
+
+1. The target should satisfy the intended morphology envelope unless a clearly documented annotation limitation prevents it.
+2. The common starting generator should satisfy the envelope consistently.
+3. The envelope should detect the dominant lane-forming mechanisms seen in v0.7.2.
+4. The envelope should permit meaningful variation in shape, orientation, spacing, and clustering.
+5. The envelope should not be so restrictive that the inverse-design objective becomes trivially infeasible.
+6. The envelope should not be weakened after seeing new LLM responses.
+
+Where appropriate, define limits using reference values, baseline quantiles, and a prospectively justified margin.
+
+Record numerical values and rationale.
+
+Do not present empirical ranges from one reference crop as universal physical limits for Ni–WC composites.
+
+They define the intended P3-like experimental family.
+
+---
+
+# 22. SEPARATE HARD CONSTRAINTS FROM DIAGNOSTICS
+
+Not every useful descriptor must become a hard constraint.
+
+A defensible initial policy is:
+
+## Hard constraints
+
+- Exact composition.
+- Correct phase labels.
+- Matrix/reinforcement topology.
+- Region-population requirements.
+- Shape-tail limits.
+- At least one validated alignment constraint.
+- At least one validated long-range spatial-organization constraint.
+- Diversity.
+
+## Additional diagnostics
+
+- Other correlation functions.
+- Alternative spacing statistics.
+- Interface density.
+- Additional shape descriptors.
+- Detailed morphology reconstruction errors.
+- Local phase-fraction heterogeneity.
+- Secondary directional descriptors.
+
+Do not require the LLM to reproduce every target descriptor exactly.
+
+The optimization needs a feasible design space.
+
+Conversely, do not hide important morphology drift merely because a diagnostic is not a hard constraint.
+
+Report both.
+
+---
+
+# 23. HUMAN-INTERPRETABLE MORPHOLOGY REVIEW
+
+Produce a compact morphology-envelope review before the new LLM experiment.
+
+Include actual:
+
+- P3 reference.
+- Exact-composition baseline examples.
+- Historical v0.7.2 lane-forming examples.
+- Controlled morphology variations.
+- Corresponding new descriptor values.
+- Proposed constraint thresholds.
+- Examples of accepted and rejected geometry.
+
+Use identical scales and phase colors.
+
+The review should demonstrate that the new envelope corresponds to the scientific intention.
+
+Do not create decorative hypothetical images.
+
+Do not rely exclusively on a table of scalar statistics.
+
+A numerical descriptor envelope cannot completely establish physical microstructure-family identity.
+
+Preserve qualitative review as an additional scientific limitation and interpretive tool.
+
+---
+
+# 24. CONTROLLED GEOMETRY–MECHANICS DEVELOPMENT DATASET
+
+The main change to the feedback intervention is that the LLM should receive information about how morphology changes affect mechanical response.
+
+Instead of providing only six baseline curves, construct a compact development dataset containing several controlled morphology variants.
+
+All variants must:
+
+- Use the same P3 phase semantics.
+- Contain exactly 20,731 reinforcement pixels.
+- Satisfy the stronger morphology envelope.
+- Remain stochastic.
+- Use finite nonperiodic boundaries.
+- Preserve a dispersed-inclusion morphology.
+- Use the same qualified mechanical protocol.
+
+These are researcher-designed experimental probes.
+
+They are not independent LLM optimization trials.
+
+Label them accordingly.
+
+Do not claim a researcher-authored variant is an ordinary-ChatGPT response.
+
+---
+
+# 25. PROPOSED CONTROLLED MORPHOLOGY VARIANTS
+
+Use a small, physically interpretable design matrix.
+
+Suggested primary variants:
+
+## V0 — Exact-composition baseline
+
+The frozen common starting generator.
+
+## V1 — Moderate particle elongation
+
+Change the shape distribution within the registered shape-tail limits while avoiding strong preferential orientation.
+
+## V2 — Moderate vertical orientation bias
+
+Introduce a limited vertical orientation preference while remaining within the alignment and spatial-organization constraints.
+
+## V3 — Moderate horizontal orientation bias
+
+Use a corresponding horizontal preference where feasible.
+
+## V4 — Altered spatial dispersion
+
+Change particle spacing or local clustering while preserving the other principal morphology characteristics as closely as practical.
+
+## V5 — Combined moderate morphology variation
+
+Combine one or two feasible geometric changes, if useful for establishing a broader attainable response range.
+
+These are suggested variants, not a requirement to implement exactly these algorithms.
+
+Inspect the actual starting generator.
+
+Use accessible existing parameters where possible.
+
+If the starting generator does not expose appropriate controls, implement a small transparent parameterized research generator or bounded adaptation.
+
+Do not rewrite the entire reconstruction framework merely to create these probes.
+
+---
+
+# 26. CONTROLLED VARIANT DESIGN RULES
+
+Before mechanically evaluating any controlled variant, freeze:
+
+- Variant identity.
+- Generation algorithm.
+- Parameter values.
+- Intended morphology change.
+- Common composition.
+- Common feasibility rules.
+- Development seeds.
+- Mechanical protocol.
+- Planned measurements.
+
+Do not design the variants after inspecting a favorable mechanical result.
+
+Do not use unrestricted search to discover a set of especially informative examples.
+
+Keep the design matrix small.
+
+A suggested initial budget is:
+
+- Six baseline development realizations.
+- Four additional variant families.
+- Three stochastic realizations per variant.
+
+This gives approximately 18 development geometries.
+
+Additional variants may be considered only if prospectively registered before mechanical results are used to select the target.
+
+The purpose is a compact informative dataset, not exhaustive design-space exploration.
+
+---
+
+# 27. CONTROLLED VARIANT FEASIBILITY
+
+Every controlled variant must pass the same morphology envelope before its mechanical response can be used to establish the attainable target range.
+
+If a planned variant generates infeasible structures:
+
+- Preserve the generated arrays.
+- Record the exact failures.
+- Do not use their favorable stiffness as evidence of attainability under the envelope.
+- Do not silently repair them in the evaluation harness.
+
+A prospectively registered development process may adjust the researcher-designed variant generator before the entire variant matrix is frozen.
+
+Once the variant algorithms and mechanical dataset are frozen, do not continually change them based on observed stiffness.
+
+The new experiment should not reproduce the previous problem of mechanically favorable structures departing from the intended family.
+
+---
+
+# 28. DEVELOPMENT SEED PARTITION
+
+Use new seeds not used in earlier experiments.
+
+The completed v0.7.2 experiment used:
+
+- Development seeds 1000–1005.
+- Held-out seeds 2000–2009.
+
+Do not reuse those as unseen final evaluation seeds.
+
+Suggested v0.7.3 partitions:
+
+- Envelope calibration: 3000–3011.
+- Geometry–mechanics development: 3100–3105.
+- Final held-out evaluation: 4000–4009.
+
+Check the complete historical experiment inventory for collisions.
+
+Register the exact seed lists before generating the relevant outputs.
+
+The calibration and development seeds may be used to establish the experiment.
+
+The final held-out seeds must remain evaluator-only.
+
+Do not expose final held-out seeds or outcomes to any LLM.
+
+Use identical final seed lists across BASE and all revision scripts.
+
+---
+
+# 29. FROZEN P3 MECHANICAL PROTOCOL
+
+Reuse the qualified v0.7.1/v0.7.2 mechanical evaluator.
+
+Do not silently change the mechanical problem.
+
+Specimen:
+
+- 256 × 256 categorical P3 field.
+- Normalized width = 1 mm.
+- Normalized height = 1 mm.
+- Reference thickness = 1 mm.
+
+These are computational scaling conventions.
+
+They are not measured microscopy dimensions.
+
+Material mapping:
+
+- Native label 1 → matrix-like solid.
+- Native label 5 → reinforcement-like solid.
+
+Constitutive properties:
+
+Matrix:
+
+- Young's modulus = 1000 MPa.
+- Poisson's ratio = 0.30.
+
+Reinforcement:
+
+- Young's modulus = 10000 MPa.
+- Poisson's ratio = 0.30.
+
+Elastic contrast:
+
+`10`
+
+Material protocol:
+
+`ILLUSTRATIVE_TWO_PHASE_ELASTIC_CONTRAST_10`
+
+Element:
+
+- PLANE182.
+- KEYOPT(1)=0.
+- KEYOPT(3)=3.
+- KEYOPT(6)=0.
+
+Verify against the inherited native protocol.
+
+Analysis:
+
+- Small-strain linear elasticity.
+- Linear static.
+- NLGEOM OFF.
+- Perfectly bonded solid-phase interfaces through shared nodes.
+
+Boundary conditions:
+
+- Bottom UY = 0.
+- Top prescribed negative UY.
+- One bottom-left UX pin.
+- Free lateral motion.
+- No rigid platen contact.
+- No self-contact.
+
+Maximum compression:
+
+`0.005`
+
+Equivalent to 0.5% engineering compression.
+
+Use this identical protocol for all primary P3 experiments.
+
+---
+
+# 30. MESH STRATEGY
+
+Use the previously qualified structured meshes.
+
+## H1
+
+- One quadrilateral per source pixel.
+- 65,536 elements.
+- 66,049 nodes.
+
+## H2
+
+- Each source pixel subdivided into 2 × 2 quadrilaterals.
+- 262,144 elements.
+- 263,169 nodes.
+
+Both preserve categorical phase geometry.
+
+Do not resize or interpolate the source labels.
+
+Do not change material interface geometry between H1 and H2.
+
+Do not modify the source array.
+
+Do not add contact elements to connect bonded solid phases.
+
+Reuse native material, connectivity, area, and boundary-constraint inventories.
+
+Preserve the limitation that pixelated phase boundaries and diagonal shared-node connections are idealized discretizations.
+
+---
+
+# 31. ACTUAL DEVELOPMENT STRESS–STRAIN CURVES
+
+For the baseline and controlled morphology variants, obtain actual native ANSYS mechanical responses.
+
+Use the previously qualified checkpoints:
+
+- 0.1% compression.
+- 0.2%.
+- 0.3%.
+- 0.4%.
+- 0.5%.
+
+For every accepted development geometry, record:
+
+- Actual achieved strain.
+- Actual prescribed displacement.
+- Signed top reaction.
+- Signed bottom reaction.
+- Nominal compressive stress.
+- Apparent vertical modulus.
+- Reaction equilibrium.
+- Strain energy.
+- Mechanical acceptance.
+- Source and native-result hashes.
+
+Do not manufacture a five-point stress–strain curve from one solved point.
+
+The feedback should contain genuine native data.
+
+The previous v0.7.2 experiment successfully generated full five-point curves for its specimens.
+
+Reuse that approach unless an independently qualified screening route is justified for later final evaluation.
+
+---
+
+# 32. OPTIONAL SECOND LOADING DIRECTION
+
+A second loading direction can make the feedback more informative.
+
+However, do not double the entire solver campaign unnecessarily.
+
+For a prospectively selected subset of development geometries, consider horizontal loading.
+
+For example:
+
+- First baseline development realization.
+- First moderate elongation realization.
+- First vertical orientation-bias realization.
+- First horizontal orientation-bias realization.
+- First altered-dispersion realization.
+
+Use appropriate rotated boundary conditions.
+
+Preserve the same geometry and constituent properties.
+
+Measure:
+
+`E_x_app`
+
+and:
+
+`E_y_app`
+
+Report the apparent directional stiffness ratio:
+
+`E_y_app / E_x_app`
+
+Do not call this a complete homogenized elasticity tensor.
+
+The primary optimization objective remains matching the registered vertical modulus.
+
+Horizontal modulus is supplementary evidence about geometry–mechanics trade-offs.
+
+If horizontal-response data are included in the MF packet, make the same model assumptions and geometric descriptors available to NF without measured horizontal mechanical responses.
+
+Do not introduce a second optimization objective after seeing these results.
+
+---
+
+# 33. GEOMETRY–MECHANICS DEVELOPMENT TABLE
+
+Construct a clear actual-data table linking each development geometry to its measured mechanical response.
+
+Suggested fields:
+
+- Variant ID.
+- Seed.
+- Exact phase count.
+- Reinforcement fraction.
+- Complete-region count.
+- Mean equivalent diameter.
+- Diameter spread.
+- Unweighted aspect ratio.
+- Area-weighted aspect ratio.
+- Shape-tail descriptor.
+- Area-weighted orientation order parameter.
+- Preferred axial orientation.
+- Directional S2 summaries.
+- Column and row occupancy variation.
+- Gap-tolerant organization descriptor.
+- Spacing and clustering descriptors.
+- Apparent vertical modulus.
+- Normalized vertical modulus.
+- Actual stress–strain curve.
+- Optional horizontal modulus.
+- Optional directional modulus ratio.
+- Mechanical acceptance.
+- Mesh-sensitivity note.
+
+Include actual geometry images for a small predetermined subset if useful.
+
+Do not include only favorable variants.
+
+Show failed or infeasible development probes separately.
+
+Do not claim that a measured association proves a causal effect of one descriptor.
+
+Several morphology features may change simultaneously despite the controlled design.
+
+Document that limitation.
+
+---
+
+# 34. DEVELOPMENT MESH-SENSITIVITY CHECKS
+
+The target modulus should be selected with numerical sensitivity in mind.
+
+Before freezing the target, refine a small prospectively selected subset of development geometries.
+
+Suggested subset:
+
+- First exact-composition baseline geometry.
+- First geometry from each controlled variant family.
+
+Run H2 under the identical mechanical protocol.
+
+Calculate:
+
+- H1 apparent modulus.
+- H2 apparent modulus.
+- Relative change.
+- Observed direction of the morphology-related modulus change.
+- Practical mesh-sensitivity diagnostic.
+
+Do not treat the previously observed v0.7.1 reference mesh difference of 0.664% as a universal uncertainty bound.
+
+Use the actual new development geometries.
+
+The target must not depend on mechanical effects smaller than the numerical differences needed to distinguish them.
+
+---
+
+# 35. PROSPECTIVE TARGET-SELECTION RULE
+
+Register a rule before inspecting the development mechanical results.
+
+A suggested rule:
+
+1. Identify the mean apparent modulus of the exact-composition baseline.
+2. Identify the mean apparent moduli of structurally feasible controlled variants.
+3. Exclude development variants whose apparent effects are unsupported by the planned mesh-sensitivity checks.
+4. Identify a feasible variant mean sufficiently separated from the baseline.
+5. Prefer a target within the measured feasible interval, rather than an extrapolated property.
+6. Set the target between the baseline mean and a confirmed feasible variant mean.
+
+A reasonable initial target location is approximately 60% of the distance from the baseline mean toward the chosen feasible variant mean:
+
+`E_target = E_baseline_mean + 0.60 * (E_variant_mean - E_baseline_mean)`
+
+This is a suggested inverse-design target-selection convention.
+
+Register the exact rule prospectively.
+
+Prefer an upward target if a meaningfully stiffer morphology remains feasible under the new envelope.
+
+If no useful upward range exists but a meaningful downward range is demonstrated, a lower target may be appropriate, provided the direction-selection rule was registered before examining results.
+
+Round the final target only if that rounding is justified and does not make the task trivial.
+
+Do not choose the target based on any MF or NF result.
+
+---
+
+# 36. TARGET DIFFICULTY GATE
+
+Before submitting LLM prompts, verify that the chosen target represents a meaningful design challenge.
+
+Compare:
+
+- Difference between target and baseline mean.
+- Baseline stochastic variability.
+- Observed development mesh sensitivity.
+- Feasible variant response range.
+
+A proposed initial gate is that the target should be separated from the baseline by a difference that is both practically meaningful and clearly larger than the relevant observed numerical sensitivity.
+
+For example, a separation on the order of several percent may be useful if it is supported by the actual feasible development responses.
+
+Do not require a particular percentage regardless of the data.
+
+Do not manufacture a target that is unsupported by feasible morphology.
+
+If the baseline and all feasible variants have nearly identical modulus:
+
+1. Preserve that finding.
+2. Determine whether the chosen morphology controls provide a sufficiently meaningful design space.
+3. Document one justified, prospectively registered extension if appropriate.
+4. If no useful target is established, stop at a valid feasibility-study outcome.
+
+Do not proceed with a target-property LLM experiment that cannot distinguish success from ordinary stochastic variation.
+
+---
+
+# 37. REGISTER TARGET ACCURACY TOLERANCE
+
+Define a target-hit tolerance before collecting LLM responses.
+
+A possible initial target-hit definition is:
+
+`abs(E_app - E_target) / E_target <= 0.02`
+
+This corresponds to a ±2% target band.
+
+The exact tolerance must be justified relative to:
+
+- Baseline variability.
+- Mechanical mesh sensitivity.
+- Intended target difficulty.
+- The actual attainable modulus range.
+
+Do not automatically adopt ±2% if it is smaller than the numerical uncertainty or larger than the entire meaningful design range.
+
+Report both:
+
+- Continuous target error.
+- Target-hit rate under the registered tolerance.
+
+Do not treat hitting a tolerance band as proof of physical material accuracy.
+
+This is an idealized numerical target.
+
+---
+
+# 38. PRIMARY EXPERIMENTAL CONDITIONS
+
+Use three primary categories.
+
+## BASE — Frozen exact-composition starting generator
+
+No new LLM revision.
+
+Generate final stochastic realizations and evaluate their target-property error.
+
+Purpose:
+
+- Establish the baseline target mismatch.
+- Establish ordinary stochastic variation.
+- Provide a common numerical reference for all revision arms.
+
+## IF — Informative mechanical-feedback revision
+
+The LLM receives:
+
+- Exact same common starting generator.
+- Phase definitions.
+- Exact composition requirement.
+- Stronger morphology constraints.
+- Mechanical model.
+- Prescribed target apparent modulus.
+- Controlled development geometry descriptions.
+- Development morphology measurements.
+- Actual corresponding ANSYS stress–strain curves.
+- Actual corresponding apparent moduli.
+- Mechanical variability.
+- Relevant measured numerical sensitivity.
+- Optional measured horizontal responses, if registered.
+
+The LLM must return one complete revised procedural generator targeting the prescribed modulus.
+
+## NF — No-mechanical-feedback revision
+
+The LLM receives:
+
+- Exact same starting generator.
+- Exact same target modulus.
+- Exact same composition requirement.
+- Exact same morphology constraints.
+- Exact same mechanical model.
+- Exact same controlled development geometry descriptions.
+- Exact same development morphology measurements.
+- Exact same generator interface and runtime limits.
+
+It does not receive measured:
+
+- Stress–strain curves.
+- Apparent moduli of development specimens.
+- Mechanical rankings.
+- Phase stress fields.
+- Geometry–mechanics associations derived from measured responses.
+- Observed mechanical outcomes of the variants.
+
+NF is the matched objective-only revision control.
+
+---
+
+# 39. IMPORTANT CONTROL FAIRNESS
+
+The NF arm must have enough information to reason about the problem.
+
+It should know:
+
+- Which phase is stiffer.
+- The exact constituent properties.
+- The direction of loading.
+- The target modulus.
+- The allowable morphology design space.
+- The prescribed mechanical boundary conditions.
+- That interfaces are ideally bonded.
+- The same controlled morphology variations.
+
+The intended intervention is actual measured mechanical responses.
+
+It is not basic physics knowledge.
+
+Do not provide IF with more revision opportunities.
+
+Do not give IF a more capable starting generator.
+
+Do not provide IF a manually authored explanation that identifies the optimal geometry.
+
+Use factual measured geometry–mechanics evidence.
+
+Let the LLM reason from that evidence.
+
+The target itself is derived from development mechanics and is supplied to both arms.
+
+Document that shared target-selection information.
+
+NF is a control without measured development responses, not a model with no mechanical knowledge whatsoever.
+
+---
+
+# 40. OPTIONAL BASELINE-FEEDBACK ARM
+
+A scientifically valuable additional condition would distinguish whether any improvement comes from richer geometry–mechanics information rather than merely receiving measured baseline curves.
+
+Optional arm:
+
+`BF — Baseline mechanical feedback only`
+
+BF receives:
+
+- All common structural information.
+- The same target.
+- Actual baseline stress–strain curves and baseline modulus variability.
+- No measured mechanical results for the controlled morphology variations.
+
+This would enable three distinct comparisons:
+
+1. IF versus NF: effect of providing informative measured responses.
+2. BF versus NF: effect of providing baseline mechanical measurements.
+3. IF versus BF: incremental effect of pairing controlled morphology variations with measured responses.
+
+However, do not add BF after seeing IF/NF results.
+
+If sufficient model and solver resources exist, register BF before collecting any new experimental LLM responses.
+
+Use the same number of independent trials and revision opportunities.
+
+If resources are limited, omit BF and complete the primary IF/NF experiment.
+
+Do not claim that comparing v0.7.3 IF directly with historical v0.7.2 MF isolates the benefit of richer feedback.
+
+The target objective, constraints, starting composition, and experimental context have changed.
+
+---
+
+# 41. INDEPENDENT LLM TRIAL COUNT
+
+The previous experiment used two independent scripts per arm.
+
+That was sufficient for a preliminary demonstration but too small to distinguish subtle arm-level effects reliably.
+
+For v0.7.3, prefer:
+
+- Four independent IF revision trials.
+- Four independent NF revision trials.
+
+Total:
+
+**Eight genuine independent initial revision responses.**
+
+Minimum acceptable pilot:
+
+- Three IF trials.
+- Three NF trials.
+
+Choose the actual trial count before submitting prompts.
+
+If BF is included, use the same registered number of independent trials in that arm.
+
+Do not add trials selectively after observing one arm performing poorly.
+
+Do not stop one arm early because it achieves a favorable result.
+
+Each independent revision must begin from the same frozen starting code.
+
+Each receives one registered revision opportunity.
+
+Use new independent ordinary-ChatGPT conversations or an explicitly authorized equivalent model-execution interface.
+
+---
+
+# 42. MODEL EXECUTION POLICY
+
+Reuse the genuine response-capture workflow established in v0.7.2.
+
+For every actual invocation, record:
+
+- Trial identity.
+- Experimental arm.
+- Actual model/interface identity.
+- Exposed reasoning configuration.
+- Full submitted prompt.
+- Complete returned response.
+- Extracted Python module.
+- Response provenance.
+- Prompt hash.
+- Response hash.
+- Module SHA-256.
+- Available conversation receipt.
+- Relevant personalization and context limitations.
+
+Use the same model and exposed reasoning configuration across all arms.
+
+Prefer an environment that reduces cross-trial context contamination where available.
+
+Do not claim backend identity, routing, token counts, or usage information that the interface does not expose.
+
+Do not let one trial receive another trial's response.
+
+Do not include historical optimization results in a revision prompt unless that information is identical and prospectively registered across arms.
+
+The main experiment should evaluate the new target-property problem, not encourage copying the earlier lane-forming solution.
+
+---
+
+# 43. HUMAN-SUBMISSION GATE
+
+If Codex cannot directly execute genuine independent ordinary-ChatGPT calls through an authorized interface:
+
+1. Complete the development geometry–mechanics dataset.
+2. Freeze the morphology envelope.
+3. Freeze the starting generator.
+4. Select and freeze the target using the registered rule.
+5. Produce the complete ready-to-submit experimental prompt packets.
+6. Clearly identify which packets include measured mechanical feedback.
+7. Provide exact instructions for submitting the independent conversations.
+8. Provide the existing verified response-ingestion procedure.
+9. Commit the complete experiment preparation.
+10. Stop at the human-submission gate.
+
+Do not fabricate LLM responses.
+
+Do not write substitute revisions and label them genuine independent ChatGPT responses.
+
+Do not count prompt generation as a completed LLM trial.
+
+A valid interim status is:
+
+`MORPHOLOGY_ENVELOPE_AND_DEVELOPMENT_MECHANICS_COMPLETE__TARGET_FROZEN__AWAITING_AUTHENTIC_LLM_RESPONSES`
+
+Once the actual responses are supplied, resume the same registered experiment.
+
+Do not modify its target, constraints, trial counts, or seed partitions.
+
+---
+
+# 44. EXACT REVISION PROMPT REQUIREMENTS
+
+The common experimental prompt must instruct the LLM to:
+
+Revise the supplied stochastic P3 generator to produce microstructures whose apparent vertical elastic modulus is close to a specified target under the registered numerical model.
+
+Preserve:
+
+- Exact reinforcement composition.
+- Native phase labels.
+- Finite boundaries.
+- Reference-like dispersed-inclusion morphology.
+- Shape-tail constraints.
+- Spatial-organization constraints.
+- Stochastic independence.
+- Generator runtime and search limitations.
+
+Return one complete Python module.
+
+The LLM may modify:
+
+- Inclusion-shape distribution.
+- Moderate orientation bias.
+- Particle size within allowed limits.
+- Spatial placement.
+- Spacing.
+- Clustering.
+- Other legitimate geometry controls.
+
+It must not:
+
+- Increase reinforcement content.
+- Create continuous or near-continuous artificial reinforcement lanes.
+- Replace the stochastic family with a fixed design.
+- Call a mechanical solver.
+- Read mechanical result caches.
+- Access the evaluator.
+- Embed target-reference pixels.
+- Ignore the registered feasibility envelope.
+
+The IF prompt additionally provides authentic measured geometry–mechanics evidence.
+
+The NF prompt receives the same geometry and problem information without measured development responses.
+
+Do not ask the model to fabricate its own stress–strain results.
+
+The independent ANSYS evaluator determines mechanical success.
+
+---
+
+# 45. GENERATED MODULE CONTRACT
+
+Required interface:
+
+`generate_microstructure(seed, parameters)`
+
+The `parameters` input should be the same for all experimental arms.
+
+Prefer an empty dictionary, consistent with the existing experiment, unless a different contract is prospectively registered.
+
+Return:
+
+- NumPy ndarray.
+- Shape `(256, 256)`.
+- Dtype `uint8`.
+- Exact labels `{1, 5}`.
+- Exactly 20,731 reinforcement pixels.
+- Exactly 44,805 matrix pixels.
+
+Use:
+
+`numpy.random.default_rng(seed)`
+
+Require:
+
+- Same-seed determinism.
+- Genuine stochastic structural differences across seeds.
+- Finite nonperiodic boundaries.
+- Boundary-censored features where appropriate.
+- Bounded runtime.
+- Bounded candidate generation.
+- No file access.
+- No network.
+- No external API calls.
+- No subprocess calls.
+- No reference-image loading.
+- No embedded reference raster.
+- No seed-specific result caches.
+- No global RNG seeding.
+- No plotting.
+- No import-time generation.
+- No hidden mechanical simulation.
+
+Use the established allowed dependencies.
+
+The generator should not contain an FE solver or import the project's mechanical evaluator.
+
+---
+
+# 46. INTERNAL GEOMETRY SEARCH
+
+Bounded internal geometry-based candidate selection is permitted.
+
+For example, the generator may evaluate a small number of candidate structures and select a candidate satisfying composition and morphology constraints.
+
+The generator may use inexpensive physical or morphological proxies.
+
+However:
+
+- All arms must obey the same registered computational limits.
+- Internal search must be bounded.
+- Actual runtime must be recorded.
+- Candidate counts should be recorded where identifiable.
+- No mechanical solver or mechanical-result lookup is allowed.
+- No target-reference pixel leakage is allowed.
+- No held-out seed-specific tuning is allowed.
+
+Do not allow an unbounded optimization loop inside the generator.
+
+Do not manually simplify or repair an expensive returned script after the experimental response is captured.
+
+Preserve its actual performance and any runtime failures.
+
+---
+
+# 47. NO REPAIR CALLS
+
+Retain the one-revision-per-trial policy.
+
+Do not request an additional response because the returned generator fails.
+
+Do not manually repair:
+
+- Syntax.
+- Imports.
+- Runtime errors.
+- Exact composition.
+- Morphology violations.
+- Stochastic diversity.
+- Mechanical objective errors.
+
+Preserve failures as experimental outcomes.
+
+If there is a genuine experiment-harness infrastructure defect, correct it transparently and apply the same correction across every affected arm.
+
+Do not confuse infrastructure correction with editing a returned LLM generator.
+
+Do not change prompts after seeing initial responses.
+
+A later revision-round experiment must have a separately registered protocol.
+
+---
+
+# 48. FREEZE ALL EXPERIMENTAL INPUTS
+
+Before opening the held-out seed partition, create an immutable experiment manifest containing:
+
+- Common starting-generator identity and hash.
+- Exact composition target.
+- Complete morphology envelope.
+- Target modulus.
+- Target-selection rule.
+- Target-hit tolerance.
+- Development variant identities.
+- Development mechanical-result hashes.
+- IF feedback packet hash.
+- NF packet hash.
+- Optional BF packet hash.
+- Model execution policy.
+- Independent trial count.
+- Revision budget.
+- All captured prompt hashes.
+- All captured response hashes.
+- All extracted script hashes.
+- Final seed-list hash.
+- Mechanical evaluator identity.
+- Mesh confirmation plan.
+- Primary and secondary outcome definitions.
+
+Suggested file:
+
+`ALL_V073_INVERSE_DESIGN_SCRIPTS_FROZEN.json`
+
+No new experimental model calls are permitted after the held-out evaluation begins.
+
+Do not make outcome-dependent changes to the target, feasibility rules, or scoring.
+
+---
+
+# 49. HELD-OUT STRUCTURAL EVALUATION
+
+Generate the registered final realizations from:
+
+- BASE.
+- All IF scripts.
+- All NF scripts.
+- All BF scripts, if registered.
+
+Use the same final seed list for each script.
+
+Recommended:
+
+Ten previously unused held-out seeds per script.
+
+For the preferred eight-revision primary design:
+
+- 10 BASE outputs.
+- 40 IF outputs.
+- 40 NF outputs.
+
+Total:
+
+**90 held-out structures.**
+
+Evaluate every output for:
+
+- Shape.
+- Dtype.
+- Correct labels.
+- Exact composition.
+- Matrix topology.
+- Reinforcement topology.
+- Region-population requirements.
+- Shape-tail constraints.
+- Orientation constraints.
+- Spatial-organization constraints.
+- Gap-tolerant near-connectivity.
+- Runtime.
+- Determinism.
+- Diversity.
+- Code-audit status.
+
+Preserve invalid outputs.
+
+Do not substitute a different seed when a registered seed fails.
+
+Do not postprocess invalid structures into feasible structures.
+
+---
+
+# 50. FEASIBILITY IS A PRIMARY OUTCOME
+
+The new experiment is not solely about minimizing modulus error.
+
+A generator that approaches the target by violating the morphology envelope has failed the constrained inverse-design problem.
+
+Report feasibility at two levels:
+
+## Realization-level feasibility
+
+Number of outputs satisfying all hard constraints divided by all attempted outputs.
+
+## Generator-level feasibility
+
+Whether the generator consistently satisfies the registered requirements.
+
+Recommended primary criterion:
+
+**All ten final held-out outputs pass the hard structural constraints.**
+
+A generator with some invalid outputs may still provide useful diagnostic evidence.
+
+It must not be declared a fully qualified inverse-design generator.
+
+Report mechanical target error among accepted outputs, but retain the full feasibility denominator.
+
+Do not make an unreliable generator look successful by ignoring its infeasible outputs.
+
+---
+
+# 51. STOCHASTIC DIVERSITY REQUIREMENTS
+
+Reuse the validated diversity methods from v0.7.2 where appropriate.
+
+The previous experiment required:
+
+- Ten unique arrays.
+- Median pairwise Hamming distance of at least 0.1.
+- At least five distinct rigid-invariant area/centroid-distance signatures.
+
+Verify the suitability of these numerical requirements under the stronger morphology envelope.
+
+Preserve them if appropriate, or register justified revised criteria before LLM execution.
+
+Do not relax diversity after observing a returned generator.
+
+The generator must produce genuinely distinct configurations.
+
+Changing only global translation or rotation does not establish meaningful stochastic generation.
+
+Do not require composition variation when composition is intentionally exact.
+
+Report:
+
+- Exact replay checks.
+- Unique array hashes.
+- Pairwise geometry variation.
+- Configuration signatures.
+- Descriptor variation.
+
+A nearly deterministic target-matching arrangement is not equivalent to a qualified stochastic inverse-design generator.
+
+---
+
+# 52. FINAL MECHANICAL EVALUATION
+
+Mechanically evaluate every structurally feasible registered final realization, subject to the prospective campaign budget.
+
+Use the frozen P3 mechanical protocol.
+
+Prefer the existing proven five-point native linear-elastic response route.
+
+The previous v0.7.2 campaign completed full curves efficiently, so do not assume scalar-only screening is necessary.
+
+For every accepted final mechanical specimen, record:
+
+- Source identity.
+- Exact phase composition.
+- Mesh identity.
+- Native material inventory.
+- Complete boundary-condition inventory.
+- Actual reaction forces.
+- Actual nominal stress.
+- Apparent modulus.
+- Strain energy.
+- Mechanical acceptance.
+- Native result provenance.
+- Independent read-only extraction.
+
+If a reduced one-point screening route is desired for storage or resource reasons, qualify it prospectively against the five-point curve method.
+
+Do not use synthetic stress–strain curves.
+
+Produce real multi-point curves for the confirmation subset in all cases.
+
+---
+
+# 53. MECHANICAL ACCEPTANCE
+
+Reuse the independently qualified v0.7.1/v0.7.2 acceptance principles.
+
+Require:
+
+1. Correct source-array identity.
+2. Correct phase mapping.
+3. Exact composition.
+4. Correct structured mesh topology.
+5. Complete domain coverage.
+6. Positive element geometry.
+7. Correct shared-node bonded interfaces.
+8. Correct constituent properties.
+9. Correct plane-stress formulation.
+10. Correct loading and supports.
+11. Genuine native solution.
+12. Complete required result sets.
+13. Actual achieved displacement.
+14. Independent signed upper/lower reactions.
+15. Acceptable equilibrium.
+16. Correct stress normalization.
+17. Consistent elastic strain energy.
+18. Valid native fields.
+19. Reproducible modulus extraction.
+20. Native file integrity.
+
+Do not weaken established acceptance tolerances.
+
+A successful MAPDL process is not automatically an accepted mechanical result.
+
+---
+
+# 54. TARGET-PROPERTY PERFORMANCE ANALYSIS
+
+For every accepted final realization, calculate:
+
+`E_app`
+
+`J = E_app / 1000 MPa`
+
+`signed_target_error = (E_app - E_target) / E_target`
+
+`absolute_target_error = abs(E_app - E_target) / E_target`
+
+`target_hit = absolute_target_error <= registered_tolerance`
+
+For each script, report:
+
+- Attempted realizations.
+- Structurally feasible realizations.
+- Mechanically accepted realizations.
+- Mean modulus.
+- Modulus sample standard deviation.
+- Mean-property bias.
+- Mean absolute target error.
+- Median absolute target error.
+- Maximum target error.
+- Target-hit rate.
+- Direction of target bias.
+- Stochastic diversity.
+- Secondary morphology metrics.
+
+Compare every revised generator with BASE.
+
+Do not reward a larger modulus if that modulus is farther from the target.
+
+The optimization objective has changed.
+
+---
+
+# 55. PRIMARY FEEDBACK COMPARISON
+
+The central experimental comparison is:
+
+**IF versus NF on held-out target-property error, subject to structural feasibility.**
+
+For each independent revision script, calculate its script-level mean absolute target error.
+
+Compare:
+
+- IF script-level target errors.
+- NF script-level target errors.
+- Mean across independent IF scripts.
+- Mean across independent NF scripts.
+- Observed arm-level difference.
+- Structural feasibility.
+- Target-hit rates.
+- Stochastic diversity.
+- Computational effort.
+
+An illustrative improvement metric is:
+
+`feedback_advantage = mean_script_error_NF - mean_script_error_IF`
+
+A positive value favors IF.
+
+Register the exact sign and aggregation convention.
+
+Do not pool 40 IF realizations as 40 independent LLM responses.
+
+The independent experimental unit is the revision script.
+
+The stochastic realizations are nested within it.
+
+With three or four scripts per arm, the study remains a small pilot.
+
+Do not manufacture statistical significance.
+
+---
+
+# 56. BASELINE-RELATIVE TARGET IMPROVEMENT
+
+In addition to comparing IF with NF, determine whether any revision improves on the frozen baseline.
+
+For a common seed:
+
+`target_error_reduction = absolute_error_BASE - absolute_error_revision`
+
+A positive value means the revision approaches the target more closely.
+
+Report:
+
+- Paired seed-level target-error reductions.
+- Mean paired improvement.
+- Fraction of improved pairs.
+- Absolute target-error distributions.
+- Script-level performance.
+
+Equal seed IDs support a common-seed comparison.
+
+They do not establish identical particle coordinates or identical random-number streams across different generation algorithms.
+
+Do not overinterpret pairing.
+
+---
+
+# 57. ACCOUNT FOR BASELINE VARIABILITY
+
+The new objective must be distinguished from ordinary stochastic fluctuation.
+
+Compare:
+
+- Baseline modulus distribution.
+- Target location.
+- Revision modulus distributions.
+- Within-script variability.
+- Between-script variability.
+- Target-error improvement.
+
+A revision that happens to generate one near-target specimen does not establish that it has successfully controlled the mechanical property.
+
+Likewise, a generator with a correct mean but very large variability may be unsuitable for consistent target matching.
+
+Report both.
+
+Do not use the baseline stochastic standard deviation as a rigorous numerical error bound.
+
+Stochastic variation and finite-element discretization sensitivity are different uncertainty sources.
+
+---
+
+# 58. REFINED-MESH CONFIRMATION
+
+Use the H2 mesh to verify important target-property conclusions.
+
+Register the refinement subset before observing final H1 outcomes.
+
+Suggested plan:
+
+- First three held-out seeds for BASE.
+- Same first three held-out seeds for every IF script.
+- Same first three held-out seeds for every NF script.
+- Same subset for BF, if registered.
+
+For eight independent revision scripts plus BASE:
+
+Up to 27 H2 confirmation geometries.
+
+This is a manageable but substantive numerical confirmation campaign.
+
+If resources are limited, register a smaller balanced subset before final evaluation.
+
+Do not refine only favorable IF candidates.
+
+Do not expand or reduce refinement based on which arm appears to be winning.
+
+Preserve the same underlying categorical geometry at both mesh levels.
+
+---
+
+# 59. TARGET ERROR UNDER MESH REFINEMENT
+
+For each refined geometry, compare:
+
+- H1 apparent modulus.
+- H2 apparent modulus.
+- H1 target error.
+- H2 target error.
+- H1 signed target bias.
+- H2 signed target bias.
+- H1 target-hit status.
+- H2 target-hit status.
+
+For each candidate and common-seed BASE pair, compare the target-error improvement at H1 and H2.
+
+Distinguish:
+
+- Target improvement that persists under refinement.
+- Target improvement that changes sign.
+- Target matching that becomes unresolved after refinement.
+- Observed H1/H2 sensitivity smaller than the target-error effect.
+- Insufficient numerical evidence.
+
+A conservative diagnostic may compare the observed change in target error with the relevant combined H1/H2 modulus changes normalized by the target.
+
+Do not call this a rigorous finite-element uncertainty bound.
+
+If a candidate appears to hit the target at H1 but moves outside the registered target band at H2, report that sensitivity.
+
+Do not classify it as robust target matching without further qualification.
+
+---
+
+# 60. PRIMARY SCIENTIFIC SUCCESS CRITERIA
+
+A preliminary successful constrained inverse-design revision requires:
+
+1. Genuine independent LLM response.
+2. Unedited returned module.
+3. Exact phase composition.
+4. Consistent structural feasibility.
+5. Preserved stochastic diversity.
+6. Qualified native mechanical results.
+7. Lower held-out target error than BASE.
+8. Improvement that is not merely numerical noise.
+9. Appropriate refined-mesh confirmation.
+10. No substantial undisclosed morphology-family drift.
+
+A preliminary informative-feedback advantage additionally requires:
+
+11. Favorable descriptive comparison with NF.
+12. Comparable independent revision budgets.
+13. Matched common information.
+14. No leakage of measured feedback into NF.
+15. Recognition of the small number of independent model trials.
+
+A revision may successfully match the target without proving that measured feedback caused that success.
+
+Report these conclusions separately.
+
+---
+
+# 61. MORPHOLOGY PRESERVATION ANALYSIS
+
+Even if a returned script passes the stronger envelope, continue examining morphology in depth.
+
+Compare the exact final designs against:
+
+- P3 reference.
+- Common exact-composition baseline.
+- Controlled development variants.
+- Historical v0.7.2 lane-forming revisions.
+
+Report:
+
+- Unweighted and area-weighted aspect ratio.
+- Shape-tail statistics.
+- Orientation organization.
+- Directional correlations.
+- Strip occupancy.
+- Gap-tolerant connectivity.
+- Spacing.
+- Clustering.
+- Interface density.
+- Relevant reference-relative morphology errors.
+
+Produce actual side-by-side images.
+
+Do not claim that passing a finite collection of numerical constraints completely guarantees natural-material plausibility.
+
+If new forms of morphology drift are observed, document them as scientific findings.
+
+Do not retroactively modify the registered acceptance rules.
+
+---
+
+# 62. SECONDARY MECHANICAL TRADE-OFFS
+
+For selected confirmation specimens, preserve:
+
+- Native stress fields.
+- Native strain fields.
+- Native displacement fields.
+- Phase-average axial stress.
+- Phase-specific equivalent-stress percentiles.
+- Elastic strain-energy shares.
+- True-scale deformed geometry.
+
+Investigate whether matching the target modulus also changes:
+
+- Matrix stress concentration.
+- Reinforcement load sharing.
+- Spatial stress localization.
+- Directional stiffness.
+- Mechanical variability.
+
+These are secondary outcomes.
+
+Do not redefine the primary objective after observing them.
+
+Do not claim that a high local stress predicts fracture or yielding under the existing linear-elastic model.
+
+Do not interpret purely elastic work as irreversible energy absorption.
+
+---
+
+# 63. OPTIONAL NON-LLM TARGET-MATCHING CONTROL
+
+If the main IF/NF campaign is sufficiently prepared and resources permit, include a simple conventional inverse-design control.
+
+This could use the controlled development variants to choose a geometry parameter or interpolate within a small registered parameter range.
+
+Example:
+
+- Select a moderate orientation or elongation parameter using the measured development response.
+- Generate new stochastic structures at that parameter.
+- Evaluate the same final seeds.
+- Measure target-property error.
+
+Requirements:
+
+- Exact composition.
+- Same morphology envelope.
+- Same mechanical model.
+- Same final seed partition.
+- Prospectively registered parameter-selection rule.
+- Transparent computational budget.
+
+This control would help answer whether an LLM is useful compared with a straightforward engineering calibration approach.
+
+Do not run a large numerical search and compare its best result unfairly against one LLM revision.
+
+Do not use final held-out outcomes to choose the non-LLM parameters.
+
+The optional control should use development evidence only.
+
+If implemented, clearly distinguish researcher-authored numerical optimization from genuine LLM revisions.
+
+---
+
+# 64. F1 SECONDARY RESEARCH TRACK
+
+The primary P3 experiment should remain the highest priority.
+
+However, Dr. Wang's research also concerns multiple material systems.
+
+The project should begin establishing mechanics beyond P3.
+
+If the primary P3 work is complete, or if it reaches a genuine human-submission gate while solver resources remain available, execute a small independent F1 feasibility benchmark.
+
+The F1 extension must not delay the primary P3 inverse-design experiment.
+
+Its purpose is:
+
+**Establish whether the existing phase-aware mechanical approach can be extended to a microscopy-derived carbon-fiber composite containing two solid phases and explicit voids.**
+
+Do not implement F1 optimization in v0.7.3.
+
+Do not begin a large F1 mechanical dataset campaign.
+
+Keep F1 results and material assumptions separate from P3.
+
+---
+
+# 65. F1 REFERENCE AUTHENTICATION
+
+F1 is the existing transverse C/PEEK microscopy reference.
+
+Native labels:
+
+- 0: polymer matrix.
+- 1: carbon-fiber cross-sections.
+- 2: void.
+
+The reference has approximate circle-based fiber annotations.
+
+Preserve:
+
+- Original microscopy image.
+- Supplied categorical mask.
+- Phase identities.
+- Reference provenance.
+- Approximate annotation limitations.
+- Unknown true physical pixel scale.
+
+Do not reinterpret F1 as a longitudinal fiber image.
+
+Do not apply longitudinal fiber-length mechanics.
+
+Do not assign the longitudinal carbon-fiber Young's modulus directly to transverse cross-sections without justification.
+
+Use explicitly idealized transverse-section constitutive assumptions.
+
+---
+
+# 66. F1 MECHANICAL MODEL
+
+For the initial F1 extension, use small-strain linear elasticity.
+
+Both matrix and reinforcement are solid.
+
+The void phase must represent actual absence of material.
+
+Do not assign void pixels the matrix modulus.
+
+Do not silently convert void into a weak solid.
+
+The preferred first geometry implementation is:
+
+- Structured pixel-based finite-element mesh.
+- One solid element per matrix or fiber pixel.
+- No continuum element for a void pixel.
+- Shared nodes across adjacent solid-phase interfaces.
+- Appropriate treatment of unused nodes.
+- Traction-free void boundaries.
+
+Verify the resulting mechanical connectivity.
+
+If isolated solid components or point-only mechanical connections occur, characterize them explicitly.
+
+Do not introduce arbitrary artificial restraints merely to eliminate rigid-body modes.
+
+A geometry with mechanically unsupported solid islands must either be handled through a separately justified physical assumption or classified as unsuitable for the current benchmark.
+
+Do not silently remove solid pixels.
+
+---
+
+# 67. F1 ILLUSTRATIVE MATERIAL PROTOCOL
+
+The actual physical properties of the C/PEEK material have not yet been calibrated for this numerical model.
+
+For an initial feasibility study, use a documented illustrative transverse stiffness contrast.
+
+A possible controlled choice is:
+
+- Matrix-like E = 1000 MPa.
+- Transverse reinforcement-like E = 10000 MPa.
+- Poisson's ratios = 0.30.
+
+These values are illustrative.
+
+They are not experimentally validated PEEK and carbon-fiber properties.
+
+Using the same contrast as P3 may simplify numerical comparison, but the two material systems must retain separate material-protocol identities.
+
+Alternatively, use traceable representative transverse elastic data if suitable data are readily available and verified.
+
+Do not make literature material calibration a prerequisite for a clearly labeled numerical feasibility benchmark.
+
+Do not claim physical prediction.
+
+---
+
+# 68. F1 ANALYTICAL AND NUMERICAL CONTROLS
+
+Before simulating the actual F1 reference, establish:
+
+1. A homogeneous solid rectangular control.
+2. A two-solid-phase control with correct shared nodes.
+3. A simple void-containing geometry with defensible independent reference behavior.
+4. Correct void-boundary traction assumptions.
+5. Correct reaction extraction.
+6. Correct full-envelope stress normalization.
+7. Correct mechanical connectivity.
+8. No unused unconstrained structural nodes.
+9. Valid material assignment.
+10. Independent native result reopening.
+
+The existing P3 analytical controls may be reused where genuinely applicable.
+
+Do not rerun the entire previous mechanics framework unnecessarily.
+
+Add only the controls needed for explicit void semantics.
+
+Use actual native ANSYS evidence.
+
+---
+
+# 69. F1 SMALL-STRAIN BOUNDARY CONDITIONS
+
+Use a clearly documented direct-displacement small-strain problem.
+
+For the initial vertical response:
+
+- Apply bottom vertical restraint to the intended solid boundary nodes.
+- Apply top vertical displacement to the intended solid boundary nodes.
+- Remove horizontal rigid-body translation with an appropriate minimal restraint.
+- Leave remaining lateral boundaries free.
+- Leave void boundaries traction-free.
+
+Verify how voids intersect the external specimen boundaries.
+
+Do not constrain nodes belonging only to removed void elements.
+
+Use the original outer envelope dimensions for nominal stress normalization, and explicitly report that convention.
+
+Do not normalize by solid-only cross-sectional area without separately identifying the alternative quantity.
+
+At the small prescribed strain, screen for invalid geometry and unsupported contact-related assumptions.
+
+Do not introduce nonlinear pore closure or self-contact.
+
+The objective is small-strain elastic response.
+
+---
+
+# 70. F1 ACTUAL BENCHMARK SCOPE
+
+If the F1 controls pass, execute a minimal actual reference comparison.
+
+Required if the optional F1 track is completed:
+
+1. Authenticated F1 reference annotation.
+2. One prospectively selected frozen genuine LLM-generated F1 realization.
+
+A reasonable generated candidate is:
+
+`F1_B_02/r0/seed0`
+
+Verify the exact captured script and saved array identity.
+
+This is an exploratory selected comparison.
+
+Do not claim it represents the entire F1 generation condition.
+
+Obtain:
+
+- Actual native stress–strain curves.
+- Apparent modulus.
+- Nominal reaction forces.
+- Native displacement.
+- Phase-specific stresses.
+- Void geometry.
+- Mechanical acceptance.
+- Preliminary mesh sensitivity where practical.
+
+Preserve all phase labels.
+
+Do not compare the absolute P3 and F1 moduli as experimentally measured material differences.
+
+Both models use illustrative material assumptions and distinct structures.
+
+---
+
+# 71. F1 SCOPE RESTRICTIONS
+
+Do not:
+
+- Launch 30–40% compression.
+- Build a nonlinear self-contact model.
+- Simulate fiber fracture.
+- Simulate interfacial debonding.
+- Invent anisotropic carbon-fiber constants.
+- Perform longitudinal fiber loading using the transverse-section geometry without justification.
+- Begin autonomous F1 optimization.
+- Claim experimental calibration.
+- Make F1 completion a prerequisite for P3 inverse design.
+
+If F1 encounters substantial geometry or mechanical difficulties, preserve the findings and defer further development.
+
+Do not let the secondary extension become another prolonged solver-repair campaign.
+
+---
+
+# 72. RESOURCE AND DISK POLICY
+
+The completed v0.7.2 campaign used approximately:
+
+- 142 native processes.
+- 71 source solves.
+- 71 independent readbacks.
+- 47.824 minutes of supervised native time.
+- 2.780 GiB peak process-tree RSS.
+- 39.455 GiB of raw native artifacts.
+
+The proposed v0.7.3 campaign may involve more geometries and larger native artifact storage.
+
+Before running:
+
+1. Measure available disk space.
+2. Estimate per-job native artifact size from prior qualified runs.
+3. Estimate the proposed campaign's solve count.
+4. Estimate total native storage.
+5. Register finite execution and storage budgets.
+6. Preserve a system disk reserve.
+7. Use unique artifact directories.
+
+A preferred campaign with approximately 18 development geometries, 90 final geometries, and a balanced H2 subset may require substantially more storage than v0.7.2.
+
+Do not assume disk resources are unlimited.
+
+Reuse the existing resource supervision.
+
+Monitor:
+
+- Available physical memory.
+- Process-tree RSS.
+- Windows commit utilization.
+- Paging indicators.
+- Free disk.
+- Solver health.
+- Output growth.
+- Runtime.
+
+Do not impose an arbitrary fixed 20 GiB process-memory cap.
+
+Do not change Windows pagefile settings.
+
+Do not terminate unrelated applications.
+
+Use one substantial native solver process at a time unless a separately justified resource plan exists.
+
+---
+
+# 73. EFFICIENT NATIVE EXECUTION
+
+The P3 mechanical model is linear elastic.
+
+Continue using that advantage.
+
+Reuse the existing qualified:
+
+- Structured mesh generation.
+- Native APDL input generation.
+- Material inventory.
+- Boundary-condition handling.
+- Reaction extraction.
+- Strain-energy verification.
+- Independent RST reopening.
+
+Avoid unnecessary repeated full-field exports.
+
+Preserve actual full native results required for scientific verification.
+
+Use compact scalar summaries for routine analysis.
+
+Store full stress and displacement fields for predetermined confirmation specimens.
+
+If a storage-saving screening route is qualified, distinguish it from genuine native multi-point curves.
+
+Do not delete the only source artifact supporting an accepted result.
+
+Do not run historical nonlinear models simply to increase licensed evidence counts.
+
+---
+
+# 74. OPERATIONAL CAMPAIGN PRIORITIES
+
+Use this order.
+
+## Tier 1 — Required
+
+1. Historical audit.
+2. Exact-composition starting generator.
+3. New morphology descriptors.
+4. Validation against independent fixtures and historical lanes.
+5. Frozen morphology envelope.
+6. Controlled geometry variants.
+7. Actual development mechanical responses.
+8. Target selection and registration.
+9. Matched IF/NF prompt packets.
+10. Genuine independent response capture.
+11. Held-out structural evaluation.
+12. Held-out mechanical evaluation.
+13. Target-error comparison.
+
+## Tier 2 — Strongly preferred
+
+14. Balanced H2 confirmation.
+15. Native full-curve confirmation.
+16. Phase-field comparison.
+17. Morphology preservation figures.
+18. Composition and diversity verification.
+
+## Tier 3 — Optional
+
+19. Baseline-feedback-only arm, if registered before model calls.
+20. Conventional non-LLM parameter-control comparison.
+21. Limited horizontal mechanics.
+22. F1 secondary reference benchmark.
+23. Additional descriptive analyses.
+
+Do not spend the available resources on Tier 3 before securing the primary research result.
+
+The F1 benchmark may be useful while waiting for genuine human-submitted model responses, provided it is separately bounded and does not modify the registered P3 experiment.
+
+---
+
+# 75. SOFTWARE ARCHITECTURE
+
+Reuse existing project components.
+
+Add only what is required for:
+
+- Exact-composition common generator preparation.
+- Extended morphology descriptors.
+- Prospective envelope calibration.
+- Controlled development variants.
+- Geometry–mechanics dataset generation.
+- Target selection.
+- Matched IF/NF prompt construction.
+- Authentic response ingestion.
+- Held-out feasibility evaluation.
+- Target-property performance calculation.
+- Refined-mesh comparison.
+- Scientific reporting.
+- Optional F1 phase-aware void handling.
+
+Do not rewrite the frozen v0.7.0, v0.7.1, or v0.7.2 pipelines.
+
+Do not replace the existing ANSYS runner.
+
+Use additive experiment-specific modules where appropriate.
+
+Maintain a simple and testable architecture.
+
+CSV and JSON manifests are sufficient.
+
+Do not introduce a large general-purpose optimization framework.
+
+---
+
+# 76. REQUIRED SOFTWARE TESTS
+
+Add focused tests for the new scientific requirements.
+
+## Exact composition
+
+- Correct exact reinforcement pixel count.
+- Correct matrix pixel count.
+- No evaluator-side repairs.
+- Deterministic exact-composition generation.
+- No isolated noise introduced by composition adjustment.
+
+## Morphology
+
+- Area-weighted aspect ratio.
+- Shape-tail detection.
+- Axial orientation equivalence.
+- Circular-region orientation handling.
+- Finite directional correlation.
+- Column and row occupancy.
+- Multiscale strip organization.
+- Gap-tolerant connectivity.
+- Segmented-lane detection.
+- Boundary censoring.
+- Distinction between diagnostic dilation and actual geometry.
+
+## Experiment design
+
+- Frozen envelope.
+- Frozen target-selection rule.
+- Exact common starting generator.
+- Correct seed partitions.
+- Identical common IF/NF information.
+- Measured responses present only in the appropriate feedback arm.
+- Equal revision budgets.
+- Authentic response ingestion.
+- No held-out result leakage.
+
+## Mechanical analysis
+
+- Correct inherited material protocol.
+- Correct phase assignment.
+- Correct nominal stress.
+- Effective modulus.
+- Target-error calculation.
+- Target-hit classification.
+- Baseline-relative target improvement.
+- Script-level aggregation.
+- H1/H2 target comparison.
+
+## Optional F1
+
+- Correct matrix/fiber/void semantics.
+- No solid elements in void pixels.
+- Valid shared-node solid interfaces.
+- Mechanical component handling.
+- Correct envelope stress normalization.
+- Correct traction-free void boundaries.
+
+Do not weaken previous scientific tests.
+
+Do not classify synthetic controls as genuine LLM trials or licensed mechanical evidence.
+
+---
+
+# 77. ACTUAL LICENSED ANSYS EVIDENCE
+
+The critical mechanical conclusions must come from actual licensed ANSYS.
+
+Required evidence includes:
+
+1. Qualified exact-composition baseline mechanics.
+2. Actual controlled morphology-variant mechanics.
+3. Actual development stress–strain curves.
+4. Actual development mesh-sensitivity checks.
+5. Actual final BASE mechanical results.
+6. Actual final IF mechanical results for feasible outputs.
+7. Actual final NF mechanical results for feasible outputs.
+8. Actual refined-mesh confirmation.
+9. Native reaction and energy verification.
+10. Independent RST reopening.
+
+If the optional F1 track is executed, preserve its actual native controls and reference/generated mechanical results separately.
+
+Report:
+
+- Active software tests.
+- Archived replay checks.
+- Historical licensed-artifact checks.
+- New licensed-artifact checks.
+
+Do not add overlapping test categories together.
+
+Do not claim that a passing parser test establishes a mechanical result.
+
+---
+
+# 78. EXPERIMENT DIRECTORY STRUCTURE
+
+Create a new additive experiment.
+
+Suggested root:
+
+`experiments/pipeline_v0.7.3/run_001/`
+
+Suggested organization:
+
+- `audit/`
+- `protocol/`
+- `starting_generator/`
+- `exact_composition/`
+- `morphology_descriptor_validation/`
+- `historical_lane_controls/`
+- `envelope_calibration/`
+- `controlled_variants/`
+- `development_mechanics/`
+- `development_mesh_checks/`
+- `target_selection/`
+- `feedback_packets/`
+- `llm_trials/`
+- `response_capture/`
+- `frozen_scripts/`
+- `heldout_structural_evaluation/`
+- `heldout_mechanics_h1/`
+- `mesh_confirmation_h2/`
+- `target_property_analysis/`
+- `morphology_preservation/`
+- `figures/`
+- `performance/`
+- `verification/`
+- `summary/`
+
+For optional F1 work, use a separate clearly labeled branch such as:
+
+`secondary_f1_benchmark/`
+
+Use existing project directory conventions where practical.
+
+Keep large raw artifacts outside Git.
+
+Preserve hashes, manifests, compact evidence, and reproduction instructions.
+
+---
+
+# 79. REQUIRED RESULTS TABLES
+
+Produce machine-readable and readable summaries.
+
+## A. Morphology-envelope calibration
+
+- Reference descriptors.
+- Baseline descriptor distributions.
+- Historical lane-control distributions.
+- Registered constraint limits.
+- Rationale.
+- Feasibility classification.
+
+## B. Exact-composition starting generator
+
+- Source identity.
+- Adaptation identity if applicable.
+- Phase count.
+- Structural validity.
+- Diversity.
+- Generation runtime.
+
+## C. Controlled geometry–mechanics dataset
+
+- Variant.
+- Seed.
+- Geometry descriptors.
+- Exact composition.
+- Mechanical acceptance.
+- Vertical apparent modulus.
+- Native stress–strain data.
+- Optional horizontal modulus.
+- H2 sensitivity where available.
+
+## D. Target selection
+
+- Baseline modulus distribution.
+- Feasible response range.
+- Target-selection rule.
+- Registered target.
+- Target-hit tolerance.
+- Numerical justification.
+
+## E. LLM response inventory
+
+- Trial.
+- Arm.
+- Model/interface.
+- Prompt hash.
+- Response hash.
+- Script hash.
+- Audit status.
+- Actual revision budget.
+
+## F. Held-out structural feasibility
+
+- Trial.
+- Seed.
+- Exact phase count.
+- Morphology descriptors.
+- Constraint failures.
+- Diversity.
+
+## G. Held-out target-property performance
+
+- Trial.
+- Seed.
+- Apparent modulus.
+- Signed target error.
+- Absolute target error.
+- Target-hit status.
+- Baseline-relative target-error reduction.
+- Mechanical acceptance.
+
+## H. Script-level comparison
+
+- Script.
+- Attempted outputs.
+- Feasible outputs.
+- Accepted mechanical outputs.
+- Mean modulus.
+- Modulus spread.
+- Mean absolute target error.
+- Mean bias.
+- Hit rate.
+- Diversity.
+
+## I. Feedback-control comparison
+
+- Independent script-level errors.
+- Arm means.
+- Observed feedback advantage.
+- Feasibility differences.
+- Computational effort.
+- Scientific limitations.
+
+## J. Refined-mesh confirmation
+
+- Geometry ID.
+- H1 modulus.
+- H2 modulus.
+- H1 target error.
+- H2 target error.
+- H1/H2 target-hit status.
+- Numerical sensitivity classification.
+
+Use actual results.
+
+Missing or unexecuted values must be explicitly identified.
+
+Do not fill missing mechanical measurements with zero.
+
+---
+
+# 80. REQUIRED SCIENTIFIC FIGURES
+
+Generate a focused figure package.
+
+## Figure 1 — Why the new morphology envelope is necessary
+
+Show:
+
+- P3 reference.
+- Original baseline.
+- Historical v0.7.2 segmented-lane designs.
+- Actual new morphology diagnostics.
+
+## Figure 2 — Exact-composition baseline
+
+Show multiple actual baseline stochastic realizations and descriptor distributions.
+
+## Figure 3 — Controlled development variants
+
+Show the actual controlled geometry families under identical phase coloring.
+
+## Figure 4 — Geometry–mechanics relationships
+
+Plot actual measured development descriptors versus apparent stiffness.
+
+Avoid unsupported causal labels.
+
+## Figure 5 — Native development stress–strain curves
+
+Use actual solved points.
+
+Show which curve belongs to which geometry.
+
+## Figure 6 — Target selection
+
+Show:
+
+- Baseline distribution.
+- Feasible development response range.
+- Registered target.
+- Target-hit tolerance band.
+
+## Figure 7 — Experimental workflow
+
+Show:
+
+- Common frozen generator.
+- Controlled geometry–mechanics dataset.
+- IF/NF information difference.
+- Actual independent model revisions.
+- Held-out evaluation.
+
+Label as schematic.
+
+## Figure 8 — Held-out generated morphologies
+
+Use predetermined final seeds.
+
+Show BASE and every revision arm.
+
+Do not select only favorable structures.
+
+## Figure 9 — Held-out apparent modulus distributions
+
+Include the target line and tolerance band.
+
+## Figure 10 — Target error by independent script
+
+Display script-level performance.
+
+Do not visually imply the nested realizations are independent LLM trials.
+
+## Figure 11 — Feasibility and target-hit rates
+
+Show denominators.
+
+## Figure 12 — H1/H2 target confirmation
+
+Show numerical sensitivity and target-hit stability.
+
+## Figure 13 — Secondary stress and phase load-sharing fields
+
+Use actual native solver outputs.
+
+## Optional F1 figures
+
+- Reference and generated categorical geometry.
+- Native stress–strain curves.
+- Actual stress field.
+- Actual true-scale deformation.
+- Void and solid phase mapping.
+
+Use actual data only.
+
+Do not fabricate stress–strain curves, images, or optimization outcomes.
+
+---
+
+# 81. FIGURE AND VISUAL SELECTION INTEGRITY
+
+Use predetermined representative seed identities where possible.
+
+Recommended:
+
+- First registered development seed.
+- First registered held-out seed.
+- Same seed identity across experimental arms.
+
+If the predetermined specimen is invalid, show its failure or document why no accepted mechanical figure exists.
+
+Do not replace it silently with a visually attractive or mechanically favorable realization.
+
+Preserve consistent:
+
+- Phase colors.
+- Domain dimensions.
+- Orientation.
+- Stress units.
+- Deformation scaling.
+- Mesh labels.
+- Target annotation.
+
+For direct stress comparisons, use shared scales where scientifically meaningful.
+
+Always distinguish actual true-scale deformation from magnified visualization.
+
+Do not present a schematic as a native ANSYS result.
+
+---
+
+# 82. STATISTICAL INTERPRETATION
+
+The independent revised LLM script is the primary experimental unit.
+
+The final stochastic realizations are nested within scripts.
+
+Do not treat:
+
+- Ten seeds from one script as ten independent LLM trials.
+- Five strain checkpoints as five independent microstructures.
+- H1 and H2 meshes as independent specimens.
+- Local FE elements as independent material samples.
+- Multiple stress-field values as independent evidence of LLM reliability.
+
+For the primary IF/NF comparison, report:
+
+- Number of independent scripts.
+- Script-level mean target errors.
+- Between-script variation.
+- Within-script stochastic variation.
+- Feasibility.
+- Target-hit rates.
+- Observed arm-level differences.
+- Numerical mesh sensitivity.
+
+A small descriptive pilot may support further research without establishing a statistically general causal effect.
+
+If reporting uncertainty intervals, state what variation they represent.
+
+Do not invent statistical significance.
+
+---
+
+# 83. INTERPRETATION OF POSSIBLE RESULTS
+
+All of the following are meaningful scientific outcomes.
+
+## IF outperforms NF
+
+This may suggest that informative geometry–mechanics measurements help the LLM solve the constrained inverse-design problem.
+
+The conclusion must remain limited by independent trial count and numerical uncertainty.
+
+## Both arms perform similarly
+
+This may suggest that the LLM's prior physical reasoning is sufficient for this particular problem, or that the feedback dataset does not provide enough useful additional information.
+
+## NF performs better
+
+Report that result.
+
+Do not hide it or give IF additional attempts.
+
+## Both arms improve over BASE but miss the target
+
+This demonstrates partial inverse-design progress.
+
+Do not classify it as successful target matching.
+
+## Both arms violate the stronger morphology constraints
+
+This indicates that the generative design space or instruction format needs improvement.
+
+Do not relax the constraints retroactively.
+
+## Target matching succeeds but morphology drifts
+
+Document the residual limitation of the new envelope.
+
+Do not claim strong family preservation solely because the hard constraints passed.
+
+## The target is not numerically distinguishable
+
+Report insufficient numerical resolution.
+
+Do not convert an unresolved target improvement into a positive optimization claim.
+
+---
+
+# 84. SCIENTIFIC LIMITATIONS
+
+Continue explicitly documenting:
+
+1. Illustrative P3 constituent properties.
+2. Provisional P3 phase-5 chemical interpretation.
+3. Unknown physical microscopy calibration.
+4. Morphology-selected local reference field.
+5. No representative-volume qualification.
+6. Idealized perfect bonding.
+7. Two-dimensional plane-stress approximation.
+8. Pixelated phase interfaces.
+9. Possible artificial corner-node load transfer.
+10. Preliminary rather than rigorous asymptotic mesh convergence.
+11. No experimental mechanical calibration.
+12. No damage, yielding, or fracture model.
+13. Small independent LLM sample size.
+14. Potential model routing and personalization effects.
+15. Different internal generator search effort.
+16. A morphology envelope derived from a limited reference and baseline ensemble.
+17. Controlled variants that may alter multiple descriptors simultaneously.
+18. Target selection using the measured development dataset.
+
+These limitations do not prevent a useful numerical inverse-design experiment.
+
+They determine what scientific claims are justified.
+
+---
+
+# 85. HISTORICAL PRESERVATION
+
+Preserve all previous research.
+
+The v0.7.2 handoff reported that 16,596 pre-existing tracked files remained unchanged.
+
+Continue the additive experiment policy.
+
+Preserve:
+
+- Original porous generators.
+- Historical porous contact failures.
+- Historical accepted mechanical states.
+- P3 and F1 microscopy references.
+- Native annotation arrays.
+- v0.7.0 captured LLM scripts.
+- Historical stochastic outputs.
+- Morphology evaluator results.
+- v0.7.1 native mechanical evidence.
+- v0.7.2 original optimization scripts.
+- v0.7.2 accepted lane-forming structures.
+- Original MF/NF prompts and responses.
+- Native mechanical results.
+- Original scientific acceptance reports.
+
+Do not modify historical evidence to reflect the new morphology envelope.
+
+Verify protected-file integrity.
+
+Never overwrite a previous native artifact destination.
+
+---
+
+# 86. REQUIRED DOCUMENTATION
+
+Produce a concise, substantive report package.
+
+## `V0_7_3_PROTOCOL.md`
+
+Scientific question, experimental scope, target-selection rule, exact composition, morphology constraints, arms, trials, seed partitions, mechanical protocol, numerical tolerances, and resource budgets.
+
+## `V0_7_3_MORPHOLOGY_ENVELOPE.md`
+
+New descriptors, analytical validation, historical lane controls, threshold calibration, registered constraints, and limitations.
+
+## `V0_7_3_CONTROLLED_GEOMETRY_MECHANICS.md`
+
+Exact-composition baseline, controlled variants, actual development mechanics, stress–strain curves, directional observations, and mesh sensitivity.
+
+## `V0_7_3_TARGET_SELECTION.md`
+
+Attainable response range, baseline variability, target-selection rule, frozen target, and target-hit tolerance.
+
+## `V0_7_3_LLM_INVERSE_DESIGN_EXPERIMENT.md`
+
+Matched experimental prompts, genuine responses, model identities, information intervention, revision budget, source hashes, and capture provenance.
+
+## `V0_7_3_HELDOUT_TARGET_RESULTS.md`
+
+Feasibility, exact composition, diversity, mechanical target errors, script-level outcomes, and IF/NF comparison.
+
+## `V0_7_3_MESH_CONFIRMATION.md`
+
+H1/H2 results, target-hit stability, and numerical interpretation.
+
+## `V0_7_3_MORPHOLOGY_AND_MECHANICAL_TRADEOFFS.md`
+
+Reference-like morphology assessment, remaining drift, local stresses, phase load sharing, and secondary findings.
+
+## Optional `V0_7_3_F1_MECHANICAL_BENCHMARK.md`
+
+F1 phase semantics, explicit void geometry, analytical controls, actual native mechanics, and limitations.
+
+## `V0_7_3_VALIDATION.md`
+
+Software verification, native evidence, protected-file integrity, resource usage, and scientific acceptance.
+
+## `V0_7_3_HANDOFF.md`
+
+Concise final research summary, actual results, figures, limitations, Git commits, and next-step decision.
+
+Do not create unnecessarily repetitive reports.
+
+Prioritize scientific results over documentation volume.
+
+---
+
+# 87. INDEPENDENT SCIENTIFIC ACCEPTANCE STATES
+
+Report the following independently.
+
+## Foundation
+
+- `HISTORICAL_V072_EVIDENCE_PRESERVED`
+- `P3_REFERENCE_AUTHENTICATED`
+- `COMMON_STARTING_GENERATOR_AUTHENTICATED`
+- `EXACT_COMPOSITION_BASELINE_QUALIFIED`
+
+## Morphology
+
+- `AREA_WEIGHTED_SHAPE_DESCRIPTORS_VALIDATED`
+- `ORIENTATION_DESCRIPTORS_VALIDATED`
+- `SPATIAL_ORGANIZATION_DESCRIPTORS_VALIDATED`
+- `GAP_TOLERANT_LANE_DIAGNOSTICS_VALIDATED`
+- `HISTORICAL_LANE_CONTROLS_CHARACTERIZED`
+- `NEW_MORPHOLOGY_ENVELOPE_REGISTERED`
+- `REFERENCE_LIKE_BASELINE_FEASIBLE`
+
+## Development mechanics
+
+- `CONTROLLED_VARIANTS_REGISTERED`
+- `CONTROLLED_VARIANTS_STRUCTURALLY_FEASIBLE`
+- `GEOMETRY_MECHANICS_DATASET_EXECUTED`
+- `NATIVE_DEVELOPMENT_CURVES_AVAILABLE`
+- `DEVELOPMENT_MESH_SENSITIVITY_ASSESSED`
+- `MECHANICAL_TARGET_ATTAINABILITY_SUPPORTED`
+- `TARGET_MODULUS_FROZEN`
+
+## LLM experiment
+
+- `MATCHED_IF_NF_PROMPTS_VERIFIED`
+- `INFORMATIVE_MECHANICAL_FEEDBACK_AUTHENTICATED`
+- `GENUINE_IF_RESPONSES_CAPTURED`
+- `GENUINE_NF_RESPONSES_CAPTURED`
+- `EQUAL_REVISION_BUDGET_VERIFIED`
+- `FINAL_SCRIPTS_FROZEN`
+- `HELDOUT_ISOLATION_VERIFIED`
+
+## Held-out inverse design
+
+- `EXACT_COMPOSITION_PRESERVED`
+- `MORPHOLOGY_ENVELOPE_PRESERVED`
+- `STOCHASTIC_DIVERSITY_PRESERVED`
+- `HELDOUT_NATIVE_MECHANICS_COMPLETE`
+- `BASELINE_RELATIVE_TARGET_IMPROVEMENT`
+- `TARGET_MODULUS_MATCHING_SUPPORTED`
+- `TARGET_MATCHING_REFINEMENT_CONFIRMED`
+- `INFORMATIVE_FEEDBACK_ADVANTAGE_SUPPORTED`
+
+## Optional F1
+
+- `F1_SOURCE_AUTHENTICATED`
+- `F1_VOID_PHASE_HANDLING_VERIFIED`
+- `F1_MECHANICAL_CONTROLS_QUALIFIED`
+- `F1_REFERENCE_NATIVE_MECHANICS`
+- `F1_GENERATED_NATIVE_MECHANICS`
+- `F1_PRELIMINARY_MESH_SENSITIVITY`
+
+## Overall research
+
+- `CONSTRAINED_LLM_INVERSE_DESIGN_EXECUTED`
+- `REFERENCE_LIKE_MECHANICAL_OPTIMIZATION_SUPPORTED`
+- `CROSS_FAMILY_MECHANICS`
+- `PHYSICAL_MATERIAL_CALIBRATION`
+- `REPRESENTATIVE_VOLUME_QUALIFICATION`
+- `AUTONOMOUS_MULTIGENERATION_OPTIMIZATION`
+- `PAPER_READINESS`
+
+Do not collapse these into one overall PASS.
+
+---
+
+# 88. EXECUTION SEQUENCE
+
+Follow this order.
+
+## PHASE A — Historical audit
+
+1. Verify Git status and HEAD.
+2. Read repository instructions.
+3. Inspect v0.7.0, v0.7.1, and v0.7.2 evidence.
+4. Authenticate P3 reference.
+5. Authenticate B02 starting script.
+6. Authenticate previous lane-forming revisions.
+7. Verify inherited mechanics.
+8. Register the new scientific scope.
+9. Commit the initial protocol.
+
+## PHASE B — Exact-composition baseline
+
+10. Verify exact target phase count.
+11. Inspect original B02 generation behavior.
+12. Establish an exact-composition starting generator.
+13. Preserve original captured code.
+14. Validate determinism.
+15. Validate composition.
+16. Validate stochastic variation.
+17. Freeze common starting identity.
+18. Commit baseline preparation.
+
+## PHASE C — Morphology constraints
+
+19. Implement area-weighted shape descriptors.
+20. Implement shape-tail descriptors.
+21. Implement orientation organization.
+22. Implement directional correlations.
+23. Implement strip-occupancy descriptors.
+24. Implement gap-tolerant organization diagnostics.
+25. Validate against analytical fixtures.
+26. Evaluate the actual reference.
+27. Evaluate the new baseline calibration ensemble.
+28. Evaluate historical lane-forming controls.
+29. Register numerical morphology limits.
+30. Produce an interpretable envelope review.
+31. Freeze the new morphology policy.
+32. Commit descriptor and envelope evidence.
+
+## PHASE D — Controlled geometry variants
+
+33. Select a small controlled morphology matrix.
+34. Implement transparent variant generators.
+35. Preserve exact composition.
+36. Register variant parameters.
+37. Freeze development seeds.
+38. Evaluate structural feasibility.
+39. Preserve infeasible variants.
+40. Freeze the mechanical development dataset.
+41. Commit variant definitions and geometry evidence.
+
+## PHASE E — Development mechanics
+
+42. Build qualified H1 meshes.
+43. Execute actual baseline native curves.
+44. Execute actual controlled variant native curves.
+45. Independently verify reactions and fields.
+46. Extract apparent moduli.
+47. Evaluate geometry–mechanics associations.
+48. Execute the planned development H2 checks.
+49. Optionally evaluate selected horizontal responses.
+50. Determine the feasible modulus range.
+51. Apply the registered target-selection rule.
+52. Register the target and target-hit tolerance.
+53. Commit actual development mechanical evidence.
+
+## PHASE F — Experimental preparation
+
+54. Freeze the target.
+55. Freeze exact composition and morphology constraints.
+56. Freeze the final mechanical protocol.
+57. Freeze independent trial counts.
+58. Prepare common revision instructions.
+59. Prepare actual IF mechanical feedback.
+60. Prepare matched NF packets without measured responses.
+61. Prepare optional BF packets only if already registered.
+62. Audit the experimental information difference.
+63. Freeze prompt hashes.
+64. Commit the experimental packets.
+
+## PHASE G — Genuine model responses
+
+65. Execute actual independent ordinary-ChatGPT trials through an authorized interface.
+66. Preserve exact responses.
+67. Record available model metadata.
+68. Extract exact Python modules.
+69. Audit returned code.
+70. Preserve failures.
+71. Freeze every script.
+72. Commit response provenance.
+
+If actual model execution is unavailable, stop at the human-submission gate and deliver the complete packets.
+
+## PHASE H — Held-out structural evaluation
+
+73. Verify frozen scripts and protocol.
+74. Open the evaluator-only final seed partition.
+75. Generate BASE outputs.
+76. Generate IF outputs.
+77. Generate NF outputs.
+78. Generate optional BF outputs if registered.
+79. Verify exact composition.
+80. Evaluate the morphology envelope.
+81. Evaluate diversity.
+82. Preserve every invalid output.
+83. Freeze source-array identities.
+84. Commit structural results.
+
+## PHASE I — Held-out mechanics
+
+85. Execute native mechanical evaluation of feasible BASE specimens.
+86. Execute identical mechanics for feasible IF specimens.
+87. Execute identical mechanics for feasible NF specimens.
+88. Execute registered optional control mechanics.
+89. Independently verify native results.
+90. Calculate apparent moduli.
+91. Calculate target errors.
+92. Calculate target-hit rates.
+93. Preserve actual mechanical failures.
+94. Commit held-out mechanics.
+
+## PHASE J — Numerical confirmation
+
+95. Execute the prospectively balanced H2 subset.
+96. Compare target-property errors on H1 and H2.
+97. Verify target-hit stability.
+98. Evaluate baseline-relative target improvement.
+99. Preserve actual native stress and strain fields.
+100. Commit numerical confirmation.
+
+## PHASE K — Scientific analysis
+
+101. Compare IF and NF independent script results.
+102. Evaluate baseline-relative target improvement.
+103. Evaluate exact composition.
+104. Evaluate morphology preservation.
+105. Evaluate diversity.
+106. Evaluate secondary stress and load-sharing effects.
+107. Produce actual scientific figures.
+108. Determine supported and unsupported conclusions.
+109. Commit scientific analysis.
+
+## PHASE L — Optional F1 benchmark
+
+Only if resources and primary progress permit:
+
+110. Authenticate F1.
+111. Register separate three-phase mechanics.
+112. Implement explicit void handling.
+113. Verify connectivity.
+114. Execute required controls.
+115. Execute actual F1 reference mechanics.
+116. Execute one predetermined generated F1 specimen.
+117. Verify native response and fields.
+118. Perform limited mesh sensitivity if practical.
+119. Preserve a separate F1 handoff.
+120. Commit completed F1 work.
+
+## PHASE M — Final verification
+
+121. Run relevant active tests.
+122. Run applicable archived checks.
+123. Run new licensed-artifact checks.
+124. Verify protected historical files.
+125. Verify frozen prompts and responses.
+126. Verify native source artifacts.
+127. Review figures.
+128. Write concise reports.
+129. Prepare Dr. Wang summary.
+130. Record actual Git commits.
+131. Verify clean working tree.
+132. Confirm nothing was pushed.
+
+## PHASE N — STOP
+
+Do not begin another optimization generation.
+
+Do not use held-out outcomes to revise the current experiment.
+
+Do not restart old porous contact research.
+
+Do not begin 3D modeling or manufacturing.
+
+Do not launch autonomous LLM optimization.
+
+---
+
+# 89. REQUIRED FINAL HANDOFF QUESTIONS
+
+Provide concise, evidence-grounded answers.
+
+## A. Foundation
+
+1. What repository and starting HEAD were used?
+2. Were all historical experiments preserved?
+3. Which starting generator was used?
+4. Was an exact-composition adaptation required?
+5. What are the original and final starting-generator hashes?
+
+## B. Morphology envelope
+
+6. Which new morphology descriptors were implemented?
+7. Were they independently validated?
+8. Did they detect the historical segmented-lane designs?
+9. What exact hard constraints were registered?
+10. Did the reference satisfy the intended envelope?
+11. Did the common baseline satisfy the envelope?
+12. How were boundary-censored regions handled?
+13. How were shape-tail and alignment effects constrained?
+14. What limitations remain in defining natural morphology?
+
+## C. Development mechanics
+
+15. Which controlled variants were generated?
+16. Which variants passed structural feasibility?
+17. How many actual development specimens were solved?
+18. What baseline modulus distribution was measured?
+19. What feasible mechanical-response range was established?
+20. Were actual stress–strain curves obtained?
+21. Were selected H2 checks completed?
+22. Were horizontal responses measured?
+23. What geometry–mechanics associations were observed?
+
+## D. Target selection
+
+24. What target-selection rule was registered?
+25. What exact target modulus was selected?
+26. Why is that target considered attainable?
+27. How far is it from the baseline mean?
+28. What target-hit tolerance was registered?
+29. Is the target difficulty distinguishable from numerical sensitivity?
+
+## E. Genuine LLM trials
+
+30. How many independent IF responses were captured?
+31. How many independent NF responses were captured?
+32. Was BF included?
+33. Which actual model/interface and reasoning settings were used?
+34. What information was identical across arms?
+35. What measured information was provided only to IF?
+36. Were all revision opportunities equal?
+37. Were researcher repairs prohibited and avoided?
+38. Were scripts frozen before held-out evaluation?
+
+## F. Held-out feasibility
+
+39. How many outputs were attempted?
+40. How many satisfied exact composition?
+41. How many passed the stronger morphology envelope?
+42. How many generators preserved stochastic diversity?
+43. Which violations occurred?
+44. Did any new lane-forming or other morphology-drift strategies emerge?
+
+## G. Target-property performance
+
+45. What was the held-out BASE mean absolute target error?
+46. What was each IF script's mean target error?
+47. What was each NF script's mean target error?
+48. What were the target-hit rates?
+49. Did any script consistently improve on BASE?
+50. Did any script achieve the registered target while preserving morphology?
+51. Did IF outperform NF descriptively?
+52. If BF was included, did informative feedback outperform baseline-only feedback?
+53. What conclusions remain limited by independent trial count?
+
+## H. Mesh confirmation
+
+54. Which geometries received H2 checks?
+55. Did the observed target improvements persist?
+56. Did any target-hit classification change?
+57. Were differences resolved relative to observed numerical sensitivity?
+58. Was strong numerical target matching supported?
+
+## I. Morphology and mechanical trade-offs
+
+59. Did the optimized structures remain reference-like?
+60. How did shape tails change?
+61. How did orientation organization change?
+62. How did long-range spatial organization change?
+63. Did matrix stress concentration change?
+64. Did phase load sharing change?
+65. What trade-offs remain relevant?
+
+## J. Optional F1 mechanics
+
+66. Was the F1 extension executed?
+67. Were explicit void semantics verified?
+68. Did the analytical controls pass?
+69. Was the F1 reference solved?
+70. Was a genuine LLM-generated F1 structure solved?
+71. Were actual stress–strain curves obtained?
+72. What material-model and geometry limitations remain?
+
+## K. Verification
+
+73. How many actual native solver processes ran?
+74. What was total native runtime?
+75. What was peak memory?
+76. How much disk storage was used?
+77. Which software tests passed?
+78. Which licensed-artifact checks passed?
+79. Were protected historical files unchanged?
+80. Which actual failures were preserved?
+81. What files were created or modified?
+82. Which Git commits were created?
+83. What are their complete hashes and exact messages?
+84. Is the final working tree clean?
+85. Was anything pushed?
+
+## L. Research conclusion
+
+86. Was constrained target-property inverse design executed?
+87. Did any LLM generator achieve the prescribed mechanical property?
+88. Was stronger morphology preservation supported?
+89. Did informative measured feedback show an advantage?
+90. What does the study establish about LLM mechanical optimization?
+91. What remains scientifically unresolved?
+92. What can accurately be shown to Dr. Wang?
+93. What is the highest-value next experiment?
+
+Do not invent answers for unexecuted steps.
+
+---
+
+# 90. REQUIRED DR. WANG SUMMARY
+
+Produce a concise research-facing summary using actual achieved results.
+
+Explain:
+
+1. The earlier experiments demonstrated genuine LLM generation of P3 and F1 microscopy-derived microstructures.
+2. The P3 mechanical evaluator produced verified native stress–strain curves.
+3. The first mechanical optimization experiment approximately doubled stiffness, but the LLM reorganized reinforcement into artificial segmented lanes.
+4. Measured baseline mechanical feedback did not outperform the no-feedback control.
+5. The new experiment therefore introduced exact composition and stronger morphology constraints.
+6. Actual geometry–mechanics measurements were collected from controlled morphological variations.
+7. A prescribed attainable mechanical target was selected.
+8. Independent LLM trials were asked to match that target.
+9. Measured-feedback revisions were compared with equal-attempt objective-only controls.
+10. Final designs were independently evaluated on previously unused seeds.
+11. Actual refined-mesh results supported or did not support the observed target improvements.
+12. The current findings remain numerical and illustrative rather than experimentally calibrated material predictions.
+
+If F1 mechanics was completed, add a concise separate result.
+
+Do not claim:
+
+- That measured feedback improved optimization if the evidence does not support it.
+- That the target was achieved when it was not.
+- That passing the morphology envelope establishes complete physical realism.
+- That the earlier 30–40% porous compression objective was achieved.
+- That experimental material calibration or manufacturing readiness has been established.
+
+---
+
+# 91. NEXT-MILESTONE DECISION RULE
+
+Choose the next research milestone based on actual outcomes.
+
+## If IF successfully matches the target and descriptively outperforms NF
+
+Consider a replicated informative-feedback study with more independent trials and multiple target values.
+
+Potential next questions:
+
+- Can the same generator target a range of specified moduli?
+- Does feedback help at different target difficulties?
+- Can the LLM jointly target vertical and horizontal response?
+
+## If both arms match the target similarly
+
+Investigate whether a conventional parameter calibration approach performs equally well.
+
+Consider a more mechanically informative objective such as:
+
+- Target anisotropy.
+- Simultaneous stiffness and stress-concentration control.
+- Matching a target property while preserving a specified morphology distribution.
+
+Do not assume adding more stress–strain points will solve the feedback question.
+
+## If IF provides no advantage
+
+Study whether the measured feedback representation contains useful design sensitivity information.
+
+Potential later work:
+
+- Better paired geometry–mechanics examples.
+- Controlled local stress-field summaries.
+- Explicit parameter-response relationships.
+- A baseline-only versus informative-feedback comparison if not already completed.
+
+## If morphology constraints prevent target attainment
+
+Investigate whether the allowable morphology design space genuinely has sufficient mechanical variability.
+
+Do not simply relax the rules until a positive result appears.
+
+## If revised scripts fail structural feasibility
+
+Prioritize a more reliable constrained generator parameterization or explicit morphology-preserving construction method.
+
+## If F1 mechanics succeeds
+
+Consider transferring the target-property optimization experiment to F1 in a separate milestone.
+
+Do not claim cross-family mechanical optimization before that experiment is performed.
+
+---
+
+# 92. ABSOLUTE RESTRICTIONS
+
+Do not:
+
+- Resume the previous 30–40% porous compression campaign.
+- Revisit the original million-element full porous mesh.
+- Restart the old corner-contact recovery.
+- Perform unrelated nonlinear contact research.
+- Modify frozen historical LLM scripts.
+- Modify historical reference arrays.
+- Reclassify v0.7.2 outputs under new constraints.
+- Repair returned experimental LLM modules.
+- Expose final held-out results to the experimental models.
+- Change the target after model execution.
+- Change morphology limits after model execution.
+- Increase reinforcement composition.
+- Fabricate model calls.
+- Fabricate mechanical results.
+- Generate synthetic curves and label them native.
+- Hide invalid outputs.
+- Select only favorable seeds.
+- Treat stochastic realizations as independent model trials.
+- Claim experimentally calibrated material properties.
+- Claim representative-volume homogenization without qualification.
+- Begin autonomous multi-generation optimization.
+- Begin 3D analysis.
+- Begin manufacturing work.
+- Push automatically.
+
+---
+
+# FINAL SCIENTIFIC INSTRUCTION
+
+The Young Dawgs project has now demonstrated three important capabilities.
+
+First, LLMs can generate stochastic microstructures from different real microscopy-derived material references.
+
+Second, those generated structures can be evaluated mechanically using a qualified two-phase finite-element model and actual native ANSYS stress–strain responses.
+
+Third, independent LLM revisions can substantially increase a specified numerical mechanical property.
+
+However, v0.7.2 also revealed two limitations.
+
+The LLMs approximately doubled apparent vertical stiffness by creating segmented vertical reinforcement lanes that departed substantially from the intended irregular particle morphology.
+
+Measured baseline mechanical feedback did not outperform an equal-attempt no-mechanical-feedback control.
+
+**Pipeline v0.7.3 must investigate these limitations rather than repeat the same easy stiffness-maximization experiment.**
+
+Use the authenticated P3 family.
+
+Establish an exact-composition common starting generator with 20,731 reinforcement pixels.
+
+Strengthen the morphology envelope using independently validated area-weighted shape statistics, shape-tail measurements, orientation organization, directional correlations, multiscale occupancy, and gap-tolerant spatial-organization diagnostics.
+
+Use the historical v0.7.2 lane-forming outputs as known challenge controls without changing their original acceptance status.
+
+Construct a small, controlled geometry–mechanics development dataset.
+
+Preserve exact composition and the stronger morphology constraints for every feasible development variant.
+
+Execute actual licensed ANSYS simulations.
+
+Obtain genuine stress–strain curves and measured apparent moduli.
+
+Use these results to establish a defensible attainable mechanical target through a prospectively registered rule.
+
+**The new objective is matching a prescribed modulus, not maximizing stiffness.**
+
+Prepare matched experimental conditions.
+
+The informative-feedback arm receives actual paired geometry–mechanics evidence.
+
+The no-feedback arm receives identical geometry information, common starting code, mechanical assumptions, composition constraints, morphology constraints, and target objective without measured development mechanical responses.
+
+Use genuine independent LLM responses with equal revision opportunities.
+
+Prefer four independent trials per arm, with a prospectively registered minimum of three if resources require.
+
+Do not repair returned generators.
+
+Freeze all scripts before final evaluation.
+
+Generate previously unused held-out stochastic realizations.
+
+Require exact reinforcement composition.
+
+Require stronger morphology preservation.
+
+Require genuine stochastic diversity.
+
+Execute actual native mechanical evaluations.
+
+Compare target-property accuracy, feasibility, and numerical uncertainty.
+
+Confirm important target-property conclusions using balanced refined-mesh comparisons.
+
+Determine separately whether:
+
+1. The LLM can achieve the target.
+2. It can preserve the intended morphology.
+3. It improves upon the starting generator.
+4. Informative measured feedback improves performance relative to the matched control.
+
+A negative result remains scientifically meaningful.
+
+If the primary work is completed or reaches an authentic human-submission gate, consider the bounded secondary F1 mechanical benchmark.
+
+Preserve F1's distinct matrix, transverse fiber, and void phases.
+
+Use small-strain mechanics and explicitly illustrative material assumptions.
+
+Do not allow F1 to become another prolonged nonlinear contact campaign.
+
+Preserve all prior research.
+
+Maintain descriptive Git commits after every coherent repository change.
+
+Do not push automatically.
+
+**Complete a scientifically controlled morphology-constrained inverse-design experiment, produce actual geometry–mechanics feedback and target-property evidence, determine whether the LLM can achieve prescribed mechanical properties without abandoning the intended structural family, report the genuine outcome to Dr. Wang, preserve scientific limitations, commit completed work, and STOP.**
