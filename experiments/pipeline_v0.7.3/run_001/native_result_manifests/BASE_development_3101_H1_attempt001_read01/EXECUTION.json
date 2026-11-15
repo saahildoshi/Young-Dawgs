@@ -1,0 +1,388 @@
+{
+  "input_sha256": "476eea56f90ad0259e409fe278fc6cf24e3eb43a372b064992db956cc4b78461",
+  "job_name": "v071_fb4b5cff9863",
+  "kind": "INDEPENDENT_READ_ONLY_RST_REOPEN",
+  "native_errors": [],
+  "native_process_ok": true,
+  "process": {
+    "artifacts": {
+      "MODEL.json": {
+        "bytes": 395,
+        "sha256": "bc30e23d6e9edca2ae652056c7d6d99954bb9935cbb65d204a69ccce174051c7"
+      },
+      "PREFLIGHT.json": {
+        "bytes": 214,
+        "sha256": "74ad5a6175a8e1e6795d19c5d28c0c888d3829e4509ca0d15752ed1fdd6f095b"
+      },
+      "connectivity.csv": {
+        "bytes": 4325376,
+        "sha256": "cf3ab3fa02a43de2c58a7f8fb80acb4dedbae77412475a9c2fed452273e4cb5d"
+      },
+      "curve.csv": {
+        "bytes": 1425,
+        "sha256": "aa7f06e468fbd7b883e10ac61bcfc0379d604946af3bf70bdb5639fa088a7ceb"
+      },
+      "fields.csv": {
+        "bytes": 18939904,
+        "sha256": "9a835de5fb28bc045af81a5f9b34638aec1271362d8697364b54723ac9f95d76"
+      },
+      "input.inp": {
+        "bytes": 2603,
+        "sha256": "476eea56f90ad0259e409fe278fc6cf24e3eb43a372b064992db956cc4b78461"
+      },
+      "launcher.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "native_counts.csv": {
+        "bytes": 53,
+        "sha256": "d19a0b20b2a56b39acf267541b97679f99e7eb99a12f2335d3fa67d169017088"
+      },
+      "nodes.csv": {
+        "bytes": 7529586,
+        "sha256": "4090b0bf2baf9a6e8f42fe108c8bc77b972cea0d8de9f386de002f84e23c125c"
+      },
+      "result_sets.txt": {
+        "bytes": 480,
+        "sha256": "f619ce89156ffc06883731818031013fc99325e93f4bf7302391e6b898fa1ecb"
+      },
+      "solver.out": {
+        "bytes": 24044,
+        "sha256": "107fc9c0b164ecf12b0efc6e5d2052d9ab47186c68239190130758af9290ea0a"
+      },
+      "v071_fb4b5cff9863.err": {
+        "bytes": 80,
+        "sha256": "2fb2c262dc92875f127edd810fd3534174bc4bde8937a686cc3324461d5d65f2"
+      },
+      "v071_fb4b5cff9863.log": {
+        "bytes": 250,
+        "sha256": "83c51cedc769449fffda165d96c5934ad24fa1797a513f65b6a52609edf73c3a"
+      }
+    },
+    "command": [
+      "C:\\Program Files\\ANSYS Inc\\v241\\ansys\\bin\\winx64\\ANSYS241.exe",
+      "-b",
+      "-smp",
+      "-np",
+      "2",
+      "-m",
+      "2048",
+      "-j",
+      "v071_fb4b5cff9863",
+      "-i",
+      "input.inp",
+      "-o",
+      "solver.out"
+    ],
+    "min_available_ram_bytes": 0,
+    "min_disk_free_bytes": 53687091200,
+    "native_signal_availability": [],
+    "paging_interpretation": "Page Reads/sec is system hard-fault disk-read proxy, not pagefile-only or per-process hard faults",
+    "peak_tree_rss_bytes": 492912640,
+    "resource_samples": [
+      {
+        "available_RAM_bytes": 44956381184,
+        "commit_fraction": 0.3581440548421907,
+        "commit_limit_bytes": 72698556416,
+        "commit_used_bytes": 26036555776,
+        "disk_free_bytes": 1143873323008,
+        "elapsed_seconds": 0.02032319997670129,
+        "native_markers_first_observed_seconds": {},
+        "output_file_bytes": {
+          "MODEL.json": 395,
+          "PREFLIGHT.json": 214,
+          "input.inp": 2603,
+          "launcher.log": 0
+        },
+        "owned_processes": [
+          {
+            "name": "ANSYS241.exe",
+            "pid": 41116,
+            "status": "running"
+          },
+          {
+            "name": "conhost.exe",
+            "pid": 14008,
+            "status": "running"
+          }
+        ],
+        "page_reads_per_second": 23.403692634623894,
+        "page_writes_per_second": 0.0,
+        "pagefile_usage_percent": 1.8505096435546875,
+        "pages_input_per_second": 374.4590821539823,
+        "physical_RAM_bytes": 68403589120,
+        "seconds_without_output_growth": 0.02032319997670129,
+        "system_memory_percent": 34.3,
+        "tree_rss_bytes": 7008256,
+        "windows_low_memory": false
+      },
+      {
+        "available_RAM_bytes": 44915642368,
+        "commit_fraction": 0.3589518336330647,
+        "commit_limit_bytes": 72698556416,
+        "commit_used_bytes": 26095280128,
+        "disk_free_bytes": 1143873331200,
+        "elapsed_seconds": 2.1206040999968536,
+        "native_markers_first_observed_seconds": {},
+        "output_file_bytes": {
+          "MODEL.json": 395,
+          "PREFLIGHT.json": 214,
+          "input.inp": 2603,
+          "launcher.log": 0,
+          "solver.out": 0,
+          "v071_fb4b5cff9863.err": 0,
+          "v071_fb4b5cff9863.lock": 0
+        },
+        "owned_processes": [
+          {
+            "name": "ANSYS241.exe",
+            "pid": 41116,
+            "status": "running"
+          },
+          {
+            "name": "conhost.exe",
+            "pid": 14008,
+            "status": "running"
+          },
+          {
+            "name": "ANSYS.exe",
+            "pid": 4460,
+            "status": "running"
+          },
+          {
+            "name": "apip-standalone-service.exe",
+            "pid": 17824,
+            "status": "running"
+          },
+          {
+            "name": "ansyscl.exe",
+            "pid": 21652,
+            "status": "running"
+          },
+          {
+            "name": "conhost.exe",
+            "pid": 40324,
+            "status": "running"
+          }
+        ],
+        "page_reads_per_second": 2.8403739655298845,
+        "page_writes_per_second": 0.0,
+        "pagefile_usage_percent": 1.8505096435546875,
+        "pages_input_per_second": 26.9835526725339,
+        "physical_RAM_bytes": 68403589120,
+        "seconds_without_output_growth": 2.1206040999968536,
+        "system_memory_percent": 34.3,
+        "tree_rss_bytes": 129368064,
+        "windows_low_memory": false
+      },
+      {
+        "available_RAM_bytes": 44653637632,
+        "commit_fraction": 0.38863963391963263,
+        "commit_limit_bytes": 72698556416,
+        "commit_used_bytes": 28253540352,
+        "disk_free_bytes": 1143873171456,
+        "elapsed_seconds": 4.124798299977556,
+        "native_markers_first_observed_seconds": {},
+        "output_file_bytes": {
+          "MODEL.json": 395,
+          "PREFLIGHT.json": 214,
+          "curve.csv": 0,
+          "input.inp": 2603,
+          "launcher.log": 0,
+          "result_sets.txt": 480,
+          "solver.out": 15598,
+          "v071_fb4b5cff9863.bat": 2878,
+          "v071_fb4b5cff9863.err": 0,
+          "v071_fb4b5cff9863.lock": 0,
+          "v071_fb4b5cff9863.log": 0,
+          "v071_fb4b5cff9863.page": 0
+        },
+        "owned_processes": [
+          {
+            "name": "ANSYS241.exe",
+            "pid": 41116,
+            "status": "running"
+          },
+          {
+            "name": "conhost.exe",
+            "pid": 14008,
+            "status": "running"
+          },
+          {
+            "name": "ANSYS.exe",
+            "pid": 4460,
+            "status": "running"
+          },
+          {
+            "name": "apip-standalone-service.exe",
+            "pid": 17824,
+            "status": "running"
+          },
+          {
+            "name": "ansyscl.exe",
+            "pid": 21652,
+            "status": "running"
+          },
+          {
+            "name": "conhost.exe",
+            "pid": 40324,
+            "status": "running"
+          }
+        ],
+        "page_reads_per_second": 9.909274645059693,
+        "page_writes_per_second": 0.0,
+        "pagefile_usage_percent": 1.8505096435546875,
+        "pages_input_per_second": 69.86038624767083,
+        "physical_RAM_bytes": 68403589120,
+        "seconds_without_output_growth": 0.0,
+        "system_memory_percent": 34.7,
+        "tree_rss_bytes": 433684480,
+        "windows_low_memory": false
+      },
+      {
+        "available_RAM_bytes": 44654690304,
+        "commit_fraction": 0.3884215894249209,
+        "commit_limit_bytes": 72698556416,
+        "commit_used_bytes": 28237688832,
+        "disk_free_bytes": 1143849967616,
+        "elapsed_seconds": 6.157826000009663,
+        "native_markers_first_observed_seconds": {},
+        "output_file_bytes": {
+          "MODEL.json": 395,
+          "PREFLIGHT.json": 214,
+          "curve.csv": 1425,
+          "fields.csv": 10395330,
+          "input.inp": 2603,
+          "launcher.log": 0,
+          "nodes.csv": 7529586,
+          "result_sets.txt": 480,
+          "solver.out": 19147,
+          "v071_fb4b5cff9863.bat": 2878,
+          "v071_fb4b5cff9863.err": 0,
+          "v071_fb4b5cff9863.lock": 0,
+          "v071_fb4b5cff9863.log": 0,
+          "v071_fb4b5cff9863.page": 0
+        },
+        "owned_processes": [
+          {
+            "name": "ANSYS241.exe",
+            "pid": 41116,
+            "status": "running"
+          },
+          {
+            "name": "conhost.exe",
+            "pid": 14008,
+            "status": "running"
+          },
+          {
+            "name": "ANSYS.exe",
+            "pid": 4460,
+            "status": "running"
+          },
+          {
+            "name": "apip-standalone-service.exe",
+            "pid": 17824,
+            "status": "running"
+          },
+          {
+            "name": "ansyscl.exe",
+            "pid": 21652,
+            "status": "running"
+          },
+          {
+            "name": "conhost.exe",
+            "pid": 40324,
+            "status": "running"
+          }
+        ],
+        "page_reads_per_second": 8.35731185392756,
+        "page_writes_per_second": 0.0,
+        "pagefile_usage_percent": 1.8505096435546875,
+        "pages_input_per_second": 112.57790673820067,
+        "physical_RAM_bytes": 68403589120,
+        "seconds_without_output_growth": 0.0,
+        "system_memory_percent": 34.7,
+        "tree_rss_bytes": 490815488,
+        "windows_low_memory": false
+      }
+    ],
+    "returncode": 0,
+    "rss_limit_bytes": null,
+    "run_directory": "C:\\Users\\sd22446\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\YoungDawgs\\artifacts\\solver\\v073\\run_001\\BASE_development_3101_H1_attempt001_read01",
+    "runtime_seconds": 6.529583099996671,
+    "started_utc": "2026-11-15T13:14:50.526981+00:00",
+    "status": "PROCESS_EXITED",
+    "system_after": {
+      "available_RAM_bytes": 45051514880,
+      "commit_fraction": 0.35677645948814984,
+      "commit_limit_bytes": 72698556416,
+      "commit_used_bytes": 25937133568,
+      "disk_free_bytes": 1143842226176,
+      "elapsed_seconds": 6.527720499958377,
+      "native_markers_first_observed_seconds": {},
+      "output_file_bytes": {
+        "MODEL.json": 395,
+        "PREFLIGHT.json": 214,
+        "connectivity.csv": 4325376,
+        "curve.csv": 1425,
+        "fields.csv": 18939904,
+        "input.inp": 2603,
+        "launcher.log": 0,
+        "native_counts.csv": 53,
+        "nodes.csv": 7529586,
+        "result_sets.txt": 480,
+        "solver.out": 24044,
+        "v071_fb4b5cff9863.err": 80,
+        "v071_fb4b5cff9863.log": 250
+      },
+      "owned_processes": [],
+      "page_reads_per_second": 12.461039780311868,
+      "page_writes_per_second": 0.0,
+      "pagefile_usage_percent": 1.8505096435546875,
+      "pages_input_per_second": 199.3766364849899,
+      "physical_RAM_bytes": 68403589120,
+      "seconds_without_output_growth": 0.0,
+      "system_memory_percent": 34.1,
+      "tree_rss_bytes": null,
+      "windows_low_memory": false
+    },
+    "system_before": {
+      "available_RAM_bytes": 44955865088,
+      "commit_fraction": 0.3570598046467817,
+      "commit_limit_bytes": 72698556416,
+      "commit_used_bytes": 25957732352,
+      "disk_free_bytes": 1143873323008,
+      "elapsed_seconds": 0,
+      "native_markers_first_observed_seconds": {},
+      "output_file_bytes": {
+        "MODEL.json": 395,
+        "PREFLIGHT.json": 214,
+        "input.inp": 2603
+      },
+      "owned_processes": [],
+      "page_reads_per_second": 0.0,
+      "page_writes_per_second": 0.0,
+      "pagefile_usage_percent": 1.8505096435546875,
+      "pages_input_per_second": 0.0,
+      "physical_RAM_bytes": 68403589120,
+      "seconds_without_output_growth": 0,
+      "system_memory_percent": 34.3,
+      "tree_rss_bytes": null,
+      "windows_low_memory": false
+    },
+    "system_health_policy": {
+      "available_reserve_bytes": 6442450944,
+      "commit_fraction": 0.98,
+      "commit_seconds": 15,
+      "critical_available_bytes": 1073741824,
+      "critical_seconds": 3,
+      "no_output_growth_seconds": 90,
+      "notification_seconds": 10,
+      "page_reads_per_second": 10000,
+      "paging_seconds": 60,
+      "reserve_seconds": 30
+    },
+    "timeout_seconds": 900
+  },
+  "solver_release": "2024 R1"
+}
