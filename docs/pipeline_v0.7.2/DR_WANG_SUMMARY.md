@@ -1,0 +1,9 @@
+# Research summary for Dr. Wang
+
+We completed the first controlled LLM mechanical-feedback pilot using the qualified two-solid-phase P3 evaluator. Starting from the same captured B02 generator, two independent ordinary-ChatGPT revisions received actual ANSYS development stress–strain data; two matched revisions received the same stiffness objective, code and structural constraints without measured mechanical feedback. Each had one revision opportunity, with no researcher repair.
+
+All 50 held-out structures passed the registered composition, topology and diversity checks. Every revised structure preserved exactly 20,731 reinforcement pixels. The BASE apparent vertical modulus averaged 1692.51 MPa; revised script means ranged from 3282.33 to 3478.26 MPa under illustrative E = 1000/10000 MPa constituent assumptions. The MF arm's mean script-level gain is 98.821%, versus 101.673% for NF; MF minus NF is -2.852 percentage points. Measured mechanical feedback does not show an arm-average advantage in this pilot.
+
+All specimens had actual native curves and independent result reopening. The preselected 15-case refined-mesh subset retained the positive revision-versus-BASE gains above the observed sensitivity diagnostic. These checks apply to the executed subset, not complete asymptotic convergence.
+
+The visual outcome limits the interpretation: all revisions favor aligned, segmented reinforcement lanes. These pass the frozen numerical envelope but depart from the original irregular particle morphology. Thus the study establishes controlled numerical stiffness changes and tests feedback against an equal-attempt control; it does not establish calibrated material optimization or a general causal advantage of mechanical feedback. The next step should strengthen family-preserving constraints and replicate the controlled experiment at exact composition.

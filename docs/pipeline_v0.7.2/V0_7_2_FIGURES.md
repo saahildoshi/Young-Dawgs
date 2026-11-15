@@ -85,4 +85,3 @@ Actual first confirmation-seed arrays, not mechanical predictions.
 Post-hoc image diagnostics, not acceptance gates.
 
 ![POSTHOC_FAMILY_DIAGNOSTICS.png](C:/Users/sd22446/Projects/Young-Dawgs-VSCode/experiments/pipeline_v0.7.2/run_001/figures/POSTHOC_FAMILY_DIAGNOSTICS.png)
-

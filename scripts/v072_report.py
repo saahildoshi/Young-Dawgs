@@ -173,7 +173,7 @@ def results():
     gallery='# v0.7.2 scientific figure gallery\n\nAll data figures use executed arrays or licensed native results. Violet/yellow denote matrix1/reinforcement5 in categorical plots. Computational millimeters do not calibrate microscopy pixels. Each image has retained source tables and a provenance record in the experiment figure directory.\n\n'
     for name,caption in figure_entries:
         gallery+='## '+name.removesuffix('.png').replace('_',' ').title()+'\n\n'+caption+'\n\n!['+name+']('+str((RUN/'figures'/name).resolve()).replace('\\','/')+')\n\n'
-    (DOC/'V0_7_2_FIGURES.md').write_text(gallery,encoding='utf-8',newline='\n')
+    (DOC/'V0_7_2_FIGURES.md').write_text(gallery.rstrip()+'\n',encoding='utf-8',newline='\n')
     print('ACTUAL RESULT REPORTS WRITTEN',[(s['trial_id'],s['modulus']['mean'],s['paired_gain']['mean']) for s in summaries],comparison,flush=True)
 
 
