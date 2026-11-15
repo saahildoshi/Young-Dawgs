@@ -197,7 +197,9 @@ def final_figures(rows,summaries,comparison,mesh):
         value=s['paired_gain']['mean']
         if value is None:ax.text(i,0,'NA',ha='center');continue
         ax.bar(i,100*value,color=color,width=.65)
-        ax.text(i,100*value,f'{s["paired_gain"]["n"]} valid pairs\n{s["structurally_feasible"]}/10 feasible',ha='center',va='bottom',fontsize=8)
+        ax.text(i,100*value,f'{s["paired_gain"]["n"]} valid pairs\n{s["structurally_feasible"]}/10 feasible',ha='center',va='bottom' if value>=0 else 'top',fontsize=8)
+    available_gains=[100*s['paired_gain']['mean'] for s in summaries[1:] if s['paired_gain']['mean'] is not None]
+    if available_gains:ax.set_ylim(min(0,min(available_gains)*1.25),max(1,max(available_gains)*1.22))
     ax.set_xticks(range(4),SHORT[1:]);ax.set(ylabel='Mean paired gain (%)',title='Four independent revised scripts · two MF and two NF')
     ax.axhline(0,color='k',lw=.8);ax.grid(axis='y',alpha=.2)
     save(fig,'FEEDBACK_VERSUS_CONTROL.png','One bar per genuine independent response. Means over nested seed pairs are descriptive; no pooled-seed significance or universal feedback effect.')
@@ -252,11 +254,16 @@ def final_figures(rows,summaries,comparison,mesh):
             axes[3,i].bar(['Matrix','Reinf.'],energy,color=['#440154','#fde725']);axes[3,i].set_ylim(0,1);axes[3,i].tick_params(labelsize=8)
         for j,label in enumerate(['SYY (MPa)','Equivalent stress (MPa)','Native |U| (mm)']):
             axes[j,0].set_ylabel(label,fontsize=9)
-            if images[j] is not None:fig.colorbar(images[j],ax=list(axes[j,:]),fraction=.014,pad=.015)
         axes[3,0].set_ylabel('Elastic energy share')
         fig.suptitle(f'Actual native fields · seed {seed} · 0.5% compression · illustrative elastic constituents',y=.995)
         # Explicit axes spacing avoids tight_layout moving shared colorbars into data.
         fig.subplots_adjust(left=.065,right=.91,bottom=.06,top=.955,wspace=.15,hspace=.18)
+        for j in range(3):
+            if images[j] is not None:
+                position=axes[j,-1].get_position()
+                color_axis=fig.add_axes([.932,position.y0,.012,position.height])
+                colorbar=fig.colorbar(images[j],cax=color_axis)
+                colorbar.ax.tick_params(labelsize=8)
         fig.savefig(folder/'NATIVE_MECHANICAL_FIELDS.png',dpi=180,bbox_inches='tight');plt.close(fig)
         captions['NATIVE_MECHANICAL_FIELDS.png']='H2 native element-associated SYY/SEQV, native nodal displacement norm, and native phase energy shares. Common stress limits use max per-specimen absolute/SEQV 99.5 percentiles; clipping disclosed, full extremes remain in raw fields. No cross-phase stress averaging, no failure interpretation.'
         fig,axes=plt.subplots(1,5,figsize=(16,3.8));derived=[]

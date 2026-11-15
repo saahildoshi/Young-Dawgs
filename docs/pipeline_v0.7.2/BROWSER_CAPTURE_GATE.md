@@ -1,11 +1,3 @@
-# Existing-response capture gate — do not resubmit
+# Capture gate resolved
 
-The six development ANSYS curves are qualified. All four registered prompts were genuinely submitted in distinct ordinary ChatGPT chats at the same exposed High setting. Three complete returned modules are preserved and audited. The existing fourth chat is [https://chatgpt.com/c/6af8c91a-41cc-83ea-b0f2-5988350d9b76](https://chatgpt.com/c/6af8c91a-41cc-83ea-b0f2-5988350d9b76).
-
-Windows graphics capture failed twice with `IGraphicsCaptureItemInterop.CreateForMonitor ... 0x80070057`. Read-only accessibility remained available, but reliable source-copy interaction could not continue. No fourth module is fabricated; its capture remains pending. Restoring the display/session and leaving Chrome visible is the only user action currently needed. No new permission or extra model attempt is required.
-
-After display recovery, capture the **existing completed P3_OPT_MF_02 response** via its Copy code control, paste into a separate empty Notepad tab, read complete accessibility document_text, and save the exact unedited text as `llm_trials/P3_OPT_MF_02/response.txt`. Preserve the UI capture/method metadata. If the final response includes narrative, preserve it too. Do not click regenerate, send a repair prompt or submit these packets again.
-
-Then run `python -m scripts.v072_trials ingest P3_OPT_MF_02`, review the original source, and `python -m scripts.v072_trials freeze`. Only after that collective freeze, use `python -m scripts.v072_trials heldout TRIAL` for BASE and each of the four registered trial IDs. The workers retain failures and do not replace seeds. Run `python -m scripts.v072_campaign 1` and `python -m scripts.v072_campaign 2` sequentially for the feasible registered cases. Each geometry receives five actual checkpoints plus native reopening, not a fabricated curve from one point. Finish the registered analysis/figures and actual-result report, verify evidence and commit. Stop after this single-generation experiment.
-
-Do not alter the frozen objective, ±64-pixel composition tolerance, morphology envelope, partitions, H2 subset, prompts or returned code. Independent conversations are the experimental units; stochastic realizations are nested. The final held-out seed list is evaluator-only. It has not been used or sent to the model. There are no held-out arrays, gains or H2 outcomes at this checkpoint.
+The existing fourth response was recovered without resubmission, regeneration or repair. All four scripts were frozen before held-out evaluation. The original capture-blocked instructions and checkpoint reports are preserved in `interim_checkpoint_001/`; recovery evidence is in `response_capture/DISPLAY_RECOVERY.json`.

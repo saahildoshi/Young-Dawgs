@@ -100,6 +100,13 @@ def result_contracts():
 def results():
     archive_interim_reports();rows,summaries,comparison,mesh=analyse();final_figures(rows,summaries,comparison,mesh)
     morphology=morphology_diagnostics();result_contracts()
+    policy=read(RUN/'protocol/FEASIBILITY_FROZEN.json')
+    original_protocol=(DOC/'interim_checkpoint_001/V0_7_2_PROTOCOL.md').read_text(encoding='utf-8')
+    (DOC/'V0_7_2_PROTOCOL.md').write_text(original_protocol+'\n## Frozen-envelope documentation addendum\n\n'+
+        'This section documents the operative JSON frozen BEFORE the first new mechanical solve and all model calls; it changes no registered rule. The original Markdown registration is retained in `interim_checkpoint_001/`.\n\n'+
+        f"Feasibility JSON frozen UTC: `{policy['frozen_utc']}`; SHA-256 `{sha(RUN/'protocol/FEASIBILITY_FROZEN.json')}`. Common start is unchanged captured P3_B_02/r0, parameters={{}}. Target count20,731; allowed deviation±64 pixels (fraction±0.0009765625). Four-connected matrix must span both axes and have LCC≥0.95. Reinforcement may not span either axis under4 or8 connectivity; largest connected fraction≤0.15 under both. Complete/all/censored counts40–75/50–125/5–50; complete mean equivalent diameter12–20px; mean aspect1.2–3.0; singleton reinforcement-area fraction≤0.001.\n\n"+
+        'All ten held-out outputs must pass for full generator qualification. Diversity requires ten unique arrays, median pairwise categorical Hamming≥0.1 and at least five rigid-invariant area/centroid-distance signatures, with boundary-clipping limitations reported. Every arm uses an empty parameter dict, local seeded RNG, the same dependency whitelist,30-second single-output ceiling and1000-full-domain-candidate ceiling. No returned-code repair, geometry correction, mechanical cache/solver inside generators, extra attempt or invalid-seed replacement is permitted. Post-hoc family diagnostics are descriptive, never replacement gates.\n\n'+
+        'Six development seeds1000–1005 and ten disjoint held-out seeds2000–2009 were frozen before responses; only development data entered model prompts. First-three-seed H2 confirmation uses2000–2002 for BASE and all four revisions. Actual full five-checkpoint curves are used throughout. Native raw labels1/5 map to matrix/reinforcement solids, native MAT1/MAT2; no void phase is introduced. P3 label5 chemistry remains provisional; the selected HorizontalFlip augmentation is not an unaugmented original or an unbiased RVE. No physical microscopy pixel scale is inferred.\n',encoding='utf-8',newline='\n')
     inventory=[]
     for trial in TRIALS:
         r=read(RUN/'llm_trials'/trial/'RECEIPT.json');source_review=read(RUN/'llm_trials'/trial/'SOURCE_REVIEW.json')
@@ -158,6 +165,15 @@ def results():
     trade+='Phase-specific element-associated SYY means, equivalent-stress percentiles normalized by each specimen nominal stress, and elastic-energy shares are retained in `optimization_analysis/PHASE_FIELDS.csv`. Compare these under fixed strain and also normalized stress; increased raw stress alone can reflect increased nominal loading. Pixel-corner maxima remain exploratory. No plasticity, damage, yielding, fracture or calibrated failure response is modeled.\n'
     (DOC/'V0_7_2_MORPHOLOGY_MECHANICS_TRADEOFFS.md').write_text(trade,encoding='utf-8',newline='\n')
     (DOC/'BROWSER_CAPTURE_GATE.md').write_text('# Capture gate resolved\n\nThe existing fourth response was recovered without resubmission, regeneration or repair. All four scripts were frozen before held-out evaluation. The original capture-blocked instructions and checkpoint reports are preserved in `interim_checkpoint_001/`; recovery evidence is in `response_capture/DISPLAY_RECOVERY.json`.\n',encoding='utf-8',newline='\n')
+    figure_entries=[('BASELINE_VARIABILITY.png','Six actual development specimens; within-generator sample variation.'),
+        ('BASELINE_NATIVE_CURVES.png','Five actual solved checkpoints per development specimen; aggregate mean is labeled separately.')]
+    figure_entries += [(r['path'],r['caption']) for r in read(RUN/'figures/FIGURE_MANIFEST.json')['figures']]
+    figure_entries += [('HELDOUT_STRUCTURE_PREVIEW.png','Actual first confirmation-seed arrays; no mechanical result is inferred from appearance.'),
+        ('POSTHOC_FAMILY_DIAGNOSTICS.png','Supplemental image diagnostics, not retrospective acceptance criteria.')]
+    gallery='# v0.7.2 scientific figure gallery\n\nAll data figures use executed arrays or licensed native results. Violet/yellow denote matrix1/reinforcement5 in categorical plots. Computational millimeters do not calibrate microscopy pixels. Each image has retained source tables and a provenance record in the experiment figure directory.\n\n'
+    for name,caption in figure_entries:
+        gallery+='## '+name.removesuffix('.png').replace('_',' ').title()+'\n\n'+caption+'\n\n!['+name+']('+str((RUN/'figures'/name).resolve()).replace('\\','/')+')\n\n'
+    (DOC/'V0_7_2_FIGURES.md').write_text(gallery,encoding='utf-8',newline='\n')
     print('ACTUAL RESULT REPORTS WRITTEN',[(s['trial_id'],s['modulus']['mean'],s['paired_gain']['mean']) for s in summaries],comparison,flush=True)
 
 
