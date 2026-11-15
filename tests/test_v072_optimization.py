@@ -91,3 +91,22 @@ def test_pairing_uses_each_seed_own_baseline_then_script_mean():
     result=paired({1:20.,2:20.},{1:10.,2:20.})
     assert result['gain_summary']['mean']==.5
     assert result['positive_gain_fraction']==.5
+
+
+def test_h1_improvement_reversing_on_h2_is_not_supported():
+    from scripts.v072_analysis import mesh_effect
+    result=mesh_effect(102.,98.,100.,99.)
+    assert not result['positive_direction_persists'] and not result['H2_gain_exceeds_observed_changes']
+
+
+def test_positive_but_submesh_effect_is_unresolved():
+    from scripts.v072_analysis import mesh_effect
+    result=mesh_effect(101.,99.,100.,98.)
+    assert result['positive_direction_persists'] and not result['H2_gain_exceeds_observed_changes']
+    assert result['conservative_sum_of_observed_mesh_changes_MPa']==4.
+
+
+def test_large_persistent_effect_exceeds_observed_mesh_change_diagnostic():
+    from scripts.v072_analysis import mesh_effect
+    result=mesh_effect(150.,148.,100.,99.)
+    assert result['positive_direction_persists'] and result['H2_gain_exceeds_observed_changes']

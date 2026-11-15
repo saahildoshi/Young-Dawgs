@@ -34,6 +34,16 @@ def paired(candidate,baseline):
     return {'pairs':rows,'gain_summary':stats(gains),'positive_gain_fraction':float(np.mean(np.array(gains)>0)) if gains else None}
 
 
+def mesh_effect(candidate_h1,candidate_h2,baseline_h1,baseline_h2):
+    h1=candidate_h1-baseline_h1;h2=candidate_h2-baseline_h2
+    diagnostic=abs(candidate_h2-candidate_h1)+abs(baseline_h2-baseline_h1)
+    return {'H1_delta_E_MPa':h1,'H2_delta_E_MPa':h2,'H1_relative_gain':h1/baseline_h1,
+        'H2_relative_gain':h2/baseline_h2,'gain_change_MPa':h2-h1,
+        'conservative_sum_of_observed_mesh_changes_MPa':diagnostic,
+        'positive_direction_persists':bool(h1>0 and h2>0),'H2_gain_exceeds_observed_changes':bool(h2>diagnostic),
+        'interpretation':'Observed two-level sensitivity diagnostic, not a rigorous FE bound or statistical interval'}
+
+
 def csv_table(path,rows):
     path=Path(path);path.parent.mkdir(parents=True,exist_ok=True)
     if not rows:return
@@ -94,14 +104,7 @@ def analyse():
                 'relative_mesh_change':abs(e2-e1)/abs(e2),'same_source_geometry':True,
                 'H1_native_RST_sha256':a['native_result_sha256'],'H2_native_RST_sha256':r['native_result_sha256']}
             if b is not None and a0 is not None:
-                h1=e1-a0['effective_modulus_MPa'];h2=e2-b['effective_modulus_MPa']
-                diagnostic=abs(e2-e1)+abs(b['effective_modulus_MPa']-a0['effective_modulus_MPa'])
-                data.update(H1_delta_E_MPa=h1,H2_delta_E_MPa=h2,H1_relative_gain=h1/a0['effective_modulus_MPa'],
-                    H2_relative_gain=h2/b['effective_modulus_MPa'],gain_change_MPa=h2-h1,
-                    conservative_sum_of_observed_mesh_changes_MPa=diagnostic,
-                    positive_direction_persists=bool(h1>0 and h2>0),
-                    H2_gain_exceeds_observed_changes=bool(h2>diagnostic),
-                    interpretation='Observed two-level sensitivity diagnostic, not a rigorous FE bound or statistical interval')
+                data.update(mesh_effect(e1,e2,a0['effective_modulus_MPa'],b['effective_modulus_MPa']))
             mesh.append(data)
     arms={}
     for arm in ['MF','NF']:
@@ -109,10 +112,14 @@ def analyse():
         values=[r['paired_gain']['mean'] for r in members]
         arms[arm]={'independent_scripts':2,'script_level_mean_paired_gains':values,
             'mean_script_gain':float(np.mean(values)) if all(v is not None for v in values) else None,
+            'sample_SD_of_script_mean_gains':float(np.std(values,ddof=1)) if all(v is not None for v in values) else None,
             'fully_feasible_scripts':sum(r['fully_qualified_generator'] for r in members),
+            'H1_confirmation_subset_script_mean_gains':[paired({seed:E[r['trial_id']].get(seed) for seed in partition['H2']},{seed:E['BASE'].get(seed) for seed in partition['H2']})['gain_summary']['mean'] for r in members],
             'H2_subset_script_mean_gains':[paired(E2[r['trial_id']],E2['BASE'])['gain_summary']['mean'] for r in members]}
     advantage=None if any(arms[a]['mean_script_gain'] is None for a in ['MF','NF']) else arms['MF']['mean_script_gain']-arms['NF']['mean_script_gain']
     comparison={'arms':arms,'MF_minus_NF_mean_script_gain':advantage,
+        'MF_minus_NF_H1_confirmation_subset_mean_script_gain':float(np.mean(arms['MF']['H1_confirmation_subset_script_mean_gains'])-np.mean(arms['NF']['H1_confirmation_subset_script_mean_gains'])) if all(v is not None for a in arms.values() for v in a['H1_confirmation_subset_script_mean_gains']) else None,
+        'MF_minus_NF_H2_confirmation_subset_mean_script_gain':float(np.mean(arms['MF']['H2_subset_script_mean_gains'])-np.mean(arms['NF']['H2_subset_script_mean_gains'])) if all(v is not None for a in arms.values() for v in a['H2_subset_script_mean_gains']) else None,
         'primary_unit':'Independent returned LLM script; 2 per arm, stochastic seeds nested. Equal weighting of script-level mean paired gains.',
         'inference':'Small descriptive pilot; no p values, no pooled-seed causal significance claim',
         'composition':'Acceptance within ±64 reference pixels, not exact equality for BASE. Report systematic fraction shifts; no geometry-only attribution or guessed correction.',
