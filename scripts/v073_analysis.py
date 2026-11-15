@@ -26,7 +26,7 @@ def csv_table(path,rows):
     names=list(dict.fromkeys(k for r in rows for k in r))
     import json
     with path.open('w',encoding='utf-8',newline='') as f:
-        out=csv.DictWriter(f,fieldnames=names);out.writeheader()
+        out=csv.DictWriter(f,fieldnames=names,lineterminator='\n');out.writeheader()
         for row in rows:out.writerow({k:json.dumps(v,sort_keys=True) if isinstance(v,(dict,list)) else v for k,v in row.items()})
 
 def analyse():
