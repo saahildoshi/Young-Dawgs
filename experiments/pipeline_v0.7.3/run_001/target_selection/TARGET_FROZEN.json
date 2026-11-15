@@ -1,0 +1,95 @@
+{
+  "J_target": null,
+  "baseline_mean_MPa": 1691.6419768287565,
+  "baseline_mean_scope": "Only structurally feasible native accepted development outputs, with full six-attempt denominator retained; no seed replacements",
+  "baseline_n": 5,
+  "baseline_sample_SD_MPa": 34.91583604884728,
+  "development_H1_sha256": "f0e984ae1050253bc3cf45c7bcd7ff5a16b3e8fed8b374ca18948a2c2f255db2",
+  "development_H2_sha256": "a3d5fb2172968331d0bfb610015fe1f92c62277d3342664c8da7c166798287cb",
+  "development_mesh_pairs": [
+    {
+      "H1": 1751.8801289324808,
+      "H2": 1740.976773527751,
+      "absolute_mesh_change": 10.903355404729837,
+      "relative_mesh_change": 0.006223802202365218,
+      "seed": 3100,
+      "trial_id": "BASE"
+    },
+    {
+      "H1": 1750.9647165426334,
+      "H2": 1740.0380770112292,
+      "absolute_mesh_change": 10.926639531404135,
+      "relative_mesh_change": 0.006240353919283608,
+      "seed": 3100,
+      "trial_id": "V1_ELONGATION"
+    },
+    {
+      "H1": 1738.2114485764207,
+      "H2": 1727.9156450734636,
+      "absolute_mesh_change": 10.295803502957142,
+      "relative_mesh_change": 0.005923216943133881,
+      "seed": 3100,
+      "trial_id": "V2_VERTICAL"
+    },
+    {
+      "H1": 1644.6977417411847,
+      "H2": 1635.6951809658735,
+      "absolute_mesh_change": 9.002560775311167,
+      "relative_mesh_change": 0.005473687077468999,
+      "seed": 3100,
+      "trial_id": "V3_HORIZONTAL"
+    },
+    {
+      "H1": 1728.9757611489454,
+      "H2": 1718.7381067753065,
+      "absolute_mesh_change": 10.237654373638861,
+      "relative_mesh_change": 0.005921224926158419,
+      "seed": 3100,
+      "trial_id": "V4_DISPERSION"
+    }
+  ],
+  "difficulty_threshold_MPa": 69.83167209769456,
+  "feasibility_sha256": "3a72f0286033e5cd2169d29754d6d0641483bbf0733cb3556fa4cfaa43bb2156",
+  "feasible_variant_results": [
+    {
+      "mean_MPa": 1733.7308376247595,
+      "mean_difference_MPa": 42.08886079600302,
+      "mesh_effect_eligible": false,
+      "n": 3,
+      "trial_id": "V1_ELONGATION"
+    },
+    {
+      "mean_MPa": 1753.0144141128424,
+      "mean_difference_MPa": 61.37243728408589,
+      "mesh_effect_eligible": false,
+      "n": 3,
+      "trial_id": "V2_VERTICAL"
+    },
+    {
+      "mean_MPa": 1636.4457940703426,
+      "mean_difference_MPa": -55.1961827584139,
+      "mesh_effect_eligible": true,
+      "n": 3,
+      "trial_id": "V3_HORIZONTAL"
+    },
+    {
+      "mean_MPa": 1708.6697687562666,
+      "mean_difference_MPa": 17.02779192751018,
+      "mesh_effect_eligible": false,
+      "n": 3,
+      "trial_id": "V4_DISPERSION"
+    }
+  ],
+  "frozen_utc": "2026-11-15T13:29:32.660782+00:00",
+  "largest_absolute_mesh_change_MPa": 10.926639531404135,
+  "largest_relative_mesh_change": 0.006240353919283608,
+  "proposed_target_MPa": 1658.524267173708,
+  "qualified_target": false,
+  "relative_target_separation": 0.019968179127993306,
+  "rule_sha256": "e8c9c99dcfe62108190c4b503db5ad89124268c2ef22943bad3da441d55dd8f6",
+  "selected_variant": "V3_HORIZONTAL",
+  "status": "NO_TARGET_PASSES_REGISTERED_DIFFICULTY_GATE",
+  "target_MPa": null,
+  "target_hit_relative_tolerance": 0.02,
+  "uncertainty": "Observed H1/H2 changes are sensitivity diagnostics, not rigorous FE bounds or calibration uncertainty"
+}

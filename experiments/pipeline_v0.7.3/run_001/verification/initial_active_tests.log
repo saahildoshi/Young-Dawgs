@@ -1,0 +1,37 @@
+........................................................................ [  7%]
+........................................................................ [ 15%]
+........................................................................ [ 22%]
+........................................................................ [ 30%]
+........................................................................ [ 38%]
+....................................F................................... [ 45%]
+........................................................................ [ 53%]
+........................................................................ [ 60%]
+........................................................................ [ 68%]
+........................................................................ [ 76%]
+........................................................................ [ 83%]
+........................................................................ [ 91%]
+........................................................................ [ 99%]
+.........                                                                [100%]
+================================== FAILURES ===================================
+__________ test_default_workflow_detects_clones_and_ignored_controls __________
+
+tmp_path = WindowsPath('C:/Users/sd22446/AppData/Local/Temp/pytest-of-sd22446/pytest-200/test_default_workflow_detects_0')
+
+    def test_default_workflow_detects_clones_and_ignored_controls(tmp_path):
+        run = prepare(tmp_path)
+        m = resume_exploration(run)
+        assert m["status"] == "WAITING_FOR_LLM"
+        (run / "response.txt").write_bytes(("\ufeff```python\r\n" + CONSTANT_GENERATOR.replace('\n', '\r\n') + "```\r\n").encode('utf-8'))
+        with pytest.raises(ValueError, match="NOT sandboxed"):
+            resume_exploration(run)
+        m = resume_exploration(run, execute=True)
+>       assert m["status"] == "COMPLETE"
+E       AssertionError: assert 'FAILED' == 'COMPLETE'
+E         
+E         - COMPLETE
+E         + FAILED
+
+tests\test_pipeline_exploration.py:66: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_pipeline_exploration.py::test_default_workflow_detects_clones_and_ignored_controls
+1 failed, 944 passed in 79.67s (0:01:19)

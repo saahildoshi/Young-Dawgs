@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "C:\Users\sd22446\Projects\Young-Dawgs-VSCode\metamaterial_eval\pipeline\exploration_worker.py", line 53, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\sd22446\Projects\Young-Dawgs-VSCode\metamaterial_eval\pipeline\exploration_worker.py", line 49, in main
+    write_json(destination / "generation_results.json", {"samples": results})
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sd22446\Projects\Young-Dawgs-VSCode\metamaterial_eval\pipeline\state.py", line 41, in write_json
+    temporary.replace(path)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\sd22446\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 1091, in replace
+    os.replace(self, target)
+    ~~~~~~~~~~^^^^^^^^^^^^^^
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\sd22446\\AppData\\Local\\Temp\\pytest-of-sd22446\\pytest-200\\test_default_workflow_detects_0\\run\\attempt_001\\samples\\generation_results.json.tmp' -> 'C:\\Users\\sd22446\\AppData\\Local\\Temp\\pytest-of-sd22446\\pytest-200\\test_default_workflow_detects_0\\run\\attempt_001\\samples\\generation_results.json'

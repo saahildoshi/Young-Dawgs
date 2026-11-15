@@ -8,6 +8,7 @@ from scripts.v070_protocol import REPO,read,write,sha
 from scripts.v073_experiment import RUN,DOC,PREV,REFERENCE,now
 from scripts.v073_analysis import statistics,csv_table
 from metamaterial_eval.composites.morphology_v073 import flattened
+from scripts.v073_figures import COLORS as PHASE_COLORS
 
 FAMILIES=['BASE','V1_ELONGATION','V2_VERTICAL','V3_HORIZONTAL','V4_DISPERSION']
 COLORS=['#365a7d','#9d5935','#b36c16','#497f62','#80568b']
@@ -53,7 +54,7 @@ def report():
         manifest.append({'path':name,'caption':caption,'sha256':sha(folder/name)})
     fig,axes=plt.subplots(2,3,figsize=(12,7))
     for ax,seed in zip(axes.flat,range(3000,3006)):
-        ax.imshow(np.load(RUN/'envelope_calibration'/f'seed_{seed}.npy')==5,cmap='cividis',vmin=0,vmax=1,interpolation='nearest')
+        ax.imshow(np.load(RUN/'envelope_calibration'/f'seed_{seed}.npy')==5,cmap=PHASE_COLORS,vmin=0,vmax=1,interpolation='nearest')
         ax.set(title=f'Exact baseline seed{seed} · count20,731');ax.set_xticks([]);ax.set_yticks([])
     save(fig,'EXACT_COMPOSITION_BASELINE.png','First six of twelve registered calibration seeds; unchanged finite pixel scale, no physical scale inference.')
     fig,axes=plt.subplots(1,3,figsize=(12,4))
