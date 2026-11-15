@@ -71,8 +71,10 @@ def report():
     for ax,trial,color in zip(axes.flat,FAMILIES,COLORS):
         for model in models:
             if model['mesh_level']!=1 or not model['specimen_id'].startswith(trial+'_development_'):continue
-            ax.plot(np.array(model['engineering_strains'])*100,model['nominal_stresses_MPa'],'o-',color=color,alpha=.8,label=model['specimen_id'].split('_')[-1])
-        ax.set(title=trial,xlabel='Actual engineering compression (%)',ylabel='Nominal compressive stress (MPa)');ax.legend(title='Seed',fontsize=8);ax.grid(alpha=.2)
+            seed=int(model['specimen_id'].split('_')[-1]);marker={3100:'o',3101:'s',3102:'^',3103:'D',3105:'x'}[seed]
+            ax.plot(np.array(model['engineering_strains'])*100,model['nominal_stresses_MPa'],marker=marker,color=color,alpha=.8,label=str(seed))
+        ymax=max(max(r['nominal_stresses_MPa']) for r in models if r['mesh_level']==1)*1.05
+        ax.set(title=trial,xlabel='Actual engineering compression (%)',ylabel='Nominal compressive stress (MPa)',ylim=(0,ymax),xlim=(.08,.52));ax.legend(title='Seed',fontsize=8);ax.grid(alpha=.2)
     axes.flat[-1].axis('off');axes.flat[-1].text(.05,.7,'Actual native solved checkpoints only.\n17 H1 curves; one infeasible BASE omitted\nfrom mechanics with denominator preserved.\nNo synthetic origin or extrapolated curve.',va='top')
     save(fig,'ACTUAL_DEVELOPMENT_CURVES.png','All17 accepted H1 five-checkpoint responses, individually identified by family and seed; illustrative linear elasticity.')
     fig,axes=plt.subplots(1,3,figsize=(13,4))
