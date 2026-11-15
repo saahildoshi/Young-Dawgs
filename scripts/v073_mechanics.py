@@ -38,6 +38,8 @@ def perform(trial,partition,seed,k):
     r=m.qualify(source,post);assert r['accepted'],[key for key,value in r['checks'].items() if not value]
     delta=abs(r['secant_modulus_MPa']-r['effective_modulus_MPa'])/r['effective_modulus_MPa']
     assert delta<=read(RUN/'protocol/PROTOCOL.json')['secant_confirmation_relative_tolerance']
+    write(RUN/'native_result_manifests'/source.name/'SECANT_CONFIRMATION.json',
+        {'actual_five_native_checkpoints':True,'relative_secant_fit_difference':delta,'passed':True})
     return r
 
 def campaign(partition,level):
