@@ -1,0 +1,322 @@
+import numpy as np
+from scipy import ndimage as ndi
+from skimage.measure import regionprops
+
+SIZE = 256
+TARGET_COUNT = 20731
+N_SMALL = 42
+MAX_CANDIDATES = 12
+
+
+def _allocate(total, weights):
+    """Allocate an exact integer total proportionally to positive weights."""
+    raw = total * np.asarray(weights, dtype=float) / np.sum(weights)
+    out = np.floor(raw).astype(int)
+    remainder = int(total - out.sum())
+    if remainder:
+        order = np.argsort(-(raw - out), kind="stable")
+        out[order[:remainder]] += 1
+    return out
+
+
+def _profile(rng, amplitude, knots=15):
+    """Smooth, nonperiodic stochastic lateral variation."""
+    xp = np.linspace(-16, SIZE + 15, knots)
+    values = rng.uniform(-amplitude, amplitude, knots)
+    return np.interp(np.arange(SIZE), xp, values)
+
+
+def _layout(rng, primary_widths):
+    """
+    Randomly position independently separated longitudinal particle groups.
+    Generous matrix corridors prevent contact between neighboring groups.
+    """
+    n = len(primary_widths)
+    widths = np.concatenate((primary_widths + 8, [16, 16]))
+    order = rng.permutation(n + 2)
+
+    minimum_gap = 3
+    free = SIZE - int(widths.sum())
+    extra = free - minimum_gap * (n + 3)
+    weights = rng.gamma(1.15, 1.0, n + 3)
+    gaps = _allocate(extra, weights) + minimum_gap
+
+    centers = np.empty(n + 2, dtype=int)
+    x = int(gaps[0])
+    for j, index in enumerate(order):
+        centers[index] = x + widths[index] // 2
+        x += int(widths[index] + gaps[j + 1])
+
+    return centers
+
+
+def _primary_group(rng, canvas, center, width):
+    """
+    Create four vertically aligned, disconnected reinforcement inclusions.
+
+    Flat, overlapping ends and thin intervening matrix layers are intended
+    to promote vertical load transfer without reinforcement connectivity.
+    The upper and lower particles are censored by the specimen boundaries.
+    """
+    cuts = np.array([
+        rng.integers(48, 82),
+        rng.integers(111, 146),
+        rng.integers(174, 209)
+    ], dtype=int)
+
+    active = np.ones(SIZE, dtype=bool)
+    active[cuts] = False
+    rows = np.flatnonzero(active)
+
+    shifts = np.rint(_profile(rng, 2.0)).astype(int)
+    width_field = _profile(rng, 1.0, knots=19)
+    width_field += rng.normal(0.0, 0.12, SIZE)
+
+    # Balanced width variation preserves the exact group area.
+    widths = np.full(SIZE, width, dtype=int)
+    order = rows[np.argsort(width_field[rows], kind="stable")]
+    k = len(rows) // 4
+    widths[order[:k]] -= 1
+    widths[order[-k:]] += 1
+
+    for y in rows:
+        w = int(widths[y])
+        x0 = int(center + shifts[y] - w // 2)
+        canvas[y, x0:x0 + w] = True
+
+
+def _small_particle(rng, canvas, y0, center, height, area):
+    """
+    Rasterize a compact, slightly irregular inclusion of exact pixel area.
+    Every occupied row is contiguous, with overlapping adjacent rows.
+    """
+    base, remainder = divmod(int(area), int(height))
+    widths = np.full(height, base, dtype=int)
+
+    if remainder:
+        order = rng.permutation(height)
+        widths[order[:remainder]] += 1
+
+    shift = int(rng.integers(-1, 2))
+    center = int(center + shift)
+
+    for row, w in enumerate(widths):
+        left = center - int(w) // 2
+        canvas[y0 + row, left:left + int(w)] = True
+
+
+def _secondary_group(rng, canvas, center, areas, compact=False):
+    """
+    Arrange small inclusions in a stochastic longitudinal sequence.
+
+    The secondary inclusions preserve complete-region counts and diameter
+    statistics while avoiding excessive allocation to transverse particles.
+    All particles remain separated by at least one full matrix row.
+    """
+    n = len(areas)
+    base_height = 10 if compact else 11
+    heights = np.full(n, base_height, dtype=int)
+
+    order = rng.permutation(n)
+    heights[order[:5]] -= 1
+    heights[order[5:10]] += 1
+
+    # Keep the sequence nonperiodic and entirely inside the domain.
+    gaps = np.ones(n - 1, dtype=int)
+    length = int(heights.sum() + gaps.sum())
+    slack = SIZE - length - 2
+
+    if slack > 2:
+        extra = int(rng.integers(0, min(3, slack) + 1))
+        for _ in range(extra):
+            gaps[int(rng.integers(n - 1))] += 1
+
+    length = int(heights.sum() + gaps.sum())
+    y = int(rng.integers(1, SIZE - length))
+
+    # Redistribute particle areas independently of their original ordering.
+    areas = areas[rng.permutation(n)]
+
+    for j in range(n):
+        h = int(heights[j])
+        _small_particle(rng, canvas, y, center, h, int(areas[j]))
+        y += h
+        if j < n - 1:
+            y += int(gaps[j])
+
+
+def _candidate(rng, compact=False):
+    canvas = np.zeros((SIZE, SIZE), dtype=bool)
+
+    # Allocate most reinforcement to long-axis-oriented inclusions.
+    # Unlike the baseline, avoid isotropic orientations and broad
+    # matrix-rich interruptions along the vertical direction.
+    n_primary = int(rng.choice([4, 5], p=[0.70, 0.30]))
+    total_width = 70 if compact else 73
+
+    weights = rng.uniform(0.84, 1.16, n_primary)
+    primary_widths = _allocate(total_width, weights)
+    centers = _layout(rng, primary_widths)
+
+    for center, width in zip(centers[:n_primary], primary_widths):
+        _primary_group(rng, canvas, int(center), int(width))
+
+    # Exact remaining area is distributed over 42 smaller inclusions.
+    remaining = TARGET_COUNT - int(canvas.sum())
+    weights = rng.uniform(0.88, 1.12, N_SMALL)
+    areas = _allocate(remaining, weights)
+
+    half = N_SMALL // 2
+    _secondary_group(
+        rng, canvas, centers[n_primary], areas[:half], compact
+    )
+    _secondary_group(
+        rng, canvas, centers[n_primary + 1], areas[half:], compact
+    )
+
+    return canvas
+
+
+def _spans(labels, axis):
+    if axis == 0:
+        first, last = labels[0, :], labels[-1, :]
+    else:
+        first, last = labels[:, 0], labels[:, -1]
+
+    first = np.unique(first[first > 0])
+    last = np.unique(last[last > 0])
+    return np.intersect1d(first, last).size > 0
+
+
+def _feasible(mask):
+    """Check the frozen composition, topology and morphology envelope."""
+    count = int(mask.sum())
+    if count != TARGET_COUNT:
+        return False
+
+    matrix, _ = ndi.label(~mask)
+    matrix_sizes = np.bincount(matrix.ravel())[1:]
+
+    if matrix_sizes.size == 0:
+        return False
+    if matrix_sizes.max() / (SIZE * SIZE - count) < 0.95:
+        return False
+    if not (_spans(matrix, 0) and _spans(matrix, 1)):
+        return False
+
+    labels, n = ndi.label(mask)
+    if not 50 <= n <= 125:
+        return False
+
+    sizes = np.bincount(labels.ravel())[1:]
+    if sizes.max() / count > 0.15:
+        return False
+    if np.count_nonzero(sizes == 1) / count > 0.001:
+        return False
+    if _spans(labels, 0) or _spans(labels, 1):
+        return False
+
+    labels8, _ = ndi.label(mask, structure=np.ones((3, 3), dtype=bool))
+    sizes8 = np.bincount(labels8.ravel())[1:]
+
+    if sizes8.max() / count > 0.15:
+        return False
+    if _spans(labels8, 0) or _spans(labels8, 1):
+        return False
+
+    border_ids = np.unique(np.concatenate((
+        labels[0, :],
+        labels[-1, :],
+        labels[:, 0],
+        labels[:, -1]
+    )))
+    border_ids = set(border_ids[border_ids > 0].tolist())
+
+    if not 5 <= len(border_ids) <= 50:
+        return False
+
+    complete = [
+        p for p in regionprops(labels)
+        if p.label not in border_ids
+    ]
+
+    if not 40 <= len(complete) <= 75:
+        return False
+
+    diameters = np.array([
+        2.0 * np.sqrt(p.area / np.pi) for p in complete
+    ])
+    aspects = np.array([
+        p.major_axis_length / max(p.minor_axis_length, 1e-12)
+        for p in complete
+    ])
+
+    return (
+        12.0 <= diameters.mean() <= 20.0
+        and 1.2 <= aspects.mean() <= 3.0
+    )
+
+
+def _geometry_score(mask):
+    """
+    Rank feasible candidates using geometry alone.
+
+    Favor persistent vertical reinforcement alignment over multiple
+    separations, and discourage coincident interruptions across groups.
+    This is a geometric design heuristic, not an elastic-modulus estimate.
+    """
+    score = 0.0
+    for distance, weight in (
+        (2, 0.12),
+        (8, 0.20),
+        (24, 0.25),
+        (48, 0.25),
+        (96, 0.18)
+    ):
+        overlap = np.mean(mask[:-distance, :] & mask[distance:, :])
+        score += weight * overlap
+
+    row_fraction = mask.mean(axis=1)
+    score -= 0.30 * row_fraction.std()
+    score += 0.08 * np.quantile(row_fraction, 0.05)
+
+    return float(score)
+
+
+def generate_microstructure(seed, parameters):
+    """
+    Generate a stochastic 256 x 256 two-phase microstructure.
+
+    Native labels: 1 = matrix, 5 = reinforcement.
+    Composition is exact; boundaries are finite and nonperiodic.
+    Selection uses only geometry and the frozen structural constraints.
+    Mechanical improvement requires independent numerical confirmation.
+    """
+    rng = np.random.default_rng(seed)
+
+    best = None
+    best_score = -np.inf
+
+    for attempt in range(MAX_CANDIDATES):
+        compact = attempt >= 8
+
+        # The compact alternative provides additional margin in the
+        # complete-region aspect-ratio feasibility constraint.
+        if compact and best is not None:
+            break
+
+        mask = _candidate(rng, compact)
+
+        if not _feasible(mask):
+            continue
+
+        score = _geometry_score(mask)
+
+        if score > best_score:
+            best = mask
+            best_score = score
+
+    if best is None:
+        raise RuntimeError("No structurally feasible candidate generated.")
+
+    return np.where(best, 5, 1).astype(np.uint8)
