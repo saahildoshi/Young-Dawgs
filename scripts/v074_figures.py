@@ -77,6 +77,10 @@ def mechanical():
         ax.set_xticks(range(4), trials); ax.set_title(arm + ' · circle initial / square revised')
         ax.set_ylabel('Mean absolute relative target error (%)'); ax.grid(axis='y', alpha=.2)
         ax.set_ylim(bottom=0)
+    # Setting only the bottom limit disables shared-axis autoscaling before
+    # the second arm is added. Explicitly include every measured script error.
+    upper = 1.18 * max(s['target_error']['mean']*100 for s in summaries if s['target_error']['mean'] is not None)
+    for ax in axes: ax.set_ylim(0,upper)
     fig.suptitle('P3 target 1640 MPa · each connected pair is one conversation')
     fig.text(.5,.015,'Conditional on accepted outputs; full attempted denominator shown. NF_01 includes a recorded extra nonscientific turn.',ha='center',fontsize=9)
     fig.tight_layout(rect=(0,.04,1,.93)); fig.savefig(DEST / 'P3_PAIRED_SCRIPT_TARGET_ERRORS.png',dpi=170);plt.close(fig)
@@ -166,7 +170,7 @@ def mechanical():
     fig,axes=plt.subplots(1,4,figsize=(14,4))
     for ax,(trial,revision,r,f,n,q) in zip(axes,records):
         displaced=n[:,1:3]+n[:,3:5]
-        coll=PolyCollection(displaced[q],facecolors=np.array(['#2d4664','#ebaa37'])[f[:,1].astype(int)-1],edgecolors='none',rasterized=True)
+        coll=PolyCollection(displaced[q],facecolors=np.array(['#2d4664','#ebaa37'])[f[:,1].astype(int)-1],edgecolors='none',antialiased=False,rasterized=True)
         ax.add_collection(coll);ax.plot([0,1,1,0,0],[0,0,1,1,0],'k--',lw=.6)
         ax.set(xlim=(-.01,1.01),ylim=(-.01,1.01),aspect='equal',title=f'{trial} r{revision}')
         ax.set_xticks([]);ax.set_yticks([])
