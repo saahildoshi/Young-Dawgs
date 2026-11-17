@@ -1,0 +1,325 @@
+text (heading) ChatGPT said:
+												7628 text Python
+												7629 button (toggle button) Enable word wrap
+												7630 button Copy code
+												7631 button Run code
+												7632 group
+													7633 group
+													7634 group
+														7635 text field (edit) (settable, string) Edit code Value: import numpy as np from scipy import ndimage as ndi from scipy.spatial import cKDTree from scipy.spatial.distance import cdist from skimage.measure import regionprops SIZE = 256 TARGET_REINFORCEMENT = 20731 N_COMPLETE = 57 N_BOUNDARY = 24 MAX_CANDIDATES = 8 LAGS = (8, 16, 32, 64) WIDTHS = (1, 8, 16, 32) MORPHOLOGY_BOUNDS = { "all_observed.area_fraction_aspect_gt3": (0, 0.27), "all_observed.area_fraction_aspect_gt4": (0, 0.16), "all_observed.area_weighted_aspect": (1, 2.59), "all_observed.area_weighted_aspect_p95": (1, 6.13), "all_observed.axial_order": (0, 0.59), "all_observed.defined_aspect_area_fraction": (0.995, 1), "gap_dilation.2.largest_fraction": (0, 0.59), "limited_gap_run_x": (0, 0.60), "limited_gap_run_y": (0, 0.56), "long_range_abs_S2_difference": (0, 0.04), "nearest_neighbor_cv": (0.10, 0.69), "strips.1.column_max": (0, 0.79), "strips.1.column_std": (0, 0.18), "strips.1.row_max": (0, 0.78), "strips.1.row_std": (0, 0.20), "strips.8.column_max": (0, 0.74), "strips.8.column_std": (0, 0.17), "strips.8.row_max": (0, 0.75), "strips.8.row_std": (0, 0.19), "strips.16.column_max": (0, 0.71),
+															7636 text import
+															7637 text 
+															7638 text numpy
+															7639 text 
+															7640 text as
+															7641 text 
+															7642 text np
+															7643 text from
+															7644 text 
+															7645 text scipy
+															7646 text 
+															7647 text import
+															7648 text 
+															7649 text ndimage
+															7650 text 
+															7651 text as
+															7652 text 
+															7653 text ndi
+															7654 text from
+															7655 text 
+															7656 text scipy
+															7657 text .
+															7658 text spatial
+															7659 text 
+															7660 text import
+															7661 text 
+															7662 text cKDTree
+															7663 text from
+															7664 text 
+															7665 text scipy
+															7666 text .
+															7667 text spatial
+															7668 text .
+															7669 text distance
+															7670 text 
+															7671 text import
+															7672 text 
+															7673 text cdist
+															7674 text from
+															7675 text 
+															7676 text skimage
+															7677 text .
+															7678 text measure
+															7679 text 
+															7680 text import
+															7681 text 
+															7682 text regionprops
+															7683 text SIZE
+															7684 text 
+															7685 text =
+															7686 text 
+															7687 text 256
+															7688 text TARGET_REINFORCEMENT
+															7689 text 
+															7690 text =
+															7691 text 
+															7692 text 20731
+															7693 text N_COMPLETE
+															7694 text 
+															7695 text =
+															7696 text 
+															7697 text 57
+															7698 text N_BOUNDARY
+															7699 text 
+															7700 text =
+															7701 text 
+															7702 text 24
+															7703 text MAX_CANDIDATES
+															7704 text 
+															7705 text =
+															7706 text 
+															7707 text 8
+															7708 text LAGS
+															7709 text 
+															7710 text =
+															7711 text (
+															7712 text 8
+															7713 text ,
+															7714 text 16
+															7715 text ,
+															7716 text 32
+															7717 text ,
+															7718 text 64
+															7719 text )
+															7720 text WIDTHS
+															7721 text 
+															7722 text =
+															7723 text (
+															7724 text 1
+															7725 text ,
+															7726 text 8
+															7727 text ,
+															7728 text 16
+															7729 text ,
+															7730 text 32
+															7731 text )
+															7732 text MORPHOLOGY_BOUNDS
+															7733 text 
+															7734 text =
+															7735 text {
+															7736 text 
+															7737 text "all_observed.area_fraction_aspect_gt3"
+															7738 text : (
+															7739 text 0
+															7740 text ,
+															7741 text 0.27
+															7742 text ),
+															7743 text 
+															7744 text "all_observed.area_fraction_aspect_gt4"
+															7745 text : (
+															7746 text 0
+															7747 text ,
+															7748 text 0.16
+															7749 text ),
+															7750 text 
+															7751 text "all_observed.area_weighted_aspect"
+															7752 text : (
+															7753 text 1
+															7754 text ,
+															7755 text 2.59
+															7756 text ),
+															7757 text 
+															7758 text "all_observed.area_weighted_aspect_p95"
+															7759 text : (
+															7760 text 1
+															7761 text ,
+															7762 text 6.13
+															7763 text ),
+															7764 text 
+															7765 text "all_observed.axial_order"
+															7766 text : (
+															7767 text 0
+															7768 text ,
+															7769 text 0.59
+															7770 text ),
+															7771 text 
+															7772 text "all_observed.defined_aspect_area_fraction"
+															7773 text : (
+															7774 text 0.995
+															7775 text ,
+															7776 text 1
+															7777 text ),
+															7778 text 
+															7779 text "gap_dilation.2.largest_fraction"
+															7780 text : (
+															7781 text 0
+															7782 text ,
+															7783 text 0.59
+															7784 text ),
+															7785 text 
+															7786 text "limited_gap_run_x"
+															7787 text : (
+															7788 text 0
+															7789 text ,
+															7790 text 0.60
+															7791 text ),
+															7792 text 
+															7793 text "limited_gap_run_y"
+															7794 text : (
+															7795 text 0
+															7796 text ,
+															7797 text 0.56
+															7798 text ),
+															7799 text 
+															7800 text "long_range_abs_S2_difference"
+															7801 text : (
+															7802 text 0
+															7803 text ,
+															7804 text 0.04
+															7805 text ),
+															7806 text 
+															7807 text "nearest_neighbor_cv"
+															7808 text : (
+															7809 text 0.10
+															7810 text ,
+															7811 text 0.69
+															7812 text ),
+															7813 text 
+															7814 text "strips.1.column_max"
+															7815 text : (
+															7816 text 0
+															7817 text ,
+															7818 text 0.79
+															7819 text ),
+															7820 text 
+															7821 text "strips.1.column_std"
+															7822 text : (
+															7823 text 0
+															7824 text ,
+															7825 text 0.18
+															7826 text ),
+															7827 text 
+															7828 text "strips.1.row_max"
+															7829 text : (
+															7830 text 0
+															7831 text ,
+															7832 text 0.78
+															7833 text ),
+															7834 text 
+															7835 text "strips.1.row_std"
+															7836 text : (
+															7837 text 0
+															7838 text ,
+															7839 text 0.20
+															7840 text ),
+															7841 text 
+															7842 text "strips.8.column_max"
+															7843 text : (
+															7844 text 0
+															7845 text ,
+															7846 text 0.74
+															7847 text ),
+															7848 text 
+															7849 text "strips.8.column_std"
+															7850 text : (
+															7851 text 0
+															7852 text ,
+															7853 text 0.17
+															7854 text ),
+															7855 text 
+															7856 text "strips.8.row_max"
+															7857 text : (
+															7858 text 0
+															7859 text ,
+															7860 text 0.75
+															7861 text ),
+															7862 text 
+															7863 text "strips.8.row_std"
+															7864 text : (
+															7865 text 0
+															7866 text ,
+															7867 text 0.19
+															7868 text ),
+															7869 text 
+															7870 text "strips.16.column_max"
+															7871 text : (
+															7872 text 0
+															7873 text ,
+															7874 text 0.71
+															7875 text ),
+												7876 button Copy
+													7877 image (graphic)
+												7878 button Rate response ID: radix-_r_10c_
+												7879 button (toggle button) Read aloud
+												7880 button Share
+												7881 button More actions ID: radix-_r_10i_
+												7882 button Convert to PDF
+												7601 group
+												7602 text ChatGPT can make mistakes. Check important info.
+												7883 button Scroll to bottom
+												7603 text (heading) Latest response
+												7604 status bar (status)
+												7605 group
+													7606 group
+														7607 group
+															7608 button Add files and more
+															7609 text field (edit) (settable, string) Ask ChatGPT Value: Ask ChatGPT
+																7884 text Ask ChatGPT
+																7611 text 
+															7612 group
+																7613 button Select ChatGPT model ID: radix-_r_v8_
+															7614 button Dictate
+															7885 button Start Voice
+															7617 status bar (status)
+										7618 status bar (status) ID: DndLiveRegion-4
+										7619 group
+										7620 status bar (status)
+										7621 status bar (status) ID: DndLiveRegion-1
+										7622 group
+										7625 group
+										7626 status bar (status)
+											7886 text Response complete
+								307 document Value: chrome://newtab-footer/ ID: RootWebArea
+									308 image (graphic) ID: baseSvg
+									309 hyperlink (link) Managed by your organisation
+									310 button (toggle button) Customise Chrome Description: Customise this page ID: customizeButton
+										311 image (graphic) ID: baseSvg
+										312 text Customise Chrome
+							313 pane (region)
+						314 pane (region)
+							315 pane (region)
+								316 button Tab search
+							317 pane (region) ID: view_21
+								318 tab
+									319 tab item (selectable) Mail - Saahil Doshi - Outlook - Memory usage - 302 MB ID: view_20
+										320 button Close
+									321 tab item (selectable) Mail - Saahil Doshi - Outlook ID: view_20
+										322 button Close
+									323 tab item (selectable) Nov. 9-13.docx ID: view_20
+										324 button Close
+									325 tab item (selectable) saahildoshi/Young-Dawgs - Memory usage - 427 MB ID: view_20
+										326 button Close
+									327 tab item (selectable) Create Microstructure Generator - Memory usage - 498 MB ID: view_20
+										328 button Close
+									5669 tab item (selectable) Create P3 Generator - Memory usage - 361 MB ID: view_20
+										5670 button Close
+									6315 tab item (selectable) Write Microstructure Generator - Memory usage - 482 MB ID: view_20
+										6316 button Close
+									6991 tab item (selectable) Create Stochastic Generator - Memory usage - 363 MB ID: view_20
+										6992 button Close
+								329 pane (region)
+							330 button New tab
+							331 pane (region)
+							332 pane (region)
+								335 button Open Gemini in Chrome
+								336 pane (region)
+						337 pane (region)
+
+Document text: ```
+Ask ChatGPT
+```
+
+Focused element: 17 text field (edit) (settable, string) Address and search bar Description: Ask Google or type a URL Value: chatgpt.com/c/6afbbd79-9cec-83e9-8163-e21b3b2083aa ID: view_1012
+
+Document text:
+Ask ChatGPT

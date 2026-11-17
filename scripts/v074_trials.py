@@ -6,6 +6,8 @@ import shutil
 import subprocess
 import sys
 import time
+import re
+from urllib.parse import urlparse
 import numpy as np
 from scripts.v070_protocol import REPO, read, write, sha
 from scripts.v070_experiment import audit
@@ -14,6 +16,14 @@ from scripts.v072_experiment import observe, diversity
 from scripts.v073_envelope import feasibility
 from metamaterial_eval.composites.morphology_v073 import describe
 from scripts.v073_prepare import save_array
+
+
+def conversation_id(url):
+    parsed=urlparse(url)
+    match=re.search(r'/c/([0-9a-f-]{36})/?$',parsed.path)
+    if parsed.scheme!='https' or parsed.netloc!='chatgpt.com' or match is None:
+        raise ValueError('Unrecognized ordinary ChatGPT conversation URL')
+    return match.group(1)
 
 
 def ingest(trial, revision):
@@ -37,6 +47,8 @@ def ingest(trial, revision):
     assert sha(prompt) == submission['prompt_sha256']
     if revision:
         assert submission['chat_url'] == read(d/'SUBMISSION_r0.json')['chat_url']
+        assert conversation_id(submission.get('observed_chat_url',submission['chat_url']))==conversation_id(submission['chat_url'])
+        assert submission['same_conversation_id_verified']
     write(receipt, {**submission, 'captured_utc':now(),
         'response_capture_sha256':sha(raw), 'code_sha256':sha(source),
         'normalization':'UTF8 text; CRLF to LF only; original capture retained',
@@ -127,13 +139,14 @@ def freeze():
     initial=read(RUN/'feedback_packets/INITIAL_FROZEN.json')
     assert sha(RUN/'protocol/PROTOCOL.json')==initial['protocol_sha256']
     assert sha(RUN/'protocol/FEASIBILITY_FROZEN.json')==initial['feasibility_sha256']
-    inventory={};urls=[];deviations={};files={}
+    inventory={};urls=[];deviations={};files={};contexts={}
     for trial in initial['trial_order']:
         d=RUN/'llm_trials'/trial;url=read(d/'SUBMISSION_r0.json')['chat_url'];urls.append(url)
         for revision in [0,1]:
             r=read(d/f'RECEIPT_r{revision}.json');sub=read(d/f'SUBMISSION_r{revision}.json')
             assert r['ordinary_ChatGPT'] and not r['Work_or_Codex'] and not r['researcher_repairs']
             assert r['chat_url']==url==sub['chat_url'] and r['model_calls']==1
+            assert conversation_id(sub.get('observed_chat_url',url))==conversation_id(url)
             assert sha(d/f'generator_r{revision}.py')==r['code_sha256']
             assert sha(d/f'returned_code_r{revision}.txt')==r['response_capture_sha256']
             prompt=d/('initial_prompt.txt' if revision==0 else 'followup_prompt.txt')
@@ -144,11 +157,14 @@ def freeze():
             for path in [d/f'generator_r{revision}.py',d/f'returned_code_r{revision}.txt',d/f'RECEIPT_r{revision}.json',prompt]:
                 files[str(path.relative_to(REPO)).replace('\\','/')]=sha(path)
         if (d/'PROTOCOL_DEVIATION.json').exists():deviations[trial]=read(d/'PROTOCOL_DEVIATION.json')
+        if (d/'PROJECT_CONTEXT_OBSERVATION.json').exists():contexts[trial]=read(d/'PROJECT_CONTEXT_OBSERVATION.json')
     assert len(set(urls))==8 and len(inventory)==16
     write(destination,{'frozen_utc':now(),'scripts':inventory,'files':files,'distinct_initial_chat_URLs':urls,
         'registered_initial_and_revision_sources':16,'independent_conversations':8,
         'same_conversation_for_all_registered_revisions':True,'no_manual_repairs_or_extra_scientific_revisions':True,
         'protocol_deviations':deviations,'strict_equal_message_budget_verified':not deviations,
+        'observed_project_context_variation':contexts,
+        'identity_rule':'Same original /c/conversationID; preserve actual observed URL, including legitimate project-path redirects. No fresh conversation substitutes.',
         'deviation_analysis':'Retain all registered trials; separately flag any nonconforming conversation and report a descriptive sensitivity analysis without it. Do not replace trials or infer an unqualified causal advantage.',
         'protocol_sha256':sha(RUN/'protocol/PROTOCOL.json'),'feasibility_sha256':sha(RUN/'protocol/FEASIBILITY_FROZEN.json'),
         'seed_partition_sha256':sha(RUN/'protocol/EVALUATOR_ONLY_SEEDS.json'),

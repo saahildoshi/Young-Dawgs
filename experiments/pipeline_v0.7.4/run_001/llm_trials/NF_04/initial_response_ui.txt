@@ -1,0 +1,436 @@
+text (heading) ChatGPT said:
+												9021 text Python
+												9022 button (toggle button) Enable word wrap
+												9533 button Copy code
+												9024 button Run code
+												9025 group
+													9534 group
+													9535 group
+														9536 text field (edit) (settable, string) Edit code Value: import numpy as np axial_order = float(abs(z)) else: axial_order = None return { "defined_aspect_area_fraction": float( areas.sum() / total ), "area_weighted_aspect": float( np.average(aspects, weights=areas) ), "area_weighted_aspect_p95": _weighted_quantile( aspects, areas, 0.95 ), "area_fraction_aspect_gt3": float( areas[aspects > 3.0].sum() / total ), "area_fraction_aspect_gt4": float( areas[aspects > 4.0].sum() / total ), "axial_order": axial_order, } def _directional_s2(mask, lag, axis): if lag == 0: return float(mask.mean()) if axis == 0: return float( np.mean( mask[:-lag, :] & mask[lag:, :] ) ) return float( np.mean( mask[:, :-lag] & mask[:, lag:] ) ) def _limited_gap_run(line, maxgap=2): positions = np.flatnonzero(line) if len(positions) == 0: return 0 splits = np.r_[ 0, np.flatnonzero( np.diff(positions) > maxgap + 1 ) + 1, len(positions), ] return max( int(positions[b - 1] - positions[a] + 1) for a, b in zip(splits[:-1], splits[1:]) ) def _morphology_descriptors(mask, regions, complete): result = {} shapes = _region_shapes(regions) if shapes is None: return None
+															9537 text import numpy as np
+															9538 text 
+															9608 text axial_order
+															9609 text 
+															9610 text =
+															9611 text 
+															9612 text float
+															9613 text (
+															9614 text abs
+															9615 text (
+															9616 text z
+															9617 text ))
+															9539 text 
+															9618 text else
+															9619 text :
+															9540 text 
+															9620 text axial_order
+															9621 text 
+															9622 text =
+															9623 text 
+															9624 text None
+															9542 text 
+															9625 text return
+															9626 text {
+															9543 text 
+															9627 text "defined_aspect_area_fraction"
+															9628 text :
+															9629 text float
+															9630 text (
+															9544 text 
+															9631 text areas
+															9632 text .
+															9633 text sum()
+															9634 text /
+															9635 text 
+															9636 text total
+															9545 text ),
+															9546 text 
+															9637 text "area_weighted_aspect"
+															9638 text :
+															9639 text float
+															9640 text (
+															9547 text 
+															9641 text np
+															9642 text .
+															9643 text average(
+															9644 text aspects
+															9645 text ,
+															9646 text weights
+															9647 text =
+															9648 text areas
+															9649 text )
+															9548 text ),
+															9549 text 
+															9650 text "area_weighted_aspect_p95"
+															9651 text :
+															9652 text _weighted_quantile
+															9653 text (
+															9550 text 
+															9654 text aspects
+															9655 text ,
+															9656 text areas
+															9657 text ,
+															9658 text 0.95
+															9551 text ),
+															9552 text 
+															9659 text "area_fraction_aspect_gt3"
+															9660 text :
+															9661 text float
+															9662 text (
+															9553 text 
+															9663 text areas
+															9664 text [
+															9665 text aspects
+															9666 text 
+															9667 text >
+															9668 text 
+															9669 text 3.0
+															9670 text ]
+															9671 text .
+															9672 text sum()
+															9673 text /
+															9674 text 
+															9675 text total
+															9554 text ),
+															9555 text 
+															9676 text "area_fraction_aspect_gt4"
+															9677 text :
+															9678 text float
+															9679 text (
+															9556 text 
+															9680 text areas
+															9681 text [
+															9682 text aspects
+															9683 text 
+															9684 text >
+															9685 text 
+															9686 text 4.0
+															9687 text ]
+															9688 text .
+															9689 text sum()
+															9690 text /
+															9691 text 
+															9692 text total
+															9557 text ),
+															9558 text 
+															9693 text "axial_order"
+															9694 text :
+															9695 text axial_order
+															9696 text ,
+															9559 text }
+															9562 text def
+															9697 text 
+															9698 text _directional_s2
+															9699 text (
+															9700 text mask
+															9701 text ,
+															9702 text lag
+															9703 text ,
+															9704 text axis
+															9705 text ):
+															9563 text 
+															9706 text if
+															9707 text 
+															9708 text lag
+															9709 text 
+															9710 text ==
+															9711 text 
+															9712 text 0
+															9713 text :
+															9564 text 
+															9714 text return
+															9715 text 
+															9716 text float
+															9717 text (
+															9718 text mask
+															9719 text .
+															9720 text mean())
+															9566 text 
+															9721 text if
+															9722 text 
+															9723 text axis
+															9724 text 
+															9725 text ==
+															9726 text 
+															9727 text 0
+															9728 text :
+															9567 text 
+															9729 text return
+															9730 text 
+															9731 text float
+															9732 text (
+															9568 text 
+															9733 text np
+															9734 text .
+															9735 text mean(
+															9569 text 
+															9736 text mask
+															9737 text [:
+															9738 text -
+															9739 text lag
+															9740 text , :]
+															9741 text &
+															9742 text 
+															9743 text mask
+															9744 text [
+															9745 text lag
+															9746 text :, :]
+															9570 text )
+															9571 text )
+															9573 text 
+															9747 text return
+															9748 text 
+															9749 text float
+															9750 text (
+															9574 text 
+															9751 text np
+															9752 text .
+															9753 text mean(
+															9575 text 
+															9754 text mask
+															9755 text [:, :
+															9756 text -
+															9757 text lag
+															9758 text ]
+															9759 text &
+															9760 text 
+															9761 text mask
+															9762 text [:,
+															9763 text lag
+															9764 text :]
+															9576 text )
+															9577 text )
+															9580 text def
+															9765 text 
+															9766 text _limited_gap_run
+															9767 text (
+															9768 text line
+															9769 text ,
+															9770 text maxgap
+															9771 text =
+															9772 text 2
+															9773 text ):
+															9581 text 
+															9774 text positions
+															9775 text 
+															9776 text =
+															9777 text 
+															9778 text np
+															9779 text .
+															9780 text flatnonzero(
+															9781 text line
+															9782 text )
+															9583 text 
+															9783 text if
+															9784 text 
+															9785 text len
+															9786 text (
+															9787 text positions
+															9788 text )
+															9789 text ==
+															9790 text 
+															9791 text 0
+															9792 text :
+															9584 text 
+															9793 text return
+															9794 text 
+															9795 text 0
+															9586 text 
+															9796 text splits
+															9797 text 
+															9798 text =
+															9799 text 
+															9800 text np
+															9801 text .
+															9802 text r_[
+															9587 text 
+															9803 text 0
+															9804 text ,
+															9588 text 
+															9805 text np
+															9806 text .
+															9807 text flatnonzero(
+															9589 text 
+															9808 text np
+															9809 text .
+															9810 text diff(
+															9811 text positions
+															9812 text )
+															9813 text >
+															9814 text 
+															9815 text maxgap
+															9816 text 
+															9817 text +
+															9818 text 
+															9819 text 1
+															9590 text )
+															9820 text +
+															9821 text 
+															9822 text 1
+															9823 text ,
+															9591 text 
+															9824 text len
+															9825 text (
+															9826 text positions
+															9827 text ),
+															9592 text ]
+															9594 text 
+															9828 text return
+															9829 text 
+															9830 text max
+															9831 text (
+															9595 text 
+															9832 text int
+															9833 text (
+															9834 text positions
+															9835 text [
+															9836 text b
+															9837 text 
+															9838 text -
+															9839 text 
+															9840 text 1
+															9841 text ]
+															9842 text -
+															9843 text 
+															9844 text positions
+															9845 text [
+															9846 text a
+															9847 text ]
+															9848 text +
+															9849 text 
+															9850 text 1
+															9851 text )
+															9596 text 
+															9852 text for
+															9853 text 
+															9854 text a
+															9855 text ,
+															9856 text b
+															9857 text 
+															9858 text in
+															9859 text 
+															9860 text zip
+															9861 text (
+															9862 text splits
+															9863 text [:
+															9864 text -
+															9865 text 1
+															9866 text ],
+															9867 text splits
+															9868 text [
+															9869 text 1
+															9870 text :])
+															9597 text )
+															9600 text def
+															9871 text 
+															9872 text _morphology_descriptors
+															9873 text (
+															9874 text mask
+															9875 text ,
+															9876 text regions
+															9877 text ,
+															9878 text complete
+															9879 text ):
+															9601 text 
+															9880 text result
+															9881 text 
+															9882 text =
+															9883 text {}
+															9603 text 
+															9884 text shapes
+															9885 text 
+															9886 text =
+															9887 text 
+															9888 text _region_shapes
+															9889 text (
+															9890 text regions
+															9891 text )
+															9605 text 
+															9892 text if
+															9893 text 
+															9894 text shapes
+															9895 text 
+															9896 text is
+															9897 text 
+															9898 text None
+															9899 text :
+															9606 text 
+															9900 text return
+															9901 text 
+															9902 text None
+												9903 button Copy
+													9904 image (graphic)
+												9905 button Rate response ID: radix-_r_h0_
+												9906 button (toggle button) Read aloud
+												9907 button Share
+												9908 button More actions ID: radix-_r_h6_
+												9909 button Convert to PDF
+												8977 group
+												8978 text ChatGPT can make mistakes. Check important info.
+												9105 button Scroll to bottom
+												8979 text (heading) Latest response
+												8980 status bar (status)
+												8981 group
+													8982 group
+														8983 group
+															8984 button Add files and more
+															8985 text field (edit) (settable, string) Ask ChatGPT Value: Ask ChatGPT
+																9913 text Ask ChatGPT
+																8987 text 
+															8988 group
+																8989 button Select ChatGPT model ID: radix-_r_f2_
+															8990 button Dictate
+															9911 button Start Voice
+															8993 status bar (status)
+										8994 status bar (status) ID: DndLiveRegion-0
+										8995 group
+										8996 group
+										8997 status bar (status)
+										8998 status bar (status) ID: DndLiveRegion-1
+										8999 status bar (status)
+											9912 text Response complete
+										9000 group
+								307 document Value: chrome://newtab-footer/ ID: RootWebArea
+									308 image (graphic) ID: baseSvg
+									309 hyperlink (link) Managed by your organisation
+									310 button (toggle button) Customise Chrome Description: Customise this page ID: customizeButton
+										311 image (graphic) ID: baseSvg
+										312 text Customise Chrome
+							313 pane (region)
+						314 pane (region)
+							315 pane (region)
+								316 button Tab search
+							317 pane (region) ID: view_21
+								318 tab
+									319 tab item (selectable) Mail - Saahil Doshi - Outlook - Memory usage - 302 MB ID: view_20
+										320 button Close
+									321 tab item (selectable) Mail - Saahil Doshi - Outlook ID: view_20
+										322 button Close
+									323 tab item (selectable) Nov. 9-13.docx ID: view_20
+										324 button Close
+									325 tab item (selectable) saahildoshi/Young-Dawgs - Memory usage - 427 MB ID: view_20
+										326 button Close
+									327 tab item (selectable) Create Microstructure Generator - Memory usage - 498 MB ID: view_20
+										328 button Close
+									5669 tab item (selectable) Create P3 Generator - Memory usage - 374 MB ID: view_20
+										5670 button Close
+									6315 tab item (selectable) Write Microstructure Generator - Memory usage - 349 MB ID: view_20
+										6316 button Close
+									6991 tab item (selectable) Create Stochastic Generator - Memory usage - 604 MB ID: view_20
+										6992 button Close
+								329 pane (region)
+							330 button New tab
+							331 pane (region)
+							332 pane (region)
+								335 button Open Gemini in Chrome
+								336 pane (region)
+						337 pane (region)
+
+Document text: ```
+Ask ChatGPT
+```
+
+Focused element: 17 text field (edit) (settable, string) Address and search bar Description: Ask Google or type a URL Value: chatgpt.com/c/6afbc095-fbac-83e9-8259-deda9a7cb4f0 ID: view_1012
+
+Document text:
+Ask ChatGPT
