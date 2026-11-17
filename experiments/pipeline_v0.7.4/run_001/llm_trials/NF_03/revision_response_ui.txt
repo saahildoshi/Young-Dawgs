@@ -1,0 +1,303 @@
+text (heading) ChatGPT said:
+												3473 text Python
+												3474 button (toggle button) Enable word wrap
+												3475 button Copy code
+												3476 button Run code
+												3477 group
+													3478 group
+													3479 group
+														3480 text field (edit) (settable, string) Edit code Value: import numpy as np from scipy import ndimage as ndi from scipy.spatial.distance import cdist from skimage.measure import regionprops SIZE = 256 TARGET_REINFORCEMENT = 20731 MAX_CANDIDATES = 8 STRIP_LIMITS = { 1: (0.79, 0.18, 0.78, 0.20), 8: (0.74, 0.17, 0.75, 0.19), 16: (0.71, 0.16, 0.69, 0.17), 32: (0.64, 0.14, 0.63, 0.16), } CORRELATION_LAGS = (16, 32, 64) def _heap_push(heap, item): heap.append(item) i = len(heap) - 1 while i: parent = (i - 1) // 2 if heap[parent] <= item: break heap[i] = heap[parent] i = parent heap[i] = item def _heap_pop(heap): result = heap[0] last = heap.pop() if heap:
+															3481 text import
+															3482 text 
+															3483 text numpy
+															3484 text 
+															3485 text as
+															3486 text 
+															3487 text np
+															3488 text from
+															3489 text 
+															3490 text scipy
+															3491 text 
+															3492 text import
+															3493 text 
+															3494 text ndimage
+															3495 text 
+															3496 text as
+															3497 text 
+															3498 text ndi
+															3499 text from
+															3500 text 
+															3501 text scipy
+															3502 text .
+															3503 text spatial
+															3504 text .
+															3505 text distance
+															3506 text 
+															3507 text import
+															3508 text 
+															3509 text cdist
+															3510 text from
+															3511 text 
+															3512 text skimage
+															3513 text .
+															3514 text measure
+															3515 text 
+															3516 text import
+															3517 text 
+															3518 text regionprops
+															3519 text SIZE
+															3520 text 
+															3521 text =
+															3522 text 
+															3523 text 256
+															3524 text TARGET_REINFORCEMENT
+															3525 text 
+															3526 text =
+															3527 text 
+															3528 text 20731
+															3529 text MAX_CANDIDATES
+															3530 text 
+															3531 text =
+															3532 text 
+															3533 text 8
+															3534 text STRIP_LIMITS
+															3535 text 
+															3536 text =
+															3537 text {
+															3538 text 
+															3539 text 1
+															3540 text : (
+															3541 text 0.79
+															3542 text ,
+															3543 text 0.18
+															3544 text ,
+															3545 text 0.78
+															3546 text ,
+															3547 text 0.20
+															3548 text ),
+															3549 text 
+															3550 text 8
+															3551 text : (
+															3552 text 0.74
+															3553 text ,
+															3554 text 0.17
+															3555 text ,
+															3556 text 0.75
+															3557 text ,
+															3558 text 0.19
+															3559 text ),
+															3560 text 
+															3561 text 16
+															3562 text : (
+															3563 text 0.71
+															3564 text ,
+															3565 text 0.16
+															3566 text ,
+															3567 text 0.69
+															3568 text ,
+															3569 text 0.17
+															3570 text ),
+															3571 text 
+															3572 text 32
+															3573 text : (
+															3574 text 0.64
+															3575 text ,
+															3576 text 0.14
+															3577 text ,
+															3578 text 0.63
+															3579 text ,
+															3580 text 0.16
+															3581 text ),
+															3582 text }
+															3583 text CORRELATION_LAGS
+															3584 text 
+															3585 text =
+															3586 text (
+															3587 text 16
+															3588 text ,
+															3589 text 32
+															3590 text ,
+															3591 text 64
+															3592 text )
+															3593 text def
+															3594 text 
+															3595 text _heap_push
+															3596 text (
+															3597 text heap
+															3598 text ,
+															3599 text item
+															3600 text ):
+															3601 text 
+															3602 text heap
+															3603 text .
+															3604 text append(
+															3605 text item
+															3606 text )
+															3607 text 
+															3608 text i
+															3609 text 
+															3610 text =
+															3611 text 
+															3612 text len
+															3613 text (
+															3614 text heap
+															3615 text )
+															3616 text -
+															3617 text 
+															3618 text 1
+															3619 text 
+															3620 text while
+															3621 text 
+															3622 text i
+															3623 text :
+															3624 text 
+															3625 text parent
+															3626 text 
+															3627 text =
+															3628 text (
+															3629 text i
+															3630 text 
+															3631 text -
+															3632 text 
+															3633 text 1
+															3634 text )
+															3635 text //
+															3636 text 
+															3637 text 2
+															3638 text 
+															3639 text if
+															3640 text 
+															3641 text heap
+															3642 text [
+															3643 text parent
+															3644 text ]
+															3645 text <=
+															3646 text 
+															3647 text item
+															3648 text :
+															3649 text 
+															3650 text break
+															3651 text 
+															3652 text heap
+															3653 text [
+															3654 text i
+															3655 text ]
+															3656 text =
+															3657 text 
+															3658 text heap
+															3659 text [
+															3660 text parent
+															3661 text ]
+															3662 text 
+															3663 text i
+															3664 text 
+															3665 text =
+															3666 text 
+															3667 text parent
+															3668 text 
+															3669 text heap
+															3670 text [
+															3671 text i
+															3672 text ]
+															3673 text =
+															3674 text 
+															3675 text item
+															3676 text def
+															3677 text 
+															3678 text _heap_pop
+															3679 text (
+															3680 text heap
+															3681 text ):
+															3682 text 
+															3683 text result
+															3684 text 
+															3685 text =
+															3686 text 
+															3687 text heap
+															3688 text [
+															3689 text 0
+															3690 text ]
+															3691 text 
+															3692 text last
+															3693 text 
+															3694 text =
+															3695 text 
+															3696 text heap
+															3697 text .
+															3698 text pop()
+															3699 text 
+															3700 text if
+															3701 text 
+															3702 text heap
+															3703 text :
+												3704 button Copy
+													3705 image (graphic)
+												3706 button Rate response ID: radix-_r_2c_
+												3707 button (toggle button) Read aloud
+												3708 button Share
+												3709 button More actions ID: radix-_r_2i_
+												3710 button Convert to PDF
+												3711 group
+												3712 text ChatGPT can make mistakes. Check important info.
+												3713 button Scroll to bottom
+												3714 text (heading) Latest response
+												3715 status bar (status)
+												3716 group
+													3717 group
+														3718 group
+															3719 button Add files and more
+															3720 text field (edit) (settable, string) Ask ChatGPT Value: Ask ChatGPT
+																3721 text Ask ChatGPT
+																3722 text 
+															3723 group
+																3724 button Select ChatGPT model ID: radix-_r_1f_
+																	3725 group
+																		3726 text High
+															3727 button Dictate
+															3728 button Start Voice
+															3729 status bar (status)
+										3730 status bar (status) ID: DndLiveRegion-0
+										3731 group
+										3732 status bar (status)
+										3733 group
+										3734 group
+										3735 status bar (status)
+										3736 status bar (status) ID: DndLiveRegion-1
+							752 pane (region)
+						753 pane (region)
+							754 pane (region)
+								755 button Tab search
+							756 pane (region) ID: view_21
+								757 tab
+									758 tab item (selectable) Mail - Saahil Doshi - Outlook - Memory usage - 441 MB ID: view_20
+										759 button Close
+									760 tab item (selectable) Time Sheet Nov. 16-20.docx - Memory usage - 535 MB ID: view_20
+										761 button Close
+									762 tab item (selectable) Mail - Saahil Doshi - Outlook - Memory usage - 369 MB ID: view_20
+										763 button Close
+									764 tab item (selectable) saahildoshi/Young-Dawgs ID: view_20
+										765 button Close
+									766 tab item (selectable) Create microstructure generator - Memory usage - 411 MB ID: view_20
+										767 button Close
+									768 tab item (selectable) Generate Microstructure Code ID: view_20
+										769 button Close
+									770 tab item (selectable) Create Stochastic Generator - Memory usage - 443 MB ID: view_20
+										771 button Close
+									772 tab item (selectable) Create Stochastic Generator - Memory usage - 400 MB ID: view_20
+										773 button Close
+								774 pane (region)
+							775 button New tab
+							776 pane (region)
+							777 pane (region)
+								778 button Open Gemini in Chrome
+								779 pane (region)
+						780 pane (region)
+
+Document text: ```
+Ask ChatGPT
+```
+
+Focused element: 17 text field (edit) (settable, string) Address and search bar Description: Ask Google or type a URL Value: chatgpt.com/c/6afbbfba-1ee8-83e9-bfed-bfe7de80d68b ID: view_1012
+
+Document text:
+Ask ChatGPT

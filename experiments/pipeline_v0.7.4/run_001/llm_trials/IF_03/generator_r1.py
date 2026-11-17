@@ -1,0 +1,1255 @@
+import numpy as np
+from scipy import ndimage as ndi
+from scipy.spatial import cKDTree
+from scipy.spatial.distance import cdist
+from skimage.measure import regionprops
+
+SIZE = 256
+TARGET_REINFORCEMENT = 20731
+N_COMPLETE = 57
+N_BOUNDARY = 24
+MAX_CANDIDATES = 8
+
+# Moderate horizontal inclusion anisotropy is used to adjust vertical
+# load transfer without introducing artificial continuous phase lanes.
+# Candidate selection uses geometry only, never computed mechanics.
+ORIENTATION_KAPPA = 0.85
+ASPECT_MEDIAN = 1.50
+TARGET_VERTICAL_ALIGNMENT = -0.18
+TARGET_S2_Y_MINUS_X_8 = -0.009
+
+LAGS = (8, 16, 32, 64)
+WIDTHS = (1, 8, 16, 32)
+
+MORPHOLOGY_BOUNDS = {
+    "all_observed.area_fraction_aspect_gt3": (0, 0.27),
+    "all_observed.area_fraction_aspect_gt4": (0, 0.16),
+    "all_observed.area_weighted_aspect": (1, 2.59),
+    "all_observed.area_weighted_aspect_p95": (1, 6.13),
+    "all_observed.axial_order": (0, 0.59),
+    "all_observed.defined_aspect_area_fraction": (0.995, 1),
+    "gap_dilation.2.largest_fraction": (0, 0.59),
+    "limited_gap_run_x": (0, 0.60),
+    "limited_gap_run_y": (0, 0.56),
+    "long_range_abs_S2_difference": (0, 0.04),
+    "nearest_neighbor_cv": (0.10, 0.69),
+    "strips.1.column_max": (0, 0.79),
+    "strips.1.column_std": (0, 0.18),
+    "strips.1.row_max": (0, 0.78),
+    "strips.1.row_std": (0, 0.20),
+    "strips.8.column_max": (0, 0.74),
+    "strips.8.column_std": (0, 0.17),
+    "strips.8.row_max": (0, 0.75),
+    "strips.8.row_std": (0, 0.19),
+    "strips.16.column_max": (0, 0.71),
+    "strips.16.column_std": (0, 0.16),
+    "strips.16.row_max": (0, 0.69),
+    "strips.16.row_std": (0, 0.17),
+    "strips.32.column_max": (0, 0.64),
+    "strips.32.column_std": (0, 0.14),
+    "strips.32.row_max": (0, 0.63),
+    "strips.32.row_std": (0, 0.16),
+}
+
+
+def _sample_centers(rng):
+    """
+    Randomized dispersed inclusion nuclei with irregular matrix-rich
+    vacancies and independently sampled boundary-censored inclusions.
+    """
+    axis = np.linspace(33.0, 223.0, 8)
+
+    interior = np.array(
+        [(x, y) for y in axis for x in axis],
+        dtype=float
+    )
+
+    vr = int(rng.integers(1, 6))
+    vc = int(rng.integers(1, 6))
+
+    vacancies = {
+        vr * 8 + vc,
+        vr * 8 + vc + 1,
+        (vr + 1) * 8 + vc,
+        (vr + 1) * 8 + vc + 1,
+    }
+
+    available = np.array(
+        [i for i in range(64) if i not in vacancies],
+        dtype=int
+    )
+
+    additional = rng.choice(
+        available, size=3, replace=False
+    )
+
+    vacancies.update(int(i) for i in additional)
+
+    keep = np.array(
+        [i for i in range(64) if i not in vacancies],
+        dtype=int
+    )
+
+    interior = interior[keep]
+
+    interior += rng.uniform(
+        -7.0, 7.0, interior.shape
+    )
+
+    phase_x, phase_y = rng.uniform(
+        0.0, 2.0 * np.pi, 2
+    )
+
+    interior[:, 0] += 3.0 * np.sin(
+        interior[:, 1] / 49.0 + phase_x
+    )
+
+    interior[:, 1] += 3.0 * np.sin(
+        interior[:, 0] / 53.0 + phase_y
+    )
+
+    interior = np.clip(
+        interior, 19.0, 237.0
+    )
+
+    boundary = []
+
+    for edge in range(4):
+        positions = np.linspace(
+            19.0, 237.0, 6
+        )
+
+        positions += rng.uniform(
+            -9.0, 9.0, 6
+        )
+
+        positions = np.clip(
+            positions, 9.0, 247.0
+        )
+
+        for coordinate in positions:
+            offset = float(
+                rng.uniform(-2.5, 2.0)
+            )
+
+            if edge == 0:
+                boundary.append(
+                    (coordinate, offset)
+                )
+            elif edge == 1:
+                boundary.append(
+                    (coordinate, 255.0 - offset)
+                )
+            elif edge == 2:
+                boundary.append(
+                    (offset, coordinate)
+                )
+            else:
+                boundary.append(
+                    (255.0 - offset, coordinate)
+                )
+
+    boundary = np.asarray(
+        boundary, dtype=float
+    )
+
+    centers = np.vstack(
+        (interior, boundary)
+    )
+
+    is_boundary = np.zeros(
+        len(centers), dtype=bool
+    )
+
+    is_boundary[N_COMPLETE:] = True
+
+    return centers, is_boundary
+
+
+def _partition_pixels(centers, is_boundary):
+    """
+    Finite nearest-nucleus territories with a narrow interparticle
+    exclusion region. No periodic distance calculations are used.
+
+    The exclusion preserves separate inclusions and reduces the risk
+    of specimen-spanning diagnostic two-pixel dilation.
+    """
+    yy, xx = np.indices(
+        (SIZE, SIZE)
+    )
+
+    coordinates = np.column_stack((
+        xx.ravel().astype(float),
+        yy.ravel().astype(float)
+    ))
+
+    tree = cKDTree(centers)
+
+    distances, owners = tree.query(
+        coordinates, k=2
+    )
+
+    allowed = (
+        distances[:, 1] - distances[:, 0]
+    ) >= 6.7
+
+    labels = owners[:, 0]
+
+    interior_pixel = (
+        (coordinates[:, 0] > 0) &
+        (coordinates[:, 0] < SIZE - 1) &
+        (coordinates[:, 1] > 0) &
+        (coordinates[:, 1] < SIZE - 1)
+    )
+
+    pools = []
+
+    for i in range(len(centers)):
+        eligible = (
+            allowed & (labels == i)
+        )
+
+        if not is_boundary[i]:
+            eligible &= interior_pixel
+
+        pools.append(
+            np.flatnonzero(eligible)
+        )
+
+    return pools
+
+
+def _allocate_areas(rng, pools, is_boundary):
+    """
+    Exact global composition through randomized local inclusion quotas.
+    Allocation remains within each nucleus's available territory.
+    """
+    count = len(pools)
+
+    capacities = np.array(
+        [
+            min(700, int(0.87 * len(pool)))
+            for pool in pools
+        ],
+        dtype=int
+    )
+
+    minimum = np.full(
+        count, 80, dtype=int
+    )
+
+    if np.any(capacities < minimum):
+        raise RuntimeError(
+            "Insufficient territory for an inclusion"
+        )
+
+    if capacities.sum() < TARGET_REINFORCEMENT:
+        raise RuntimeError(
+            "Insufficient total reinforcement capacity"
+        )
+
+    sigma = np.where(
+        is_boundary, 0.43, 0.58
+    )
+
+    weights = np.exp(
+        rng.normal(size=count) * sigma
+        - 0.5 * sigma**2
+    )
+
+    weights *= np.where(
+        is_boundary, 1.20, 0.95
+    )
+
+    allocation = minimum.astype(float)
+
+    remaining = float(
+        TARGET_REINFORCEMENT
+        - minimum.sum()
+    )
+
+    active = np.ones(
+        count, dtype=bool
+    )
+
+    for _ in range(count + 1):
+        indices = np.flatnonzero(active)
+
+        if len(indices) == 0:
+            break
+
+        share = (
+            remaining
+            * weights[indices]
+            / weights[indices].sum()
+        )
+
+        limits = (
+            capacities[indices]
+            - minimum[indices]
+        )
+
+        saturated = share >= limits
+
+        if not saturated.any():
+            allocation[indices] = (
+                minimum[indices] + share
+            )
+            remaining = 0.0
+            break
+
+        fixed = indices[saturated]
+
+        allocation[fixed] = capacities[fixed]
+
+        remaining -= float(
+            np.sum(
+                capacities[fixed]
+                - minimum[fixed]
+            )
+        )
+
+        active[fixed] = False
+
+    if remaining > 1e-6:
+        raise RuntimeError(
+            "Area-allocation capacity exhausted"
+        )
+
+    quotas = np.floor(
+        allocation + 1e-10
+    ).astype(int)
+
+    deficit = (
+        TARGET_REINFORCEMENT
+        - int(quotas.sum())
+    )
+
+    fractional = (
+        allocation - np.floor(allocation)
+    )
+
+    tie_break = rng.random(count)
+
+    order = np.lexsort(
+        (tie_break, -fractional)
+    )
+
+    for i in order:
+        if deficit == 0:
+            break
+
+        if quotas[i] < capacities[i]:
+            quotas[i] += 1
+            deficit -= 1
+
+    if (
+        deficit != 0 or
+        int(quotas.sum()) != TARGET_REINFORCEMENT
+    ):
+        raise RuntimeError(
+            "Exact area allocation failed"
+        )
+
+    return quotas
+
+
+def _irregular_radial_scores(
+    rng, center, pixel_indices
+):
+    """
+    Irregular, independently generated particle cross sections.
+
+    A moderate axial orientation distribution favors horizontal
+    reinforcement geometry. This changes shape anisotropy without
+    prescribing a reinforcement pathway or continuous aligned lane.
+
+    Each orientation, aspect ratio, harmonic perturbation, and
+    indentation remains stochastic.
+    """
+    y = pixel_indices // SIZE
+    x = pixel_indices % SIZE
+
+    dx = (
+        x.astype(float) - center[0]
+    )
+    dy = (
+        y.astype(float) - center[1]
+    )
+
+    # Axial von Mises distribution: theta and theta + pi are equivalent.
+    # An isotropic minority preserves broad angular variation.
+    if rng.random() < 0.12:
+        orientation = rng.uniform(
+            0.0, np.pi
+        )
+    else:
+        orientation = (
+            0.5 * rng.vonmises(
+                0.0, ORIENTATION_KAPPA
+            )
+        ) % np.pi
+
+    aspect = np.clip(
+        rng.lognormal(
+            np.log(ASPECT_MEDIAN), 0.25
+        ),
+        1.03,
+        2.55
+    )
+
+    c = np.cos(orientation)
+    s = np.sin(orientation)
+
+    u = (
+        dx * c + dy * s
+    ) / np.sqrt(aspect)
+
+    v = (
+        -dx * s + dy * c
+    ) * np.sqrt(aspect)
+
+    angle = np.arctan2(v, u)
+    radial = np.hypot(u, v)
+
+    phases = rng.uniform(
+        0.0, 2.0 * np.pi, 4
+    )
+
+    amplitudes = rng.uniform(
+        [0.08, 0.06, 0.035, 0.020],
+        [0.17, 0.12, 0.075, 0.050]
+    )
+
+    modulation = (
+        1.0
+        + amplitudes[0]
+        * np.sin(3.0 * angle + phases[0])
+        + amplitudes[1]
+        * np.cos(5.0 * angle + phases[1])
+        + amplitudes[2]
+        * np.sin(8.0 * angle + phases[2])
+        + amplitudes[3]
+        * np.cos(12.0 * angle + phases[3])
+    )
+
+    if rng.random() < 0.75:
+        for _ in range(
+            int(rng.integers(1, 3))
+        ):
+            center_angle = rng.uniform(
+                -np.pi, np.pi
+            )
+            width = rng.uniform(
+                0.19, 0.42
+            )
+            depth = rng.uniform(
+                0.10, 0.25
+            )
+
+            difference = np.arctan2(
+                np.sin(angle - center_angle),
+                np.cos(angle - center_angle)
+            )
+
+            modulation -= (
+                depth
+                * np.exp(
+                    -0.5 * (difference / width)**2
+                )
+            )
+
+    modulation = np.clip(
+        modulation, 0.57, 1.55
+    )
+
+    return radial / modulation
+
+
+def _generate_candidate(seed):
+    """
+    Construct one independently randomized specimen with an exact
+    reinforcement count. No image or mechanical outcome is consulted.
+    """
+    rng = np.random.default_rng(seed)
+
+    centers, is_boundary = _sample_centers(
+        rng
+    )
+
+    pools = _partition_pixels(
+        centers, is_boundary
+    )
+
+    quotas = _allocate_areas(
+        rng, pools, is_boundary
+    )
+
+    reinforcement = np.zeros(
+        SIZE * SIZE, dtype=bool
+    )
+
+    for i, pool in enumerate(pools):
+        quota = int(quotas[i])
+
+        if len(pool) < quota:
+            raise RuntimeError(
+                "Local inclusion territory exhausted"
+            )
+
+        scores = _irregular_radial_scores(
+            rng, centers[i], pool
+        )
+
+        selected = np.argpartition(
+            scores, quota - 1
+        )[:quota]
+
+        reinforcement[
+            pool[selected]
+        ] = True
+
+    reinforcement = reinforcement.reshape(
+        SIZE, SIZE
+    )
+
+    if (
+        int(reinforcement.sum())
+        != TARGET_REINFORCEMENT
+    ):
+        raise RuntimeError(
+            "Generated reinforcement count is incorrect"
+        )
+
+    labels, count = ndi.label(
+        reinforcement
+    )
+
+    if count != len(centers):
+        raise RuntimeError(
+            "Disconnected or merged inclusion construction"
+        )
+
+    edge_labels = set(
+        np.unique(
+            np.concatenate((
+                labels[0, :],
+                labels[-1, :],
+                labels[:, 0],
+                labels[:, -1]
+            ))
+        )
+    ) - {0}
+
+    if len(edge_labels) != N_BOUNDARY:
+        raise RuntimeError(
+            "Boundary-censored inclusion count incorrect"
+        )
+
+    return np.where(
+        reinforcement, 5, 1
+    ).astype(np.uint8)
+
+
+def directional_s2(a, r, axis):
+    if not 0 <= r < a.shape[axis]:
+        raise ValueError(
+            "Lag outside finite image"
+        )
+
+    if r == 0:
+        return float(np.mean(a))
+
+    lower = [slice(None)] * 2
+    upper = lower.copy()
+
+    lower[axis] = slice(None, -r)
+    upper[axis] = slice(r, None)
+
+    return float(
+        np.mean(
+            a[tuple(lower)].astype(float)
+            * a[tuple(upper)]
+        )
+    )
+
+
+def weighted_quantile(values, weights, q):
+    values = np.asarray(values)
+    weights = np.asarray(weights)
+
+    if (
+        not len(values)
+        or weights.sum() <= 0
+    ):
+        return None
+
+    order = np.argsort(
+        values, kind="stable"
+    )
+
+    values = values[order]
+    weights = weights[order]
+
+    threshold = q * weights.sum()
+
+    index = np.searchsorted(
+        np.cumsum(weights),
+        threshold,
+        side="left"
+    )
+
+    return float(
+        values[min(index, len(values) - 1)]
+    )
+
+
+def region_shapes(regions):
+    total = sum(
+        r.area for r in regions
+    )
+
+    aspects = []
+    areas = []
+    angles = []
+    anisotropies = []
+
+    for region in regions:
+        xy = region.coords[:, [1, 0]].astype(float)
+        xy[:, 1] *= -1.0
+        xy -= xy.mean(axis=0)
+
+        covariance = (
+            xy.T @ xy / len(xy)
+        )
+
+        values, vectors = np.linalg.eigh(
+            covariance
+        )
+
+        if values[0] <= 1e-12:
+            continue
+
+        aspect = float(
+            np.sqrt(values[1] / values[0])
+        )
+
+        direction = vectors[:, 1]
+
+        anisotropy = float(
+            (values[1] - values[0])
+            / values.sum()
+        )
+
+        aspects.append(aspect)
+        areas.append(float(region.area))
+
+        angles.append(
+            float(
+                np.arctan2(
+                    direction[1], direction[0]
+                ) % np.pi
+            )
+        )
+
+        anisotropies.append(
+            anisotropy
+        )
+
+    aspects = np.asarray(aspects)
+    areas = np.asarray(areas)
+    angles = np.asarray(angles)
+    anisotropies = np.asarray(anisotropies)
+
+    weights = (
+        areas
+        * anisotropies
+        * (anisotropies >= 0.05)
+    )
+
+    if weights.sum() > 1e-12:
+        z = (
+            np.sum(
+                weights * np.exp(2j * angles)
+            )
+            / weights.sum()
+        )
+    else:
+        z = None
+
+    largest = (
+        max(regions, key=lambda r: r.area)
+        if regions else None
+    )
+
+    largest_aspect = None
+
+    if (
+        largest is not None
+        and largest.axis_minor_length > 0
+    ):
+        largest_aspect = float(
+            largest.axis_major_length
+            / largest.axis_minor_length
+        )
+
+    return {
+        "regions": len(regions),
+        "area": int(total),
+        "largest_region_area":
+            int(largest.area) if largest else None,
+        "largest_region_aspect":
+            largest_aspect,
+        "defined_aspect_area_fraction":
+            float(areas.sum() / total)
+            if total else None,
+        "unweighted_aspect_mean":
+            float(aspects.mean())
+            if len(aspects) else None,
+        "area_weighted_aspect":
+            float(
+                np.average(
+                    aspects, weights=areas
+                )
+            ) if len(aspects) else None,
+        "area_weighted_aspect_p90":
+            weighted_quantile(
+                aspects, areas, 0.90
+            ),
+        "area_weighted_aspect_p95":
+            weighted_quantile(
+                aspects, areas, 0.95
+            ),
+        "area_fraction_aspect_gt3":
+            float(
+                areas[aspects > 3].sum() / total
+            ) if total else None,
+        "area_fraction_aspect_gt4":
+            float(
+                areas[aspects > 4].sum() / total
+            ) if total else None,
+        "axial_order":
+            float(abs(z))
+            if z is not None else None,
+        "preferred_axial_angle_deg":
+            float(
+                np.degrees(np.angle(z))
+                / 2 % 180
+            )
+            if z is not None and abs(z) > 1e-8
+            else None,
+        "vertical_alignment":
+            float(-z.real)
+            if z is not None else None,
+        "orientation_weight_fraction":
+            float(weights.sum() / total)
+            if total else None
+    }
+
+
+def topology(mask, connectivity=1):
+    structure = ndi.generate_binary_structure(
+        2, connectivity
+    )
+
+    labels, count = ndi.label(
+        mask, structure
+    )
+
+    sizes = np.bincount(
+        labels.ravel()
+    )[1:]
+
+    def spans(first, second):
+        shared = (
+            set(np.unique(first))
+            & set(np.unique(second))
+        )
+        return bool(shared - {0})
+
+    return {
+        "regions": int(count),
+        "largest_fraction":
+            float(
+                sizes.max() / mask.sum()
+            ) if sizes.size else None,
+        "spans_x":
+            spans(
+                labels[:, 0],
+                labels[:, -1]
+            ),
+        "spans_y":
+            spans(
+                labels[0, :],
+                labels[-1, :]
+            ),
+        "singleton_area_fraction":
+            float(
+                sizes[sizes == 1].sum()
+                / mask.sum()
+            ) if sizes.size else None
+    }
+
+
+def limited_gap_run(line, maxgap=2):
+    positions = np.flatnonzero(line)
+
+    if not len(positions):
+        return 0
+
+    splits = np.r_[
+        0,
+        np.flatnonzero(
+            np.diff(positions) > maxgap + 1
+        ) + 1,
+        len(positions)
+    ]
+
+    return max(
+        int(
+            positions[b - 1]
+            - positions[a] + 1
+        )
+        for a, b in zip(
+            splits[:-1], splits[1:]
+        )
+    )
+
+
+def describe(mask):
+    a = np.asarray(
+        mask, dtype=bool
+    )
+
+    if a.ndim != 2:
+        raise ValueError(
+            "Expected two-dimensional finite mask"
+        )
+
+    labels, _ = ndi.label(a)
+    regions = regionprops(labels)
+
+    edge = set(
+        np.unique(
+            np.concatenate((
+                labels[0, :],
+                labels[-1, :],
+                labels[:, 0],
+                labels[:, -1]
+            ))
+        )
+    ) - {0}
+
+    complete = [
+        region for region in regions
+        if region.label not in edge
+    ]
+
+    centers = np.asarray(
+        [r.centroid for r in complete]
+    )
+
+    nearest = []
+
+    if len(centers) > 1:
+        distances = cdist(
+            centers, centers
+        )
+
+        np.fill_diagonal(
+            distances, np.inf
+        )
+
+        nearest = distances.min(axis=1)
+
+    out = {
+        "complete": region_shapes(complete),
+        "all_observed": region_shapes(regions),
+        "boundary_censored_regions":
+            len(edge),
+        "correlation": {},
+        "strips": {},
+        "gap_dilation": {},
+        "nearest_neighbor_mean_px":
+            float(np.mean(nearest))
+            if len(nearest) else None,
+        "nearest_neighbor_cv":
+            float(
+                np.std(nearest)
+                / np.mean(nearest)
+            ) if len(nearest) else None,
+        "interface_density":
+            float((
+                np.count_nonzero(
+                    a[1:] != a[:-1]
+                )
+                + np.count_nonzero(
+                    a[:, 1:] != a[:, :-1]
+                )
+            ) / a.size)
+    }
+
+    for lag in LAGS:
+        sx = directional_s2(
+            a, lag, 1
+        )
+        sy = directional_s2(
+            a, lag, 0
+        )
+
+        out["correlation"][str(lag)] = {
+            "x": sx,
+            "y": sy,
+            "y_minus_x": sy - sx
+        }
+
+    differences = [
+        abs(value["y_minus_x"])
+        for lag, value
+        in out["correlation"].items()
+        if int(lag) >= 16
+    ]
+
+    out["long_range_abs_S2_difference"] = (
+        float(np.mean(differences))
+        if differences else None
+    )
+
+    for width in WIDTHS:
+        x = np.convolve(
+            a.mean(axis=0),
+            np.ones(width) / width,
+            mode="valid"
+        )
+
+        y = np.convolve(
+            a.mean(axis=1),
+            np.ones(width) / width,
+            mode="valid"
+        )
+
+        out["strips"][str(width)] = {
+            "column_std": float(x.std()),
+            "row_std": float(y.std()),
+            "column_max": float(x.max()),
+            "row_max": float(y.max()),
+            "column_fraction_ge08":
+                float(np.mean(x >= 0.8)),
+            "row_fraction_ge08":
+                float(np.mean(y >= 0.8))
+        }
+
+    for radius in (1, 2):
+        yy, xx = np.mgrid[
+            -radius:radius + 1,
+            -radius:radius + 1
+        ]
+
+        disk = (
+            xx**2 + yy**2 <= radius**2
+        )
+
+        dilated = ndi.binary_dilation(
+            a,
+            structure=disk,
+            border_value=0
+        )
+
+        out["gap_dilation"][str(radius)] = {
+            **topology(dilated, 2),
+            "fraction":
+                float(dilated.mean())
+        }
+
+    out["limited_gap_run_y"] = (
+        max(
+            limited_gap_run(a[:, i])
+            for i in range(a.shape[1])
+        ) / a.shape[0]
+    )
+
+    out["limited_gap_run_x"] = (
+        max(
+            limited_gap_run(a[i])
+            for i in range(a.shape[0])
+        ) / a.shape[1]
+    )
+
+    return out
+
+
+def flattened(description):
+    result = {}
+
+    for group in (
+        "complete", "all_observed"
+    ):
+        for key, value in description[group].items():
+            if key != "preferred_axial_angle_deg":
+                result[
+                    f"{group}.{key}"
+                ] = value
+
+    for key in (
+        "long_range_abs_S2_difference",
+        "limited_gap_run_y",
+        "limited_gap_run_x",
+        "nearest_neighbor_cv",
+        "nearest_neighbor_mean_px",
+        "interface_density"
+    ):
+        result[key] = description[key]
+
+    for width, row in description["strips"].items():
+        for key in (
+            "column_std",
+            "row_std",
+            "column_max",
+            "row_max"
+        ):
+            result[
+                f"strips.{width}.{key}"
+            ] = row[key]
+
+    for radius, row in description["gap_dilation"].items():
+        for key in (
+            "largest_fraction",
+            "spans_x",
+            "spans_y"
+        ):
+            result[
+                f"gap_dilation.{radius}.{key}"
+            ] = row[key]
+
+    return result
+
+
+def _structural_ok(a, return_description=False):
+    if a.shape != (SIZE, SIZE):
+        return (False, None) if return_description else False
+
+    if a.dtype != np.uint8:
+        return (False, None) if return_description else False
+
+    if set(np.unique(a)) != {1, 5}:
+        return (False, None) if return_description else False
+
+    reinforcement = a == 5
+
+    if int(reinforcement.sum()) != TARGET_REINFORCEMENT:
+        return (False, None) if return_description else False
+
+    matrix = topology(
+        ~reinforcement, 1
+    )
+
+    if (
+        matrix["largest_fraction"] < 0.95
+        or not matrix["spans_x"]
+        or not matrix["spans_y"]
+    ):
+        return (False, None) if return_description else False
+
+    for connectivity in (1, 2):
+        result = topology(
+            reinforcement, connectivity
+        )
+
+        if (
+            result["spans_x"]
+            or result["spans_y"]
+            or result["largest_fraction"] > 0.15
+        ):
+            return (False, None) if return_description else False
+
+        if (
+            connectivity == 1
+            and result["singleton_area_fraction"] > 0.001
+        ):
+            return (False, None) if return_description else False
+
+    labels, count = ndi.label(
+        reinforcement
+    )
+
+    regions = regionprops(labels)
+
+    edge = set(
+        np.unique(
+            np.concatenate((
+                labels[0, :],
+                labels[-1, :],
+                labels[:, 0],
+                labels[:, -1]
+            ))
+        )
+    ) - {0}
+
+    complete = [
+        region for region in regions
+        if region.label not in edge
+    ]
+
+    if not (
+        40 <= len(complete) <= 75
+        and 50 <= count <= 125
+        and 5 <= len(edge) <= 50
+    ):
+        return (False, None) if return_description else False
+
+    diameters = [
+        region.equivalent_diameter_area
+        for region in complete
+    ]
+
+    if (
+        not diameters
+        or not 12 <= np.mean(diameters) <= 20
+    ):
+        return (False, None) if return_description else False
+
+    aspects = [
+        region.axis_major_length
+        / region.axis_minor_length
+        for region in complete
+        if region.axis_minor_length > 0
+    ]
+
+    if (
+        not aspects
+        or not 1.2 <= np.mean(aspects) <= 3.0
+    ):
+        return (False, None) if return_description else False
+
+    description = describe(
+        reinforcement
+    )
+
+    measurements = flattened(
+        description
+    )
+
+    for key, bounds in MORPHOLOGY_BOUNDS.items():
+        value = measurements.get(key)
+
+        if (
+            value is None
+            or not bounds[0] <= value <= bounds[1]
+        ):
+            return (False, None) if return_description else False
+
+    if (
+        measurements["gap_dilation.2.spans_x"]
+        or measurements["gap_dilation.2.spans_y"]
+    ):
+        return (False, None) if return_description else False
+
+    if return_description:
+        return True, description
+
+    return True
+
+
+def _geometry_score(description):
+    """
+    Rank already-feasible candidates by moderate horizontal
+    inclusion anisotropy and finite-window directional correlation.
+
+    These are morphology-only proxies, not apparent-modulus estimates.
+    No stored mechanical results, FE calculation, or inverse solver
+    participates in this selection.
+    """
+    alignment = (
+        description["all_observed"]["vertical_alignment"]
+    )
+
+    s2_difference = (
+        description["correlation"]["8"]["y_minus_x"]
+    )
+
+    aspect = (
+        description["all_observed"]["area_weighted_aspect"]
+    )
+
+    alignment_error = abs(
+        alignment - TARGET_VERTICAL_ALIGNMENT
+    ) / 0.25
+
+    correlation_error = abs(
+        s2_difference - TARGET_S2_Y_MINUS_X_8
+    ) / 0.025
+
+    aspect_error = abs(
+        aspect - 1.72
+    ) / 0.50
+
+    return (
+        alignment_error
+        + 0.45 * correlation_error
+        + 0.12 * aspect_error
+    )
+
+
+def generate_microstructure(seed, parameters={}):
+    """
+    Generate a stochastic finite-domain P3 microstructure.
+
+    Returns a (256, 256) uint8 array containing exactly:
+        20,731 pixels labeled 5 (reinforcement-like solid)
+        44,805 pixels labeled 1 (matrix-like solid)
+
+    Construction and selection are deterministic for a fixed seed.
+    Up to eight independently randomized geometry candidates are
+    generated, structurally validated, and ranked using geometry only.
+
+    An explicit error is raised if the fixed candidate bound yields
+    no structurally feasible output.
+    """
+    if parameters is None:
+        parameters = {}
+
+    if parameters:
+        raise ValueError(
+            "This registered generator accepts empty parameters"
+        )
+
+    rng = np.random.default_rng(seed)
+
+    best_candidate = None
+    best_score = np.inf
+
+    for _ in range(MAX_CANDIDATES):
+        candidate_seed = int(
+            rng.integers(0, 2**63)
+        )
+
+        try:
+            candidate = _generate_candidate(
+                candidate_seed
+            )
+        except RuntimeError:
+            continue
+
+        feasible, description = _structural_ok(
+            candidate,
+            return_description=True
+        )
+
+        if not feasible:
+            continue
+
+        score = _geometry_score(
+            description
+        )
+
+        if score < best_score:
+            best_score = score
+            best_candidate = candidate
+
+    if best_candidate is None:
+        raise RuntimeError(
+            "No structurally feasible P3 microstructure "
+            "within eight registered geometry candidates"
+        )
+
+    return best_candidate

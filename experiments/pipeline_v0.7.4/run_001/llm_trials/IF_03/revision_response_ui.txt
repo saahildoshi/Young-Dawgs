@@ -1,0 +1,289 @@
+text (heading) ChatGPT said:
+												2027 text Python
+												2028 button (toggle button) Enable word wrap
+												2029 button Copy code
+												2030 button Run code
+												2031 group
+													2032 group
+													2033 group
+														2034 text field (edit) (settable, string) Edit code Value: import numpy as np from scipy import ndimage as ndi from scipy.spatial import cKDTree from scipy.spatial.distance import cdist from skimage.measure import regionprops SIZE = 256 TARGET_REINFORCEMENT = 20731 N_COMPLETE = 57 N_BOUNDARY = 24 MAX_CANDIDATES = 8 # Moderate horizontal inclusion anisotropy is used to adjust vertical # load transfer without introducing artificial continuous phase lanes. # Candidate selection uses geometry only, never computed mechanics. ORIENTATION_KAPPA = 0.85 ASPECT_MEDIAN = 1.50 TARGET_VERTICAL_ALIGNMENT = -0.18 TARGET_S2_Y_MINUS_X_8 = -0.009 LAGS = (8, 16, 32, 64) WIDTHS = (1, 8, 16, 32) MORPHOLOGY_BOUNDS = { "all_observed.area_fraction_aspect_gt3": (0, 0.27), "all_observed.area_fraction_aspect_gt4": (0, 0.16), "all_observed.area_weighted_aspect": (1, 2.59), "all_observed.area_weighted_aspect_p95": (1, 6.13), "all_observed.axial_order": (0, 0.59), "all_observed.defined_aspect_area_fraction": (0.995, 1), "gap_dilation.2.largest_fraction": (0, 0.59), "limited_gap_run_x": (0, 0.60), "limited_gap_run_y": (0, 0.56), "long_range_abs_S2_difference": (0, 0.04), "nearest_neighbor_cv": (0.10, 0.69), "strips.1.column_max": (0, 0.79),
+															2035 text import
+															2036 text 
+															2037 text numpy
+															2038 text 
+															2039 text as
+															2040 text 
+															2041 text np
+															2042 text from
+															2043 text 
+															2044 text scipy
+															2045 text 
+															2046 text import
+															2047 text 
+															2048 text ndimage
+															2049 text 
+															2050 text as
+															2051 text 
+															2052 text ndi
+															2053 text from
+															2054 text 
+															2055 text scipy
+															2056 text .
+															2057 text spatial
+															2058 text 
+															2059 text import
+															2060 text 
+															2061 text cKDTree
+															2062 text from
+															2063 text 
+															2064 text scipy
+															2065 text .
+															2066 text spatial
+															2067 text .
+															2068 text distance
+															2069 text 
+															2070 text import
+															2071 text 
+															2072 text cdist
+															2073 text from
+															2074 text 
+															2075 text skimage
+															2076 text .
+															2077 text measure
+															2078 text 
+															2079 text import
+															2080 text 
+															2081 text regionprops
+															2082 text SIZE
+															2083 text 
+															2084 text =
+															2085 text 
+															2086 text 256
+															2087 text TARGET_REINFORCEMENT
+															2088 text 
+															2089 text =
+															2090 text 
+															2091 text 20731
+															2092 text N_COMPLETE
+															2093 text 
+															2094 text =
+															2095 text 
+															2096 text 57
+															2097 text N_BOUNDARY
+															2098 text 
+															2099 text =
+															2100 text 
+															2101 text 24
+															2102 text MAX_CANDIDATES
+															2103 text 
+															2104 text =
+															2105 text 
+															2106 text 8
+															2107 text # Moderate horizontal inclusion anisotropy is used to adjust vertical
+															2108 text # load transfer without introducing artificial continuous phase lanes.
+															2109 text # Candidate selection uses geometry only, never computed mechanics.
+															2110 text ORIENTATION_KAPPA
+															2111 text 
+															2112 text =
+															2113 text 
+															2114 text 0.85
+															2115 text ASPECT_MEDIAN
+															2116 text 
+															2117 text =
+															2118 text 
+															2119 text 1.50
+															2120 text TARGET_VERTICAL_ALIGNMENT
+															2121 text 
+															2122 text =
+															2123 text 
+															2124 text -
+															2125 text 0.18
+															2126 text TARGET_S2_Y_MINUS_X_8
+															2127 text 
+															2128 text =
+															2129 text 
+															2130 text -
+															2131 text 0.009
+															2132 text LAGS
+															2133 text 
+															2134 text =
+															2135 text (
+															2136 text 8
+															2137 text ,
+															2138 text 16
+															2139 text ,
+															2140 text 32
+															2141 text ,
+															2142 text 64
+															2143 text )
+															2144 text WIDTHS
+															2145 text 
+															2146 text =
+															2147 text (
+															2148 text 1
+															2149 text ,
+															2150 text 8
+															2151 text ,
+															2152 text 16
+															2153 text ,
+															2154 text 32
+															2155 text )
+															2156 text MORPHOLOGY_BOUNDS
+															2157 text 
+															2158 text =
+															2159 text {
+															2160 text 
+															2161 text "all_observed.area_fraction_aspect_gt3"
+															2162 text : (
+															2163 text 0
+															2164 text ,
+															2165 text 0.27
+															2166 text ),
+															2167 text 
+															2168 text "all_observed.area_fraction_aspect_gt4"
+															2169 text : (
+															2170 text 0
+															2171 text ,
+															2172 text 0.16
+															2173 text ),
+															2174 text 
+															2175 text "all_observed.area_weighted_aspect"
+															2176 text : (
+															2177 text 1
+															2178 text ,
+															2179 text 2.59
+															2180 text ),
+															2181 text 
+															2182 text "all_observed.area_weighted_aspect_p95"
+															2183 text : (
+															2184 text 1
+															2185 text ,
+															2186 text 6.13
+															2187 text ),
+															2188 text 
+															2189 text "all_observed.axial_order"
+															2190 text : (
+															2191 text 0
+															2192 text ,
+															2193 text 0.59
+															2194 text ),
+															2195 text 
+															2196 text "all_observed.defined_aspect_area_fraction"
+															2197 text : (
+															2198 text 0.995
+															2199 text ,
+															2200 text 1
+															2201 text ),
+															2202 text 
+															2203 text "gap_dilation.2.largest_fraction"
+															2204 text : (
+															2205 text 0
+															2206 text ,
+															2207 text 0.59
+															2208 text ),
+															2209 text 
+															2210 text "limited_gap_run_x"
+															2211 text : (
+															2212 text 0
+															2213 text ,
+															2214 text 0.60
+															2215 text ),
+															2216 text 
+															2217 text "limited_gap_run_y"
+															2218 text : (
+															2219 text 0
+															2220 text ,
+															2221 text 0.56
+															2222 text ),
+															2223 text 
+															2224 text "long_range_abs_S2_difference"
+															2225 text : (
+															2226 text 0
+															2227 text ,
+															2228 text 0.04
+															2229 text ),
+															2230 text 
+															2231 text "nearest_neighbor_cv"
+															2232 text : (
+															2233 text 0.10
+															2234 text ,
+															2235 text 0.69
+															2236 text ),
+															2237 text 
+															2238 text "strips.1.column_max"
+															2239 text : (
+															2240 text 0
+															2241 text ,
+															2242 text 0.79
+															2243 text ),
+												2244 button Copy
+													2245 image (graphic)
+												2246 button Rate response ID: radix-_r_ae_
+												2247 button (toggle button) Read aloud
+												2248 button Share
+												2249 button More actions ID: radix-_r_ak_
+												2250 button Convert to PDF
+												2251 group
+												2252 text ChatGPT can make mistakes. Check important info.
+												2253 button Scroll to bottom
+												2254 text (heading) Latest response
+												2255 status bar (status)
+												2256 group
+													2257 group
+														2258 group
+															2259 button Add files and more
+															2260 text field (edit) (settable, string) Ask ChatGPT Value: Ask ChatGPT
+																2451 text Ask ChatGPT
+																2262 text 
+															2263 group
+																2264 button Select ChatGPT model ID: radix-_r_1f_
+																	2265 group
+																		2266 text High
+															2267 button Dictate
+															2268 button Start Voice
+															2269 status bar (status)
+										2270 status bar (status) ID: DndLiveRegion-0
+										2271 group
+										2272 status bar (status)
+										2273 group
+										2274 group
+										2275 status bar (status)
+										2276 status bar (status) ID: DndLiveRegion-1
+							752 pane (region)
+						753 pane (region)
+							754 pane (region)
+								755 button Tab search
+							756 pane (region) ID: view_21
+								757 tab
+									758 tab item (selectable) Mail - Saahil Doshi - Outlook - Memory usage - 441 MB ID: view_20
+										759 button Close
+									760 tab item (selectable) Time Sheet Nov. 16-20.docx - Memory usage - 535 MB ID: view_20
+										761 button Close
+									762 tab item (selectable) Mail - Saahil Doshi - Outlook - Memory usage - 369 MB ID: view_20
+										763 button Close
+									764 tab item (selectable) saahildoshi/Young-Dawgs ID: view_20
+										765 button Close
+									766 tab item (selectable) Create microstructure generator ID: view_20
+										767 button Close
+									768 tab item (selectable) Generate Microstructure Code ID: view_20
+										769 button Close
+									770 tab item (selectable) Create Stochastic Generator - Memory usage - 443 MB ID: view_20
+										771 button Close
+									772 tab item (selectable) Create Stochastic Generator - Memory usage - 400 MB ID: view_20
+										773 button Close
+								774 pane (region)
+							775 button New tab
+							776 pane (region)
+							777 pane (region)
+								778 button Open Gemini in Chrome
+								779 pane (region)
+						780 pane (region)
+
+Document text: ```
+Ask ChatGPT
+```
+
+Focused element: 17 text field (edit) (settable, string) Address and search bar Description: Ask Google or type a URL Value: chatgpt.com/c/6afbbd79-9cec-83e9-8163-e21b3b2083aa ID: view_1012
+
+Document text:
+Ask ChatGPT

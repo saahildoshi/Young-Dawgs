@@ -1,0 +1,336 @@
+text (heading) ChatGPT said:
+												4278 text Python
+												4279 button (toggle button) Enable word wrap
+												4280 button Copy code
+												4281 button Run code
+												4282 group
+													4283 group
+													4284 group
+														4285 text field (edit) (settable, string) Edit code Value: import numpy as np from scipy import ndimage as ndi from scipy.spatial.distance import cdist from skimage.draw import polygon from skimage.measure import regionprops SIZE = 256 TARGET_REINFORCEMENT = 20731 MAX_CANDIDATES = 8 LAGS = (8, 16, 32, 64) WIDTHS = (1, 8, 16, 32) MORPHOLOGY_BOUNDS = { "all_observed.area_fraction_aspect_gt3": (0.0, 0.27), "all_observed.area_fraction_aspect_gt4": (0.0, 0.16), "all_observed.area_weighted_aspect": (1.0, 2.59), "all_observed.area_weighted_aspect_p95": (1.0, 6.13), "all_observed.axial_order": (0.0, 0.59), "all_observed.defined_aspect_area_fraction": (0.995, 1.0), "gap_dilation.2.largest_fraction": (0.0, 0.59), "limited_gap_run_x": (0.0, 0.60), "limited_gap_run_y": (0.0, 0.56), "long_range_abs_S2_difference": (0.0, 0.04), "nearest_neighbor_cv": (0.10, 0.69), "strips.1.column_max": (0.0, 0.79), "strips.1.column_std": (0.0, 0.18), "strips.1.row_max": (0.0, 0.78), "strips.1.row_std": (0.0, 0.20), "strips.8.column_max": (0.0, 0.74), "strips.8.column_std": (0.0, 0.17), "strips.8.row_max": (0.0, 0.75), "strips.8.row_std": (0.0, 0.19), "strips.16.column_max": (0.0, 0.71), "strips.16.column_std": (0.0, 0.16), "strips.16.row_max": (0.0, 0.69), "strips.16.row_std": (0.0, 0.17),
+															4286 text import
+															4287 text 
+															4288 text numpy
+															4289 text 
+															4290 text as
+															4291 text 
+															4292 text np
+															4293 text from
+															4294 text 
+															4295 text scipy
+															4296 text 
+															4297 text import
+															4298 text 
+															4299 text ndimage
+															4300 text 
+															4301 text as
+															4302 text 
+															4303 text ndi
+															4304 text from
+															4305 text 
+															4306 text scipy
+															4307 text .
+															4308 text spatial
+															4309 text .
+															4310 text distance
+															4311 text 
+															4312 text import
+															4313 text 
+															4314 text cdist
+															4315 text from
+															4316 text 
+															4317 text skimage
+															4318 text .
+															4319 text draw
+															4320 text 
+															4321 text import
+															4322 text 
+															4323 text polygon
+															4324 text from
+															4325 text 
+															4326 text skimage
+															4327 text .
+															4328 text measure
+															4329 text 
+															4330 text import
+															4331 text 
+															4332 text regionprops
+															4333 text SIZE
+															4334 text 
+															4335 text =
+															4336 text 
+															4337 text 256
+															4338 text TARGET_REINFORCEMENT
+															4339 text 
+															4340 text =
+															4341 text 
+															4342 text 20731
+															4343 text MAX_CANDIDATES
+															4344 text 
+															4345 text =
+															4346 text 
+															4347 text 8
+															4348 text LAGS
+															4349 text 
+															4350 text =
+															4351 text (
+															4352 text 8
+															4353 text ,
+															4354 text 16
+															4355 text ,
+															4356 text 32
+															4357 text ,
+															4358 text 64
+															4359 text )
+															4360 text WIDTHS
+															4361 text 
+															4362 text =
+															4363 text (
+															4364 text 1
+															4365 text ,
+															4366 text 8
+															4367 text ,
+															4368 text 16
+															4369 text ,
+															4370 text 32
+															4371 text )
+															4372 text MORPHOLOGY_BOUNDS
+															4373 text 
+															4374 text =
+															4375 text {
+															4376 text 
+															4377 text "all_observed.area_fraction_aspect_gt3"
+															4378 text : (
+															4379 text 0.0
+															4380 text ,
+															4381 text 0.27
+															4382 text ),
+															4383 text 
+															4384 text "all_observed.area_fraction_aspect_gt4"
+															4385 text : (
+															4386 text 0.0
+															4387 text ,
+															4388 text 0.16
+															4389 text ),
+															4390 text 
+															4391 text "all_observed.area_weighted_aspect"
+															4392 text : (
+															4393 text 1.0
+															4394 text ,
+															4395 text 2.59
+															4396 text ),
+															4397 text 
+															4398 text "all_observed.area_weighted_aspect_p95"
+															4399 text : (
+															4400 text 1.0
+															4401 text ,
+															4402 text 6.13
+															4403 text ),
+															4404 text 
+															4405 text "all_observed.axial_order"
+															4406 text : (
+															4407 text 0.0
+															4408 text ,
+															4409 text 0.59
+															4410 text ),
+															4411 text 
+															4412 text "all_observed.defined_aspect_area_fraction"
+															4413 text : (
+															4414 text 0.995
+															4415 text ,
+															4416 text 1.0
+															4417 text ),
+															4418 text 
+															4419 text "gap_dilation.2.largest_fraction"
+															4420 text : (
+															4421 text 0.0
+															4422 text ,
+															4423 text 0.59
+															4424 text ),
+															4425 text 
+															4426 text "limited_gap_run_x"
+															4427 text : (
+															4428 text 0.0
+															4429 text ,
+															4430 text 0.60
+															4431 text ),
+															4432 text 
+															4433 text "limited_gap_run_y"
+															4434 text : (
+															4435 text 0.0
+															4436 text ,
+															4437 text 0.56
+															4438 text ),
+															4439 text 
+															4440 text "long_range_abs_S2_difference"
+															4441 text : (
+															4442 text 0.0
+															4443 text ,
+															4444 text 0.04
+															4445 text ),
+															4446 text 
+															4447 text "nearest_neighbor_cv"
+															4448 text : (
+															4449 text 0.10
+															4450 text ,
+															4451 text 0.69
+															4452 text ),
+															4453 text 
+															4454 text "strips.1.column_max"
+															4455 text : (
+															4456 text 0.0
+															4457 text ,
+															4458 text 0.79
+															4459 text ),
+															4460 text 
+															4461 text "strips.1.column_std"
+															4462 text : (
+															4463 text 0.0
+															4464 text ,
+															4465 text 0.18
+															4466 text ),
+															4467 text 
+															4468 text "strips.1.row_max"
+															4469 text : (
+															4470 text 0.0
+															4471 text ,
+															4472 text 0.78
+															4473 text ),
+															4474 text 
+															4475 text "strips.1.row_std"
+															4476 text : (
+															4477 text 0.0
+															4478 text ,
+															4479 text 0.20
+															4480 text ),
+															4481 text 
+															4482 text "strips.8.column_max"
+															4483 text : (
+															4484 text 0.0
+															4485 text ,
+															4486 text 0.74
+															4487 text ),
+															4488 text 
+															4489 text "strips.8.column_std"
+															4490 text : (
+															4491 text 0.0
+															4492 text ,
+															4493 text 0.17
+															4494 text ),
+															4495 text 
+															4496 text "strips.8.row_max"
+															4497 text : (
+															4498 text 0.0
+															4499 text ,
+															4500 text 0.75
+															4501 text ),
+															4502 text 
+															4503 text "strips.8.row_std"
+															4504 text : (
+															4505 text 0.0
+															4506 text ,
+															4507 text 0.19
+															4508 text ),
+															4509 text 
+															4510 text "strips.16.column_max"
+															4511 text : (
+															4512 text 0.0
+															4513 text ,
+															4514 text 0.71
+															4515 text ),
+															4516 text 
+															4517 text "strips.16.column_std"
+															4518 text : (
+															4519 text 0.0
+															4520 text ,
+															4521 text 0.16
+															4522 text ),
+															4523 text 
+															4524 text "strips.16.row_max"
+															4525 text : (
+															4526 text 0.0
+															4527 text ,
+															4528 text 0.69
+															4529 text ),
+															4530 text 
+															4531 text "strips.16.row_std"
+															4532 text : (
+															4533 text 0.0
+															4534 text ,
+															4535 text 0.17
+															4536 text ),
+												4537 button Copy
+													4538 image (graphic)
+												4539 button Rate response ID: radix-_r_ok_
+												4540 button (toggle button) Read aloud
+												4541 button Share
+												4542 button More actions ID: radix-_r_oq_
+												4543 button Convert to PDF
+												4544 group
+												4545 text ChatGPT can make mistakes. Check important info.
+												4546 button Scroll to bottom
+												4547 text (heading) Latest response
+												4548 status bar (status)
+												4549 group
+													4550 group
+														4551 group
+															4552 button Add files and more
+															4553 text field (edit) (settable, string) Ask ChatGPT Value: Ask ChatGPT
+																4554 text Ask ChatGPT
+																4555 text 
+															4556 group
+																4557 button Select ChatGPT model ID: radix-_r_1f_
+																	4558 group
+																		4559 text High
+															4560 button Dictate
+															4561 button Start Voice
+															4562 status bar (status)
+										4563 status bar (status) ID: DndLiveRegion-0
+										4564 group
+										4565 status bar (status)
+											4566 text Response complete
+										4567 group
+										4568 group
+										4569 status bar (status)
+										4570 status bar (status) ID: DndLiveRegion-1
+							752 pane (region)
+						753 pane (region)
+							754 pane (region)
+								755 button Tab search
+							756 pane (region) ID: view_21
+								757 tab
+									758 tab item (selectable) Mail - Saahil Doshi - Outlook - Memory usage - 441 MB ID: view_20
+										759 button Close
+									760 tab item (selectable) Time Sheet Nov. 16-20.docx - Memory usage - 535 MB ID: view_20
+										761 button Close
+									762 tab item (selectable) Mail - Saahil Doshi - Outlook - Memory usage - 369 MB ID: view_20
+										763 button Close
+									764 tab item (selectable) saahildoshi/Young-Dawgs ID: view_20
+										765 button Close
+									766 tab item (selectable) Create microstructure generator - Memory usage - 411 MB ID: view_20
+										767 button Close
+									768 tab item (selectable) Generate Microstructure Code - Memory usage - 389 MB ID: view_20
+										769 button Close
+									770 tab item (selectable) Create Stochastic Generator - Memory usage - 443 MB ID: view_20
+										771 button Close
+									772 tab item (selectable) Create Stochastic Generator - Memory usage - 400 MB ID: view_20
+										773 button Close
+								774 pane (region)
+							775 button New tab
+							776 pane (region)
+							777 pane (region)
+								778 button Open Gemini in Chrome
+								779 pane (region)
+						780 pane (region)
+
+Selected text: ```
+chatgpt.com/c/6afbc095-fbac-83e9-8259-deda9a7cb4f0
+```
+
+Note: Pay special attention to the content selected by the user. If the user asks a question or refers to the content they are looking at on-screen, they might be referring to the selected content (but they might be referring to something else that's visible, too).
+
+Focused element: 17 text field (edit) (settable, string) Address and search bar Description: Ask Google or type a URL Value: chatgpt.com/c/6afbc095-fbac-83e9-8259-deda9a7cb4f0 ID: view_1012
+
+Selected text: chatgpt.com/c/6afbc095-fbac-83e9-8259-deda9a7cb4f0
+
+Document text:
+Ask ChatGPT
