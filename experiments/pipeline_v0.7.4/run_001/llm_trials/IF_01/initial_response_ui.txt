@@ -1,0 +1,524 @@
+text (heading) ChatGPT said:
+												2460 text Python
+												2461 button (toggle button) Enable word wrap
+												2960 button Copy code
+												2463 button Run code
+												2464 group
+													2961 group
+													2962 group
+														2963 text field (edit) (settable, string) Edit code Value: import numpy as np mask[tuple(lo)] & mask[tuple(hi)] ) ) def _limited_gap_run(line, maxgap=2): positions = np.flatnonzero(line) if positions.size == 0: return 0 split = np.r_[ 0, np.flatnonzero(np.diff(positions) > maxgap + 1) + 1, len(positions), ] return max( int(positions[b - 1] - positions[a] + 1) for a, b in zip(split[:-1], split[1:]) ) def _descriptor_values(mask, regions, complete): values = {} shapes = _shape_descriptors(regions) if shapes is None: return None for key, value in shapes.items(): values["all_observed." + key] = value centers = np.asarray( [r.centroid for r in complete], dtype=float ) if len(centers) <= 1: return None distances = cdist(centers, centers) np.fill_diagonal(distances, np.inf) nearest = distances.min(axis=1) values["nearest_neighbor_cv"] = float( nearest.std() / max(nearest.mean(), 1e-12) ) differences = [] for lag in (16, 32, 64): sx = _directional_s2(mask, lag, 1) sy = _directional_s2(mask, lag, 0) differences.append(abs(sy - sx)) values["long_range_abs_S2_difference"] = float( np.mean(differences) ) column_fraction = mask.mean(axis=0) row_fraction = mask.mean(axis=1) for width in (1, 8, 16, 32): kernel = np.ones(width, dtype=float) / width columns = np.convolve( column_fraction, kernel, mode="valid" ) rows = np.convolve(
+															2964 text import numpy as np
+															2965 text 
+															2966 text mask
+															2967 text [
+															2968 text tuple
+															2969 text (
+															2970 text lo
+															2971 text )]
+															2972 text &
+															2973 text 
+															2974 text mask
+															2975 text [
+															2976 text tuple
+															2977 text (
+															2978 text hi
+															2979 text )]
+															2980 text )
+															2981 text )
+															2982 text def
+															2983 text 
+															2984 text _limited_gap_run
+															2985 text (
+															2986 text line
+															2987 text ,
+															2988 text maxgap
+															2989 text =
+															2990 text 2
+															2991 text ):
+															2992 text 
+															2993 text positions
+															2994 text 
+															2995 text =
+															2996 text 
+															2997 text np
+															2998 text .
+															2999 text flatnonzero(
+															3000 text line
+															3001 text )
+															3002 text 
+															3003 text if
+															3004 text 
+															3005 text positions
+															3006 text .
+															3007 text size
+															3008 text ==
+															3009 text 
+															3010 text 0
+															3011 text :
+															3012 text 
+															3013 text return
+															3014 text 
+															3015 text 0
+															3016 text 
+															3017 text split
+															3018 text 
+															3019 text =
+															3020 text 
+															3021 text np
+															3022 text .
+															3023 text r_[
+															3024 text 
+															3025 text 0
+															3026 text ,
+															3027 text 
+															3028 text np
+															3029 text .
+															3030 text flatnonzero(
+															3031 text np
+															3032 text .
+															3033 text diff(
+															3034 text positions
+															3035 text )
+															3036 text >
+															3037 text 
+															3038 text maxgap
+															3039 text 
+															3040 text +
+															3041 text 
+															3042 text 1
+															3043 text )
+															3044 text +
+															3045 text 
+															3046 text 1
+															3047 text ,
+															3048 text 
+															3049 text len
+															3050 text (
+															3051 text positions
+															3052 text ),
+															3053 text ]
+															3054 text 
+															3055 text return
+															3056 text 
+															3057 text max
+															3058 text (
+															3059 text 
+															3060 text int
+															3061 text (
+															3062 text positions
+															3063 text [
+															3064 text b
+															3065 text 
+															3066 text -
+															3067 text 
+															3068 text 1
+															3069 text ]
+															3070 text -
+															3071 text 
+															3072 text positions
+															3073 text [
+															3074 text a
+															3075 text ]
+															3076 text +
+															3077 text 
+															3078 text 1
+															3079 text )
+															3080 text 
+															3081 text for
+															3082 text 
+															3083 text a
+															3084 text ,
+															3085 text b
+															3086 text 
+															3087 text in
+															3088 text 
+															3089 text zip
+															3090 text (
+															3091 text split
+															3092 text [:
+															3093 text -
+															3094 text 1
+															3095 text ],
+															3096 text split
+															3097 text [
+															3098 text 1
+															3099 text :])
+															3100 text )
+															3101 text def
+															3102 text 
+															3103 text _descriptor_values
+															3104 text (
+															3105 text mask
+															3106 text ,
+															3107 text regions
+															3108 text ,
+															3109 text complete
+															3110 text ):
+															3111 text 
+															3112 text values
+															3113 text 
+															3114 text =
+															3115 text {}
+															3116 text 
+															3117 text shapes
+															3118 text 
+															3119 text =
+															3120 text 
+															3121 text _shape_descriptors
+															3122 text (
+															3123 text regions
+															3124 text )
+															3125 text 
+															3126 text if
+															3127 text 
+															3128 text shapes
+															3129 text 
+															3130 text is
+															3131 text 
+															3132 text None
+															3133 text :
+															3134 text 
+															3135 text return
+															3136 text 
+															3137 text None
+															3138 text 
+															3139 text for
+															3140 text 
+															3141 text key
+															3142 text ,
+															3143 text value
+															3144 text 
+															3145 text in
+															3146 text 
+															3147 text shapes
+															3148 text .
+															3149 text items():
+															3150 text 
+															3151 text values
+															3152 text [
+															3153 text "all_observed."
+															3154 text 
+															3155 text +
+															3156 text 
+															3157 text key
+															3158 text ]
+															3159 text =
+															3160 text 
+															3161 text value
+															3162 text 
+															3163 text centers
+															3164 text 
+															3165 text =
+															3166 text 
+															3167 text np
+															3168 text .
+															3169 text asarray(
+															3170 text [
+															3171 text r
+															3172 text .
+															3173 text centroid
+															3174 text for
+															3175 text 
+															3176 text r
+															3177 text 
+															3178 text in
+															3179 text 
+															3180 text complete
+															3181 text ],
+															3182 text dtype
+															3183 text =
+															3184 text float
+															3185 text )
+															3186 text 
+															3187 text if
+															3188 text 
+															3189 text len
+															3190 text (
+															3191 text centers
+															3192 text )
+															3193 text <=
+															3194 text 
+															3195 text 1
+															3196 text :
+															3197 text 
+															3198 text return
+															3199 text 
+															3200 text None
+															3201 text 
+															3202 text distances
+															3203 text 
+															3204 text =
+															3205 text 
+															3206 text cdist
+															3207 text (
+															3208 text centers
+															3209 text ,
+															3210 text centers
+															3211 text )
+															3212 text 
+															3213 text np
+															3214 text .
+															3215 text fill_diagonal(
+															3216 text distances
+															3217 text ,
+															3218 text np
+															3219 text .
+															3220 text inf)
+															3221 text 
+															3222 text nearest
+															3223 text 
+															3224 text =
+															3225 text 
+															3226 text distances
+															3227 text .
+															3228 text min(
+															3229 text axis
+															3230 text =
+															3231 text 1
+															3232 text )
+															3233 text 
+															3234 text values
+															3235 text [
+															3236 text "nearest_neighbor_cv"
+															3237 text ]
+															3238 text =
+															3239 text 
+															3240 text float
+															3241 text (
+															3242 text 
+															3243 text nearest
+															3244 text .
+															3245 text std()
+															3246 text /
+															3247 text 
+															3248 text max
+															3249 text (
+															3250 text nearest
+															3251 text .
+															3252 text mean(),
+															3253 text 1e-12
+															3254 text )
+															3255 text )
+															3256 text 
+															3257 text differences
+															3258 text 
+															3259 text =
+															3260 text []
+															3261 text 
+															3262 text for
+															3263 text 
+															3264 text lag
+															3265 text 
+															3266 text in
+															3267 text (
+															3268 text 16
+															3269 text ,
+															3270 text 32
+															3271 text ,
+															3272 text 64
+															3273 text ):
+															3274 text 
+															3275 text sx
+															3276 text 
+															3277 text =
+															3278 text 
+															3279 text _directional_s2
+															3280 text (
+															3281 text mask
+															3282 text ,
+															3283 text lag
+															3284 text ,
+															3285 text 1
+															3286 text )
+															3287 text 
+															3288 text sy
+															3289 text 
+															3290 text =
+															3291 text 
+															3292 text _directional_s2
+															3293 text (
+															3294 text mask
+															3295 text ,
+															3296 text lag
+															3297 text ,
+															3298 text 0
+															3299 text )
+															3300 text 
+															3301 text differences
+															3302 text .
+															3303 text append(
+															3304 text abs
+															3305 text (
+															3306 text sy
+															3307 text 
+															3308 text -
+															3309 text 
+															3310 text sx
+															3311 text ))
+															3312 text 
+															3313 text values
+															3314 text [
+															3315 text "long_range_abs_S2_difference"
+															3316 text ]
+															3317 text =
+															3318 text 
+															3319 text float
+															3320 text (
+															3321 text 
+															3322 text np
+															3323 text .
+															3324 text mean(
+															3325 text differences
+															3326 text )
+															3327 text )
+															3328 text 
+															3329 text column_fraction
+															3330 text 
+															3331 text =
+															3332 text 
+															3333 text mask
+															3334 text .
+															3335 text mean(
+															3336 text axis
+															3337 text =
+															3338 text 0
+															3339 text )
+															3340 text 
+															3341 text row_fraction
+															3342 text 
+															3343 text =
+															3344 text 
+															3345 text mask
+															3346 text .
+															3347 text mean(
+															3348 text axis
+															3349 text =
+															3350 text 1
+															3351 text )
+															3352 text 
+															3353 text for
+															3354 text 
+															3355 text width
+															3356 text 
+															3357 text in
+															3358 text (
+															3359 text 1
+															3360 text ,
+															3361 text 8
+															3362 text ,
+															3363 text 16
+															3364 text ,
+															3365 text 32
+															3366 text ):
+															3367 text 
+															3368 text kernel
+															3369 text 
+															3370 text =
+															3371 text 
+															3372 text np
+															3373 text .
+															3374 text ones(
+															3375 text width
+															3376 text ,
+															3377 text dtype
+															3378 text =
+															3379 text float
+															3380 text )
+															3381 text /
+															3382 text 
+															3383 text width
+															3384 text 
+															3385 text columns
+															3386 text 
+															3387 text =
+															3388 text 
+															3389 text np
+															3390 text .
+															3391 text convolve(
+															3392 text 
+															3393 text column_fraction
+															3394 text ,
+															3395 text kernel
+															3396 text ,
+															3397 text mode
+															3398 text =
+															3399 text "valid"
+															3400 text )
+															3401 text 
+															3402 text rows
+															3403 text 
+															3404 text =
+															3405 text 
+															3406 text np
+															3407 text .
+															3408 text convolve(
+												3409 button Copy
+													3410 image (graphic)
+												3411 button Rate response ID: radix-_r_gk_
+												3412 button (toggle button) Read aloud
+												3413 button Share
+												3414 button More actions ID: radix-_r_gq_
+												3415 button Convert to PDF
+												2388 group
+												2389 text ChatGPT can make mistakes. Check important info.
+												2528 button Scroll to bottom
+												2390 text (heading) Latest response
+												2391 status bar (status)
+												2392 group
+													2393 group
+														2394 group
+															2395 button Add files and more
+															2396 text field (edit) (settable, string) Ask ChatGPT Value: Ask ChatGPT
+																3416 text Ask ChatGPT
+																2398 text 
+															2399 group
+																2400 button Select ChatGPT model ID: radix-_r_f1_
+															2401 button Dictate
+															3417 button Start Voice
+															2404 status bar (status)
+										2147 status bar (status) ID: DndLiveRegion-0
+										2148 group
+										2149 group
+										2150 status bar (status)
+										2151 status bar (status) ID: DndLiveRegion-1
+										2405 status bar (status)
+											3418 text Response complete
+										2406 group
+								307 document Value: chrome://newtab-footer/ ID: RootWebArea
+									308 image (graphic) ID: baseSvg
+									309 hyperlink (link) Managed by your organisation
+									310 button (toggle button) Customise Chrome Description: Customise this page ID: customizeButton
+										311 image (graphic) ID: baseSvg
+										312 text Customise Chrome
+							313 pane (region)
+						314 pane (region)
+							315 pane (region)
+								316 button Tab search
+							317 pane (region) ID: view_21
+								318 tab
+									319 tab item (selectable) Mail - Saahil Doshi - Outlook - Memory usage - 302 MB ID: view_20
+										320 button Close
+									321 tab item (selectable) Mail - Saahil Doshi - Outlook ID: view_20
+										322 button Close
+									323 tab item (selectable) Nov. 9-13.docx ID: view_20
+										324 button Close
+									325 tab item (selectable) saahildoshi/Young-Dawgs - Memory usage - 427 MB ID: view_20
+										326 button Close
+									327 tab item (selectable) Generate Microstructure Code - Memory usage - 641 MB ID: view_20
+										328 button Close
+								329 pane (region)
+							330 button New tab
+							331 pane (region)
+							332 pane (region)
+								335 button Open Gemini in Chrome
+								336 pane (region)
+						337 pane (region)
+
+Document text: ```
+Ask ChatGPT
+```
+
+Focused element: 17 text field (edit) (settable, string) Address and search bar Description: Ask Google or type a URL Value: chatgpt.com/c/6afbb637-f198-83ea-b1e8-70ef3b1cb890 ID: view_1012
+
+Document text:
+Ask ChatGPT

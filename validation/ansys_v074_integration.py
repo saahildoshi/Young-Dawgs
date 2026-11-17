@@ -35,3 +35,21 @@ def test_F1_selected_refinements_preserve_void_and_material_area():
         assert b['mesh_proof']['elements']==4*a['mesh_proof']['elements']
         assert a['mesh_proof']['source_phase_counts']==b['mesh_proof']['source_phase_counts']
         assert a['mesh_proof']['material_envelope_area_fractions']==b['mesh_proof']['material_envelope_area_fractions']
+
+
+@pytest.mark.parametrize('path',sorted((RUN/'mechanical_response').glob('*.json')),ids=lambda p:p.stem)
+def test_P3_actual_native_curves_hashes_constraints_and_independent_readback(path):
+    r=read(path)
+    assert r['accepted'] and all(r['checks'].values())
+    source=Path(r['source_directory']);post=Path(r['independent_readback_directory'])
+    assert read(source/'EXECUTION.json')['solver_release']=='2024 R1'
+    assert sha(source/'elastic.rst')==r['native_result_sha256']
+    assert sha(source/'model.db')==r['native_database_sha256']
+    assert sha(post/'fields.csv')==r['native_fields_sha256']
+    assert all(read(post/'READBACK.json')['identical_exports_to_solve'].values())
+    assert r['engineering_strains']==pytest.approx([.001,.002,.003,.004,.005],abs=1e-9)
+    c=np.asarray(r['native_curve'])
+    assert np.polyfit(-c[:,2],-c[:,5],1)[0]==pytest.approx(r['effective_modulus_MPa'],rel=1e-10)
+    assert abs(r['secant_modulus_MPa']/r['effective_modulus_MPa']-1)<1e-5
+    assert c[:,8]==pytest.approx(.5*np.abs(c[:,5]*c[:,2]),rel=.001)
+    assert r['phase_results']['2']['volume_fraction']==pytest.approx(20731/65536,abs=1e-8)

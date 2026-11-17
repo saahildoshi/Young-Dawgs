@@ -1,0 +1,486 @@
+text (heading) ChatGPT said:
+												1028 text Python
+												1029 button (toggle button) Enable word wrap
+												1537 button Copy code
+												1031 button Run code
+												1032 group
+													1538 group
+													1539 group
+														1540 text field (edit) (settable, string) Edit code Value: import numpy as np int(positions[b - 1] - positions[a] + 1) for a, b in zip(splits[:-1], splits[1:]) ) def describe(mask): a = np.asarray(mask, dtype=bool) if a.ndim != 2: raise ValueError("Expected two-dimensional finite mask") labels, _ = ndi.label(a) regions = regionprops(labels) edge_labels = set( np.unique( np.r_[ labels[0], labels[-1], labels[:, 0], labels[:, -1], ] ) ) - {0} complete = [ region for region in regions if region.label not in edge_labels ] centers = np.array( [region.centroid for region in complete] ) nearest = [] if len(centers) > 1: distances = cdist(centers, centers) np.fill_diagonal(distances, np.inf) nearest = distances.min(axis=1) out = { "complete": region_shapes(complete), "all_observed": region_shapes(regions), "boundary_censored_regions": len(edge_labels), "correlation": {}, "strips": {}, "gap_dilation": {}, "nearest_neighbor_mean_px": ( float(np.mean(nearest)) if len(nearest) else None ), "nearest_neighbor_cv": ( float(np.std(nearest) / np.mean(nearest)) if len(nearest) and np.mean(nearest) > 0 else None ), "interface_density": float( ( np.count_nonzero(a[1:] != a[:-1]) + np.count_nonzero(a[:, 1:] != a[:, :-1]) ) / a.size ), } for lag in LAGS: if lag >= min(a.shape): continue
+															1541 text import numpy as np
+															1542 text 
+															1543 text int
+															1544 text (
+															1545 text positions
+															1546 text [
+															1547 text b
+															1548 text 
+															1549 text -
+															1550 text 
+															1551 text 1
+															1552 text ]
+															1553 text -
+															1554 text 
+															1555 text positions
+															1556 text [
+															1557 text a
+															1558 text ]
+															1559 text +
+															1560 text 
+															1561 text 1
+															1562 text )
+															1563 text 
+															1564 text for
+															1565 text 
+															1566 text a
+															1567 text ,
+															1568 text b
+															1569 text 
+															1570 text in
+															1571 text 
+															1572 text zip
+															1573 text (
+															1574 text splits
+															1575 text [:
+															1576 text -
+															1577 text 1
+															1578 text ],
+															1579 text splits
+															1580 text [
+															1581 text 1
+															1582 text :])
+															1583 text )
+															1584 text def
+															1585 text 
+															1586 text describe
+															1587 text (
+															1588 text mask
+															1589 text ):
+															1590 text 
+															1591 text a
+															1592 text 
+															1593 text =
+															1594 text 
+															1595 text np
+															1596 text .
+															1597 text asarray(
+															1598 text mask
+															1599 text ,
+															1600 text dtype
+															1601 text =
+															1602 text bool
+															1603 text )
+															1604 text 
+															1605 text if
+															1606 text 
+															1607 text a
+															1608 text .
+															1609 text ndim
+															1610 text !=
+															1611 text 
+															1612 text 2
+															1613 text :
+															1614 text 
+															1615 text raise
+															1616 text 
+															1617 text ValueError
+															1618 text (
+															1619 text "Expected two-dimensional finite mask"
+															1620 text )
+															1621 text 
+															1622 text labels
+															1623 text ,
+															1624 text _
+															1625 text 
+															1626 text =
+															1627 text 
+															1628 text ndi
+															1629 text .
+															1630 text label(
+															1631 text a
+															1632 text )
+															1633 text 
+															1634 text regions
+															1635 text 
+															1636 text =
+															1637 text 
+															1638 text regionprops
+															1639 text (
+															1640 text labels
+															1641 text )
+															1642 text 
+															1643 text edge_labels
+															1644 text 
+															1645 text =
+															1646 text 
+															1647 text set
+															1648 text (
+															1649 text 
+															1650 text np
+															1651 text .
+															1652 text unique(
+															1653 text 
+															1654 text np
+															1655 text .
+															1656 text r_[
+															1657 text 
+															1658 text labels
+															1659 text [
+															1660 text 0
+															1661 text ],
+															1662 text 
+															1663 text labels
+															1664 text [
+															1665 text -
+															1666 text 1
+															1667 text ],
+															1668 text 
+															1669 text labels
+															1670 text [:,
+															1671 text 0
+															1672 text ],
+															1673 text 
+															1674 text labels
+															1675 text [:,
+															1676 text -
+															1677 text 1
+															1678 text ],
+															1679 text ]
+															1680 text )
+															1681 text )
+															1682 text -
+															1683 text {
+															1684 text 0
+															1685 text }
+															1686 text 
+															1687 text complete
+															1688 text 
+															1689 text =
+															1690 text [
+															1691 text 
+															1692 text region
+															1693 text 
+															1694 text for
+															1695 text 
+															1696 text region
+															1697 text 
+															1698 text in
+															1699 text 
+															1700 text regions
+															1701 text 
+															1702 text if
+															1703 text 
+															1704 text region
+															1705 text .
+															1706 text label
+															1707 text not
+															1708 text 
+															1709 text in
+															1710 text 
+															1711 text edge_labels
+															1712 text ]
+															1713 text 
+															1714 text centers
+															1715 text 
+															1716 text =
+															1717 text 
+															1718 text np
+															1719 text .
+															1720 text array(
+															1721 text [
+															1722 text region
+															1723 text .
+															1724 text centroid
+															1725 text for
+															1726 text 
+															1727 text region
+															1728 text 
+															1729 text in
+															1730 text 
+															1731 text complete
+															1732 text ]
+															1733 text )
+															1734 text 
+															1735 text nearest
+															1736 text 
+															1737 text =
+															1738 text []
+															1739 text 
+															1740 text if
+															1741 text 
+															1742 text len
+															1743 text (
+															1744 text centers
+															1745 text )
+															1746 text >
+															1747 text 
+															1748 text 1
+															1749 text :
+															1750 text 
+															1751 text distances
+															1752 text 
+															1753 text =
+															1754 text 
+															1755 text cdist
+															1756 text (
+															1757 text centers
+															1758 text ,
+															1759 text centers
+															1760 text )
+															1761 text 
+															1762 text np
+															1763 text .
+															1764 text fill_diagonal(
+															1765 text distances
+															1766 text ,
+															1767 text np
+															1768 text .
+															1769 text inf)
+															1770 text 
+															1771 text nearest
+															1772 text 
+															1773 text =
+															1774 text 
+															1775 text distances
+															1776 text .
+															1777 text min(
+															1778 text axis
+															1779 text =
+															1780 text 1
+															1781 text )
+															1782 text 
+															1783 text out
+															1784 text 
+															1785 text =
+															1786 text {
+															1787 text 
+															1788 text "complete"
+															1789 text :
+															1790 text region_shapes
+															1791 text (
+															1792 text complete
+															1793 text ),
+															1794 text 
+															1795 text "all_observed"
+															1796 text :
+															1797 text region_shapes
+															1798 text (
+															1799 text regions
+															1800 text ),
+															1801 text 
+															1802 text "boundary_censored_regions"
+															1803 text :
+															1804 text len
+															1805 text (
+															1806 text edge_labels
+															1807 text ),
+															1808 text 
+															1809 text "correlation"
+															1810 text : {},
+															1811 text 
+															1812 text "strips"
+															1813 text : {},
+															1814 text 
+															1815 text "gap_dilation"
+															1816 text : {},
+															1817 text 
+															1818 text "nearest_neighbor_mean_px"
+															1819 text : (
+															1820 text 
+															1821 text float
+															1822 text (
+															1823 text np
+															1824 text .
+															1825 text mean(
+															1826 text nearest
+															1827 text ))
+															1828 text if
+															1829 text 
+															1830 text len
+															1831 text (
+															1832 text nearest
+															1833 text )
+															1834 text else
+															1835 text 
+															1836 text None
+															1837 text ),
+															1838 text 
+															1839 text "nearest_neighbor_cv"
+															1840 text : (
+															1841 text 
+															1842 text float
+															1843 text (
+															1844 text np
+															1845 text .
+															1846 text std(
+															1847 text nearest
+															1848 text )
+															1849 text /
+															1850 text 
+															1851 text np
+															1852 text .
+															1853 text mean(
+															1854 text nearest
+															1855 text ))
+															1856 text 
+															1857 text if
+															1858 text 
+															1859 text len
+															1860 text (
+															1861 text nearest
+															1862 text )
+															1863 text and
+															1864 text 
+															1865 text np
+															1866 text .
+															1867 text mean(
+															1868 text nearest
+															1869 text )
+															1870 text >
+															1871 text 
+															1872 text 0
+															1873 text 
+															1874 text else
+															1875 text 
+															1876 text None
+															1877 text ),
+															1878 text 
+															1879 text "interface_density"
+															1880 text :
+															1881 text float
+															1882 text (
+															1883 text (
+															1884 text 
+															1885 text np
+															1886 text .
+															1887 text count_nonzero(
+															1888 text a
+															1889 text [
+															1890 text 1
+															1891 text :]
+															1892 text !=
+															1893 text 
+															1894 text a
+															1895 text [:
+															1896 text -
+															1897 text 1
+															1898 text ])
+															1899 text 
+															1900 text +
+															1901 text 
+															1902 text np
+															1903 text .
+															1904 text count_nonzero(
+															1905 text a
+															1906 text [:,
+															1907 text 1
+															1908 text :]
+															1909 text !=
+															1910 text 
+															1911 text a
+															1912 text [:, :
+															1913 text -
+															1914 text 1
+															1915 text ])
+															1916 text )
+															1917 text 
+															1918 text /
+															1919 text 
+															1920 text a
+															1921 text .
+															1922 text size
+															1923 text ),
+															1924 text }
+															1925 text 
+															1926 text for
+															1927 text 
+															1928 text lag
+															1929 text 
+															1930 text in
+															1931 text 
+															1932 text LAGS
+															1933 text :
+															1934 text 
+															1935 text if
+															1936 text 
+															1937 text lag
+															1938 text 
+															1939 text >=
+															1940 text 
+															1941 text min
+															1942 text (
+															1943 text a
+															1944 text .
+															1945 text shape):
+															1946 text 
+															1947 text continue
+												1948 button Copy
+													1949 image (graphic)
+												1950 button Rate response ID: radix-_r_gn_
+												1951 button (toggle button) Read aloud
+												1952 button Share
+												1953 button More actions ID: radix-_r_gt_
+												1954 button Convert to PDF
+												935 group
+												936 text ChatGPT can make mistakes. Check important info.
+												1070 button Scroll to bottom
+												937 text (heading) Latest response
+												938 status bar (status)
+												939 group
+													940 group
+														941 group
+															942 button Add files and more
+															943 text field (edit) (settable, string) Ask ChatGPT Value: Ask ChatGPT
+																1955 text Ask ChatGPT
+																945 text 
+															946 group
+																947 button Select ChatGPT model ID: radix-_r_f8_
+															948 button Dictate
+															1956 button Start Voice
+															951 status bar (status)
+										420 status bar (status) ID: DndLiveRegion-0
+										761 group
+										762 group
+										504 status bar (status)
+										505 status bar (status) ID: DndLiveRegion-1
+										952 status bar (status)
+											1957 text Response complete
+										953 group
+								307 document Value: chrome://newtab-footer/ ID: RootWebArea
+									308 image (graphic) ID: baseSvg
+									309 hyperlink (link) Managed by your organisation
+									310 button (toggle button) Customise Chrome Description: Customise this page ID: customizeButton
+										311 image (graphic) ID: baseSvg
+										312 text Customise Chrome
+							313 pane (region)
+						314 pane (region)
+							315 pane (region)
+								316 button Tab search
+							317 pane (region) ID: view_21
+								318 tab
+									319 tab item (selectable) Mail - Saahil Doshi - Outlook - Memory usage - 302 MB ID: view_20
+										320 button Close
+									321 tab item (selectable) Mail - Saahil Doshi - Outlook ID: view_20
+										322 button Close
+									323 tab item (selectable) Nov. 9-13.docx ID: view_20
+										324 button Close
+									325 tab item (selectable) saahildoshi/Young-Dawgs - Memory usage - 427 MB ID: view_20
+										326 button Close
+									327 tab item (selectable) Generate Microstructure Code - Memory usage - 387 MB ID: view_20
+										328 button Close
+								329 pane (region)
+							330 button New tab
+							331 pane (region)
+							332 pane (region)
+								335 button Open Gemini in Chrome
+								336 pane (region)
+						337 pane (region)
+
+Document text: ```
+Ask ChatGPT
+```
+
+Focused element: 17 text field (edit) (settable, string) Address and search bar Description: Ask Google or type a URL Value: chatgpt.com/c/6afbb12b-1020-83ea-85ba-d387a4969eee ID: view_1012
+
+Document text:
+Ask ChatGPT
