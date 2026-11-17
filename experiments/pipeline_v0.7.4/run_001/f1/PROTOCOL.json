@@ -1,0 +1,42 @@
+{
+  "E_MPa": [
+    1000,
+    10000
+  ],
+  "H2": [
+    "F1_M2_REFERENCE",
+    "F1_M3_B02_SEED0"
+  ],
+  "NLGEOM": false,
+  "boundaries": "UY0 bottom, imposed negativeUY top; oneUX bottom pin per independent load-carrying component, no hidden springs or hole constraints",
+  "domain_mm": [
+    1,
+    1
+  ],
+  "floating_islands": "Reject/HOLD if a solid component lacks both loading boundaries or joins another component only at a corner; do not repair geometry",
+  "material_protocol": "F1_ILLUSTRATIVE_TRANSVERSE_TWO_SOLIDS_AND_EXPLICIT_VOID",
+  "models": [
+    "F1_M0",
+    "F1_M1_PARALLEL",
+    "F1_M1_VOID",
+    "F1_M2_REFERENCE",
+    "F1_M3_B02_SEED0"
+  ],
+  "nominal_stress": "Signed total boundary reaction divided by full1mm envelope width\u00d71mm thickness, including void in denominator",
+  "nu": 0.3,
+  "plane_stress": "PLANE182 KEYOPT1=0/3=3/6=0",
+  "registered_utc": "2026-11-17T01:08:36.929447+00:00",
+  "source_hashes": {
+    "F1_M2_REFERENCE.json": "79e5804cb2aebeafe9d2b8c4c2d8dc832ecd15f0e804664bbb790684f30dec33",
+    "F1_M3_B02_SEED0.json": "4b754c8ee28bae85ca3fc00ab09284611ebbe80f1dad715750bbb6619f7e763b"
+  },
+  "strains": [
+    0.001,
+    0.002,
+    0.003,
+    0.004,
+    0.005
+  ],
+  "thickness_mm": 1,
+  "void_no_elements": true
+}

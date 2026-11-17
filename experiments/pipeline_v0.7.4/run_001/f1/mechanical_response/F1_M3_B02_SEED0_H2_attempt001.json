@@ -1,0 +1,214 @@
+{
+  "RVE_qualified": false,
+  "accepted": true,
+  "actual_engineering_strains": [
+    0.001,
+    0.002,
+    0.003,
+    0.004,
+    0.005
+  ],
+  "analytical_expected_MPa": null,
+  "checks": {
+    "actual_five_strains": true,
+    "complete_constraints_no_void_restraints": true,
+    "energy_work": true,
+    "envelope_stress_equals_integrated_solid_stress": true,
+    "finite_fields": true,
+    "independent_exports_identical": true,
+    "linear_fit": true,
+    "mesh_counts": true,
+    "native_element_connectivity": true,
+    "native_node_ids_coordinates": true,
+    "native_phase_ids": true,
+    "native_plane182_options": true,
+    "pin_sum_negligible": true,
+    "plane_stress_constitutive": true,
+    "positive_stiffness_energy": true,
+    "reaction_balance": true,
+    "reactions_signed": true,
+    "readback_process": true,
+    "solid_volume_not_envelope": true,
+    "source_process": true,
+    "summed_element_energy": true
+  },
+  "constraints": {
+    "actual": 1027,
+    "expected": 1027,
+    "missing": [],
+    "passed": true,
+    "unexpected": []
+  },
+  "effective_modulus_MPa": 2093.0765628562617,
+  "family": "F1",
+  "field_location": "Native element-associated ETABLE; no cross-material nodal stress averaging",
+  "fit_intercept_MPa": -4.0377524647321366e-14,
+  "independent_readback_directory": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v074\\run_001\\F1_M3_B02_SEED0_H2_attempt001_read01",
+  "mesh_level": 2,
+  "mesh_proof": {
+    "elements": 256720,
+    "envelope_area_mm2": 1.0,
+    "free_void_edges": 606,
+    "image_row0_at_top": true,
+    "material_elements": {
+      "1": 136336,
+      "2": 120384
+    },
+    "material_envelope_area_fractions": {
+      "1": 0.52008056640625,
+      "2": 0.459228515625
+    },
+    "material_solid_area_fractions": {
+      "1": 0.5310688688064817,
+      "2": 0.4689311311935182
+    },
+    "mesh_id": "65aa8afc06e050cc2fa766b96c8b4d86727b7fa3f87e78f259bda45d2575548a",
+    "no_unused_nodes": true,
+    "no_void_elements": true,
+    "nodes": 258019,
+    "outer_boundary_edges": 1994,
+    "passed": true,
+    "pins": [
+      0
+    ],
+    "shared_solid_interfaces": true,
+    "solid_area_mm2": 0.97930908203125,
+    "solid_components": 1,
+    "source_phase_counts": {
+      "0": 34084,
+      "1": 30096,
+      "2": 1356
+    },
+    "void_area_mm2": 0.02069091796875
+  },
+  "native_database_sha256": "85782ab9e59795a7a876bed237c0aa8c6e6b3058c48ece3315df8ef47bf20587",
+  "native_fields_sha256": "c9e421860c557a9d8c6e8915eee25906ddcc3e3a881c07b1a403c1132d217bee",
+  "native_result_sha256": "84db5f36bacf6a0082e1468b57847b6ced89f671c9e5a3d5447930839524ac52",
+  "nominal_stress_denominator": "Full envelope width\u00d7thickness, includes void; solid stress integration checked separately",
+  "nominal_stresses_MPa": [
+    2.093076562856261,
+    4.186153125712522,
+    6.279229688568599,
+    8.372306251425044,
+    10.46538281428131
+  ],
+  "phase_results": {
+    "1": {
+      "constitutive_relative_error": 3.366189522325113e-08,
+      "elastic_energy_fraction": 0.7518301001605164,
+      "elements": 136336,
+      "envelope_volume_fraction": 0.52008056640625,
+      "equivalent_percentiles_MPa": {
+        "100": 58.67242833528624,
+        "50": 7.664065408232261,
+        "90": 12.050753488827935,
+        "95": 13.664704583153974,
+        "99": 17.703595864745818
+      },
+      "mean_axial_strain": -0.007485287482854089,
+      "mean_syy_MPa": -7.530194770477804,
+      "solid_volume_fraction": 0.5310688688064817
+    },
+    "2": {
+      "constitutive_relative_error": 4.760228897145433e-08,
+      "elastic_energy_fraction": 0.2481698998394834,
+      "elements": 120384,
+      "envelope_volume_fraction": 0.459228515625,
+      "equivalent_percentiles_MPa": {
+        "100": 82.46058765184176,
+        "50": 14.280700190247561,
+        "90": 23.051654445752096,
+        "95": 26.890873672563483,
+        "99": 37.27330859535806
+      },
+      "mean_axial_strain": -0.001431189491999076,
+      "mean_syy_MPa": -14.26103699997884,
+      "solid_volume_fraction": 0.4689311311935182
+    }
+  },
+  "physical_calibration": false,
+  "properties": {
+    "1": {
+      "E_MPa": 1000.0,
+      "nu": 0.3
+    },
+    "2": {
+      "E_MPa": 10000.0,
+      "nu": 0.3
+    }
+  },
+  "signed_native_curve": [
+    [
+      1.0,
+      0.001,
+      -0.001,
+      -0.001,
+      0.0,
+      -2.093076562856261,
+      2.093076562771799,
+      1.859539178161959e-10,
+      0.001046538281298866,
+      0.97930908203125,
+      258019.0,
+      256720.0
+    ],
+    [
+      2.0,
+      0.002,
+      -0.002,
+      -0.002,
+      0.0,
+      -4.186153125712522,
+      4.186153125543598,
+      3.719078356323918e-10,
+      0.004186153125195465,
+      0.97930908203125,
+      258019.0,
+      256720.0
+    ],
+    [
+      3.0,
+      0.003,
+      -0.003,
+      -0.003,
+      0.0,
+      -6.279229688568599,
+      6.279229688315404,
+      5.578932154344456e-10,
+      0.009418844531490788,
+      0.97930908203125,
+      258019.0,
+      256720.0
+    ],
+    [
+      4.0,
+      0.004,
+      -0.004,
+      -0.004,
+      0.0,
+      -8.372306251425044,
+      8.372306251087196,
+      7.438156712647835e-10,
+      0.01674461250078186,
+      0.97930908203125,
+      258019.0,
+      256720.0
+    ],
+    [
+      5.0,
+      0.005,
+      -0.005,
+      -0.005,
+      0.0,
+      -10.46538281428131,
+      10.46538281385902,
+      9.298597562211293e-10,
+      0.02616345703400689,
+      0.97930908203125,
+      258019.0,
+      256720.0
+    ]
+  ],
+  "source_directory": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v074\\run_001\\F1_M3_B02_SEED0_H2_attempt001",
+  "specimen_id": "F1_M3_B02_SEED0"
+}
