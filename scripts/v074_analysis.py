@@ -165,6 +165,19 @@ def analyse():
             'H2_error_reduction': statistics([r['H2_initial_minus_revised_error'] for r in local if r['H2_initial_minus_revised_error'] is not None])})
     comparison = arm_comparison(summaries, changes)
     sensitivity = arm_comparison(summaries, changes, ('NF_01',))
+    compact = [{
+        **{key:r[key] for key in ('trial_id','arm','revision','attempted','generated','exact_composition','structurally_feasible','mechanically_accepted','fully_qualified_generator','target_hits','target_hits_per_attempt','target_hits_per_accepted','mean_property_bias','mean_signed_bias')},
+        'mean_modulus_MPa':r['modulus']['mean'],'sample_SD_modulus_MPa':r['modulus']['sample_SD'],
+        'min_modulus_MPa':r['modulus']['min'],'max_modulus_MPa':r['modulus']['max'],
+        'mean_absolute_relative_target_error':r['target_error']['mean'],
+        'median_absolute_relative_target_error':r['target_error']['median'],
+        'mean_generation_seconds':r['runtime']['mean'],
+        'unique_arrays':r['diversity']['unique_arrays'],
+        'median_pairwise_hamming':r['diversity']['median_pairwise_hamming'],
+        'diversity_passed':r['diversity']['passed'],
+    } for r in summaries]
+    flat_mesh_changes = [{'trial_id':r['trial_id'],'arm':r['arm'],**pair}
+        for r in mesh_changes for pair in r['paired_checks']]
     from metamaterial_eval.composites.morphology_v073 import describe, flattened
     from scripts.v072_experiment import observe
     reference = np.load(MICRO/'references/P3/evaluation_only_labels.npy')
@@ -185,7 +198,8 @@ def analyse():
             ('IF_VERSUS_NF', comparison), ('SENSITIVITY_WITHOUT_NF01', sensitivity),
             ('MESH_CONFIRMATION', mesh), ('MESH_PAIRED_CHANGES', mesh_changes),
             ('NATIVE_CURVES', curves), ('PHASE_RESULTS', phases), ('MORPHOLOGY', morphology),
-            ('MORPHOLOGY_REFERENCE_COMPARISON', descriptor_summaries), ('GENUINE_TRIAL_INVENTORY', inventory)]:
+            ('MORPHOLOGY_REFERENCE_COMPARISON', descriptor_summaries), ('GENUINE_TRIAL_INVENTORY', inventory),
+            ('COMPACT_SCRIPT_TABLE', compact), ('MESH_PAIRED_SEEDS', flat_mesh_changes)]:
         write(output / f'{name}.json', data)
         if isinstance(data, list): csv_table(output / f'{name}.csv', data)
     write(output / 'ANALYSIS_PROVENANCE.json', {'created_utc': now(),
