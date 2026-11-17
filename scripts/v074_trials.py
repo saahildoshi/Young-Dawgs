@@ -80,6 +80,10 @@ def evaluate(trial, revision, partition):
     if partition=='heldout':
         frozen=read(RUN/'frozen_scripts/ALL_SIXTEEN_SCRIPTS_FROZEN.json')
         assert frozen['scripts'][f'{trial}/r{revision}']['code_sha256']==sha(source)
+        assert frozen['protocol_sha256']==sha(RUN/'protocol/PROTOCOL.json')
+        assert frozen['feasibility_sha256']==sha(RUN/'protocol/FEASIBILITY_FROZEN.json')
+        assert frozen['seed_partition_sha256']==sha(RUN/'protocol/EVALUATOR_ONLY_SEEDS.json')
+        for name,digest in frozen['files'].items():assert sha(REPO/name)==digest,name
     else:
         assert revision==0
     destination = RUN/'structures'/trial/f'r{revision}'/partition
@@ -117,6 +121,42 @@ def evaluate(trial, revision, partition):
         'rows':rows,'diversity':div,'no_repair_or_substitution':True})
 
 
+def freeze():
+    destination=RUN/'frozen_scripts/ALL_SIXTEEN_SCRIPTS_FROZEN.json'
+    assert not destination.exists() and not any((RUN/'structures').glob('*/r*/heldout'))
+    initial=read(RUN/'feedback_packets/INITIAL_FROZEN.json')
+    assert sha(RUN/'protocol/PROTOCOL.json')==initial['protocol_sha256']
+    assert sha(RUN/'protocol/FEASIBILITY_FROZEN.json')==initial['feasibility_sha256']
+    inventory={};urls=[];deviations={};files={}
+    for trial in initial['trial_order']:
+        d=RUN/'llm_trials'/trial;url=read(d/'SUBMISSION_r0.json')['chat_url'];urls.append(url)
+        for revision in [0,1]:
+            r=read(d/f'RECEIPT_r{revision}.json');sub=read(d/f'SUBMISSION_r{revision}.json')
+            assert r['ordinary_ChatGPT'] and not r['Work_or_Codex'] and not r['researcher_repairs']
+            assert r['chat_url']==url==sub['chat_url'] and r['model_calls']==1
+            assert sha(d/f'generator_r{revision}.py')==r['code_sha256']
+            assert sha(d/f'returned_code_r{revision}.txt')==r['response_capture_sha256']
+            prompt=d/('initial_prompt.txt' if revision==0 else 'followup_prompt.txt')
+            assert sha(prompt)==r['prompt_sha256']
+            if revision==0:assert sha(prompt)==initial['prompt_sha256']
+            else:assert sha(prompt)==read(d/'FOLLOWUP_PACKET_FROZEN.json')['prompt_sha256']
+            inventory[f'{trial}/r{revision}']=r
+            for path in [d/f'generator_r{revision}.py',d/f'returned_code_r{revision}.txt',d/f'RECEIPT_r{revision}.json',prompt]:
+                files[str(path.relative_to(REPO)).replace('\\','/')]=sha(path)
+        if (d/'PROTOCOL_DEVIATION.json').exists():deviations[trial]=read(d/'PROTOCOL_DEVIATION.json')
+    assert len(set(urls))==8 and len(inventory)==16
+    write(destination,{'frozen_utc':now(),'scripts':inventory,'files':files,'distinct_initial_chat_URLs':urls,
+        'registered_initial_and_revision_sources':16,'independent_conversations':8,
+        'same_conversation_for_all_registered_revisions':True,'no_manual_repairs_or_extra_scientific_revisions':True,
+        'protocol_deviations':deviations,'strict_equal_message_budget_verified':not deviations,
+        'deviation_analysis':'Retain all registered trials; separately flag any nonconforming conversation and report a descriptive sensitivity analysis without it. Do not replace trials or infer an unqualified causal advantage.',
+        'protocol_sha256':sha(RUN/'protocol/PROTOCOL.json'),'feasibility_sha256':sha(RUN/'protocol/FEASIBILITY_FROZEN.json'),
+        'seed_partition_sha256':sha(RUN/'protocol/EVALUATOR_ONLY_SEEDS.json'),
+        'adapter_sha256':sha(REPO/'scripts/v074_mechanics.py'),'heldout_started':False,
+        'no_additional_model_calls_after_freeze':True})
+    print('ALL16 AUTHENTIC MODULES FROZEN; final evaluation eligible. Protocol deviations:',list(deviations),flush=True)
+
+
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('action');p.add_argument('args',nargs='*');a=p.parse_args()
     if a.action=='ingest':ingest(a.args[0],int(a.args[1]))
@@ -124,3 +164,4 @@ if __name__=='__main__':
     elif a.action=='worker':
         from pathlib import Path
         worker(Path(a.args[0]),Path(a.args[1]),int(a.args[2]))
+    elif a.action=='freeze':freeze()
