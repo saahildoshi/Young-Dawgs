@@ -1,0 +1,194 @@
+{
+  "F1": {
+    "controls": [
+      "homogeneous rectangle",
+      "parallel two-material rectangle",
+      "two disconnected-by-void load-carrying vertical strips, each minimally restrained"
+    ],
+    "generated": "F1_B_02/r0/seed0",
+    "island_policy": "No removal/filling/weak springs; audit edge and node connectivity. Only unloaded floating islands may be explicitly minimally grounded as a separately documented physical assumption; otherwise HOLD that configuration.",
+    "labels": {
+      "0": "matrix solid MAT1",
+      "1": "transverse fiber-like solid MAT2",
+      "2": "void; no elements"
+    },
+    "material_protocol": "F1_ILLUSTRATIVE_TRANSVERSE_TWO_SOLIDS_AND_EXPLICIT_VOID",
+    "nu": 0.3,
+    "properties_MPa": {
+      "1": 1000.0,
+      "2": 10000.0
+    },
+    "reference": "F1 evaluation_only_labels.npy",
+    "refinement": "H1 and H2 reference and selected generated source if mechanical connectivity qualifies",
+    "required": true
+  },
+  "H2_selection": "First two final heldout seeds of every initial and revised script, feasible only; no substitutions or favorable expansion",
+  "J_target": 1.64,
+  "NLGEOM": "OFF",
+  "STL": {
+    "base_mm": 2.4,
+    "border_mm": 4.0,
+    "exact": "Preserve XY pixel support; explicitly diagnose point-only connections and small details",
+    "field_mm": 160.0,
+    "geometry": "Single coherent height-field boundary surface, no internal overlapped shells; independent STL re-import and edge/link/volume/intersection validation",
+    "interpretation": "Enlarged educational relief, arbitrary presentation XY/Z scale, no genuine3D reconstruction or mechanical specimen",
+    "layer_height_mm": 0.2,
+    "minimum_detail_goal_mm": 0.8,
+    "nozzle_assumption_mm": 0.4,
+    "outer_mm": 168.0,
+    "print_ready": "If needed, registered 3x3 square binary opening then closing within field; retain source unchanged, quantify every changed pixel/region and preserve small-feature diagnostics. No outcome-based aesthetic redraw.",
+    "relief_mm": 1.2,
+    "required": true,
+    "slicer": "Search installed supported slicers and slice if available; otherwise mark NOT_VERIFIED; no actual printer assumed",
+    "source": "Authenticated P3 reference annotation"
+  },
+  "additional_rounds": false,
+  "allowed_dependencies": [
+    "numpy",
+    "scipy",
+    "skimage",
+    "PIL",
+    "math",
+    "random",
+    "collections",
+    "itertools"
+  ],
+  "arm_comparison": "Mean independent NF final-script error minus mean independent IF final-script error; positive favors IF. Also compare per-conversation error reductions. Missing/invalid scores null, never zero.",
+  "directional_extension": {
+    "families": [
+      "BASE",
+      "V2_VERTICAL",
+      "V3_HORIZONTAL"
+    ],
+    "horizontal": "Rotate unchanged source by90degrees, identical evaluator, H1; transformed-domain x loading and free transverse displacement. Record phase/source maps; not a homogenized tensor.",
+    "source_partition": "v073 development seed3100",
+    "vertical": "Reuse authentic previous H1 result"
+  },
+  "element": {
+    "KEYOPT1": 0,
+    "KEYOPT3": 3,
+    "KEYOPT6": 0,
+    "integration": "2x2, full integration B-bar; no uniform reduced integration/hourglass control",
+    "name": "PLANE182",
+    "real_constant_THK_mm": 1.0
+  },
+  "estimated_total_sources_including_F1_and_directional": 162,
+  "exact_matrix_count": 44805,
+  "exact_reinforcement_count": 20731,
+  "followup_turns_per_trial": 1,
+  "generator_failure_policy": "Bounded explicit failure preserved; evaluator never repairs or substitutes seeds",
+  "generator_parameters": {},
+  "heldout_policy": "No final generation before all16 authentic initial/revised modules plus prompts/protocol collectively frozen; no final seeds/results reach any model",
+  "human_submission_gate": "If actual UI unavailable, preserve exact chat URL and next same-chat message; still complete required F1 and STL",
+  "independent_conversations_per_arm": 4,
+  "initial_prompt_images": "Authenticated raw P3 microscopy input; segmentation mask remains evaluator-only. Common source/structural descriptions may be supplied identically.",
+  "initial_turns_per_trial": 1,
+  "initial_variation": "Identical prompt/reference/common source template, but actual independent initial responses may differ. Do not claim common-source paired design.",
+  "loading": "UYbottom0, UYtop=-strain*H, UXbottomleft0; other UX free; sides traction free",
+  "material": {
+    "constitutive_model": "small-strain isotropic linear elasticity",
+    "id": "ILLUSTRATIVE_TWO_PHASE_ELASTIC_CONTRAST_10",
+    "interface": "perfectly bonded shared nodes, no contact",
+    "materials": {
+      "1": {
+        "E_MPa": 1000.0,
+        "nu": 0.3
+      },
+      "2": {
+        "E_MPa": 10000.0,
+        "nu": 0.3
+      }
+    },
+    "physical_calibration": false,
+    "raw_to_material": {
+      "1": 1,
+      "5": 2
+    },
+    "units": "mm N MPa"
+  },
+  "microscopy_physical_pixel_scale": null,
+  "model_policy": "Ordinary persistent ChatGPT chats, one initial and one continuation in each original URL; exposed model/reasoning consistent, backend/personalization limitations recorded",
+  "morphology_policy": "Byte-identical v073 numerical envelope; cohort all-valid criterion adapted to six final seeds without changing per-array thresholds",
+  "morphology_policy_sha256": "3a72f0286033e5cd2169d29754d6d0641483bbf0733cb3556fa4cfaa43bb2156",
+  "native_base": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v074\\run_001",
+  "native_route": "Five actual native solved checkpoints and independent RST reopening for every accepted model",
+  "phase_map": {
+    "1": "matrix-like solid / native MAT1",
+    "5": "provisional reinforcement-like solid / native MAT2"
+  },
+  "planned_P3_maximum_source_models": 152,
+  "primary_metric": "Per-script mean absolute relative target error, conditional on feasibility with full attempted denominators; 6/6 required for full generator qualification",
+  "prohibited": [
+    "old contact campaign",
+    "large strain",
+    "3D mechanical FEM",
+    "manufacturing claims",
+    "automatic push",
+    "post-heldout model calls"
+  ],
+  "randomization_seed": 74016,
+  "registered_utc": "2026-11-17T01:08:36.929447+00:00",
+  "repairs": false,
+  "request_sha256": "6c90903ee53b48000388e90ac336d78fa5c968e40eae562235e0bc97c20327bf",
+  "resource_limits": {
+    "cores": 2,
+    "disk_reserve_bytes": 75161927680,
+    "maximum_native_jobs": 350,
+    "native_campaign_seconds": 18000,
+    "one_native_job": true,
+    "raw_storage_budget_bytes": 214748364800,
+    "readback_timeout_s": 900,
+    "rss_cap": null,
+    "solve_timeout_s": 1800
+  },
+  "same_conversation_required": true,
+  "secondary_metrics": [
+    "within-conversation initial-minus-revised target error",
+    "mean-property bias",
+    "median error",
+    "sample SD",
+    "hit rate",
+    "validity",
+    "diversity",
+    "H1/H2 sensitivity"
+  ],
+  "single_generation_timeout_seconds": 30,
+  "starting_candidate_maximum": 8,
+  "starting_head": "1dd833d4a3e5cce960383079868c8e4f02b506f5",
+  "strain_checkpoints": [
+    0.001,
+    0.002,
+    0.003,
+    0.004,
+    0.005
+  ],
+  "target_MPa": 1640.0,
+  "target_band_MPa": [
+    1607.2,
+    1672.8
+  ],
+  "target_hit_tolerance": 0.02,
+  "target_selection": "User-specified prospective target supported by authenticated v073 horizontal-family measurements; no old two-SD gate reapplied",
+  "tolerances": {
+    "benchmark_relative": 0.001,
+    "constitutive_field_relative": 1e-05,
+    "energy_relative": 0.001,
+    "horizontal_pin_relative": 0.001,
+    "linear_fit_relative_residual": 1e-05,
+    "mesh_modulus_relative": 0.02,
+    "native_displacement_absolute_mm": 1e-09,
+    "native_volume_relative": 1e-08,
+    "reaction_balance_relative": 0.001
+  },
+  "trial_order": [
+    "NF_01",
+    "IF_01",
+    "NF_02",
+    "IF_02",
+    "IF_03",
+    "IF_04",
+    "NF_03",
+    "NF_04"
+  ],
+  "worker_timeout_seconds": 75
+}
