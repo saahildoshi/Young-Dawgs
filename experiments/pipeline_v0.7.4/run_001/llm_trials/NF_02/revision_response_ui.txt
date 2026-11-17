@@ -1,0 +1,268 @@
+text (heading) ChatGPT said:
+												19037 text Python
+												19038 button (toggle button) Enable word wrap
+												19039 button Copy code
+												19040 button Run code
+												19041 group
+													19042 group
+													19043 group
+														19044 text field (edit) (settable, string) Edit code Value: import numpy as np from scipy import ndimage as ndi from scipy.spatial import cKDTree from skimage.measure import regionprops SIZE = 256 TARGET = 20731 MAX_CANDIDATES = 8 TERRITORY_GAP = 4.8 CENTER_JITTER = 6.1 AREA_LOG_SIGMA = 0.73 ASPECT_MEDIAN = 1.69 ASPECT_LOG_SIGMA = 0.27 HORIZONTAL_BIAS_PROBABILITY = 0.34 HORIZONTAL_ANGLE_SPREAD = 0.43 STRIP_BOUNDS = { 1: (0.79, 0.18, 0.78, 0.20), 8: (0.74, 0.17, 0.75, 0.19), 16: (0.71, 0.16, 0.69, 0.17), 32: (0.64, 0.14, 0.63, 0.16), } def _centers(rng): """ Construct independent, irregularly displaced inclusion centers. Loose spatial stratification prevents large empty domains without imposing continuous reinforcement lanes. Boundary centers are separately sampled to generate genuinely censored observations. """ nx, ny = 11, 10 sx, sy = SIZE / nx, SIZE / ny
+															19045 text import
+															19046 text 
+															19047 text numpy
+															19048 text 
+															19049 text as
+															19050 text 
+															19051 text np
+															19052 text from
+															19053 text 
+															19054 text scipy
+															19055 text 
+															19056 text import
+															19057 text 
+															19058 text ndimage
+															19059 text 
+															19060 text as
+															19061 text 
+															19062 text ndi
+															19063 text from
+															19064 text 
+															19065 text scipy
+															19066 text .
+															19067 text spatial
+															19068 text 
+															19069 text import
+															19070 text 
+															19071 text cKDTree
+															19072 text from
+															19073 text 
+															19074 text skimage
+															19075 text .
+															19076 text measure
+															19077 text 
+															19078 text import
+															19079 text 
+															19080 text regionprops
+															19081 text SIZE
+															19082 text 
+															19083 text =
+															19084 text 
+															19085 text 256
+															19086 text TARGET
+															19087 text 
+															19088 text =
+															19089 text 
+															19090 text 20731
+															19091 text MAX_CANDIDATES
+															19092 text 
+															19093 text =
+															19094 text 
+															19095 text 8
+															19096 text TERRITORY_GAP
+															19097 text 
+															19098 text =
+															19099 text 
+															19100 text 4.8
+															19101 text CENTER_JITTER
+															19102 text 
+															19103 text =
+															19104 text 
+															19105 text 6.1
+															19106 text AREA_LOG_SIGMA
+															19107 text 
+															19108 text =
+															19109 text 
+															19110 text 0.73
+															19111 text ASPECT_MEDIAN
+															19112 text 
+															19113 text =
+															19114 text 
+															19115 text 1.69
+															19116 text ASPECT_LOG_SIGMA
+															19117 text 
+															19118 text =
+															19119 text 
+															19120 text 0.27
+															19121 text HORIZONTAL_BIAS_PROBABILITY
+															19122 text 
+															19123 text =
+															19124 text 
+															19125 text 0.34
+															19126 text HORIZONTAL_ANGLE_SPREAD
+															19127 text 
+															19128 text =
+															19129 text 
+															19130 text 0.43
+															19131 text STRIP_BOUNDS
+															19132 text 
+															19133 text =
+															19134 text {
+															19135 text 
+															19136 text 1
+															19137 text : (
+															19138 text 0.79
+															19139 text ,
+															19140 text 0.18
+															19141 text ,
+															19142 text 0.78
+															19143 text ,
+															19144 text 0.20
+															19145 text ),
+															19146 text 
+															19147 text 8
+															19148 text : (
+															19149 text 0.74
+															19150 text ,
+															19151 text 0.17
+															19152 text ,
+															19153 text 0.75
+															19154 text ,
+															19155 text 0.19
+															19156 text ),
+															19157 text 
+															19158 text 16
+															19159 text : (
+															19160 text 0.71
+															19161 text ,
+															19162 text 0.16
+															19163 text ,
+															19164 text 0.69
+															19165 text ,
+															19166 text 0.17
+															19167 text ),
+															19168 text 
+															19169 text 32
+															19170 text : (
+															19171 text 0.64
+															19172 text ,
+															19173 text 0.14
+															19174 text ,
+															19175 text 0.63
+															19176 text ,
+															19177 text 0.16
+															19178 text ),
+															19179 text }
+															19180 text def
+															19181 text 
+															19182 text _centers
+															19183 text (
+															19184 text rng
+															19185 text ):
+															19186 text 
+															19187 text """
+															19188 text Construct independent, irregularly displaced inclusion centers.
+															19189 text Loose spatial stratification prevents large empty domains without
+															19190 text imposing continuous reinforcement lanes. Boundary centers are
+															19191 text separately sampled to generate genuinely censored observations.
+															19192 text """
+															19193 text 
+															19194 text nx
+															19195 text ,
+															19196 text ny
+															19197 text 
+															19198 text =
+															19199 text 
+															19200 text 11
+															19201 text ,
+															19202 text 10
+															19203 text 
+															19204 text sx
+															19205 text ,
+															19206 text sy
+															19207 text 
+															19208 text =
+															19209 text 
+															19210 text SIZE
+															19211 text 
+															19212 text /
+															19213 text 
+															19214 text nx
+															19215 text ,
+															19216 text SIZE
+															19217 text 
+															19218 text /
+															19219 text 
+															19220 text ny
+												19221 button Copy
+													19222 image (graphic)
+												19223 button Rate response ID: radix-_r_kf_
+												19224 button (toggle button) Read aloud
+												19225 button Share
+												19226 button (toggle button) Add to project sources
+												19227 button More actions ID: radix-_r_kn_
+												19228 button Convert to PDF
+												19229 group (complementary) Is this conversation helpful so far?
+													19230 text Is this conversation helpful so far?
+													19231 button (toggle button) Yes
+													19232 button (toggle button) No
+													19233 button Dismiss rating prompt
+												19234 group
+												19235 text ChatGPT can make mistakes. Check important info.
+												19236 button Scroll to bottom
+												19237 text (heading) Latest response
+												19238 status bar (status)
+												19239 group
+													19240 group
+														19241 group
+															19242 button Add files and more
+															19243 text field (edit) (settable, string) Ask ChatGPT Value: Ask ChatGPT
+																19261 text Ask ChatGPT
+																19245 text 
+															19246 group
+																19247 button Select ChatGPT model ID: radix-_r_fq_
+															19248 button Dictate
+															19249 button Start Voice
+															19250 status bar (status)
+										19251 status bar (status) ID: DndLiveRegion-2
+										19252 group
+										19253 status bar (status)
+										19254 group
+										19255 status bar (status)
+										19256 status bar (status) ID: DndLiveRegion-1
+										19257 status bar (status)
+											19258 text Response complete
+										19259 group
+								307 document Value: chrome://newtab-footer/ ID: RootWebArea
+									308 image (graphic) ID: baseSvg
+									309 hyperlink (link) Managed by your organisation
+									310 button (toggle button) Customise Chrome Description: Customise this page ID: customizeButton
+										311 image (graphic) ID: baseSvg
+										312 text Customise Chrome
+							313 pane (region)
+						314 pane (region)
+							315 pane (region)
+								316 button Tab search
+							317 pane (region) ID: view_21
+								318 tab
+									319 tab item (selectable) Mail - Saahil Doshi - Outlook - Memory usage - 302 MB ID: view_20
+										320 button Close
+									321 tab item (selectable) Mail - Saahil Doshi - Outlook ID: view_20
+										322 button Close
+									323 tab item (selectable) Nov. 9-13.docx ID: view_20
+										324 button Close
+									325 tab item (selectable) saahildoshi/Young-Dawgs - Memory usage - 427 MB ID: view_20
+										326 button Close
+									327 tab item (selectable) Create microstructure generator - Memory usage - 781 MB ID: view_20
+										328 button Close
+									5669 tab item (selectable) Create Stochastic Generator - High memory usage - 808 MB ID: view_20
+										5670 button Close
+									6315 tab item (selectable) Create Microstructure Generator - Memory usage - 751 MB ID: view_20
+										6316 button Close
+									6991 tab item (selectable) Create Stochastic Generator - Memory usage - 448 MB ID: view_20
+										6992 button Close
+								329 pane (region)
+							330 button New tab
+							331 pane (region)
+							332 pane (region)
+								335 button Open Gemini in Chrome
+								336 pane (region)
+						337 pane (region)
+
+Document text: ```
+Ask ChatGPT
+```
+
+Focused element: 17 text field (edit) (settable, string) Address and search bar Description: Ask Google or type a URL Value: chatgpt.com/g/g-p-6adabe4175a48191b0a5bb4986ade2f1-pipeline-tests/c/6afbb82e-2680-83ea-8d10-0ecbe2042751 ID: view_1012
+
+Document text:
+Ask ChatGPT

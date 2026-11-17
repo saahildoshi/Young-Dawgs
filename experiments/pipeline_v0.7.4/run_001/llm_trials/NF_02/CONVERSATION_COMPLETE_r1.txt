@@ -1,0 +1,532 @@
+text (heading) You said:
+												18712 button User attachment
+													18713 image (graphic) User attachment
+												18714 text Create one complete initial stochastic P3 microstructure generator for the attached raw SEM image and the common scientific specification below. This is the INITIAL generator turn in this conversation. A single later registered revision, if requested, will continue this same conversation. Do not use tools or browse; return code only in ONE complete Python code block, with no prose or demo. Prefer <=500 lines, but completeness and correctness are required. Use the supplied researcher-prepared template as common scientific background; you may retain its morphology functions and change legitimate geometric construction within the limits. Produce your own identifiable complete initial module in this response; do not tell us merely to load another file. The template is derived from a previous captured LLM generator plus explicitly researcher-authored count/feasibility logic. It is not a new model trial until your actual response is captured. No measured mechanical responses are supplied in this initial task. Required generate_microstructure(seed, parameters), parameters={}, returns numpy ndarray shape(256,256), uint8, labels exactly1/5, both nonempty. EXACTLY20,731 reinforcement pixels. Finite nonperiodic field with appropriately clipped edge features. Use local numpy.random.default_rng(seed); same seed exactly replays, different seeds change configuration beyond rigid translation/rotation. The evaluator will not repair arrays. If internal candidate construction exhausts its fixed bound, raise an explicit failure. No file/network/API/subprocess access, no external solver or cached mechanics, no reference loading or embedded raster/coordinate tracing, no global RNG seeding, plotting, printing, import-time generation or executable module-scope calls. Module scope only imports, functions and literal constants. Use no dependencies outside the allowed list. Preserve irregular dispersed-inclusion morphology, matrix connectivity and complete/boundary region populations. Avoid continuous or segmented artificial lanes. Hard shape/tail/alignment measurements include ALL observed regions, not just complete features. New orientation uses area×eigenvalue-anisotropy weights, ignoring anisotropy<.05, axial angles modulo180degrees with image+x right and y up. Finite S2/strip windows never wrap. Two-pixel diagnostic dilation is evaluator geometry only, not a change to the actual mechanical specimen. Diagnostic dilation must not span x or y. The template contains the precise inexpensive definitions for the common hard constraints. Runtime, exact replay and between-seed diversity are evaluated independently. You may reason about geometry and elasticity, but do not invent measured performance or claim to have run ANSYS. We will independently measure actual mechanics after capturing this exact source. Target accuracy and structural feasibility are separate outcomes. Exceeding1640MPa is not automatically an improvement. There is one initial response and one later continuation opportunity, no manual repairs or retries. COMMON SCIENTIFIC SPECIFICATION: { "J_target": 1.64, "allowed_dependencies": [ "numpy", "scipy", "skimage", "PIL", "math", "random", "collections", "itertools" ], "composition": { "dtype": "uint8", "matrix": 44805, "reinforcement": 20731, "shape": [ 256, 256 ] }, "descriptor_conventions": "New shape/tail/alignment limits include all observed regions, never exclude boundary-clipped features. Complete/all statistics both retained. Pixel-region geometry is not a recovered physical particle.", "diversity": { "all_arrays_unique": true, "minimum_median_hamming": 0.1, "minimum_unique_rigid_invariant_signatures": "ceil(number_outputs/2)" }, "feasibility_guardrails": { "descriptor_ranges": { "all_regions": [ 50, 125 ], "aspect_mean": [ 1.2, 3.0 ], "boundary_censored_regions": [ 5, 50 ], "complete_regions": [ 40, 75 ], "diameter_mean_px": [ 12, 20 ] }, "matrix_lcc_minimum": 0.95, "reinforcement_largest_fraction_maximum": 0.15, "single_pixel_reinforcement_fraction_maximum": 0.001 }, "generator_parameters": {}, "maximum_internal_geometry_candidates": 8, "mechanical_model": { "computational_sizes_not_microscopy_calibration": true, "computational_square_mm": 1, "computational_thickness_mm": 1, "loading": "bottom UY0, prescribed negative top UY through0.5%, one minimal bottom UX pin; free lateral motion, shared-node ideal bonds, linear elasticity, no contact", "materials_MPa": { "matrix": 1000, "reinforcement": 10000 }, "nu": 0.3, "plane_stress": true }, "must_be_false": [ "gap_dilation.2.spans_x", "gap_dilation.2.spans_y" ], "new_hard_descriptor_bounds": { "all_observed.area_fraction_aspect_gt3": [ 0, 0.27 ], "all_observed.area_fraction_aspect_gt4": [ 0, 0.16 ], "all_observed.area_weighted_aspect": [ 1, 2.59 ], "all_observed.area_weighted_aspect_p95": [ 1, 6.13 ], "all_observed.axial_order": [ 0, 0.59 ], "all_observed.defined_aspect_area_fraction": [ 0.995, 1 ], "gap_dilation.2.largest_fraction": [ 0, 0.59 ], "limited_gap_run_x": [ 0, 0.6 ], "limited_gap_run_y": [ 0, 0.56 ], "long_range_abs_S2_difference": [ 0, 0.04 ], "nearest_neighbor_cv": [ 0.1, 0.69 ], "strips.1.column_max": [ 0, 0.79 ], "strips.1.column_std": [ 0, 0.18 ], "strips.1.row_max": [ 0, 0.78 ], "strips.1.row_std": [ 0, 0.2 ], "strips.16.column_max": [ 0, 0.71 ], "strips.16.column_std": [ 0, 0.16 ], "strips.16.row_max": [ 0, 0.69 ], "strips.16.row_std": [ 0, 0.17 ], "strips.32.column_max": [ 0, 0.64 ], "strips.32.column_std": [ 0, 0.14 ], "strips.32.row_max": [ 0, 0.63 ], "strips.32.row_std": [ 0, 0.16 ], "strips.8.column_max": [ 0, 0.74 ], "strips.8.column_std": [ 0, 0.17 ], "strips.8.row_max": [ 0, 0.75 ], "strips.8.row_std": [ 0, 0.19 ] }, "objective": "Minimize generator-level mean absolute relative target error; do not maximize stiffness", "phase_definitions": { "1": "matrix-like solid", "5": "provisional reinforcement-like solid; provisionally reprecipitated carbides; not a verified chemistry" }, "physical_scale": "No microscopy calibration; do not infer micrometers from pixels or simulate experimentally calibrated properties", "single_output_seconds": 30, "source_provenance": "Supplied horizontally flipped SEM tile, genuine geometry-preserving microscopy augmentation, morphology-selected crop; not an unaugmented original or unbiased RVE", "target_MPa": 1640, "target_band_relative": 0.02, "topology": "4-connected matrix must span x/y; reinforcement prohibited from spanning under both 4 and 8 connectivity. Largest reinforcement fraction <=0.15 under both. Corner contacts retained as mesh artifact, never claimed physical bonds." } COMMON RESEARCHER-PREPARED TEMPLATE (copy/adapt into one self-contained module):
+												18715 text ```python import numpy as np from scipy import ndimage as ndi from scipy.special import ndtri from skimage.draw import polygon SIZE = 256 FRACTION = 0.3163299560546875 N_COMPLETE = 57 D_MEAN = 15.706688295952011 D_STD = 8.893419110493891 def _particle(rng, area): """Generate an irregular, angular, approximately equiaxed or elongated region.""" n = int(rng.integers(12, 23)) t = (np.arange(n) + rng.uniform(-0.28, 0.28, n)) * 2 * np.pi / n noise = rng.normal(0, 0.23, n) r = np.clip(1 + noise + 0.25 * np.roll(noise, 1), 0.48, 1.55) if area > 90 and rng.random() < 0.65: for _ in range(int(rng.integers(1, 4))): r[rng.integers(n)] *= rng.uniform(0.35, 0.72) aspect = np.clip(rng.lognormal(np.log(1.75), 0.34), 1.05, 3.8) x = r * np.cos(t) * np.sqrt(aspect) y = r * np.sin(t) / np.sqrt(aspect) a = rng.uniform(0, np.pi) x, y = x * np.cos(a) - y * np.sin(a), x * np.sin(a) + y * np.cos(a) base = abs(np.sum(x * np.roll(y, -1) - y * np.roll(x, -1))) / 2 scale = np.sqrt(area / max(base, 0.01)) for _ in range(3): xx, yy = x * scale, y * scale xx, yy = xx - xx.min() + 2, yy - yy.min() + 2 mask = np.zeros((int(np.ceil(yy.max())) + 3, int(np.ceil(xx.max())) + 3), dtype=bool) rr, cc = polygon(yy, xx, shape=mask.shape) mask[rr, cc] = True lab, count = ndi.label(mask) if count: sizes = np.bincount(lab.ravel())[1:] mask = lab == (1 + np.argmax(sizes)) scale *= np.sqrt(area / max(mask.sum(), 1)) rows, cols = np.where(mask) return mask[rows.min():rows.max()+1, cols.min():cols.max()+1] def _place(rng, canvas, shape, field, boundary=False, target=0): h, w = shape.shape blocked = ndi.binary_dilation(canvas) best, best_score = None, -np.inf for _ in range(220): if boundary: edge = int(rng.integers(4)) x = int(rng.integers(-w//3, SIZE - 2*w//3)) y = int(rng.integers(-h//3, SIZE - 2*h//3)) if edge < 2: cut = int(rng.uniform(0, 0.72) * h) y = -cut if edge == 0 else SIZE - h + cut else: cut = int(rng.uniform(0, 0.72) * w) x = -cut if edge == 2 else SIZE - w + cut else: x = int(rng.integers(1, SIZE - w)) y = int(rng.integers(1, SIZE - h)) x0, x1 = max(0, x), min(SIZE, x + w) y0, y1 = max(0, y), min(SIZE, y + h) p = shape[y0-y:y1-y, x0-x:x1-x] if not p.any() or np.any(blocked[y0:y1, x0:x1] & p): continue score = field[(y0+y1)//2,
+												18716 button Show more
+													18717 image (graphic)
+												18718 button Copy message
+												18719 button Share prompt
+												18720 button Edit message
+												18721 text (heading) ChatGPT said:
+												18722 text Python
+												18723 button (toggle button) Enable word wrap
+												18724 button Copy code
+												18725 button Run code
+												18726 group
+													18727 group
+													18728 group
+														18729 text field (edit) (settable, string) Edit code Value: import numpy as np from scipy import ndimage as ndi from scipy.spatial import cKDTree from skimage.measure import regionprops SIZE = 256 TARGET = 20731 MAX_CANDIDATES = 8 TERRITORY_GAP = 4.8 STRIP_BOUNDS = { 1: (0.79, 0.18, 0.78, 0.20), 8: (0.74, 0.17, 0.75, 0.19), 16: (0.71, 0.16, 0.69, 0.17), 32: (0.64, 0.14, 0.63, 0.16), } def _centers(rng): """Irregular, incomplete stratification without axis-aligned lanes.""" nx, ny = 11, 10 sx, sy = SIZE / nx, SIZE / ny interior = [ (i, j) for j in range(1, ny - 1) for i in range(1, nx - 1) ] boundary = [ (i, j) for j in range(ny) for i in range(nx) if (i == 0 or i == nx - 1 or j == 0 or j == ny - 1) and not (i in (0, nx - 1) and j in (0, ny - 1)) ]
+															18730 text import
+															18731 text 
+															18732 text numpy
+															18733 text 
+															18734 text as
+															18735 text 
+															18736 text np
+															18737 text from
+															18738 text 
+															18739 text scipy
+															18740 text 
+															18741 text import
+															18742 text 
+															18743 text ndimage
+															18744 text 
+															18745 text as
+															18746 text 
+															18747 text ndi
+															18748 text from
+															18749 text 
+															18750 text scipy
+															18751 text .
+															18752 text spatial
+															18753 text 
+															18754 text import
+															18755 text 
+															18756 text cKDTree
+															18757 text from
+															18758 text 
+															18759 text skimage
+															18760 text .
+															18761 text measure
+															18762 text 
+															18763 text import
+															18764 text 
+															18765 text regionprops
+															18766 text SIZE
+															18767 text 
+															18768 text =
+															18769 text 
+															18770 text 256
+															18771 text TARGET
+															18772 text 
+															18773 text =
+															18774 text 
+															18775 text 20731
+															18776 text MAX_CANDIDATES
+															18777 text 
+															18778 text =
+															18779 text 
+															18780 text 8
+															18781 text TERRITORY_GAP
+															18782 text 
+															18783 text =
+															18784 text 
+															18785 text 4.8
+															18786 text STRIP_BOUNDS
+															18787 text 
+															18788 text =
+															18789 text {
+															18790 text 
+															18791 text 1
+															18792 text : (
+															18793 text 0.79
+															18794 text ,
+															18795 text 0.18
+															18796 text ,
+															18797 text 0.78
+															18798 text ,
+															18799 text 0.20
+															18800 text ),
+															18801 text 
+															18802 text 8
+															18803 text : (
+															18804 text 0.74
+															18805 text ,
+															18806 text 0.17
+															18807 text ,
+															18808 text 0.75
+															18809 text ,
+															18810 text 0.19
+															18811 text ),
+															18812 text 
+															18813 text 16
+															18814 text : (
+															18815 text 0.71
+															18816 text ,
+															18817 text 0.16
+															18818 text ,
+															18819 text 0.69
+															18820 text ,
+															18821 text 0.17
+															18822 text ),
+															18823 text 
+															18824 text 32
+															18825 text : (
+															18826 text 0.64
+															18827 text ,
+															18828 text 0.14
+															18829 text ,
+															18830 text 0.63
+															18831 text ,
+															18832 text 0.16
+															18833 text ),
+															18834 text }
+															18835 text def
+															18836 text 
+															18837 text _centers
+															18838 text (
+															18839 text rng
+															18840 text ):
+															18841 text 
+															18842 text """Irregular, incomplete stratification without axis-aligned lanes."""
+															18843 text 
+															18844 text nx
+															18845 text ,
+															18846 text ny
+															18847 text 
+															18848 text =
+															18849 text 
+															18850 text 11
+															18851 text ,
+															18852 text 10
+															18853 text 
+															18854 text sx
+															18855 text ,
+															18856 text sy
+															18857 text 
+															18858 text =
+															18859 text 
+															18860 text SIZE
+															18861 text 
+															18862 text /
+															18863 text 
+															18864 text nx
+															18865 text ,
+															18866 text SIZE
+															18867 text 
+															18868 text /
+															18869 text 
+															18870 text ny
+															18871 text 
+															18872 text interior
+															18873 text 
+															18874 text =
+															18875 text [
+															18876 text (
+															18877 text i
+															18878 text ,
+															18879 text j
+															18880 text )
+															18881 text 
+															18882 text for
+															18883 text 
+															18884 text j
+															18885 text 
+															18886 text in
+															18887 text 
+															18888 text range
+															18889 text (
+															18890 text 1
+															18891 text ,
+															18892 text ny
+															18893 text 
+															18894 text -
+															18895 text 
+															18896 text 1
+															18897 text )
+															18898 text 
+															18899 text for
+															18900 text 
+															18901 text i
+															18902 text 
+															18903 text in
+															18904 text 
+															18905 text range
+															18906 text (
+															18907 text 1
+															18908 text ,
+															18909 text nx
+															18910 text 
+															18911 text -
+															18912 text 
+															18913 text 1
+															18914 text )
+															18915 text ]
+															18916 text 
+															18917 text boundary
+															18918 text 
+															18919 text =
+															18920 text [
+															18921 text (
+															18922 text i
+															18923 text ,
+															18924 text j
+															18925 text )
+															18926 text 
+															18927 text for
+															18928 text 
+															18929 text j
+															18930 text 
+															18931 text in
+															18932 text 
+															18933 text range
+															18934 text (
+															18935 text ny
+															18936 text )
+															18937 text 
+															18938 text for
+															18939 text 
+															18940 text i
+															18941 text 
+															18942 text in
+															18943 text 
+															18944 text range
+															18945 text (
+															18946 text nx
+															18947 text )
+															18948 text 
+															18949 text if
+															18950 text (
+															18951 text i
+															18952 text 
+															18953 text ==
+															18954 text 
+															18955 text 0
+															18956 text 
+															18957 text or
+															18958 text 
+															18959 text i
+															18960 text 
+															18961 text ==
+															18962 text 
+															18963 text nx
+															18964 text 
+															18965 text -
+															18966 text 
+															18967 text 1
+															18968 text 
+															18969 text or
+															18970 text 
+															18971 text j
+															18972 text 
+															18973 text ==
+															18974 text 
+															18975 text 0
+															18976 text 
+															18977 text or
+															18978 text 
+															18979 text j
+															18980 text 
+															18981 text ==
+															18982 text 
+															18983 text ny
+															18984 text 
+															18985 text -
+															18986 text 
+															18987 text 1
+															18988 text )
+															18989 text 
+															18990 text and
+															18991 text 
+															18992 text not
+															18993 text (
+															18994 text i
+															18995 text 
+															18996 text in
+															18997 text (
+															18998 text 0
+															18999 text ,
+															19000 text nx
+															19001 text 
+															19002 text -
+															19003 text 
+															19004 text 1
+															19005 text )
+															19006 text and
+															19007 text 
+															19008 text j
+															19009 text 
+															19010 text in
+															19011 text (
+															19012 text 0
+															19013 text ,
+															19014 text ny
+															19015 text 
+															19016 text -
+															19017 text 
+															19018 text 1
+															19019 text ))
+															19020 text ]
+												19021 button Copy
+													19022 image (graphic)
+												19023 button Rate response ID: radix-_r_eu_
+												19024 button (toggle button) Read aloud
+												19025 button Share
+												19026 button (toggle button) Add to project sources
+												19027 button More actions ID: radix-_r_f2_
+												19028 button Convert to PDF
+												19029 text (heading) You said:
+												19030 text You generated the initial Python microstructure module earlier in THIS conversation. We executed that exact captured module on the three registered development seeds before this continuation. This is the ONE registered revision request; revise your own earlier generator toward the fixed1640MPa apparent-modulus target while preserving the morphology and procedural constraints. Return ONE COMPLETE self-contained revised Python module in one Python code block, no prose or demo. Do not use tools or browse. Do not claim to have run ANSYS yourself. No additional repair or optimization round is available. Keep generate_microstructure(seed, parameters), parameters={}, uint8 shape(256,256), native labels1=matrix-like solid and5=provisional reinforcement-like solid. EXACTLY20,731 label5 pixels and44,805 label1 pixels; finite nonperiodic support. Preserve local RNG replay and independent arrangement variation. At most8 geometry candidates and30seconds per output. No I/O, files, external caches, mechanical solver, reference loading/tracing, global RNG state, import-time calls, or dependencies beyond the initial allowed list. If no feasible candidate is found, raise an explicit failure; the evaluator will not repair outputs. Unchanged illustrative physics: E_matrix1000MPa, E_reinforcement10000MPa, bothnu0.30, linear plane stress, shared-node ideal bonds,1mm computational square and thickness; bottomUY0/top negativeUY at0.001,0.002,0.003,0.004,0.005 engineering strain, one bottomUXpin, free lateral displacement, no contact or large strain. Computational dimensions do not calibrate microscopy. Fixed target1640MPa,±2% hit band1607.2–1672.8MPa. Objective is generator-level mean absolute relative target error, not maximum stiffness. All outputs must also satisfy the unchanged full morphology envelope and diversity. Raw SEM provenance and provisional phase definition remain as supplied initially. The image is a horizontally flipped authentic microscopy tile and a morphology-selected crop, not an unaugmented original or unbiased RVE. No segmentation mask or held-out seeds/results are provided. No other contemporary trial's source or results are included. The initial code is already in this same conversation; it is not reattached. FULL UNCHANGED MORPHOLOGY POLICY (historical ten-output wording does not change per-array thresholds; current final cohort has six outputs): { "absolute_fraction_tolerance": 0, "absolute_pixel_tolerance": 0, "boundary_policy": "New shape/tail/alignment limits include all observed regions, never exclude boundary-clipped features. Complete/all statistics both retained. Pixel-region geometry is not a recovered physical particle.", "calibration": "One reference +12 prospective baseline seeds, independent fixtures and already-observed historical controls; not blind natural-family validation", "connectivity_policy": "4-connected matrix must span x/y; reinforcement prohibited from spanning under both 4 and 8 connectivity. Largest reinforcement fraction <=0.15 under both. Corner contacts retained as mesh artifact, never claimed physical bonds.", "diagnostic_only": [ "complete-region new shape/orientation", "largest-region shape", "S2 individual lags", "1px dilation", "interface density", "NNmean", "old reference-relative reconstruction errors" ], "diversity": { "all_arrays_unique": true, "minimum_median_hamming": 0.1, "minimum_unique_rigid_invariant_signatures": "ceil(number_outputs/2)" }, "frozen_utc": "2026-11-15T13:11:31.025005+00:00", "generator_acceptance": "10/10 held-out outputs feasible and diversity passes; partial validity reported with denominator", "guardrails": { "descriptor_ranges": { "all_regions": [ 50, 125 ], "aspect_mean": [ 1.2, 3.0 ], "boundary_censored_regions": [ 5, 50 ], "complete_regions": [ 40, 75 ], "diameter_mean_px": [ 12, 20 ] }, "matrix_lcc_minimum": 0.95, "reinforcement_largest_fraction_maximum": 0.15, "single_pixel_reinforcement_fraction_maximum": 0.001 }, "must_be_false": [ "gap_dilation.2.spans_x", "gap_dilation.2.spans_y" ], "new_descriptor_bounds": { "all_observed.area_fraction_aspect_gt3": [ 0, 0.27 ], "all_observed.area_fraction_aspect_gt4": [ 0, 0.16 ], "all_observed.area_weighted_aspect": [ 1, 2.59 ], "all_observed.area_weighted_aspect_p95": [ 1, 6.13 ], "all_observed.axial_order": [ 0, 0.59 ], "all_observed.defined_aspect_area_fraction": [ 0.995, 1 ], "gap_dilation.2.largest_fraction": [ 0, 0.59 ], "limited_gap_run_x": [ 0, 0.6 ], "limited_gap_run_y": [ 0, 0.56 ], "long_range_abs_S2_difference": [ 0, 0.04 ], "nearest_neighbor_cv": [ 0.1, 0.69 ], "strips.1.column_max": [ 0, 0.79 ], "strips.1.column_std": [ 0, 0.18 ], "strips.1.row_max": [ 0, 0.78 ], "strips.1.row_std": [ 0, 0.2 ], "strips.16.column_max": [ 0, 0.71 ], "strips.16.column_std": [ 0, 0.16 ], "strips.16.row_max": [ 0, 0.69 ], "strips.16.row_std": [ 0, 0.17 ], "strips.32.column_max": [ 0, 0.64 ], "strips.32.column_std": [ 0, 0.14 ], "strips.32.row_max": [ 0, 0.63 ], "strips.32.row_std": [ 0, 0.16 ], "strips.8.column_max": [ 0, 0.74 ], "strips.8.column_std": [ 0, 0.17 ], "strips.8.row_max": [ 0, 0.75 ], "strips.8.row_std": [ 0, 0.19 ] }, "single_generation_timeout_seconds": 30, "target_count": 20731, "target_fraction": 0.3163299560546875, "threshold_rationale": { "area_weighted_aspect": "max(reference,baseline)*1.25", "axial_order": "max+.30 to permit moderate orientation", "gap_lcc": "max+.25; no 2px disk-dilation spanning", "limited_gap_runs": "max+.20", "long_range_S2": "max+.02", "p95": "max*1.20", "rounding": "upper thresholds round upward to hundredth; coverage>=.995 prevents undefined-region evasion", "spacing_CV": "[.10,max+.20]", "strip_max": "min(.8,max+.15)", "strip_std": "max+.06", "tail_gt3": "max+.15 area fraction", "tail_gt4": "max+.08" } } STRUCTURAL DEVELOPMENT INFORMATION (consistent schema in both conditions; structural decimals rounded to6 places for readability, raw evaluator records retained): {"development_structures":[{"common_descriptors":{"S2_x_8":0.159605,"S2_y_8":0.157605,"all_regions":80,"aspect_mean":1.518372,"boundary_censored_regions":24,"complete_regions":56,"diameter_mean_px":17.20299,"diameter_std_px":4.989064,"interface_density":0.089737,"matrix_lcc":0.999955,"nearest_neighbor_cv":0.167099,"nearest_neighbor_mean_px":21.978649,"reinforcement_fraction":0.31633},"deterministic":true,"error":null,"feasibility":{"failures":[],"passed":true},"generation_seconds":0.058863,"new_descriptors":{"all_observed.area_fraction_aspect_gt3":0.0,"all_observed.area_fraction_aspect_gt4":0.0,"all_observed.area_weighted_aspect":1.459321,"all_observed.area_weighted_aspect_p95":2.088507,"all_observed.axial_order":0.07897,"all_observed.defined_aspect_area_fraction":1.0,"all_observed.preferred_axial_angle_deg":null,"all_observed.vertical_alignment":-0.055036,"gap_dilation.2.largest_fraction":0.065413,"gap_dilation.2.spans_x":false,"gap_dilation.2.spans_y":false,"interface_density":0.089737,"limited_gap_run_x":0.136719,"limited_gap_run_y":0.128906,"long_range_abs_S2_difference":0.007773,"nearest_neighbor_cv":0.167099,"nearest_neighbor_mean_px":21.978649,"strips.1.column_max":0.5625,"strips.1.column_std":0.125721,"strips.1.row_max":0.558594,"strips.1.row_std":0.129351,"strips.16.column_max":0.494629,"strips.16.column_std":0.08047,"strips.16.row_max":0.478027,"strips.16.row_std":0.08631,"strips.32.column_max":0.428223,"strips.32.column_std":0.0582,"strips.32.row_max":0.412354,"strips.32.row_std":0.051059,"strips.8.column_max":0.550293,"strips.8.column_std":0.109079,"strips.8.row_max":0.543945,"strips.8.row_std":0.113502},"phase_counts":{"1":44805,"5":20731},"seed":4200,"status":"GENERATED"},{"common_descriptors":{"S2_x_8":0.158754,"S2_y_8":0.161779,"all_regions":76,"aspect_mean":1.577012,"boundary_censored_regions":22,"complete_regions":54,"diameter_mean_px":17.332356,"diameter_std_px":4.812208,"interface_density":0.088638,"matrix_lcc":1.0,"nearest_neighbor_cv":0.184884,"nearest_neighbor_mean_px":22.684741,"reinforcement_fraction":0.31633},"deterministic":true,"error":null,"feasibility":{"failures":[],"passed":true},"generation_seconds":0.082816,"new_descriptors":{"all_observed.area_fraction_aspect_gt3":0.0,"all_observed.area_fraction_aspect_gt4":0.0,"all_observed.area_weighted_aspect":1.64765,"all_observed.area_weighted_aspect_p95":2.744314,"all_observed.axial_order":0.170207,"all_observed.defined_aspect_area_fraction":1.0,"all_observed.preferred_axial_angle_deg":null,"all_observed.vertical_alignment":0.09106,"gap_dilation.2.largest_fraction":0.078526,"gap_dilation.2.spans_x":false,"gap_dilation.2.spans_y":false,"interface_density":0.088638,"limited_gap_run_x":0.152344,"limited_gap_run_y":0.136719,"long_range_abs_S2_difference":0.004506,"nearest_neighbor_cv":0.184884,"nearest_neighbor_mean_px":22.684741,"strips.1.column_max":0.515625,"strips.1.column_std":0.110518,"strips.1.row_max":0.617188,"strips.1.row_std":0.13062,"strips.16.column_max":0.463379,"strips.16.column_std":0.066482,"strips.16.row_max":0.54541,"strips.16.row_std":0.092851,"strips.32.column_max":0.407104,"strips.32.column_std":0.04292,"strips.32.row_max":0.453491,"strips.32.row_std":0.067219,"strips.8.column_max":0.490723,"strips.8.column_std":0.094138,"strips.8.row_max":0.593262,"strips.8.row_std":0.118098},"phase_counts":{"1":44805,"5":20731},"seed":4201,"status":"GENERATED"},{"common_descriptors":{"S2_x_8":0.154911,"S2_y_8":0.15929,"all_regions":
+												19031 button Show more
+													19032 image (graphic)
+												19033 button Copy message
+												19034 button Share prompt
+												19035 button Edit message
+												19036 text (heading) ChatGPT said:
+												19037 text Python
+												19038 button (toggle button) Enable word wrap
+												19039 button Copy code
+												19040 button Run code
+												19041 group
+													19042 group
+													19043 group
+														19044 text field (edit) (settable, string) Edit code Value: import numpy as np from scipy import ndimage as ndi from scipy.spatial import cKDTree from skimage.measure import regionprops SIZE = 256 TARGET = 20731 MAX_CANDIDATES = 8 TERRITORY_GAP = 4.8 CENTER_JITTER = 6.1 AREA_LOG_SIGMA = 0.73 ASPECT_MEDIAN = 1.69 ASPECT_LOG_SIGMA = 0.27 HORIZONTAL_BIAS_PROBABILITY = 0.34 HORIZONTAL_ANGLE_SPREAD = 0.43 STRIP_BOUNDS = { 1: (0.79, 0.18, 0.78, 0.20), 8: (0.74, 0.17, 0.75, 0.19), 16: (0.71, 0.16, 0.69, 0.17), 32: (0.64, 0.14, 0.63, 0.16), } def _centers(rng): """ Construct independent, irregularly displaced inclusion centers. Loose spatial stratification prevents large empty domains without imposing continuous reinforcement lanes. Boundary centers are separately sampled to generate genuinely censored observations. """ nx, ny = 11, 10 sx, sy = SIZE / nx, SIZE / ny
+															19045 text import
+															19046 text 
+															19047 text numpy
+															19048 text 
+															19049 text as
+															19050 text 
+															19051 text np
+															19052 text from
+															19053 text 
+															19054 text scipy
+															19055 text 
+															19056 text import
+															19057 text 
+															19058 text ndimage
+															19059 text 
+															19060 text as
+															19061 text 
+															19062 text ndi
+															19063 text from
+															19064 text 
+															19065 text scipy
+															19066 text .
+															19067 text spatial
+															19068 text 
+															19069 text import
+															19070 text 
+															19071 text cKDTree
+															19072 text from
+															19073 text 
+															19074 text skimage
+															19075 text .
+															19076 text measure
+															19077 text 
+															19078 text import
+															19079 text 
+															19080 text regionprops
+															19081 text SIZE
+															19082 text 
+															19083 text =
+															19084 text 
+															19085 text 256
+															19086 text TARGET
+															19087 text 
+															19088 text =
+															19089 text 
+															19090 text 20731
+															19091 text MAX_CANDIDATES
+															19092 text 
+															19093 text =
+															19094 text 
+															19095 text 8
+															19096 text TERRITORY_GAP
+															19097 text 
+															19098 text =
+															19099 text 
+															19100 text 4.8
+															19101 text CENTER_JITTER
+															19102 text 
+															19103 text =
+															19104 text 
+															19105 text 6.1
+															19106 text AREA_LOG_SIGMA
+															19107 text 
+															19108 text =
+															19109 text 
+															19110 text 0.73
+															19111 text ASPECT_MEDIAN
+															19112 text 
+															19113 text =
+															19114 text 
+															19115 text 1.69
+															19116 text ASPECT_LOG_SIGMA
+															19117 text 
+															19118 text =
+															19119 text 
+															19120 text 0.27
+															19121 text HORIZONTAL_BIAS_PROBABILITY
+															19122 text 
+															19123 text =
+															19124 text 
+															19125 text 0.34
+															19126 text HORIZONTAL_ANGLE_SPREAD
+															19127 text 
+															19128 text =
+															19129 text 
+															19130 text 0.43
+															19131 text STRIP_BOUNDS
+															19132 text 
+															19133 text =
+															19134 text {
+															19135 text 
+															19136 text 1
+															19137 text : (
+															19138 text 0.79
+															19139 text ,
+															19140 text 0.18
+															19141 text ,
+															19142 text 0.78
+															19143 text ,
+															19144 text 0.20
+															19145 text ),
+															19146 text 
+															19147 text 8
+															19148 text : (
+															19149 text 0.74
+															19150 text ,
+															19151 text 0.17
+															19152 text ,
+															19153 text 0.75
+															19154 text ,
+															19155 text 0.19
+															19156 text ),
+															19157 text 
+															19158 text 16
+															19159 text : (
+															19160 text 0.71
+															19161 text ,
+															19162 text 0.16
+															19163 text ,
+															19164 text 0.69
+															19165 text ,
+															19166 text 0.17
+															19167 text ),
+															19168 text 
+															19169 text 32
+															19170 text : (
+															19171 text 0.64
+															19172 text ,
+															19173 text 0.14
+															19174 text ,
+															19175 text 0.63
+															19176 text ,
+															19177 text 0.16
+															19178 text ),
+															19179 text }
+															19180 text def
+															19181 text 
+															19182 text _centers
+															19183 text (
+															19184 text rng
+															19185 text ):
+															19186 text 
+															19187 text """
+															19188 text Construct independent, irregularly displaced inclusion centers.
+															19189 text Loose spatial stratification prevents large empty domains without
+															19190 text imposing continuous reinforcement lanes. Boundary centers are
+															19191 text separately sampled to generate genuinely censored observations.
+															19192 text """
+															19193 text 
+															19194 text nx
+															19195 text ,
+															19196 text ny
+															19197 text 
+															19198 text =
+															19199 text 
+															19200 text 11
+															19201 text ,
+															19202 text 10
+															19203 text 
+															19204 text sx
+															19205 text ,
+															19206 text sy
+															19207 text 
+															19208 text =
+															19209 text 
+															19210 text SIZE
+															19211 text 
+															19212 text /
+															19213 text 
+															19214 text nx
+															19215 text ,
+															19216 text SIZE
+															19217 text 
+															19218 text /
+															19219 text 
+															19220 text ny
+												19221 button Copy
+													19222 image (graphic)
+												19223 button Rate response ID: radix-_r_kf_
+												19224 button (toggle button) Read aloud
+												19225 button Share
+												19226 button (toggle button) Add to project sources
+												19227 button More actions ID: radix-_r_kn_
+												19228 button Convert to PDF
+												19229 group (complementary) Is this conversation helpful so far?
+													19230 text Is this conversation helpful so far?
+													19231 button (toggle button) Yes
+													19232 button (toggle button) No
+													19233 button Dismiss rating prompt
+												19234 group
+												19235 text ChatGPT can make mistakes. Check important info.
+												19236 button Scroll to bottom
+												19237 text (heading) Latest response
+												19238 status bar (status)
+												19239 group
+													19240 group
+														19241 group
+															19242 
