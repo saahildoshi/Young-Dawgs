@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="19" time="5.500" timestamp="2026-11-17T13:16:41.438524-05:00" hostname="ENGR746663D"><testcase classname="validation.ansys_v074_integration" name="test_P3_actual_native_curves_hashes_constraints_and_independent_readback[NF_01_r0_development_4200_H1_attempt001]" time="0.001"><failure message="FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v074\\run_001\\NF_01_r0_development_4200_H1_attempt001\\EXECUTION.json'">path = WindowsPath('C:/Users/sd22446/Projects/Young-Dawgs-VSCode/experiments/pipeline_v0.7.4/run_001/mechanical_response/NF_01_r0_development_4200_H1_attempt001.json')
+
+    @pytest.mark.parametrize('path',sorted((RUN/'mechanical_response').glob('*.json')),ids=lambda p:p.stem)
+    def test_P3_actual_native_curves_hashes_constraints_and_independent_readback(path):
+        r=read(path)
+        assert r['accepted'] and all(r['checks'].values())
+        source=Path(r['source_directory']);post=Path(r['independent_readback_directory'])
+&gt;       assert read(source/'EXECUTION.json')['solver_release']=='2024 R1'
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+validation\ansys_v074_integration.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+scripts\v070_protocol.py:16: in read
+    def read(path):return json.loads(Path(path).read_text(encoding='utf-8'))
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py:787: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/sd22446/AppData/Local/YoungDawgs/artifacts/solver/v074/run_001/NF_01_r0_development_4200_H1_attempt001/EXECUTION.json')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+&gt;       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v074\\run_001\\NF_01_r0_development_4200_H1_attempt001\\EXECUTION.json'
+
+..\..\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py:771: FileNotFoundError</failure></testcase><testcase classname="validation.ansys_v074_integration" name="test_P3_actual_native_curves_hashes_constraints_and_independent_readback[NF_01_r0_development_4201_H1_attempt001]" time="0.010"><failure message="FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v074\\run_001\\NF_01_r0_development_4201_H1_attempt001\\EXECUTION.json'">path = WindowsPath('C:/Users/sd22446/Projects/Young-Dawgs-VSCode/experiments/pipeline_v0.7.4/run_001/mechanical_response/NF_01_r0_development_4201_H1_attempt001.json')
+
+    @pytest.mark.parametrize('path',sorted((RUN/'mechanical_response').glob('*.json')),ids=lambda p:p.stem)
+    def test_P3_actual_native_curves_hashes_constraints_and_independent_readback(path):
+        r=read(path)
+        assert r['accepted'] and all(r['checks'].values())
+        source=Path(r['source_directory']);post=Path(r['independent_readback_directory'])
+&gt;       assert read(source/'EXECUTION.json')['solver_release']=='2024 R1'
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+validation\ansys_v074_integration.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+scripts\v070_protocol.py:16: in read
+    def read(path):return json.loads(Path(path).read_text(encoding='utf-8'))
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py:787: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/sd22446/AppData/Local/YoungDawgs/artifacts/solver/v074/run_001/NF_01_r0_development_4201_H1_attempt001/EXECUTION.json')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+&gt;       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v074\\run_001\\NF_01_r0_development_4201_H1_attempt001\\EXECUTION.json'
+
+..\..\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py:771: FileNotFoundError</failure></testcase><testcase classname="validation.ansys_v074_integration" name="test_P3_actual_native_curves_hashes_constraints_and_independent_readback[NF_01_r0_development_4202_H1_attempt001]" time="0.011"><failure message="FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v074\\run_001\\NF_01_r0_development_4202_H1_attempt001\\EXECUTION.json'">path = WindowsPath('C:/Users/sd22446/Projects/Young-Dawgs-VSCode/experiments/pipeline_v0.7.4/run_001/mechanical_response/NF_01_r0_development_4202_H1_attempt001.json')
+
+    @pytest.mark.parametrize('path',sorted((RUN/'mechanical_response').glob('*.json')),ids=lambda p:p.stem)
+    def test_P3_actual_native_curves_hashes_constraints_and_independent_readback(path):
+        r=read(path)
+        assert r['accepted'] and all(r['checks'].values())
+        source=Path(r['source_directory']);post=Path(r['independent_readback_directory'])
+&gt;       assert read(source/'EXECUTION.json')['solver_release']=='2024 R1'
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+validation\ansys_v074_integration.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+scripts\v070_protocol.py:16: in read
+    def read(path):return json.loads(Path(path).read_text(encoding='utf-8'))
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py:787: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/sd22446/AppData/Local/YoungDawgs/artifacts/solver/v074/run_001/NF_01_r0_development_4202_H1_attempt001/EXECUTION.json')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+&gt;       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v074\\run_001\\NF_01_r0_development_4202_H1_attempt001\\EXECUTION.json'
+
+..\..\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py:771: FileNotFoundError</failure></testcase><testcase classname="validation.ansys_v074_integration" name="test_P3_actual_native_curves_hashes_constraints_and_independent_readback[NF_01_r0_heldout_5000_H1_attempt001]" time="0.166" /><testcase classname="validation.ansys_v074_integration" name="test_P3_actual_native_curves_hashes_constraints_and_independent_readback[NF_01_r0_heldout_5000_H2_attempt001]" time="0.619" /><testcase classname="validation.ansys_v074_integration" name="test_P3_actual_native_curves_hashes_constraints_and_independent_readback[NF_01_r0_heldout_5001_H1_attempt001]" time="0.171" /><testcase classname="validation.ansys_v074_integration" name="test_P3_actual_native_curves_hashes_constraints_and_independent_readback[NF_01_r0_heldout_5001_H2_attempt001]" time="0.622" /><testcase classname="validation.ansys_v074_integration" name="test_P3_actual_native_curves_hashes_constraints_and_independent_readback[NF_01_r0_heldout_5002_H1_attempt001]" time="0.164" /><testcase classname="validation.ansys_v074_integration" name="test_P3_actual_native_curves_hashes_constraints_and_independent_readback[NF_01_r0_heldout_5003_H1_attempt001]" time="0.164" /><testcase classname="validation.ansys_v074_integration" name="test_P3_actual_native_curves_hashes_constraints_and_independent_readback[NF_01_r0_heldout_5004_H1_attempt001]" time="0.156" /><testcase classname="validation.ansys_v074_integration" name="test_P3_actual_native_curves_hashes_constraints_and_independent_readback[NF_01_r0_heldout_5005_H1_attempt001]" time="0.164" /><testcase classname="validation.ansys_v074_integration" name="test_P3_actual_native_curves_hashes_constraints_and_independent_readback[NF_01_r1_heldout_5000_H1_attempt001]" time="0.178" /><testcase classname="validation.ansys_v074_integration" name="test_P3_actual_native_curves_hashes_constraints_and_independent_readback[NF_01_r1_heldout_5000_H2_attempt001]" time="0.617" /><testcase classname="validation.ansys_v074_integration" name="test_P3_actual_native_curves_hashes_constraints_and_independent_readback[NF_01_r1_heldout_5001_H1_attempt001]" time="0.176" /><testcase classname="validation.ansys_v074_integration" name="test_P3_actual_native_curves_hashes_constraints_and_independent_readback[NF_01_r1_heldout_5001_H2_attempt001]" time="0.595" /><testcase classname="validation.ansys_v074_integration" name="test_P3_actual_native_curves_hashes_constraints_and_independent_readback[NF_01_r1_heldout_5002_H1_attempt001]" time="0.165" /><testcase classname="validation.ansys_v074_integration" name="test_P3_actual_native_curves_hashes_constraints_and_independent_readback[NF_01_r1_heldout_5003_H1_attempt001]" time="0.171" /><testcase classname="validation.ansys_v074_integration" name="test_P3_actual_native_curves_hashes_constraints_and_independent_readback[NF_01_r1_heldout_5004_H1_attempt001]" time="0.160" /><testcase classname="validation.ansys_v074_integration" name="test_P3_actual_native_curves_hashes_constraints_and_independent_readback[NF_01_r1_heldout_5005_H1_attempt001]" time="0.158" /></testsuite></testsuites>
