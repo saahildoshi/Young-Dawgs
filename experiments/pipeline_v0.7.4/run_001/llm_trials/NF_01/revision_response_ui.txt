@@ -1,0 +1,242 @@
+text (heading) ChatGPT said:
+												15760 text Python
+												15761 button (toggle button) Enable word wrap
+												15762 button Copy code
+												15763 button Run code
+												15764 group
+													15765 group
+													15766 group
+														15767 text field (edit) (settable, string) Edit code Value: import numpy as np from scipy import ndimage as ndi from scipy.spatial import cKDTree from skimage.measure import regionprops SIZE = 256 TARGET_REINFORCEMENT = 20731 N_COMPLETE = 57 N_BOUNDARY = 20 MAX_CANDIDATES = 8 # Geometry-only revision: moderate horizontal axial preference, slightly # greater inclusion elongation, and modestly less regular nucleus spacing. # These changes may reduce apparent vertical stiffness by altering the # load-transfer geometry. No measured modulus or mechanical solver is used. ORIENTATION_KAPPA = 0.90 ASPECT_MEDIAN = 1.85 ASPECT_LOG_STD = 0.23 ASPECT_MAX = 2.75 PLACEMENT_JITTER = 4.25 TERRITORY_MARGIN = 6.5 STRIP_BOUNDS = { 1: (0.79, 0.18, 0.78, 0.20), 8: (0.74, 0.17, 0.75, 0.19), 16: (0.71, 0.16, 0.69, 0.17), 32: (0.64, 0.14, 0.63, 0.16), } def _centers(rng): """ Construct independent, nonperiodic reinforcement nuclei. Twenty boundary nuclei are distributed over the specimen edges.
+															15768 text import
+															15769 text 
+															15770 text numpy
+															15771 text 
+															15772 text as
+															15773 text 
+															15774 text np
+															15775 text from
+															15776 text 
+															15777 text scipy
+															15778 text 
+															15779 text import
+															15780 text 
+															15781 text ndimage
+															15782 text 
+															15783 text as
+															15784 text 
+															15785 text ndi
+															15786 text from
+															15787 text 
+															15788 text scipy
+															15789 text .
+															15790 text spatial
+															15791 text 
+															15792 text import
+															15793 text 
+															15794 text cKDTree
+															15795 text from
+															15796 text 
+															15797 text skimage
+															15798 text .
+															15799 text measure
+															15800 text 
+															15801 text import
+															15802 text 
+															15803 text regionprops
+															15804 text SIZE
+															15805 text 
+															15806 text =
+															15807 text 
+															15808 text 256
+															15809 text TARGET_REINFORCEMENT
+															15810 text 
+															15811 text =
+															15812 text 
+															15813 text 20731
+															15814 text N_COMPLETE
+															15815 text 
+															15816 text =
+															15817 text 
+															15818 text 57
+															15819 text N_BOUNDARY
+															15820 text 
+															15821 text =
+															15822 text 
+															15823 text 20
+															15824 text MAX_CANDIDATES
+															15825 text 
+															15826 text =
+															15827 text 
+															15828 text 8
+															15829 text # Geometry-only revision: moderate horizontal axial preference, slightly
+															15830 text # greater inclusion elongation, and modestly less regular nucleus spacing.
+															15831 text # These changes may reduce apparent vertical stiffness by altering the
+															15832 text # load-transfer geometry. No measured modulus or mechanical solver is used.
+															15833 text ORIENTATION_KAPPA
+															15834 text 
+															15835 text =
+															15836 text 
+															15837 text 0.90
+															15838 text ASPECT_MEDIAN
+															15839 text 
+															15840 text =
+															15841 text 
+															15842 text 1.85
+															15843 text ASPECT_LOG_STD
+															15844 text 
+															15845 text =
+															15846 text 
+															15847 text 0.23
+															15848 text ASPECT_MAX
+															15849 text 
+															15850 text =
+															15851 text 
+															15852 text 2.75
+															15853 text PLACEMENT_JITTER
+															15854 text 
+															15855 text =
+															15856 text 
+															15857 text 4.25
+															15858 text TERRITORY_MARGIN
+															15859 text 
+															15860 text =
+															15861 text 
+															15862 text 6.5
+															15863 text STRIP_BOUNDS
+															15864 text 
+															15865 text =
+															15866 text {
+															15867 text 
+															15868 text 1
+															15869 text : (
+															15870 text 0.79
+															15871 text ,
+															15872 text 0.18
+															15873 text ,
+															15874 text 0.78
+															15875 text ,
+															15876 text 0.20
+															15877 text ),
+															15878 text 
+															15879 text 8
+															15880 text : (
+															15881 text 0.74
+															15882 text ,
+															15883 text 0.17
+															15884 text ,
+															15885 text 0.75
+															15886 text ,
+															15887 text 0.19
+															15888 text ),
+															15889 text 
+															15890 text 16
+															15891 text : (
+															15892 text 0.71
+															15893 text ,
+															15894 text 0.16
+															15895 text ,
+															15896 text 0.69
+															15897 text ,
+															15898 text 0.17
+															15899 text ),
+															15900 text 
+															15901 text 32
+															15902 text : (
+															15903 text 0.64
+															15904 text ,
+															15905 text 0.14
+															15906 text ,
+															15907 text 0.63
+															15908 text ,
+															15909 text 0.16
+															15910 text ),
+															15911 text }
+															15912 text def
+															15913 text 
+															15914 text _centers
+															15915 text (
+															15916 text rng
+															15917 text ):
+															15918 text 
+															15919 text """
+															15920 text Construct independent, nonperiodic reinforcement nuclei.
+															15921 text Twenty boundary nuclei are distributed over the specimen edges.
+												15922 button Copy
+													15923 image (graphic)
+												15924 button Rate response ID: radix-_r_l8_
+												15925 button (toggle button) Read aloud
+												15926 button Share
+												15927 button (toggle button) Add to project sources
+												15928 button More actions ID: radix-_r_lg_
+												15929 button Convert to PDF
+												15930 group
+												15931 text ChatGPT can make mistakes. Check important info.
+												15932 button Scroll to bottom
+												15933 text (heading) Latest response
+												15934 status bar (status)
+												15935 group
+													15936 group
+														15937 group
+															15938 button Add files and more
+															15939 text field (edit) (settable, string) Ask ChatGPT Value: Ask ChatGPT
+																15940 text Ask ChatGPT
+																15941 text 
+															15942 group
+																15943 button Select ChatGPT model ID: radix-_r_gp_
+															15944 button Dictate
+															15945 button Start Voice
+															15946 status bar (status)
+										15947 status bar (status) ID: DndLiveRegion-2
+										15948 group
+										15949 status bar (status)
+										15950 group
+										15951 status bar (status)
+										15952 status bar (status) ID: DndLiveRegion-1
+										15953 status bar (status)
+											15954 text Response complete
+										15955 group
+										15956 group
+								307 document Value: chrome://newtab-footer/ ID: RootWebArea
+									308 image (graphic) ID: baseSvg
+									309 hyperlink (link) Managed by your organisation
+									310 button (toggle button) Customise Chrome Description: Customise this page ID: customizeButton
+										311 image (graphic) ID: baseSvg
+										312 text Customise Chrome
+							313 pane (region)
+						314 pane (region)
+							315 pane (region)
+								316 button Tab search
+							317 pane (region) ID: view_21
+								318 tab
+									319 tab item (selectable) Mail - Saahil Doshi - Outlook - Memory usage - 302 MB ID: view_20
+										320 button Close
+									321 tab item (selectable) Mail - Saahil Doshi - Outlook ID: view_20
+										322 button Close
+									323 tab item (selectable) Nov. 9-13.docx ID: view_20
+										324 button Close
+									325 tab item (selectable) saahildoshi/Young-Dawgs - Memory usage - 427 MB ID: view_20
+										326 button Close
+									327 tab item (selectable) Generate Python Microstructure Code - Memory usage - 454 MB ID: view_20
+										328 button Close
+									5669 tab item (selectable) Create Stochastic Generator - High memory usage - 808 MB ID: view_20
+										5670 button Close
+									6315 tab item (selectable) Create Microstructure Generator - Memory usage - 751 MB ID: view_20
+										6316 button Close
+									6991 tab item (selectable) Generate Microstructure Code - Memory usage - 503 MB ID: view_20
+										6992 button Close
+								329 pane (region)
+							330 button New tab
+							331 pane (region)
+							332 pane (region)
+								335 button Open Gemini in Chrome
+								336 pane (region)
+						337 pane (region)
+
+Document text: ```
+Ask ChatGPT
+```
+
+Focused element: 17 text field (edit) (settable, string) Address and search bar Description: Ask Google or type a URL Value: chatgpt.com/g/g-p-6adabe4175a48191b0a5bb4986ade2f1-pipeline-tests/c/6afbb12b-1020-83ea-85ba-d387a4969eee ID: view_1012
+
+Document text:
+Ask ChatGPT
