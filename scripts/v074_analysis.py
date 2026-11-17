@@ -178,6 +178,18 @@ def analyse():
     } for r in summaries]
     flat_mesh_changes = [{'trial_id':r['trial_id'],'arm':r['arm'],**pair}
         for r in mesh_changes for pair in r['paired_checks']]
+    mesh_arms = {}
+    for excluded in ((),('NF_01',)):
+        label = 'all_registered' if not excluded else 'without_NF01'
+        arms = {}
+        for arm in ('IF','NF'):
+            local = [r for r in mesh_changes if r['arm']==arm and r['trial_id'] not in excluded]
+            arms[arm] = {'conversations':len(local),
+                'H1_matched_refined_seed_error_reduction':statistics([r['H1_error_reduction']['mean'] for r in local if r['H1_error_reduction']['mean'] is not None]),
+                'H2_matched_refined_seed_error_reduction':statistics([r['H2_error_reduction']['mean'] for r in local if r['H2_error_reduction']['mean'] is not None])}
+        x,y = [arms[arm]['H2_matched_refined_seed_error_reduction']['mean'] for arm in ('IF','NF')]
+        mesh_arms[label] = {'arms':arms,'H2_improvement_advantage_IF_minus_NF':x-y if x is not None and y is not None else None,
+            'scope':'Unweighted conversation means on only preselected, mutually accepted refined seeds. Not the full six-seed primary estimate; NF03 contributes one paired seed.'}
     from metamaterial_eval.composites.morphology_v073 import describe, flattened
     from scripts.v072_experiment import observe
     reference = np.load(MICRO/'references/P3/evaluation_only_labels.npy')
@@ -199,7 +211,7 @@ def analyse():
             ('MESH_CONFIRMATION', mesh), ('MESH_PAIRED_CHANGES', mesh_changes),
             ('NATIVE_CURVES', curves), ('PHASE_RESULTS', phases), ('MORPHOLOGY', morphology),
             ('MORPHOLOGY_REFERENCE_COMPARISON', descriptor_summaries), ('GENUINE_TRIAL_INVENTORY', inventory),
-            ('COMPACT_SCRIPT_TABLE', compact), ('MESH_PAIRED_SEEDS', flat_mesh_changes)]:
+            ('COMPACT_SCRIPT_TABLE', compact), ('MESH_PAIRED_SEEDS', flat_mesh_changes), ('MESH_ARM_COMPARISON',mesh_arms)]:
         write(output / f'{name}.json', data)
         if isinstance(data, list): csv_table(output / f'{name}.csv', data)
     write(output / 'ANALYSIS_PROVENANCE.json', {'created_utc': now(),
