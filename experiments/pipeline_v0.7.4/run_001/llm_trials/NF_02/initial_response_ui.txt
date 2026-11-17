@@ -1,0 +1,372 @@
+text (heading) ChatGPT said:
+												3696 text Python
+												3697 button (toggle button) Enable word wrap
+												4157 button Copy code
+												3699 button Run code
+												3700 group
+													4158 group
+													4159 group
+														4160 text field (edit) (settable, string) Edit code Value: import numpy as np from scipy import ndimage as ndi from scipy.spatial import cKDTree from skimage.measure import regionprops SIZE = 256 TARGET = 20731 MAX_CANDIDATES = 8 TERRITORY_GAP = 4.8 STRIP_BOUNDS = { 1: (0.79, 0.18, 0.78, 0.20), 8: (0.74, 0.17, 0.75, 0.19), 16: (0.71, 0.16, 0.69, 0.17), 32: (0.64, 0.14, 0.63, 0.16), } def _centers(rng): """Irregular, incomplete stratification without axis-aligned lanes.""" nx, ny = 11, 10 sx, sy = SIZE / nx, SIZE / ny interior = [ (i, j) for j in range(1, ny - 1) for i in range(1, nx - 1) ] boundary = [ (i, j) for j in range(ny) for i in range(nx) if (i == 0 or i == nx - 1 or j == 0 or j == ny - 1) and not (i in (0, nx - 1) and j in (0, ny - 1)) ]
+															4161 text import
+															4162 text 
+															4163 text numpy
+															4164 text 
+															4165 text as
+															4166 text 
+															4167 text np
+															4168 text from
+															4169 text 
+															4170 text scipy
+															4171 text 
+															4172 text import
+															4173 text 
+															4174 text ndimage
+															4175 text 
+															4176 text as
+															4177 text 
+															4178 text ndi
+															4179 text from
+															4180 text 
+															4181 text scipy
+															4182 text .
+															4183 text spatial
+															4184 text 
+															4185 text import
+															4186 text 
+															4187 text cKDTree
+															4188 text from
+															4189 text 
+															4190 text skimage
+															4191 text .
+															4192 text measure
+															4193 text 
+															4194 text import
+															4195 text 
+															4196 text regionprops
+															4197 text SIZE
+															4198 text 
+															4199 text =
+															4200 text 
+															4201 text 256
+															4202 text TARGET
+															4203 text 
+															4204 text =
+															4205 text 
+															4206 text 20731
+															4207 text MAX_CANDIDATES
+															4208 text 
+															4209 text =
+															4210 text 
+															4211 text 8
+															4212 text TERRITORY_GAP
+															4213 text 
+															4214 text =
+															4215 text 
+															4216 text 4.8
+															4217 text STRIP_BOUNDS
+															4218 text 
+															4219 text =
+															4220 text {
+															4221 text 
+															4222 text 1
+															4223 text : (
+															4224 text 0.79
+															4225 text ,
+															4226 text 0.18
+															4227 text ,
+															4228 text 0.78
+															4229 text ,
+															4230 text 0.20
+															4231 text ),
+															4232 text 
+															4233 text 8
+															4234 text : (
+															4235 text 0.74
+															4236 text ,
+															4237 text 0.17
+															4238 text ,
+															4239 text 0.75
+															4240 text ,
+															4241 text 0.19
+															4242 text ),
+															4243 text 
+															4244 text 16
+															4245 text : (
+															4246 text 0.71
+															4247 text ,
+															4248 text 0.16
+															4249 text ,
+															4250 text 0.69
+															4251 text ,
+															4252 text 0.17
+															4253 text ),
+															4254 text 
+															4255 text 32
+															4256 text : (
+															4257 text 0.64
+															4258 text ,
+															4259 text 0.14
+															4260 text ,
+															4261 text 0.63
+															4262 text ,
+															4263 text 0.16
+															4264 text ),
+															4265 text }
+															4266 text def
+															4267 text 
+															4268 text _centers
+															4269 text (
+															4270 text rng
+															4271 text ):
+															4272 text 
+															4273 text """Irregular, incomplete stratification without axis-aligned lanes."""
+															4274 text 
+															4275 text nx
+															4276 text ,
+															4277 text ny
+															4278 text 
+															4279 text =
+															4280 text 
+															4281 text 11
+															4282 text ,
+															4283 text 10
+															4284 text 
+															4285 text sx
+															4286 text ,
+															4287 text sy
+															4288 text 
+															4289 text =
+															4290 text 
+															4291 text SIZE
+															4292 text 
+															4293 text /
+															4294 text 
+															4295 text nx
+															4296 text ,
+															4297 text SIZE
+															4298 text 
+															4299 text /
+															4300 text 
+															4301 text ny
+															4302 text 
+															4303 text interior
+															4304 text 
+															4305 text =
+															4306 text [
+															4307 text (
+															4308 text i
+															4309 text ,
+															4310 text j
+															4311 text )
+															4312 text 
+															4313 text for
+															4314 text 
+															4315 text j
+															4316 text 
+															4317 text in
+															4318 text 
+															4319 text range
+															4320 text (
+															4321 text 1
+															4322 text ,
+															4323 text ny
+															4324 text 
+															4325 text -
+															4326 text 
+															4327 text 1
+															4328 text )
+															4329 text 
+															4330 text for
+															4331 text 
+															4332 text i
+															4333 text 
+															4334 text in
+															4335 text 
+															4336 text range
+															4337 text (
+															4338 text 1
+															4339 text ,
+															4340 text nx
+															4341 text 
+															4342 text -
+															4343 text 
+															4344 text 1
+															4345 text )
+															4346 text ]
+															4347 text 
+															4348 text boundary
+															4349 text 
+															4350 text =
+															4351 text [
+															4352 text (
+															4353 text i
+															4354 text ,
+															4355 text j
+															4356 text )
+															4357 text 
+															4358 text for
+															4359 text 
+															4360 text j
+															4361 text 
+															4362 text in
+															4363 text 
+															4364 text range
+															4365 text (
+															4366 text ny
+															4367 text )
+															4368 text 
+															4369 text for
+															4370 text 
+															4371 text i
+															4372 text 
+															4373 text in
+															4374 text 
+															4375 text range
+															4376 text (
+															4377 text nx
+															4378 text )
+															4379 text 
+															4380 text if
+															4381 text (
+															4382 text i
+															4383 text 
+															4384 text ==
+															4385 text 
+															4386 text 0
+															4387 text 
+															4388 text or
+															4389 text 
+															4390 text i
+															4391 text 
+															4392 text ==
+															4393 text 
+															4394 text nx
+															4395 text 
+															4396 text -
+															4397 text 
+															4398 text 1
+															4399 text 
+															4400 text or
+															4401 text 
+															4402 text j
+															4403 text 
+															4404 text ==
+															4405 text 
+															4406 text 0
+															4407 text 
+															4408 text or
+															4409 text 
+															4410 text j
+															4411 text 
+															4412 text ==
+															4413 text 
+															4414 text ny
+															4415 text 
+															4416 text -
+															4417 text 
+															4418 text 1
+															4419 text )
+															4420 text 
+															4421 text and
+															4422 text 
+															4423 text not
+															4424 text (
+															4425 text i
+															4426 text 
+															4427 text in
+															4428 text (
+															4429 text 0
+															4430 text ,
+															4431 text nx
+															4432 text 
+															4433 text -
+															4434 text 
+															4435 text 1
+															4436 text )
+															4437 text and
+															4438 text 
+															4439 text j
+															4440 text 
+															4441 text in
+															4442 text (
+															4443 text 0
+															4444 text ,
+															4445 text ny
+															4446 text 
+															4447 text -
+															4448 text 
+															4449 text 1
+															4450 text ))
+															4451 text ]
+												4452 button Copy
+													4453 image (graphic)
+												4454 button Rate response ID: radix-_r_lr_
+												4455 button (toggle button) Read aloud
+												4456 button Share
+												4457 button More actions ID: radix-_r_m1_
+												4458 button Convert to PDF
+												3619 group
+												3620 text ChatGPT can make mistakes. Check important info.
+												3775 button Scroll to bottom
+												3621 text (heading) Latest response
+												3622 status bar (status)
+												3623 group
+													3624 group
+														3625 group
+															3626 button Add files and more
+															3627 text field (edit) (settable, string) Ask ChatGPT Value: Ask ChatGPT
+																4459 text Ask ChatGPT
+																3629 text 
+															3630 group
+																3631 button Select ChatGPT model ID: radix-_r_ko_
+															3632 button Dictate
+															4460 button Start Voice
+															3635 status bar (status)
+										3451 status bar (status) ID: DndLiveRegion-2
+										2148 group
+										2150 status bar (status)
+										2151 status bar (status) ID: DndLiveRegion-1
+										2405 status bar (status)
+											3418 text Response complete
+										3636 group
+										3452 group
+										3637 status bar (status)
+											4461 text Response complete
+								307 document Value: chrome://newtab-footer/ ID: RootWebArea
+									308 image (graphic) ID: baseSvg
+									309 hyperlink (link) Managed by your organisation
+									310 button (toggle button) Customise Chrome Description: Customise this page ID: customizeButton
+										311 image (graphic) ID: baseSvg
+										312 text Customise Chrome
+							313 pane (region)
+						314 pane (region)
+							315 pane (region)
+								316 button Tab search
+							317 pane (region) ID: view_21
+								318 tab
+									319 tab item (selectable) Mail - Saahil Doshi - Outlook - Memory usage - 302 MB ID: view_20
+										320 button Close
+									321 tab item (selectable) Mail - Saahil Doshi - Outlook ID: view_20
+										322 button Close
+									323 tab item (selectable) Nov. 9-13.docx ID: view_20
+										324 button Close
+									325 tab item (selectable) saahildoshi/Young-Dawgs - Memory usage - 427 MB ID: view_20
+										326 button Close
+									327 tab item (selectable) Create Generator Code - Memory usage - 429 MB ID: view_20
+										328 button Close
+								329 pane (region)
+							330 button New tab
+							331 pane (region)
+							332 pane (region)
+								335 button Open Gemini in Chrome
+								336 pane (region)
+						337 pane (region)
+
+Document text: ```
+Ask ChatGPT
+```
+
+Focused element: 17 text field (edit) (settable, string) Address and search bar Description: Ask Google or type a URL Value: chatgpt.com/c/6afbb82e-2680-83ea-8d10-0ecbe2042751 ID: view_1012
+
+Document text:
+Ask ChatGPT

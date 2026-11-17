@@ -1,0 +1,312 @@
+text (heading) ChatGPT said:
+												4737 text Python
+												4738 button (toggle button) Enable word wrap
+												5169 button Copy code
+												4740 button Run code
+												4741 group
+													5170 group
+													5171 group
+														5172 text field (edit) (settable, string) Edit code Value: import numpy as np from scipy import ndimage as ndi from scipy.special import ndtri from scipy.spatial.distance import cdist from skimage.measure import regionprops SIZE = 256 TARGET_REINFORCEMENT = 20731 N_COMPLETE = 57 D_MEAN = 15.706688295952011 D_STD = 8.893419110493891 MAX_CANDIDATES = 8 LAGS = (8, 16, 32, 64) WIDTHS = (1, 8, 16, 32) MORPHOLOGY_BOUNDS = { "all_observed.area_fraction_aspect_gt3": (0, 0.27), "all_observed.area_fraction_aspect_gt4": (0, 0.16), "all_observed.area_weighted_aspect": (1, 2.59), "all_observed.area_weighted_aspect_p95": (1, 6.13), "all_observed.axial_order": (0, 0.59), "all_observed.defined_aspect_area_fraction": (0.995, 1), "gap_dilation.2.largest_fraction": (0, 0.59), "limited_gap_run_x": (0, 0.60), "limited_gap_run_y": (0, 0.56), "long_range_abs_S2_difference": (0, 0.04), "nearest_neighbor_cv": (0.10, 0.69), "strips.1.column_max": (0, 0.79), "strips.1.column_std": (0, 0.18), "strips.1.row_max": (0, 0.78), "strips.1.row_std": (0, 0.20), "strips.8.column_max": (0, 0.74), "strips.8.column_std": (0, 0.17), "strips.8.row_max": (0, 0.75),
+															5173 text import
+															5174 text 
+															5175 text numpy
+															5176 text 
+															5177 text as
+															5178 text 
+															5179 text np
+															5180 text from
+															5181 text 
+															5182 text scipy
+															5183 text 
+															5184 text import
+															5185 text 
+															5186 text ndimage
+															5187 text 
+															5188 text as
+															5189 text 
+															5190 text ndi
+															5191 text from
+															5192 text 
+															5193 text scipy
+															5194 text .
+															5195 text special
+															5196 text 
+															5197 text import
+															5198 text 
+															5199 text ndtri
+															5200 text from
+															5201 text 
+															5202 text scipy
+															5203 text .
+															5204 text spatial
+															5205 text .
+															5206 text distance
+															5207 text 
+															5208 text import
+															5209 text 
+															5210 text cdist
+															5211 text from
+															5212 text 
+															5213 text skimage
+															5214 text .
+															5215 text measure
+															5216 text 
+															5217 text import
+															5218 text 
+															5219 text regionprops
+															5220 text SIZE
+															5221 text 
+															5222 text =
+															5223 text 
+															5224 text 256
+															5225 text TARGET_REINFORCEMENT
+															5226 text 
+															5227 text =
+															5228 text 
+															5229 text 20731
+															5230 text N_COMPLETE
+															5231 text 
+															5232 text =
+															5233 text 
+															5234 text 57
+															5235 text D_MEAN
+															5236 text 
+															5237 text =
+															5238 text 
+															5239 text 15.706688295952011
+															5240 text D_STD
+															5241 text 
+															5242 text =
+															5243 text 
+															5244 text 8.893419110493891
+															5245 text MAX_CANDIDATES
+															5246 text 
+															5247 text =
+															5248 text 
+															5249 text 8
+															5250 text LAGS
+															5251 text 
+															5252 text =
+															5253 text (
+															5254 text 8
+															5255 text ,
+															5256 text 16
+															5257 text ,
+															5258 text 32
+															5259 text ,
+															5260 text 64
+															5261 text )
+															5262 text WIDTHS
+															5263 text 
+															5264 text =
+															5265 text (
+															5266 text 1
+															5267 text ,
+															5268 text 8
+															5269 text ,
+															5270 text 16
+															5271 text ,
+															5272 text 32
+															5273 text )
+															5274 text MORPHOLOGY_BOUNDS
+															5275 text 
+															5276 text =
+															5277 text {
+															5278 text 
+															5279 text "all_observed.area_fraction_aspect_gt3"
+															5280 text : (
+															5281 text 0
+															5282 text ,
+															5283 text 0.27
+															5284 text ),
+															5285 text 
+															5286 text "all_observed.area_fraction_aspect_gt4"
+															5287 text : (
+															5288 text 0
+															5289 text ,
+															5290 text 0.16
+															5291 text ),
+															5292 text 
+															5293 text "all_observed.area_weighted_aspect"
+															5294 text : (
+															5295 text 1
+															5296 text ,
+															5297 text 2.59
+															5298 text ),
+															5299 text 
+															5300 text "all_observed.area_weighted_aspect_p95"
+															5301 text : (
+															5302 text 1
+															5303 text ,
+															5304 text 6.13
+															5305 text ),
+															5306 text 
+															5307 text "all_observed.axial_order"
+															5308 text : (
+															5309 text 0
+															5310 text ,
+															5311 text 0.59
+															5312 text ),
+															5313 text 
+															5314 text "all_observed.defined_aspect_area_fraction"
+															5315 text : (
+															5316 text 0.995
+															5317 text ,
+															5318 text 1
+															5319 text ),
+															5320 text 
+															5321 text "gap_dilation.2.largest_fraction"
+															5322 text : (
+															5323 text 0
+															5324 text ,
+															5325 text 0.59
+															5326 text ),
+															5327 text 
+															5328 text "limited_gap_run_x"
+															5329 text : (
+															5330 text 0
+															5331 text ,
+															5332 text 0.60
+															5333 text ),
+															5334 text 
+															5335 text "limited_gap_run_y"
+															5336 text : (
+															5337 text 0
+															5338 text ,
+															5339 text 0.56
+															5340 text ),
+															5341 text 
+															5342 text "long_range_abs_S2_difference"
+															5343 text : (
+															5344 text 0
+															5345 text ,
+															5346 text 0.04
+															5347 text ),
+															5348 text 
+															5349 text "nearest_neighbor_cv"
+															5350 text : (
+															5351 text 0.10
+															5352 text ,
+															5353 text 0.69
+															5354 text ),
+															5355 text 
+															5356 text "strips.1.column_max"
+															5357 text : (
+															5358 text 0
+															5359 text ,
+															5360 text 0.79
+															5361 text ),
+															5362 text 
+															5363 text "strips.1.column_std"
+															5364 text : (
+															5365 text 0
+															5366 text ,
+															5367 text 0.18
+															5368 text ),
+															5369 text 
+															5370 text "strips.1.row_max"
+															5371 text : (
+															5372 text 0
+															5373 text ,
+															5374 text 0.78
+															5375 text ),
+															5376 text 
+															5377 text "strips.1.row_std"
+															5378 text : (
+															5379 text 0
+															5380 text ,
+															5381 text 0.20
+															5382 text ),
+															5383 text 
+															5384 text "strips.8.column_max"
+															5385 text : (
+															5386 text 0
+															5387 text ,
+															5388 text 0.74
+															5389 text ),
+															5390 text 
+															5391 text "strips.8.column_std"
+															5392 text : (
+															5393 text 0
+															5394 text ,
+															5395 text 0.17
+															5396 text ),
+															5397 text 
+															5398 text "strips.8.row_max"
+															5399 text : (
+															5400 text 0
+															5401 text ,
+															5402 text 0.75
+															5403 text ),
+												5404 button Copy
+													5405 image (graphic)
+												5406 button Rate response ID: radix-_r_r3_
+												5407 button (toggle button) Read aloud
+												5408 button Share
+												5409 button More actions ID: radix-_r_r9_
+												5410 button Convert to PDF
+												4669 group
+												4670 text ChatGPT can make mistakes. Check important info.
+												4796 button Scroll to bottom
+												4671 text (heading) Latest response
+												4672 status bar (status)
+												4673 group
+													4674 group
+														4675 group
+															4676 button Add files and more
+															4677 text field (edit) (settable, string) Ask ChatGPT Value: Ask ChatGPT
+																5411 text Ask ChatGPT
+																4679 text 
+															4680 group
+																4681 button Select ChatGPT model ID: radix-_r_pv_
+															4682 button Dictate
+															5412 button Start Voice
+															4685 status bar (status)
+										4501 status bar (status) ID: DndLiveRegion-3
+										2148 group
+										2150 status bar (status)
+										2151 status bar (status) ID: DndLiveRegion-1
+										4686 group
+										3637 status bar (status)
+											4461 text Response complete
+										4502 group
+										4687 status bar (status)
+											5413 text Response complete
+								307 document Value: chrome://newtab-footer/ ID: RootWebArea
+									308 image (graphic) ID: baseSvg
+									309 hyperlink (link) Managed by your organisation
+									310 button (toggle button) Customise Chrome Description: Customise this page ID: customizeButton
+										311 image (graphic) ID: baseSvg
+										312 text Customise Chrome
+							313 pane (region)
+						314 pane (region)
+							315 pane (region)
+								316 button Tab search
+							317 pane (region) ID: view_21
+								318 tab
+									319 tab item (selectable) Mail - Saahil Doshi - Outlook - Memory usage - 302 MB ID: view_20
+										320 button Close
+									321 tab item (selectable) Mail - Saahil Doshi - Outlook ID: view_20
+										322 button Close
+									323 tab item (selectable) Nov. 9-13.docx ID: view_20
+										324 button Close
+									325 tab item (selectable) saahildoshi/Young-Dawgs - Memory usage - 427 MB ID: view_20
+										326 button Close
+									327 tab item (selectable) Write Microstructure Generator - Memory usage - 456 MB ID: view_20
+										328 button Close
+								329 pane (region)
+							330 button New tab
+							331 pane (region)
+							332 pane (region)
+								335 button Open Gemini in Chrome
+								336 pane (region)
+						337 pane (region)
+
+Document text: ```
+Ask ChatGPT
+```
+
+Focused element: 17 text field (edit) (settable, string) Address and search bar Description: Ask Google or type a URL Value: chatgpt.com/c/6afbbaca-a08c-83ea-8a91-1d7ee30a3e9e ID: view_1012
+
+Document text:
+Ask ChatGPT

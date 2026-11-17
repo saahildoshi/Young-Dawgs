@@ -1,0 +1,631 @@
+
+import numpy as np
+from scipy import ndimage as ndi
+from scipy.spatial import cKDTree
+from skimage.measure import regionprops
+
+SIZE = 256
+TARGET = 20731
+MAX_CANDIDATES = 8
+TERRITORY_GAP = 4.8
+
+STRIP_BOUNDS = {
+    1: (0.79, 0.18, 0.78, 0.20),
+    8: (0.74, 0.17, 0.75, 0.19),
+    16: (0.71, 0.16, 0.69, 0.17),
+    32: (0.64, 0.14, 0.63, 0.16),
+}
+
+
+def _centers(rng):
+    """Irregular, incomplete stratification without axis-aligned lanes."""
+    nx, ny = 11, 10
+    sx, sy = SIZE / nx, SIZE / ny
+
+    interior = [
+        (i, j)
+        for j in range(1, ny - 1)
+        for i in range(1, nx - 1)
+    ]
+    boundary = [
+        (i, j)
+        for j in range(ny)
+        for i in range(nx)
+        if (i == 0 or i == nx - 1 or j == 0 or j == ny - 1)
+        and not (i in (0, nx - 1) and j in (0, ny - 1))
+    ]
+
+    rng.shuffle(interior)
+    rng.shuffle(boundary)
+
+    nc = int(rng.integers(55, 61))
+    nb = int(rng.integers(20, 25))
+
+    selected = [(i, j, False) for i, j in interior[:nc]]
+    selected += [(i, j, True) for i, j in boundary[:nb]]
+    rng.shuffle(selected)
+
+    centers = []
+    censored = []
+
+    for i, j, edge in selected:
+        x = (i + 0.5) * sx
+        y = (j + 0.5) * sy
+
+        if edge:
+            if i == 0:
+                x = rng.uniform(1.4, 4.0)
+                y += rng.normal(0, 4.0)
+            elif i == nx - 1:
+                x = SIZE - 1 - rng.uniform(1.4, 4.0)
+                y += rng.normal(0, 4.0)
+            elif j == 0:
+                y = rng.uniform(1.4, 4.0)
+                x += rng.normal(0, 4.0)
+            else:
+                y = SIZE - 1 - rng.uniform(1.4, 4.0)
+                x += rng.normal(0, 4.0)
+        else:
+            x += rng.normal(0, 5.7)
+            y += rng.normal(0, 6.0)
+            x = np.clip(x, 23, SIZE - 24)
+            y = np.clip(y, 24, SIZE - 25)
+
+        centers.append((y, x))
+        censored.append(edge)
+
+    return np.asarray(centers, dtype=float), np.asarray(censored, dtype=bool)
+
+
+def _territories(centers):
+    """Finite nearest-seed territories with a variable, nonperiodic moat."""
+    yy, xx = np.indices((SIZE, SIZE))
+    pixels = np.column_stack((yy.ravel(), xx.ravel()))
+    distances, indices = cKDTree(centers).query(pixels, k=2)
+
+    ownership = indices[:, 0].reshape(SIZE, SIZE)
+    clearance = (distances[:, 1] - distances[:, 0]).reshape(
+        SIZE, SIZE
+    )
+
+    permitted = clearance >= TERRITORY_GAP
+    capacity = np.bincount(
+        ownership[permitted],
+        minlength=len(centers)
+    )
+
+    return ownership, permitted, capacity
+
+
+def _allocate_areas(rng, capacity, censored):
+    """Allocate exactly TARGET pixels before constructing any particles."""
+    n = len(capacity)
+
+    weights = np.exp(rng.normal(0, 0.69, n))
+    weights[censored] = (
+        1.34 * np.exp(rng.normal(0, 0.43, int(censored.sum())))
+    )
+
+    minimum = np.where(censored, 80, 48)
+    maximum = np.minimum(
+        np.floor(0.92 * capacity).astype(int),
+        np.where(censored, 680, 1100)
+    )
+
+    if np.any(maximum < minimum):
+        raise RuntimeError("Insufficient territory capacity")
+
+    if minimum.sum() > TARGET or maximum.sum() < TARGET:
+        raise RuntimeError("Exact composition is infeasible")
+
+    lower, upper = 0.0, 1.0
+
+    while np.clip(weights * upper, minimum, maximum).sum() < TARGET:
+        upper *= 2.0
+
+    for _ in range(65):
+        middle = (lower + upper) / 2
+        total = np.clip(weights * middle, minimum, maximum).sum()
+
+        if total < TARGET:
+            lower = middle
+        else:
+            upper = middle
+
+    floating = np.clip(
+        weights * (lower + upper) / 2,
+        minimum,
+        maximum
+    )
+
+    areas = np.floor(floating).astype(int)
+    difference = TARGET - int(areas.sum())
+
+    if difference > 0:
+        order = np.argsort(-(floating - areas), kind="stable")
+        for i in order:
+            if difference == 0:
+                break
+            if areas[i] < maximum[i]:
+                areas[i] += 1
+                difference -= 1
+
+    elif difference < 0:
+        order = np.argsort(floating - areas, kind="stable")
+        for i in order:
+            if difference == 0:
+                break
+            if areas[i] > minimum[i]:
+                areas[i] -= 1
+                difference += 1
+
+    if difference != 0 or areas.sum() != TARGET:
+        raise RuntimeError("Exact area allocation failed")
+
+    return areas
+
+
+def _particle_scores(rng, ys, xs, center):
+    """Anisotropic, angular stochastic radial geometry."""
+    dy = ys.astype(float) - center[0]
+    dx = xs.astype(float) - center[1]
+
+    theta = rng.uniform(0, np.pi)
+    ct, st = np.cos(theta), np.sin(theta)
+
+    u = dx * ct + dy * st
+    v = -dx * st + dy * ct
+
+    aspect = float(
+        np.clip(
+            rng.lognormal(np.log(1.55), 0.25),
+            1.04,
+            2.48
+        )
+    )
+
+    root = np.sqrt(aspect)
+    u /= root
+    v *= root
+
+    angle = np.mod(np.arctan2(v, u), 2 * np.pi)
+
+    nv = int(rng.integers(14, 23))
+    noise = rng.normal(0, 0.26, nv)
+
+    radial = (
+        1.0
+        + 0.69 * noise
+        + 0.145 * np.roll(noise, 1)
+        + 0.145 * np.roll(noise, -1)
+    )
+
+    if rng.random() < 0.68:
+        for _ in range(int(rng.integers(1, 4))):
+            k = int(rng.integers(nv))
+            radial[k] *= rng.uniform(0.62, 0.88)
+
+    radial = np.clip(radial, 0.51, 1.47)
+
+    t = angle * (nv / (2 * np.pi))
+    k = np.floor(t).astype(int)
+    f = t - k
+
+    local_radius = (
+        radial[k % nv] * (1.0 - f)
+        + radial[(k + 1) % nv] * f
+    )
+
+    distance = np.hypot(u, v)
+    scores = distance / np.maximum(local_radius, 0.45)
+
+    phase1, phase2 = rng.uniform(0, 2 * np.pi, 2)
+    modulation = (
+        1.0
+        + 0.040 * np.sin(0.57 * dx + 0.37 * dy + phase1)
+        + 0.035 * np.cos(0.32 * dx - 0.59 * dy + phase2)
+    )
+
+    return scores * modulation
+
+
+def _connected_piece(ys, xs, scores, target):
+    """Select an exact-size four-connected particle."""
+    if len(ys) < target:
+        raise RuntimeError("Particle territory exhausted")
+
+    y0, y1 = int(ys.min()), int(ys.max()) + 1
+    x0, x1 = int(xs.min()), int(xs.max()) + 1
+
+    ly = ys - y0
+    lx = xs - x0
+
+    shape = (y1 - y0, x1 - x0)
+    piece = np.zeros(shape, dtype=bool)
+
+    order = np.argsort(scores, kind="stable")
+    chosen = order[:target]
+    piece[ly[chosen], lx[chosen]] = True
+
+    labels, count = ndi.label(piece)
+
+    if count > 1:
+        sizes = np.bincount(labels.ravel())
+        sizes[0] = 0
+        main = int(np.argmax(sizes))
+        piece = labels == main
+
+        allowed = np.zeros(shape, dtype=bool)
+        allowed[ly, lx] = True
+
+        costs = np.full(shape, np.inf, dtype=float)
+        costs[ly, lx] = scores
+
+        structure = ndi.generate_binary_structure(2, 1)
+        remaining = target - int(piece.sum())
+
+        for _ in range(remaining):
+            frontier = (
+                ndi.binary_dilation(piece, structure=structure)
+                & allowed
+                & ~piece
+            )
+
+            if not frontier.any():
+                raise RuntimeError("Connected shape repair exhausted")
+
+            index = int(np.argmin(np.where(frontier, costs, np.inf)))
+            piece.ravel()[index] = True
+
+    if int(piece.sum()) != target:
+        raise RuntimeError("Particle area mismatch")
+
+    if ndi.label(piece)[1] != 1:
+        raise RuntimeError("Particle disconnected")
+
+    return y0, y1, x0, x1, piece
+
+
+def _candidate(rng):
+    centers, censored = _centers(rng)
+    owners, permitted, capacity = _territories(centers)
+    areas = _allocate_areas(rng, capacity, censored)
+
+    canvas = np.zeros((SIZE, SIZE), dtype=bool)
+
+    for i, area in enumerate(areas):
+        ys, xs = np.nonzero(permitted & (owners == i))
+
+        if len(ys) < int(area):
+            raise RuntimeError("Insufficient admissible particle pixels")
+
+        scores = _particle_scores(rng, ys, xs, centers[i])
+        y0, y1, x0, x1, piece = _connected_piece(
+            ys, xs, scores, int(area)
+        )
+
+        if censored[i]:
+            touches = (
+                (y0 == 0 and piece[0].any())
+                or (y1 == SIZE and piece[-1].any())
+                or (x0 == 0 and piece[:, 0].any())
+                or (x1 == SIZE and piece[:, -1].any())
+            )
+
+            if not touches:
+                raise RuntimeError("Boundary feature was not censored")
+
+        canvas[y0:y1, x0:x1] |= piece
+
+    if int(canvas.sum()) != TARGET:
+        raise RuntimeError("Final reinforcement count mismatch")
+
+    return canvas
+
+
+def _topology(mask, connectivity):
+    structure = ndi.generate_binary_structure(2, connectivity)
+    labels, count = ndi.label(mask, structure=structure)
+
+    sizes = np.bincount(labels.ravel())[1:]
+    area = int(mask.sum())
+
+    def shared(a, b):
+        common = np.intersect1d(np.unique(a), np.unique(b))
+        return bool(np.any(common != 0))
+
+    return {
+        "count": count,
+        "largest": (
+            float(sizes.max() / area) if area and len(sizes) else 0.0
+        ),
+        "spans_x": shared(labels[:, 0], labels[:, -1]),
+        "spans_y": shared(labels[0], labels[-1]),
+        "singleton": (
+            float(sizes[sizes == 1].sum() / area) if area else 0.0
+        ),
+    }
+
+
+def _shapes(regions):
+    """Covariance-eigenvalue aspects; image x right and y up."""
+    areas = []
+    aspects = []
+    orientations = []
+    anisotropies = []
+
+    total = sum(int(r.area) for r in regions)
+
+    for r in regions:
+        xy = r.coords[:, [1, 0]].astype(float)
+        xy[:, 1] *= -1
+        xy -= xy.mean(axis=0)
+
+        covariance = xy.T @ xy / len(xy)
+        values, vectors = np.linalg.eigh(covariance)
+
+        if values[0] <= 1e-12:
+            continue
+
+        aspect = float(np.sqrt(values[1] / values[0]))
+        anisotropy = float(
+            (values[1] - values[0]) / max(values.sum(), 1e-12)
+        )
+
+        vector = vectors[:, 1]
+        angle = float(np.arctan2(vector[1], vector[0]) % np.pi)
+
+        areas.append(float(r.area))
+        aspects.append(aspect)
+        anisotropies.append(anisotropy)
+        orientations.append(angle)
+
+    if not areas or total <= 0:
+        return None
+
+    areas = np.asarray(areas)
+    aspects = np.asarray(aspects)
+    anisotropies = np.asarray(anisotropies)
+    orientations = np.asarray(orientations)
+
+    weights = areas * anisotropies * (anisotropies >= 0.05)
+
+    if weights.sum() <= 1e-12:
+        return None
+
+    order = np.argsort(aspects, kind="stable")
+    ordered_areas = areas[order]
+    ordered_aspects = aspects[order]
+
+    position = np.searchsorted(
+        np.cumsum(ordered_areas),
+        0.95 * ordered_areas.sum(),
+        side="left"
+    )
+
+    axial = np.sum(weights * np.exp(2j * orientations)) / weights.sum()
+
+    return {
+        "defined": float(areas.sum() / total),
+        "mean": float(aspects.mean()),
+        "weighted": float(np.average(aspects, weights=areas)),
+        "p95": float(ordered_aspects[position]),
+        "gt3": float(areas[aspects > 3].sum() / total),
+        "gt4": float(areas[aspects > 4].sum() / total),
+        "order": float(abs(axial)),
+    }
+
+
+def _limited_run(line):
+    occupied = np.flatnonzero(line)
+
+    if not len(occupied):
+        return 0
+
+    breaks = np.flatnonzero(np.diff(occupied) > 3)
+    starts = np.r_[0, breaks + 1]
+    ends = np.r_[breaks, len(occupied) - 1]
+
+    return int(
+        np.max(occupied[ends] - occupied[starts] + 1)
+    )
+
+
+def _finite_s2_difference(a):
+    differences = []
+
+    for lag in (16, 32, 64):
+        sx = np.mean(a[:, :-lag] & a[:, lag:])
+        sy = np.mean(a[:-lag, :] & a[lag:, :])
+        differences.append(abs(float(sy - sx)))
+
+    return float(np.mean(differences))
+
+
+def _strip_ok(a):
+    columns = a.mean(axis=0)
+    rows = a.mean(axis=1)
+
+    for width, bounds in STRIP_BOUNDS.items():
+        kernel = np.ones(width, dtype=float) / width
+
+        col = np.convolve(columns, kernel, mode="valid")
+        row = np.convolve(rows, kernel, mode="valid")
+
+        cmax, cstd, rmax, rstd = bounds
+
+        if (
+            col.max() > cmax
+            or col.std() > cstd
+            or row.max() > rmax
+            or row.std() > rstd
+        ):
+            return False
+
+    return True
+
+
+def _structural_ok(a):
+    if a.shape != (SIZE, SIZE):
+        return False
+
+    if int(a.sum()) != TARGET:
+        return False
+
+    if int(a.size - a.sum()) != 44805:
+        return False
+
+    matrix = _topology(~a, 1)
+
+    if (
+        matrix["largest"] < 0.95
+        or not matrix["spans_x"]
+        or not matrix["spans_y"]
+    ):
+        return False
+
+    for connectivity in (1, 2):
+        t = _topology(a, connectivity)
+
+        if (
+            t["spans_x"]
+            or t["spans_y"]
+            or t["largest"] > 0.15
+        ):
+            return False
+
+        if connectivity == 1 and t["singleton"] > 0.001:
+            return False
+
+    labels, count = ndi.label(a)
+    regions = regionprops(labels)
+
+    edge_labels = np.unique(
+        np.concatenate(
+            (
+                labels[0, :],
+                labels[-1, :],
+                labels[:, 0],
+                labels[:, -1],
+            )
+        )
+    )
+    edge_labels = set(int(v) for v in edge_labels if v != 0)
+
+    complete = [r for r in regions if r.label not in edge_labels]
+
+    if not (
+        50 <= count <= 125
+        and 40 <= len(complete) <= 75
+        and 5 <= len(edge_labels) <= 50
+    ):
+        return False
+
+    diameters = np.array(
+        [r.equivalent_diameter_area for r in complete]
+    )
+
+    if not 12 <= float(diameters.mean()) <= 20:
+        return False
+
+    complete_aspects = [
+        r.axis_major_length / r.axis_minor_length
+        for r in complete
+        if r.axis_minor_length > 0
+    ]
+
+    if not complete_aspects:
+        return False
+
+    if not 1.2 <= float(np.mean(complete_aspects)) <= 3.0:
+        return False
+
+    shapes = _shapes(regions)
+
+    if shapes is None:
+        return False
+
+    if (
+        shapes["defined"] < 0.995
+        or shapes["gt3"] > 0.27
+        or shapes["gt4"] > 0.16
+        or not 1 <= shapes["weighted"] <= 2.59
+        or not 1 <= shapes["p95"] <= 6.13
+        or shapes["order"] > 0.59
+    ):
+        return False
+
+    centers = np.asarray(
+        [r.centroid for r in complete],
+        dtype=float
+    )
+
+    distances, _ = cKDTree(centers).query(centers, k=2)
+    nearest = distances[:, 1]
+    nearest_cv = float(nearest.std() / nearest.mean())
+
+    if not 0.1 <= nearest_cv <= 0.69:
+        return False
+
+    if not _strip_ok(a):
+        return False
+
+    if _finite_s2_difference(a) > 0.04:
+        return False
+
+    longest_x = max(_limited_run(row) for row in a) / SIZE
+    longest_y = max(_limited_run(col) for col in a.T) / SIZE
+
+    if longest_x > 0.60 or longest_y > 0.56:
+        return False
+
+    yy, xx = np.mgrid[-2:3, -2:3]
+    disk = (xx * xx + yy * yy) <= 4
+
+    dilated = ndi.binary_dilation(
+        a, structure=disk, border_value=0
+    )
+
+    dilation_topology = _topology(dilated, 2)
+
+    if (
+        dilation_topology["largest"] > 0.59
+        or dilation_topology["spans_x"]
+        or dilation_topology["spans_y"]
+    ):
+        return False
+
+    return True
+
+
+def generate_microstructure(seed, parameters={}):
+    """
+    Produce one stochastic P3 realization.
+
+    Output:
+        (256, 256) uint8 array
+        1: matrix-like solid
+        5: provisional reinforcement-like solid
+
+    Geometry is finite and nonperiodic. No mechanical simulation,
+    external reference, or measured response is used.
+    """
+    rng = np.random.default_rng(seed)
+
+    for _ in range(MAX_CANDIDATES):
+        try:
+            reinforcement = _candidate(rng)
+        except RuntimeError:
+            continue
+
+        if _structural_ok(reinforcement):
+            result = np.where(
+                reinforcement, 5, 1
+            ).astype(np.uint8)
+
+            return result
+
+    raise RuntimeError(
+        "No structurally feasible P3 microstructure "
+        "within eight bounded geometry candidates"
+    )
