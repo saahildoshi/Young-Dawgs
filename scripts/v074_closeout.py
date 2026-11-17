@@ -40,7 +40,7 @@ def audit():
     tests={name:xml_counts(paths) for name,paths in {
         'active':[RUN/'tests/final_active_software.xml'],
         'archived_replays':sorted((RUN/'tests/archived_replay').glob('*.xml')),
-        'licensed_v074':[RUN/'tests/final_native_checks.xml'],
+        'licensed_current_heldout_raw':[RUN/'tests/final_native_checks.xml'],
         'fabrication':[RUN/'tests/final_STL_checks.xml'],
     }.items()}
     assert all(v['tests']>0 and v['failures']==v['errors']==v['skipped']==0 for v in tests.values()),tests
@@ -82,7 +82,9 @@ def audit():
         'available_critical_hashes_verified':hashes,'unavailable_critical_files':unavailable,
         'all_recorded_raw_files_available':not unavailable,
         'limitation':'Earlier raw ANSYS folders absent; exact cause/removal time unknown. Retained immutable records/curves and prior passed checks do not replace a current raw-file hash verification.'})
-    write(RUN/'audit/FINAL_INTEGRITY.json',{'checked_utc':now(),'passed':True,
+    write(RUN/'audit/FINAL_INTEGRITY.json',{'checked_utc':now(),'passed':not unavailable,
+        'available_and_tracked_checks_passed':True,
+        'status':'HOLD_EARLIER_RAW_ANSYS_PRESERVATION' if unavailable else 'PASS',
         'passed_scope':'Tracked protected files, frozen inputs, current held-out raw evidence and delivered STL/toolpaths; earlier raw preservation has a separate HOLD',
         'protected_files_unchanged':len(protected),'previous_package_files_verified':len(previous),
         'critical_native_hashes_verified':hashes,'all_sixteen_sources_and_prompts_unchanged':True,
@@ -95,7 +97,7 @@ def audit():
         'composite_mesh_sha256':sha(REPO/'metamaterial_eval/simulation/composite_elastic.py'),
         'three_phase_mesh_sha256':sha(REPO/'metamaterial_eval/simulation/three_phase_elastic.py'),
         'descriptor_sha256':sha(REPO/'metamaterial_eval/composites/morphology_v073.py')})
-    print('FINAL INTEGRITY PASS',perf['native_processes'],tests,flush=True)
+    print('TRACKED/CURRENT INTEGRITY PASS; EARLIER RAW', 'HOLD' if unavailable else 'PASS',perf['native_processes'],tests,flush=True)
 
 
 def doc(name,text):
@@ -240,7 +242,7 @@ def reports():
         f"{perf['total_supervised_native_seconds']:.3f} supervised native seconds total; source {perf['source_solve_seconds']:.3f} s, readback {perf['readback_seconds']:.3f} s. Wall-clock workflow time is different.",
         f"Peak native process-tree RSS {perf['peak_process_tree_RSS_bytes']/2**30:.3f} GiB; minimum observed available RAM {perf['minimum_available_RAM_bytes']/2**30:.3f} GiB; sampled, not an exact instantaneous maximum.",
         str(integrity['test_results'])+'; detailed validation and retained failed initial root-collection invocation are documented.',
-        f"All {integrity['test_results']['licensed_v074']['tests']} final current held-out raw-native checks passed, including field, energy, reactions, constraints, connectivity and independent reopening; {integrity['critical_native_hashes_verified']} currently available critical hashes authenticate. Earlier raw-file revalidation is unavailable, and the discovered missing-file failures remain recorded.",
+        f"All {integrity['test_results']['licensed_current_heldout_raw']['tests']} final current held-out raw-native checks passed, including field, energy, reactions, constraints, connectivity and independent reopening; {integrity['critical_native_hashes_verified']} currently available critical hashes authenticate. Earlier raw-file revalidation is unavailable, and the discovered missing-file failures remain recorded.",
         'Versioned run evidence in experiments/pipeline_v0.7.4/run_001/, required reports in docs/pipeline_v0.7.4/, presentation assets in presentation_assets/v0.7.4/, additive scripts and focused tests. See final package manifest for exact files/hashes.',
         'Full hashes and messages in COMMITS.md; final sealing commit reported in delivery because a commit cannot contain its own hash.',
         'Final clean status is verified after the sealing commit and reported in delivery; the package records the preceding staged delivery state.',
