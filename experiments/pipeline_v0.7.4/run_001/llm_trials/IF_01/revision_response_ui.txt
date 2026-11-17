@@ -1,0 +1,293 @@
+text (heading) ChatGPT said:
+												17595 text Python
+												17596 button (toggle button) Enable word wrap
+												17597 button Copy code
+												17598 button Run code
+												17599 group
+													17600 group
+													17601 group
+														17602 text field (edit) (settable, string) Edit code Value: import numpy as np from scipy import ndimage as ndi from scipy.special import ndtri from scipy.spatial.distance import cdist from skimage.draw import polygon from skimage.measure import regionprops SIZE = 256 TARGET_PIXELS = 20731 N_COMPLETE = 57 N_BOUNDARY = 22 D_MEAN = 15.706688295952011 D_STD = 8.893419110493891 MAX_CANDIDATES = 8 # Geometry-only revision: introduce a moderate horizontal orientation # preference while retaining isotropic stochastic variation. # The preference is intentionally weaker than full horizontal alignment. HORIZONTAL_MIX = 0.30 HORIZONTAL_KAPPA = 1.25 MORPHOLOGY_BOUNDS = { "all_observed.area_fraction_aspect_gt3": (0, 0.27), "all_observed.area_fraction_aspect_gt4": (0, 0.16), "all_observed.area_weighted_aspect": (1, 2.59), "all_observed.area_weighted_aspect_p95": (1, 6.13), "all_observed.axial_order": (0, 0.59), "all_observed.defined_aspect_area_fraction": (0.995, 1), "gap_dilation.2.largest_fraction": (0, 0.59), "limited_gap_run_x": (0, 0.60), "limited_gap_run_y": (0, 0.56), "long_range_abs_S2_difference": (0, 0.04), "nearest_neighbor_cv": (0.10, 0.69), "strips.1.column_max": (0, 0.79), "strips.1.column_std": (0, 0.18), "strips.1.row_max": (0, 0.78),
+															17603 text import
+															17604 text 
+															17605 text numpy
+															17606 text 
+															17607 text as
+															17608 text 
+															17609 text np
+															17610 text from
+															17611 text 
+															17612 text scipy
+															17613 text 
+															17614 text import
+															17615 text 
+															17616 text ndimage
+															17617 text 
+															17618 text as
+															17619 text 
+															17620 text ndi
+															17621 text from
+															17622 text 
+															17623 text scipy
+															17624 text .
+															17625 text special
+															17626 text 
+															17627 text import
+															17628 text 
+															17629 text ndtri
+															17630 text from
+															17631 text 
+															17632 text scipy
+															17633 text .
+															17634 text spatial
+															17635 text .
+															17636 text distance
+															17637 text 
+															17638 text import
+															17639 text 
+															17640 text cdist
+															17641 text from
+															17642 text 
+															17643 text skimage
+															17644 text .
+															17645 text draw
+															17646 text 
+															17647 text import
+															17648 text 
+															17649 text polygon
+															17650 text from
+															17651 text 
+															17652 text skimage
+															17653 text .
+															17654 text measure
+															17655 text 
+															17656 text import
+															17657 text 
+															17658 text regionprops
+															17659 text SIZE
+															17660 text 
+															17661 text =
+															17662 text 
+															17663 text 256
+															17664 text TARGET_PIXELS
+															17665 text 
+															17666 text =
+															17667 text 
+															17668 text 20731
+															17669 text N_COMPLETE
+															17670 text 
+															17671 text =
+															17672 text 
+															17673 text 57
+															17674 text N_BOUNDARY
+															17675 text 
+															17676 text =
+															17677 text 
+															17678 text 22
+															17679 text D_MEAN
+															17680 text 
+															17681 text =
+															17682 text 
+															17683 text 15.706688295952011
+															17684 text D_STD
+															17685 text 
+															17686 text =
+															17687 text 
+															17688 text 8.893419110493891
+															17689 text MAX_CANDIDATES
+															17690 text 
+															17691 text =
+															17692 text 
+															17693 text 8
+															17694 text # Geometry-only revision: introduce a moderate horizontal orientation
+															17695 text # preference while retaining isotropic stochastic variation.
+															17696 text # The preference is intentionally weaker than full horizontal alignment.
+															17697 text HORIZONTAL_MIX
+															17698 text 
+															17699 text =
+															17700 text 
+															17701 text 0.30
+															17702 text HORIZONTAL_KAPPA
+															17703 text 
+															17704 text =
+															17705 text 
+															17706 text 1.25
+															17707 text MORPHOLOGY_BOUNDS
+															17708 text 
+															17709 text =
+															17710 text {
+															17711 text 
+															17712 text "all_observed.area_fraction_aspect_gt3"
+															17713 text : (
+															17714 text 0
+															17715 text ,
+															17716 text 0.27
+															17717 text ),
+															17718 text 
+															17719 text "all_observed.area_fraction_aspect_gt4"
+															17720 text : (
+															17721 text 0
+															17722 text ,
+															17723 text 0.16
+															17724 text ),
+															17725 text 
+															17726 text "all_observed.area_weighted_aspect"
+															17727 text : (
+															17728 text 1
+															17729 text ,
+															17730 text 2.59
+															17731 text ),
+															17732 text 
+															17733 text "all_observed.area_weighted_aspect_p95"
+															17734 text : (
+															17735 text 1
+															17736 text ,
+															17737 text 6.13
+															17738 text ),
+															17739 text 
+															17740 text "all_observed.axial_order"
+															17741 text : (
+															17742 text 0
+															17743 text ,
+															17744 text 0.59
+															17745 text ),
+															17746 text 
+															17747 text "all_observed.defined_aspect_area_fraction"
+															17748 text : (
+															17749 text 0.995
+															17750 text ,
+															17751 text 1
+															17752 text ),
+															17753 text 
+															17754 text "gap_dilation.2.largest_fraction"
+															17755 text : (
+															17756 text 0
+															17757 text ,
+															17758 text 0.59
+															17759 text ),
+															17760 text 
+															17761 text "limited_gap_run_x"
+															17762 text : (
+															17763 text 0
+															17764 text ,
+															17765 text 0.60
+															17766 text ),
+															17767 text 
+															17768 text "limited_gap_run_y"
+															17769 text : (
+															17770 text 0
+															17771 text ,
+															17772 text 0.56
+															17773 text ),
+															17774 text 
+															17775 text "long_range_abs_S2_difference"
+															17776 text : (
+															17777 text 0
+															17778 text ,
+															17779 text 0.04
+															17780 text ),
+															17781 text 
+															17782 text "nearest_neighbor_cv"
+															17783 text : (
+															17784 text 0.10
+															17785 text ,
+															17786 text 0.69
+															17787 text ),
+															17788 text 
+															17789 text "strips.1.column_max"
+															17790 text : (
+															17791 text 0
+															17792 text ,
+															17793 text 0.79
+															17794 text ),
+															17795 text 
+															17796 text "strips.1.column_std"
+															17797 text : (
+															17798 text 0
+															17799 text ,
+															17800 text 0.18
+															17801 text ),
+															17802 text 
+															17803 text "strips.1.row_max"
+															17804 text : (
+															17805 text 0
+															17806 text ,
+															17807 text 0.78
+															17808 text ),
+												17809 button Copy
+													17810 image (graphic)
+												17811 button Rate response ID: radix-_r_je_
+												17812 button (toggle button) Read aloud
+												17813 button Share
+												17814 button (toggle button) Add to project sources
+												17815 button More actions ID: radix-_r_jm_
+												17816 button Convert to PDF
+												17817 group
+												17818 text ChatGPT can make mistakes. Check important info.
+												17819 button Scroll to bottom
+												17820 text (heading) Latest response
+												17821 status bar (status)
+												17822 group
+													17823 group
+														17824 group
+															17825 button Add files and more
+															17826 text field (edit) (settable, string) Ask ChatGPT Value: Ask ChatGPT
+																17827 text Ask ChatGPT
+																17828 text 
+															17829 group
+																17830 button Select ChatGPT model ID: radix-_r_fq_
+															17831 button Dictate
+															17832 button Start Voice
+															17833 status bar (status)
+										17834 status bar (status) ID: DndLiveRegion-2
+										17835 group
+										17836 status bar (status)
+										17837 group
+										17838 status bar (status)
+										17839 status bar (status) ID: DndLiveRegion-1
+										17840 status bar (status)
+											17841 text Response complete
+										17842 group
+								307 document Value: chrome://newtab-footer/ ID: RootWebArea
+									308 image (graphic) ID: baseSvg
+									309 hyperlink (link) Managed by your organisation
+									310 button (toggle button) Customise Chrome Description: Customise this page ID: customizeButton
+										311 image (graphic) ID: baseSvg
+										312 text Customise Chrome
+							313 pane (region)
+						314 pane (region)
+							315 pane (region)
+								316 button Tab search
+							317 pane (region) ID: view_21
+								318 tab
+									319 tab item (selectable) Mail - Saahil Doshi - Outlook - Memory usage - 302 MB ID: view_20
+										320 button Close
+									321 tab item (selectable) Mail - Saahil Doshi - Outlook ID: view_20
+										322 button Close
+									323 tab item (selectable) Nov. 9-13.docx ID: view_20
+										324 button Close
+									325 tab item (selectable) saahildoshi/Young-Dawgs - Memory usage - 427 MB ID: view_20
+										326 button Close
+									327 tab item (selectable) Generate Python Microstructure Code - Memory usage - 512 MB ID: view_20
+										328 button Close
+									5669 tab item (selectable) Create Stochastic Generator - High memory usage - 808 MB ID: view_20
+										5670 button Close
+									6315 tab item (selectable) Create Microstructure Generator - Memory usage - 751 MB ID: view_20
+										6316 button Close
+									6991 tab item (selectable) Create Stochastic Generator - Memory usage - 448 MB ID: view_20
+										6992 button Close
+								329 pane (region)
+							330 button New tab
+							331 pane (region)
+							332 pane (region)
+								335 button Open Gemini in Chrome
+								336 pane (region)
+						337 pane (region)
+
+Document text: ```
+Ask ChatGPT
+```
+
+Focused element: 17 text field (edit) (settable, string) Address and search bar Description: Ask Google or type a URL Value: chatgpt.com/g/g-p-6adabe4175a48191b0a5bb4986ade2f1-pipeline-tests/c/6afbb637-f198-83ea-b1e8-70ef3b1cb890 ID: view_1012
+
+Document text:
+Ask ChatGPT
