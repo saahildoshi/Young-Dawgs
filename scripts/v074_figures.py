@@ -60,6 +60,8 @@ def mechanical():
     changes = read(analysis / 'WITHIN_CONVERSATION_CHANGES.json')
     mesh = read(analysis / 'MESH_CONFIRMATION.json')
     curves = read(analysis / 'NATIVE_CURVES.json')
+    morphology = read(analysis / 'MORPHOLOGY.json')
+    descriptor_summary = read(analysis / 'MORPHOLOGY_REFERENCE_COMPARISON.json')
     order = read(RUN / 'protocol/PROTOCOL.json')['trial_order']
     fig, axes = plt.subplots(1, 2, figsize=(12, 5))
     for ax, arm, color in zip(axes, ('IF', 'NF'), ('#355f8a', '#b7772e')):
@@ -78,6 +80,26 @@ def mechanical():
     fig.suptitle('P3 target 1640 MPa · each connected pair is one conversation')
     fig.text(.5,.015,'Conditional on accepted outputs; full attempted denominator shown. NF_01 includes a recorded extra nonscientific turn.',ha='center',fontsize=9)
     fig.tight_layout(rect=(0,.04,1,.93)); fig.savefig(DEST / 'P3_PAIRED_SCRIPT_TARGET_ERRORS.png',dpi=170);plt.close(fig)
+    fig, axes = plt.subplots(2,2,figsize=(12,8))
+    descriptors = [('diameter_std_px','Complete-region diameter SD (pixels)'),
+        ('all_observed.area_weighted_aspect','All-observed area-weighted aspect'),
+        ('nearest_neighbor_cv','Complete-region nearest-neighbor CV'),
+        ('all_observed.axial_order','All-observed anisotropy-weighted axial order')]
+    for ax,(key,label) in zip(axes.flat,descriptors):
+        reference=next(r['reference_value'] for r in descriptor_summary if r['descriptor']==key)
+        ax.axhline(reference,ls='--',color='#555555',lw=1,label='Reference annotation')
+        for i,trial in enumerate(order):
+            for revision,offset,marker in [(0,-.14,'o'),(1,.14,'s')]:
+                values=[r[key] for r in morphology if r['trial_id']==trial and r['revision']==revision and r['feasible']]
+                if values:
+                    color='#355f8a' if trial.startswith('IF') else '#b7772e'
+                    ax.scatter(i+offset+np.linspace(-.035,.035,len(values)),values,marker=marker,color=color,alpha=.45,s=17)
+                    ax.plot([i+offset-.06,i+offset+.06],[np.mean(values)]*2,color=color,lw=2)
+        ax.set_xticks(range(8),order,rotation=45);ax.set_ylabel(label);ax.grid(axis='y',alpha=.2)
+        ax.legend(fontsize=8)
+    fig.suptitle('Actual held-out morphology · circle initial / square revised · blue IF / ochre NF')
+    fig.text(.5,.01,'All generated arrays pass the fixed envelope; reference differences remain. Pixel descriptors do not imply a physical scale.',ha='center',fontsize=9)
+    fig.tight_layout(rect=(0,.04,1,.94));fig.savefig(DEST/'P3_MORPHOLOGY_REFERENCE_COMPARISON.png',dpi=170);plt.close(fig)
     fig, axes = plt.subplots(2, 2, figsize=(12, 9), sharex=True, sharey=True)
     for i, arm in enumerate(('IF','NF')):
         for revision in (0,1):

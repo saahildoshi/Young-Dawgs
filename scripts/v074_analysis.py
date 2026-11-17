@@ -1,7 +1,7 @@
 """Descriptive script-level inference, with seeds nested and failures explicit."""
 import numpy as np
 from scripts.v070_protocol import read, write, sha
-from scripts.v074_experiment import RUN, REPO, now
+from scripts.v074_experiment import RUN, REPO, MICRO, now
 from scripts.v073_analysis import statistics, target_metrics, csv_table
 
 
@@ -49,7 +49,7 @@ def analyse():
     assert (RUN / 'performance/FINAL_MECHANICS_COMPLETE.json').exists()
     protocol = read(RUN / 'protocol/PROTOCOL.json')
     order = protocol['trial_order']
-    rows, summaries, curves, morphology = [], [], [], []
+    rows, summaries, curves, morphology, phases = [], [], [], [], []
     for trial in order:
         for revision in (0, 1):
             structure = read(RUN / 'structures' / trial / f'r{revision}' / 'heldout/SUMMARY.json')
@@ -71,6 +71,7 @@ def analyse():
                         from metamaterial_eval.composites.morphology_v073 import flattened
                         morphology.append({'trial_id': trial, 'revision': revision, 'seed': s['seed'],
                             'feasible': s['feasibility']['passed'], 'failures': s['feasibility']['failures'],
+                            **{key: s['descriptors'][key] for key in ('all_regions','complete_regions','boundary_censored_regions','diameter_mean_px','diameter_std_px','aspect_mean','nearest_neighbor_mean_px','interface_density')},
                             **flattened(s.get('morphology_v073', {}))} if s.get('morphology_v073') else {
                                 'trial_id': trial, 'revision': revision, 'seed': s['seed'],
                                 'feasible': False, 'failures': s['feasibility']['failures']})
@@ -78,6 +79,16 @@ def analyse():
                         name = f'{trial}_r{revision}_heldout_{case["seed"]}_H{level}_attempt001'
                         result = read(RUN / 'mechanical_response' / f'{name}.json')
                         assert result['accepted'] and all(result['checks'].values())
+                        for material, values in result['phase_results'].items():
+                            phases.append({'trial_id': trial, 'revision': revision, 'seed': s['seed'],
+                                'mesh_level': level, 'native_material': int(material),
+                                'raw_phase_label': 1 if material == '1' else 5,
+                                'volume_fraction': values['volume_fraction'],
+                                'mean_syy_MPa': values['mean_syy_MPa'],
+                                'mean_axial_strain': values['mean_axial_strain'],
+                                'equivalent_stress_p99_MPa': values['equivalent_percentiles_MPa']['p99'],
+                                'equivalent_stress_p99_over_nominal': values['equivalent_percentiles_over_nominal']['p99'],
+                                'elastic_energy_fraction': values['elastic_energy_fraction']})
                         for c in result['native_curve']:
                             curves.append({'trial_id': trial, 'revision': revision, 'seed': s['seed'],
                                 'mesh_level': level, 'step': int(c[0]),
@@ -137,11 +148,27 @@ def analyse():
             'H2_error_reduction': statistics([r['H2_initial_minus_revised_error'] for r in local if r['H2_initial_minus_revised_error'] is not None])})
     comparison = arm_comparison(summaries, changes)
     sensitivity = arm_comparison(summaries, changes, ('NF_01',))
+    from metamaterial_eval.composites.morphology_v073 import describe, flattened
+    from scripts.v072_experiment import observe
+    reference = np.load(MICRO/'references/P3/evaluation_only_labels.npy')
+    observed = observe(reference)
+    reference_metrics = {**flattened(describe(reference == 5)),
+        **{key: observed['descriptors'][key] for key in ('all_regions','complete_regions','boundary_censored_regions','diameter_mean_px','diameter_std_px','aspect_mean','nearest_neighbor_mean_px','interface_density')}}
+    descriptor_summaries = []
+    for trial in order:
+        for revision in (0,1):
+            local = [r for r in morphology if r['trial_id'] == trial and r['revision'] == revision and r['feasible']]
+            for key, value in reference_metrics.items():
+                if isinstance(value,(bool,int,float)) and key != 'all_observed.preferred_axial_angle_deg':
+                    values = [r[key] for r in local if isinstance(r.get(key),(bool,int,float))]
+                    descriptor_summaries.append({'trial_id':trial,'revision':revision,'descriptor':key,
+                        'reference_value':value,**statistics(values)})
     output = RUN / 'target_property_analysis'
     for name, data in [('HELDOUT_RESULTS', rows), ('SCRIPT_SUMMARIES', summaries), ('WITHIN_CONVERSATION_CHANGES', changes),
             ('IF_VERSUS_NF', comparison), ('SENSITIVITY_WITHOUT_NF01', sensitivity),
             ('MESH_CONFIRMATION', mesh), ('MESH_PAIRED_CHANGES', mesh_changes),
-            ('NATIVE_CURVES', curves), ('MORPHOLOGY', morphology)]:
+            ('NATIVE_CURVES', curves), ('PHASE_RESULTS', phases), ('MORPHOLOGY', morphology),
+            ('MORPHOLOGY_REFERENCE_COMPARISON', descriptor_summaries)]:
         write(output / f'{name}.json', data)
         if isinstance(data, list): csv_table(output / f'{name}.csv', data)
     write(output / 'ANALYSIS_PROVENANCE.json', {'created_utc': now(),
