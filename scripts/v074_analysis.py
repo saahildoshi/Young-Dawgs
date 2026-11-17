@@ -49,7 +49,7 @@ def analyse():
     assert (RUN / 'performance/FINAL_MECHANICS_COMPLETE.json').exists()
     protocol = read(RUN / 'protocol/PROTOCOL.json')
     order = protocol['trial_order']
-    rows, summaries, curves, morphology, phases = [], [], [], [], []
+    rows, summaries, curves, morphology, phases, inventory = [], [], [], [], [], []
     for trial in order:
         for revision in (0, 1):
             structure = read(RUN / 'structures' / trial / f'r{revision}' / 'heldout/SUMMARY.json')
@@ -104,6 +104,23 @@ def analyse():
                 fully_qualified_generator=structure['fully_qualified_generator'] and summary['mechanically_accepted'] == 6,
                 runtime=statistics([r['generation_seconds'] for r in local if r['generation_seconds'] is not None]))
             summaries.append(summary)
+            receipt = read(RUN/'llm_trials'/trial/f'RECEIPT_r{revision}.json')
+            inventory.append({'trial_id':trial,'arm':trial[:2],'revision':revision,
+                'independent_unit':trial,'chat_url':receipt['chat_url'],
+                'observed_chat_url':receipt.get('observed_chat_url',receipt['chat_url']),
+                'conversation_id':receipt.get('conversation_id',receipt['chat_url'].rsplit('/',1)[1]),
+                'same_conversation_revision':receipt.get('same_conversation_id_verified') if revision else None,
+                'ordinary_ChatGPT':receipt['ordinary_ChatGPT'],'Work_or_Codex':receipt['Work_or_Codex'],
+                'exposed_reasoning':receipt.get('exposed_reasoning_label'),
+                'backend_version':receipt.get('backend_version'),'tokens':receipt.get('tokens'),'cost':receipt.get('cost'),
+                'submission_observed_utc':receipt.get('submission_observed_utc'),
+                'captured_utc':receipt['captured_utc'],'prompt_sha256':receipt['prompt_sha256'],
+                'raw_response_sha256':receipt['response_capture_sha256'],'code_sha256':receipt['code_sha256'],
+                'researcher_repairs':False,'scientific_response_calls':1,'mask_supplied':False,
+                'heldout_attempted':6,'heldout_generated':structure['generated'],
+                'heldout_feasible':structure['feasible'],'H1_accepted':summary['mechanically_accepted'],
+                'H2_accepted':sum(r['trial_id']==trial and r['revision']==revision and r['mesh_level']==2 and r['apparent_modulus_MPa'] is not None for r in rows),
+                'strict_equal_message_budget':trial!='NF_01'})
     changes, mesh = [], []
     for trial in order:
         pair = [next(r for r in summaries if r['trial_id'] == trial and r['revision'] == rev) for rev in (0, 1)]
@@ -168,7 +185,7 @@ def analyse():
             ('IF_VERSUS_NF', comparison), ('SENSITIVITY_WITHOUT_NF01', sensitivity),
             ('MESH_CONFIRMATION', mesh), ('MESH_PAIRED_CHANGES', mesh_changes),
             ('NATIVE_CURVES', curves), ('PHASE_RESULTS', phases), ('MORPHOLOGY', morphology),
-            ('MORPHOLOGY_REFERENCE_COMPARISON', descriptor_summaries)]:
+            ('MORPHOLOGY_REFERENCE_COMPARISON', descriptor_summaries), ('GENUINE_TRIAL_INVENTORY', inventory)]:
         write(output / f'{name}.json', data)
         if isinstance(data, list): csv_table(output / f'{name}.csv', data)
     write(output / 'ANALYSIS_PROVENANCE.json', {'created_utc': now(),
