@@ -1,0 +1,114 @@
+**Additional required deliverable for v0.7.4: 3D-printable porous metamaterial STL**
+
+I also want a physical 3D-printable model of the **original porous mechanical metamaterial we worked on before switching to P3 and F1 composites**.
+
+This is an additional deliverable, not a replacement for the P3 reference relief STL already requested.
+
+### 1. Use the actual historical porous microstructure
+
+Locate the original preserved porous metamaterial geometry from the earlier Young Dawgs research, preferably **Design 9, seed 1**, which was used in our historical ANSYS compression work.
+
+Investigate both:
+- The original 1024 × 1024 porous specimen.
+- The central 256 × 256 crop used in the later compression simulations.
+
+Use the authenticated original binary geometry, not an approximation, newly generated random sample, or manually redrawn pattern.
+
+Identify the exact source array, phase definitions, dimensions, and SHA-256. Preserve the historical source unchanged.
+
+Prefer the full specimen for the presentation if its features remain practical to print. Otherwise, use the 256 × 256 crop and explain why.
+
+### 2. Make it a real porous structure, not a relief plaque
+
+**This STL must preserve the actual through-holes of the porous metamaterial.**
+
+Unlike the P3 composite plaque, it should NOT have a solid backing plate filling the pores.
+
+Extrude the original 2D solid network into a three-dimensional plate:
+
+- Solid pixels become printable material.
+- Void pixels become open, through-thickness holes.
+- Preserve the network connectivity and recognizable pore geometry.
+- Use a flat top and bottom.
+- Make the object a single connected printable body wherever the authenticated source topology permits.
+
+Suggested presentation-scale dimensions:
+- Approximately 140–170 mm across.
+- Approximately 4–6 mm thick.
+- Uniform XY scaling to preserve the microstructure's proportions.
+- Sized for a typical FDM printer with a 0.4 mm nozzle.
+
+These dimensions are for presentation, not the actual microscopy or simulation scale.
+
+### 3. Preserve fidelity and ensure printability
+
+Create two versions if necessary:
+
+**A. Source-faithful STL**
+
+`POROUS_METAMATERIAL_ORIGINAL.stl`
+
+An accurate XY extrusion of the historical solid/void mask, with no undocumented morphology changes.
+
+**B. Print-ready STL**
+
+`POROUS_METAMATERIAL_PRINT_READY.stl`
+
+A version designed for reliable PLA printing, with any necessary minimum-strut-width adjustments or perimeter reinforcement explicitly documented.
+
+Do not silently close pores, change network connectivity, or remove thin features. Quantify any differences between the source and print-ready geometry, including solid fraction, pore changes, and connectivity.
+
+If a source-faithful version cannot be printed reliably, retain it as a reference and explain the required changes. Do not represent a modified print-safe model as the exact original.
+
+### 4. Validate the actual STL
+
+Check:
+- Watertight, manifold geometry.
+- Positive volume and correct normals.
+- No degenerate triangles or self-intersections.
+- No disconnected floating bodies.
+- True through-holes, not shallow depressions.
+- Minimum printable strut widths.
+- Bed footprint and physical dimensions.
+- Independent STL re-import.
+- Actual slicer compatibility if slicing software is available.
+
+If the historical array includes isolated solid islands, identify them and handle them transparently rather than silently deleting them.
+
+Generate isometric, top-down, and side-view previews from the actual exported mesh.
+
+### 5. Required deliverables
+
+Place the additional files in:
+
+`presentation_assets/v0.7.4/`
+
+Include:
+- `POROUS_METAMATERIAL_ORIGINAL.stl`
+- `POROUS_METAMATERIAL_PRINT_READY.stl`
+- `POROUS_METAMATERIAL_PREVIEW.png`
+- `POROUS_METAMATERIAL_PRINTING_INSTRUCTIONS.md`
+- `POROUS_METAMATERIAL_SOURCE_MANIFEST.json`
+- `POROUS_METAMATERIAL_STL_VALIDATION.json`
+
+Use source-specific filenames if necessary to distinguish the full specimen from the 256 × 256 crop.
+
+### 6. Presentation goal
+
+I want to be able to **hold up the actual porous metamaterial geometry during my Young Dawgs presentation** and explain how our original LLM-generated structures were evaluated using ANSYS.
+
+The audience should be able to see and preferably look through the pores. The printed object should resemble the actual historical microstructure, not just a decorative lattice.
+
+The final presentation assets should now include **both**:
+1. The P3 two-phase composite raised-relief model.
+2. The original porous metamaterial through-hole model.
+
+If feasible, produce a simple side-by-side visualization explaining the difference between the two material systems.
+
+Do not modify the historical ANSYS results or restart porous compression simulations.
+
+This is a **geometry export and presentation-fabrication task only**, not a new mechanical research campaign.
+
+Add the deliverables to the v0.7.4 handoff, create a descriptive Git commit, and do not push automatically.
+
+Continue all other registered v0.7.4 work, including the same-conversation ChatGPT feedback requirement and F1 mechanics.
