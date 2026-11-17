@@ -25,6 +25,9 @@ def audit():
         assert sha(RUN/'protocol'/name)==frozen[key]
     assert sha(RUN/'protocol/FEASIBILITY_FROZEN.json')==sha(PREV/'protocol/FEASIBILITY_FROZEN.json')
     for name,digest in read(RUN/'fabrication/DELIVERED_ASSETS.json')['files'].items():assert sha(ASSETS/name)==digest,name
+    f1_report=read(RUN/'f1/REPORT_MANIFEST.json')
+    for name,digest in f1_report['files'].items():assert sha(RUN/name)==digest,name
+    assert sha(DOC/'V0_7_4_F1_MECHANICAL_RESULTS.md')==f1_report['report_sha256']
     hashes={}; unavailable=[]
     for label,root in [('prior_v073',PREV),('v074',RUN)]:
         count=0
