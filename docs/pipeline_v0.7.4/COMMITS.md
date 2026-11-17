@@ -1,6 +1,6 @@
 # v0.7.4 local commits
 
-Starting HEAD `1dd833d4a3e5cce960383079868c8e4f02b506f5`. No push or history rewrite. Final sealing commit follows these documents; its hash is reported in delivery.
+Starting HEAD `1dd833d4a3e5cce960383079868c8e4f02b506f5`. All commits remain local; no push or history rewrite. The final package-sealing commit follows this inventory and is reported in the delivery message, because a commit cannot contain its own full hash.
 
 - `41ea81a3a50a8787a775b17f73f946fd8dd71311` — docs(research): register v0.7.4 same-thread inverse-design protocol and required deliverables
 - `42681163016463f384935aa8c0181776a91f0a00` — feat(morphology): qualify bounded exact-composition common generator without changing frozen constraints
@@ -37,3 +37,4 @@ Starting HEAD `1dd833d4a3e5cce960383079868c8e4f02b506f5`. No push or history rew
 - `c27b28b65e123581f4a23f40f4d705077cf9b0b3` — feat(research): preserve third control's native results with failed generator seeds left unsolved
 - `7bb2b955e6150bba8ddfb74da68f8724a5de2221` — feat(research): complete fourth informative conversation's balanced native target and mesh evaluation
 - `b4c204656402020c51858ff5e7a0b608bb2acc06` — feat(research): complete all genuine same-chat held-out mechanics and report script-level target and mesh comparisons
+- `261df3b53393a6f6c8034ec984d91b2c3212c929` — docs(research): publish completed v0.7.4 pilot and all handoff answers with explicit scientific and preservation limits
