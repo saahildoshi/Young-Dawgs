@@ -255,7 +255,8 @@ def freeze():
     files={str(p.relative_to(REPO)).replace('\\','/'):sha(p) for root in roots for p in sorted(root.rglob('*')) if p.is_file() and '__pycache__' not in p.parts}
     for p in sorted((REPO/'scripts').glob('v074*.py')):files[str(p.relative_to(REPO)).replace('\\','/')]=sha(p)
     for p in sorted((REPO/'tests').glob('test_v074*.py')):files[str(p.relative_to(REPO)).replace('\\','/')]=sha(p)
-    for name in ['metamaterial_eval/simulation/three_phase_elastic.py','validation/ansys_v074_integration.py','validation/stl_v074_integration.py']:
+    for name in ['metamaterial_eval/simulation/three_phase_elastic.py','validation/ansys_v074_integration.py','validation/stl_v074_integration.py',
+            'scripts/.gitattributes','tests/.gitattributes','validation/.gitattributes','metamaterial_eval/simulation/.gitattributes']:
         files[name]=sha(REPO/name)
     write(destination,{'frozen_utc':now(),'files':files,'manifest_excludes_itself':True,
         'no_further_model_calls_or_scientific_revisions':True,'pushed':False})
