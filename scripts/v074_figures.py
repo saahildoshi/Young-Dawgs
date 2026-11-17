@@ -63,7 +63,7 @@ def mechanical():
     morphology = read(analysis / 'MORPHOLOGY.json')
     descriptor_summary = read(analysis / 'MORPHOLOGY_REFERENCE_COMPARISON.json')
     order = read(RUN / 'protocol/PROTOCOL.json')['trial_order']
-    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5), sharey=True)
     for ax, arm, color in zip(axes, ('IF', 'NF'), ('#355f8a', '#b7772e')):
         trials = [t for t in order if t.startswith(arm)]
         for i, trial in enumerate(trials):
@@ -114,6 +114,7 @@ def mechanical():
                     means = [np.mean([r['nominal_compression_MPa'] for r in selected if r['step'] == step]) for step in range(1,6)]
                     ax.plot(np.arange(1,6)*.1,means,color=color,label=trial,lw=1.7)
             ax.plot(np.arange(1,6)*.1,1640*np.arange(1,6)*.001,'k--',lw=1,label='1640 MPa target')
+            ax.fill_between(np.arange(1,6)*.1,1607.2*np.arange(1,6)*.001,1672.8*np.arange(1,6)*.001,color='gray',alpha=.12,label='±2% target band')
             ax.set_title(f'{arm} {"initial" if revision == 0 else "revised"} · accepted H1 only')
             ax.set_xlabel('Engineering compression (%)');ax.set_ylabel('Nominal compression stress (MPa)')
             ax.legend(fontsize=8);ax.grid(alpha=.2)

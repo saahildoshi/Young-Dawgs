@@ -25,23 +25,29 @@ def audit():
         assert sha(RUN/'protocol'/name)==frozen[key]
     assert sha(RUN/'protocol/FEASIBILITY_FROZEN.json')==sha(PREV/'protocol/FEASIBILITY_FROZEN.json')
     for name,digest in read(RUN/'fabrication/DELIVERED_ASSETS.json')['files'].items():assert sha(ASSETS/name)==digest,name
-    hashes={}
+    hashes={}; unavailable=[]
     for label,root in [('prior_v073',PREV),('v074',RUN)]:
         count=0
         for path in sorted((root/'native_result_manifests').glob('*/NATIVE_ARTIFACTS.json')):
             for item in read(path).values():
-                assert sha(Path(item['path']))==item['sha256'],item['path']
-                count+=1
+                if Path(item['path']).is_file():
+                    assert sha(Path(item['path']))==item['sha256'],item['path']
+                    count+=1
+                else:
+                    unavailable.append({'version':label,'model':path.parent.name,
+                        'file':item['path'],'recorded_sha256':item['sha256']})
         hashes[label]=count
     tests={name:xml_counts(paths) for name,paths in {
         'active':[RUN/'tests/final_active_software.xml'],
         'archived_replays':sorted((RUN/'tests/archived_replay').glob('*.xml')),
         'licensed_v074':[RUN/'tests/final_native_checks.xml'],
-        'fabrication':[RUN/'tests/STL_integration.xml'],
+        'fabrication':[RUN/'tests/final_STL_checks.xml'],
     }.items()}
     assert all(v['tests']>0 and v['failures']==v['errors']==v['skipped']==0 for v in tests.values()),tests
-    receipts=[read(p) for p in sorted(BASE.glob('*/process_receipt.json'))]
-    executions=[read(p) for p in sorted(BASE.glob('*/EXECUTION.json'))]
+    # Compact process records retain the original earlier execution evidence.
+    # Counting only presently available raw folders would undercount that work.
+    executions=[read(p) for p in sorted((RUN/'native_result_manifests').glob('*/EXECUTION.json'))]
+    receipts=[r['process'] for r in executions]
     source=[r for r in executions if r['kind']=='LICENSED_SOURCE_SOLVE']
     post=[r for r in executions if r['kind']=='INDEPENDENT_READ_ONLY_RST_REOPEN']
     assert len(receipts)==len(executions)==len(source)+len(post)
@@ -64,16 +70,25 @@ def audit():
         'maximum_system_page_reads_per_second':max((s['page_reads_per_second'] for s in samples if s.get('page_reads_per_second') is not None),default=None),
         'raw_artifact_bytes':sum(p.stat().st_size for p in BASE.rglob('*') if p.is_file()),
         'native_base':str(BASE),'cores':2,'native_concurrency':1,'RSS_cap':None,
+        'performance_evidence':'All retained versioned execution records, including earlier records whose raw folders are currently unavailable',
+        'raw_storage_scope':'Currently present raw native files; earlier missing raw folders cannot be remeasured',
         'native_failures':0,'paging_caveat':'System disk hard-fault proxy, not per-process paging or a pagefile-only measurement'}
     limits=read(RUN/'protocol/PROTOCOL.json')['resource_limits']
     assert perf['native_processes']<=limits['maximum_native_jobs']
     assert perf['total_supervised_native_seconds']<=limits['native_campaign_seconds']
     assert perf['raw_artifact_bytes']<=limits['raw_storage_budget_bytes']
     write(RUN/'performance/FINAL_SUMMARY.json',perf)
+    write(RUN/'audit/FINAL_RAW_AVAILABILITY.json',{'checked_utc':now(),
+        'available_critical_hashes_verified':hashes,'unavailable_critical_files':unavailable,
+        'all_recorded_raw_files_available':not unavailable,
+        'limitation':'Earlier raw ANSYS folders absent; exact cause/removal time unknown. Retained immutable records/curves and prior passed checks do not replace a current raw-file hash verification.'})
     write(RUN/'audit/FINAL_INTEGRITY.json',{'checked_utc':now(),'passed':True,
+        'passed_scope':'Tracked protected files, frozen inputs, current held-out raw evidence and delivered STL/toolpaths; earlier raw preservation has a separate HOLD',
         'protected_files_unchanged':len(protected),'previous_package_files_verified':len(previous),
         'critical_native_hashes_verified':hashes,'all_sixteen_sources_and_prompts_unchanged':True,
-        'test_results':tests,'fabrication_assets_unchanged':True,'pushed':False})
+        'test_results':tests,'fabrication_assets_unchanged':True,'pushed':False,
+        'all_recorded_raw_files_available':not unavailable,
+        'unavailable_critical_native_file_count':len(unavailable)})
     write(RUN/'audit/FINAL_EXECUTION_ENVIRONMENT.json',{'python':sys.version,'platform':platform.platform(),
         'packages':{name:importlib.metadata.version(name) for name in ['numpy','scipy','scikit-image','Pillow','matplotlib','psutil','pytest','trimesh','manifold3d']},
         'qualified_evaluator_sha256':sha(REPO/'scripts/v071_mechanics.py'),
@@ -93,6 +108,7 @@ def percent(value):return 'unavailable' if value is None else f'{value*100:.4f}%
 def reports():
     p=read(RUN/'protocol/PROTOCOL.json')
     integrity=read(RUN/'audit/FINAL_INTEGRITY.json');perf=read(RUN/'performance/FINAL_SUMMARY.json')
+    availability=read(RUN/'audit/FINAL_RAW_AVAILABILITY.json')
     a=RUN/'target_property_analysis'
     summaries=read(a/'SCRIPT_SUMMARIES.json');changes=read(a/'WITHIN_CONVERSATION_CHANGES.json')
     comparison=read(a/'IF_VERSUS_NF.json');sensitivity=read(a/'SENSITIVITY_WITHOUT_NF01.json')
@@ -112,6 +128,7 @@ def reports():
     acceptedmesh=[r for r in mesh if r['relative_mesh_change'] is not None]
     maxchange=max(r['relative_mesh_change'] for r in acceptedmesh)
     meshtext=f"All {len(h2)} registered H2 slots are accounted for: {len(acceptedmesh)} actual refined source solves and one unsolved structurally failed NF_03 initial seed 5001, with no replacement. Every script uses the preselected seeds 5000 and 5001. Observed relative modulus changes range from {percent(min(r['relative_mesh_change'] for r in acceptedmesh))} to {percent(maxchange)}; {sum(r['within_2pct_mesh_tolerance'] for r in acceptedmesh)}/{len(acceptedmesh)} meet the registered 2% tolerance. The paired H1/H2 table records whether each initial-to-revised error reduction persists and whether it exceeds the sum of the two observed mesh shifts divided by target. This conservative comparison is a sensitivity diagnostic, not a rigorous error bound or full convergence proof. It tests two seeds per script, not the whole six-seed mean."
+    preservation=('Earlier raw ANSYS folders are currently absent from their recorded local paths. The original committed results, native execution/readback receipts, compact curves, expected hashes, figures and earlier passing test records are preserved, but current rehashing/reopening of those earlier raw files is unavailable. The cause and removal time are unknown. The current held-out raw files were verified directly. No old scientific case was rerun to conceal the gap. Generic slicer G-code was independently reproduced byte-for-byte from the same engine/settings/STLs and its original hashes verified; recovery receipts distinguish those new deterministic slices from the original executions. This is a raw-preservation limitation, not a new native solve failure.') if availability['unavailable_critical_files'] else 'All recorded raw native files are currently available and their critical hashes authenticate.'
     states={key:'PASS' for key in ['P3_TARGET_FROZEN','P3_MORPHOLOGY_POLICY_PRESERVED','P3_STARTING_GENERATOR_QUALIFIED',
         'GENUINE_INITIAL_CHATGPT_SCRIPTS_CAPTURED','SAME_CONVERSATION_FEEDBACK_VERIFIED','GENUINE_IF_REVISIONS_CAPTURED','GENUINE_NF_REVISIONS_CAPTURED',
         'P3_HELDOUT_STRUCTURAL_EVALUATION','P3_HELDOUT_NATIVE_MECHANICS','SCIENTIFIC_REVISION_BUDGET_ONE_PER_CONVERSATION',
@@ -120,7 +137,8 @@ def reports():
         'STL_SOURCE_AUTHENTICATED','STL_EXPORTED','STL_WATERTIGHT','STL_MANIFOLD','STL_SINGLE_SOLID','STL_PRINTABILITY_CHECKED',
         'STL_SLICER_VERIFIED','STL_PREVIEW_CREATED','STL_PRINTING_INSTRUCTIONS_CREATED']}
     states.update(EQUAL_REVISION_BUDGET_VERIFIED='FAIL',P3_TARGET_ERROR_IMPROVEMENT='HOLD',INFORMATIVE_FEEDBACK_ADVANTAGE='HOLD',
-        P3_H2_MESH_CONFIRMATION='PASS' if maxchange<=.02 else 'FAIL',PHYSICAL_MATERIAL_CALIBRATION='NOT_VERIFIED',ACTUAL_PHYSICAL_PRINT='NOT_RUN')
+        P3_H2_MESH_CONFIRMATION='PASS' if maxchange<=.02 else 'FAIL',PHYSICAL_MATERIAL_CALIBRATION='NOT_VERIFIED',ACTUAL_PHYSICAL_PRINT='NOT_RUN',
+        EARLIER_RAW_ANSYS_PRESERVATION='HOLD' if availability['unavailable_critical_files'] else 'PASS')
     write(RUN/'summary/FINAL_SCIENTIFIC_STATUS.json',{'created_utc':now(),'states':states,
         'status':'REGISTERED_GENUINE_SAME_CONVERSATION_PILOT_COMPLETE__DESCRIPTIVE_RESULTS_WITH_PROTOCOL_AND_GENERALIZATION_LIMITS',
         'state_scope':{'P3_TARGET_ERROR_IMPROVEMENT':'HOLD for an unqualified capability claim; actual positive/negative descriptive results are reported per script and arm',
@@ -132,19 +150,19 @@ def reports():
         'The registered target was 1640 MPa (J = 1.640), with a ±2% hit band of 1607.2–1672.8 MPa. Four IF and four NF initial/revised script pairs were frozen together before final generation. No script was manually repaired or revised after held-out evaluation. IF received its own three actual development curves/moduli/errors and authenticated v0.7.3 controlled geometry–mechanics; NF received matched structural information and unchanged physics/target without measured mechanics. The final seeds and evaluation masks were withheld from every generator conversation.\n\n'
         f'All 96 held-out attempts are preserved. {generation["generated"]} generated arrays have exact 20,731/44,805 phase composition and pass the complete unchanged morphology envelope; two NF_03 initial attempts exhausted the eight-candidate bound. All 16 generated cohorts pass their observed diversity diagnostics, but only 15/16 initial/revised generators meet the full six-of-six structural criterion. All eight revised scripts pass six-of-six. The two failed initial outputs have null mechanics and remain in denominators.\n\n'+table+'\n'+arm+'\n'+contrast+'\n\n'
         f'Actual accepted H1 source solves: {sum(r["apparent_modulus_MPa"] is not None for r in h1)}/96 attempted slots. Actual H2 source solves: {len(acceptedmesh)}/32 slots. Every accepted case contains five solved strain checkpoints and a separate native result-file reopening. Full per-seed moduli, bias, mean/median errors, sample SD, target hits, timing, diversity and failure records are in `target_property_analysis/`.\n\n'+meshtext+'\n\n'
-        'The fixed first-seed figures show dispersed inclusions without the earlier continuous reinforcement lanes. They also show visible differences from the selected reference: some scripts use narrower size populations or more even spacing, and revisions can change orientation. Passing the frozen envelope is not equivalence to the natural image distribution. All successful arrays are unique within each cohort and their rigid-invariant diversity diagnostics pass; these diagnostics do not establish coverage of the true material distribution. Initial/revised paired array differences are recorded separately.\n\n'+continuity+'\n\n'+limitations+'\n\n'
+        'The fixed first-seed figures show dispersed inclusions without the earlier continuous reinforcement lanes. They also show visible differences from the selected reference: some scripts use narrower size populations or more even spacing, and revisions can change orientation. Passing the frozen envelope is not equivalence to the natural image distribution. All successful arrays are unique within each cohort and their rigid-invariant diversity diagnostics pass; these diagnostics do not establish coverage of the true material distribution. Initial/revised paired array differences are recorded separately.\n\n'+continuity+'\n\n'+preservation+'\n\n'+limitations+'\n\n'
         'See [figures](V0_7_4_FIGURES.md), [validation](V0_7_4_VALIDATION.md), [F1](V0_7_4_F1_MECHANICAL_RESULTS.md) and [handoff](V0_7_4_HANDOFF.md).')
     doc('DR_WANG_SUMMARY.md','# Research summary for Dr. Wang\n\n'
         'The project has demonstrated genuine LLM generation of multiple microscopy-based microstructure families and actual ANSYS stress–strain evaluation of P3 composites. Earlier stiffness maximization produced large gains by creating artificial reinforcement lanes, which motivated stronger shape, orientation and spatial-organization constraints.\n\n'
         'This study used a prescribed 1640 MPa apparent-modulus target under the same illustrative elastic model. Eight ordinary-ChatGPT conversations each produced an initial generator and one genuine revision in that same conversation. Four received measured mechanical feedback; four received structural information without measured mechanics. All sixteen scripts were frozen before evaluating six new seeds per script.\n\n'+arm+'\n'+contrast+'\n\n'
         f'Of 96 final attempts, 94 generated exact-composition, morphology-feasible specimens and received actual five-checkpoint ANSYS solves with independent readback. Two bounded generator failures were retained. {len(acceptedmesh)} predetermined H2 refinements quantify mesh sensitivity. The study remains a small descriptive pilot: initial scripts differ, account/project context was not isolated, and one control conversation had an extra nonscientific URL turn.\n\n'
         'For the distinct F1 family, the explicit matrix/fiber/void reference and an authenticated LLM-generated structure were solved with void regions omitted from the mesh. H1 apparent moduli were 2230.45 and 2147.60 MPa, respectively; H2 gave 2158.15 and 2093.08 MPa. Approximate circular fiber annotations and illustrative isotropic properties limit interpretation.\n\n'
-        'Validated presentation models include an enlarged P3 raised-relief plaque and a separate historical porous through-hole model. Both passed geometric re-import and actual generic slicer checks. They are educational 2D-derived extrusions, not measured 3D reconstructions or calibrated material specimens; no physical print has been completed.\n\n'+limitations)
+        'Validated presentation models include an enlarged P3 raised-relief plaque and a separate historical porous through-hole model. Both passed geometric re-import and actual generic slicer checks. They are educational 2D-derived extrusions, not measured 3D reconstructions or calibrated material specimens; no physical print has been completed.\n\n'+preservation+'\n\n'+limitations)
     validation='| Category | Passed checks | Failures / errors / skips |\n|---|---:|---:|\n'
     for label,t in integrity['test_results'].items():validation+=f"| {label} | {t['tests']} | {t['failures']} / {t['errors']} / {t['skipped']} |\n"
     validation+=f"\nActual native execution totals: {perf['actual_source_solves']} source solves + {perf['independent_readback_processes']} independent readbacks = {perf['native_processes']} processes, {perf['actual_native_checkpoints']} solved checkpoints. Supervised native time {perf['total_supervised_native_seconds']:.3f} s ({perf['total_supervised_native_seconds']/60:.3f} min), comprising {perf['source_solve_seconds']:.3f} s source and {perf['readback_seconds']:.3f} s reopening. Peak process-tree RSS {perf['peak_process_tree_RSS_bytes']/2**30:.3f} GiB; minimum observed available RAM {perf['minimum_available_RAM_bytes']/2**30:.3f} GiB. Raw native artifacts occupy {perf['raw_artifact_bytes']/2**30:.3f} GiB under `{BASE}`. One job, two cores, health monitoring and no imposed RSS cap were retained. Process receipts preserve memory/system paging measurements; these are not per-process pagefile measurements. No native execution/acceptance failure occurred.\n\n"
-    validation+=f"All {integrity['protected_files_unchanged']:,} originally tracked files and {integrity['previous_package_files_verified']} prior package records authenticate unchanged. Critical native files verified: {integrity['critical_native_hashes_verified']}. All sixteen frozen source/prompt records, protocol, seed partitions, original morphology policy and delivered fabrication assets authenticate. Raw native binaries and diagnostic G-code remain outside Git; compact source/result/readback manifests and native CSV curves are included.\n\n"
-    validation+='The active suite is the explicitly scoped `tests/` suite. An initial root collection invocation produced duplicate archived-module collection errors and is retained in `tests/root_collection_failed.xml`; the final active suite has no excluded active tests. Archived checks replay immutable historical test groups and are not new independent physical experiments. Fabrication checks re-import the actual meshes and inspect the actual qualified generic toolpaths. Raw UI captures retain their original whitespace and CRLF where applicable; executable generator copies normalize newlines only.\n\n'+continuity+'\n\n'
+    validation+=f"All {integrity['protected_files_unchanged']:,} originally tracked files and {integrity['previous_package_files_verified']} prior package records authenticate unchanged. Currently available critical native files verified: {integrity['critical_native_hashes_verified']}; {integrity['unavailable_critical_native_file_count']} recorded earlier critical files are unavailable. All sixteen frozen source/prompt records, protocol, seed partitions, original morphology policy and delivered fabrication assets authenticate. Raw native binaries and diagnostic G-code remain outside Git; compact source/result/readback manifests and native CSV curves are included.\n\n"+preservation+'\n\n'
+    validation+='The active suite is the explicitly scoped `tests/` suite. An initial root collection invocation produced duplicate archived-module collection errors and is retained in `tests/root_collection_failed.xml`; the final active suite has no excluded active tests. A later native-artifact check found three earlier development folders absent (3 FileNotFoundError failures, 16 current held-out checks passed); that XML remains in `tests/NF01_complete_native_checks.xml`. Final licensed raw checks explicitly cover the current held-out cohort; earlier raw checks are not silently skipped or represented as newly passed. Original earlier checks and their passing XML remain preserved as historical execution evidence. Archived software checks replay immutable historical test groups and are not new independent physical experiments. Fabrication checks re-import the actual meshes and inspect the actual qualified generic toolpaths. Raw UI captures retain their original whitespace and CRLF where applicable; executable generator copies normalize newlines only.\n\n'+continuity+'\n\n'
     validation+='| Required scientific state | State |\n|---|---|\n'+''.join(f'| {k} | {v} |\n' for k,v in states.items())
     validation+='\n`HOLD` marks unsupported unqualified capability/causal claims, not missing numerical measurements. F1 mesh sensitivity passed as a performed diagnostic, with 2.54–3.24% modulus shifts; it is not full convergence. STL PASS states apply to the qualified simplified/framed models under disclosed generic assumptions, not the nonmanifold exact P3 mesh or an actual printer.\n'
     doc('V0_7_4_VALIDATION.md','# Final validation and separate scientific acceptance states\n\n'+validation)
@@ -155,7 +173,7 @@ def reports():
     doc('V0_7_4_FIGURES.md',gallery)
     answers=[
         f'Authoritative repository `{REPO}`, master, starting HEAD `{p["starting_head"]}`.',
-        f'Yes: {integrity["protected_files_unchanged"]:,} initial tracked-file hashes and {integrity["previous_package_files_verified"]} v0.7.3 package records pass.',
+        f'All {integrity["protected_files_unchanged"]:,} initial tracked-file hashes and {integrity["previous_package_files_verified"]} v0.7.3 package records pass. Earlier raw external ANSYS folders are currently unavailable; preservation is HOLD for those files.',
         '1640 MPa, J = 1.640; ±2% band 1607.2–1672.8 MPa; no old difficulty gate reapplied.',
         'Yes. The v0.7.3 morphology-policy file remains byte-identical; six-output cohort qualification was prospectively registered.',
         'P3_B02_EXACT_BOUNDED_MORPHOLOGY_RESEARCHER_ADAPTATION_V074, SHA 190d01bd8af82af6a2682d290b93ef11de8db047218fecd12af1d33e12adef11. Researcher-prepared common template, not a trial.',
@@ -179,7 +197,7 @@ def reports():
         contrast,
         'No generated field violates the frozen constraints; visible size-population/spacing/orientation differences remain. Constraint pass does not establish natural-image equivalence. All observed within-cohort diversity diagnostics pass.',
         meshtext,
-        'Unqualified causal/generalization claims, exact backend/context independence, full mesh convergence, physical calibration and RVE validity remain unresolved; NF01 strict total-message equality fails.',
+        'Unqualified causal/generalization claims, exact backend/context independence, full mesh convergence, physical calibration and RVE validity remain unresolved; NF01 strict total-message equality fails. Earlier raw ANSYS availability is a separate HOLD.',
         'Yes: prepared original C/PEEK microscopy and its evaluator annotation authenticate; source file hashes in f1/source_manifests/.',
         'Yes: native source phases matrix 0, transverse carbon-fiber-like cross-section 1 and void 2 remain distinct; explicit MAT1/MAT2/no-element mapping.',
         'Yes: matrix, nu=0 parallel two-solid and explicit two-strip void controls give 1000, 5500 and 500 MPa with independent readbacks.',
@@ -205,7 +223,7 @@ def reports():
         f"{perf['total_supervised_native_seconds']:.3f} supervised native seconds total; source {perf['source_solve_seconds']:.3f} s, readback {perf['readback_seconds']:.3f} s. Wall-clock workflow time is different.",
         f"Peak native process-tree RSS {perf['peak_process_tree_RSS_bytes']/2**30:.3f} GiB; minimum observed available RAM {perf['minimum_available_RAM_bytes']/2**30:.3f} GiB; sampled, not an exact instantaneous maximum.",
         str(integrity['test_results'])+'; detailed validation and retained failed initial root-collection invocation are documented.',
-        f"All {integrity['test_results']['licensed_v074']['tests']} final v0.7.4 licensed evidence checks passed, including actual field, energy, reactions, constraints, connectivity and independent native reopening; {integrity['critical_native_hashes_verified']} critical hashes authenticate.",
+        f"All {integrity['test_results']['licensed_v074']['tests']} final current held-out raw-native checks passed, including field, energy, reactions, constraints, connectivity and independent reopening; {integrity['critical_native_hashes_verified']} currently available critical hashes authenticate. Earlier raw-file revalidation is unavailable, and the discovered missing-file failures remain recorded.",
         'Versioned run evidence in experiments/pipeline_v0.7.4/run_001/, required reports in docs/pipeline_v0.7.4/, presentation assets in presentation_assets/v0.7.4/, additive scripts and focused tests. See final package manifest for exact files/hashes.',
         'Full hashes and messages in COMMITS.md; final sealing commit reported in delivery because a commit cannot contain its own hash.',
         'Final clean status is verified after the sealing commit and reported in delivery; the package records the preceding staged delivery state.',
