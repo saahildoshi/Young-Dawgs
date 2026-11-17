@@ -1,0 +1,7 @@
+# Registered conversation-continuous experiment
+
+Eight independent persistent ordinary-ChatGPT conversations receive an identical initial prompt, the authenticated raw SEM crop and the same researcher-prepared source template. No segmentation mask or measured mechanics is supplied initially. Actual returned initial source modules may differ; they are not replaced by the template or manually repaired. IF/NF assignment and ordering precede any response.
+
+Each exact initial module is evaluated on the same registered development seeds, with invalid attempts retained. IF receives authentic measurements for its own initial source plus the reused v073 paired geometry–mechanics dataset. NF receives the identical continuation structure, physics and structural information without measured responses. Both receive one follow-up in the SAME original URL, with earlier code already present; no old-script attachment to a new chat substitutes for continuity. Capture timestamps, initial and revised response hashes, prompt hashes and chronological UI evidence bind each conversation. All16 actual source modules must freeze before final seeds are generated.
+
+The exposed model/reasoning configuration is held consistent where available. Backend routing, account memory, custom instructions and complete statistical independence cannot be inferred. Conversation identity, exact prompt and response provenance are verified separately from scientific generator validity. No final outcomes are sent to the model, and there are no additional repair or optimization rounds.
