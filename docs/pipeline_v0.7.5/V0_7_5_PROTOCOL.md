@@ -1,0 +1,9 @@
+# v0.7.5 replication protocol
+
+Twelve ordinary ChatGPT conversations start from the same authenticated P3 SEM tile and byte-identical initial prompt used in v0.7.4. Each conversation has one initial generation and one revision. Development uses seeds 6100–6102. After every initial trial has three recorded development attempts, sort by availability and uncapped mean absolute target error, breaking ties by feasible count, accepted count and trial ID. Form adjacent pairs and make one PCG64 draw per pair with seed 75016. Preserve failed trials and assignment.
+
+IF receives its own accepted development measurements and the same v0.7.3 controlled measurements supplied in v0.7.4. Both arms receive the fixed target, physics, geometry policy and structural feedback. Each revision uses its original conversation. Freeze the complete evidence before generating seeds 7100–7105. Refine the first three fixed seeds where eligible.
+
+The target is 1640 MPa with an inclusive ±2% hit band. The primary script loss averages six attempts with accepted absolute relative errors capped at 10% and failures scored at 10%. Positive initial-minus-revised loss indicates improvement. Compare equal-weight conversation improvements and the six within-pair contrasts. Report the 5% and 20% penalty sensitivities, uncapped accepted-only analysis, strictly compliant subset, every leave-one-out contrast, and matched H1/H2 sensitivity.
+
+The v0.7.3 policy is copied byte-for-byte. Geometry, material, loading and native acceptance remain as specified in the qualified model. The maximum 252 source solves and their separate readbacks use one job at a time, two cores, a 240-minute aggregate native budget, 185 GiB new raw storage, and a 50 GiB system-disk reserve. The measured v0.7.4 sizes project approximately 159 GiB for the full design.

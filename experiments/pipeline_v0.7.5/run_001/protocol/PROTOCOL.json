@@ -1,0 +1,146 @@
+{
+  "H2_selection": "First three fixed final seeds for every initial/revised script, structurally feasible only; no substitutions.",
+  "J_target": 1.64,
+  "NLGEOM": "OFF",
+  "allowed_dependencies": [
+    "numpy",
+    "scipy",
+    "skimage",
+    "PIL",
+    "math",
+    "random",
+    "collections",
+    "itertools"
+  ],
+  "arm_assignment_before_development": false,
+  "assignment": "One PCG64 integer draw in [0,2) per sorted adjacent pair, in pair order. Draw selects IF member by zero-based position. No rerandomization.",
+  "context": "Consistent ordinary persistent ChatGPT context and exposed effort setting; no account-setting changes. Record visible differences and unknown backend routing.",
+  "element": {
+    "KEYOPT1": 0,
+    "KEYOPT3": 3,
+    "KEYOPT6": 0,
+    "integration": "2x2, full integration B-bar; no uniform reduced integration/hourglass control",
+    "name": "PLANE182",
+    "real_constant_THK_mm": 1.0
+  },
+  "exact_matrix_count": 44805,
+  "exact_reinforcement_count": 20731,
+  "failure_penalties": [
+    0.05,
+    0.1,
+    0.2
+  ],
+  "loading": "UYbottom0, UYtop=-strain*H, UXbottomleft0; other UX free; sides traction free",
+  "matching": "Sort by missing mechanical mean last, then ascending uncapped development mean absolute relative target error, descending feasible count, descending accepted count, and trial ID. Pair adjacent ranks.",
+  "material": {
+    "constitutive_model": "small-strain isotropic linear elasticity",
+    "id": "ILLUSTRATIVE_TWO_PHASE_ELASTIC_CONTRAST_10",
+    "interface": "perfectly bonded shared nodes, no contact",
+    "materials": {
+      "1": {
+        "E_MPa": 1000.0,
+        "nu": 0.3
+      },
+      "2": {
+        "E_MPa": 10000.0,
+        "nu": 0.3
+      }
+    },
+    "physical_calibration": false,
+    "raw_to_material": {
+      "1": 1,
+      "5": 2
+    },
+    "units": "mm N MPa"
+  },
+  "message_budget": {
+    "assistant_initial": 1,
+    "assistant_revision": 1,
+    "user_initial": 1,
+    "user_revision": 1
+  },
+  "morphology_policy_sha256": "3a72f0286033e5cd2169d29754d6d0641483bbf0733cb3556fa4cfaa43bb2156",
+  "native_base": "C:\\Users\\sd22446\\AppData\\Local\\YoungDawgs\\artifacts\\solver\\v075\\run_001",
+  "native_route": "Qualified five-checkpoint source solve and independent RST readback",
+  "primary_effect": "Mean IF minus NF of within-conversation initial minus revised losses. Each conversation has equal weight.",
+  "primary_loss": "Mean of six attempted seed losses, capped absolute relative error at 0.10 with failure scored 0.10. Failed modulus remains null.",
+  "primary_penalty": 0.1,
+  "randomization_seed": 75016,
+  "reference_sha256": "220616b81ceebcb91038a7767ffd7f4c245de0391b3f84dea8f6f2adc95d15dd",
+  "registered_utc": "2026-11-20T16:43:36.346154+00:00",
+  "request_sha256": "fc92820939d45e59f19ecebd6ceda13236119244575beb6b564027a67ad953bb",
+  "resource_basis": {
+    "available_RAM_bytes": 41932595200,
+    "basis": "Measured v074 held-out solve and readback durations and raw directory sizes. 185 GiB includes headroom above approximately 159 GiB for all three refinements.",
+    "estimated_GiB": 159.12,
+    "estimated_seconds": 12240,
+    "free_disk_bytes": 1029612425216,
+    "max_H2": 72,
+    "max_development_H1": 36,
+    "max_heldout_H1": 144,
+    "v074_performance_sha256": "e7d4baaeef2b74a04deff09e7cb2bdbbf046abef37f4bbe90f284c7e0787d933"
+  },
+  "resource_limits": {
+    "cores": 2,
+    "disk_reserve_bytes": 53687091200,
+    "maximum_native_jobs": 504,
+    "native_campaign_seconds": 14400,
+    "one_native_job": true,
+    "raw_storage_budget_bytes": 198642237440,
+    "readback_timeout_s": 900,
+    "rss_cap": null,
+    "solve_timeout_s": 1800
+  },
+  "robustness": [
+    "all failure penalties",
+    "uncapped accepted-only",
+    "strict 2+2 compliance",
+    "all leave-one-conversation-out contrasts",
+    "all six paired effects",
+    "matched H1/H2 subset"
+  ],
+  "single_generation_timeout_seconds": 30,
+  "starting_branch": "master",
+  "starting_candidate_maximum": 8,
+  "starting_head": "d1901cc1e1c6d97ee6fb41af6c542cfa7ce2ba77",
+  "starting_status": "?? scripts/v075_protocol.py\n",
+  "strain_checkpoints": [
+    0.001,
+    0.002,
+    0.003,
+    0.004,
+    0.005
+  ],
+  "target_MPa": 1640,
+  "target_band_MPa": [
+    1607.2,
+    1672.8
+  ],
+  "target_hit_tolerance": 0.02,
+  "tolerances": {
+    "benchmark_relative": 0.001,
+    "constitutive_field_relative": 1e-05,
+    "energy_relative": 0.001,
+    "horizontal_pin_relative": 0.001,
+    "linear_fit_relative_residual": 1e-05,
+    "mesh_modulus_relative": 0.02,
+    "native_displacement_absolute_mm": 1e-09,
+    "native_volume_relative": 1e-08,
+    "reaction_balance_relative": 0.001
+  },
+  "trial_order": [
+    "V075_T01",
+    "V075_T02",
+    "V075_T03",
+    "V075_T04",
+    "V075_T05",
+    "V075_T06",
+    "V075_T07",
+    "V075_T08",
+    "V075_T09",
+    "V075_T10",
+    "V075_T11",
+    "V075_T12"
+  ],
+  "worker_timeout_seconds": 75
+}

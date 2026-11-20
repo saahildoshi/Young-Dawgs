@@ -1,0 +1,2502 @@
+# YOUNG DAWGS — PIPELINE v0.7.5
+# Replicated Same-Conversation LLM Mechanical-Feedback Experiment
+# Controlled P3 Target-Modulus Inverse Design, Cross-Family Research Synthesis, and Presentation Readiness
+
+**Repository:** `C:\Users\sd22446\Projects\Young-Dawgs-VSCode`
+
+**Scientific supervisor:** Dr. Xianqiao Wang
+
+**Mechanical solver:** ANSYS Mechanical APDL 2024 R1
+
+**Primary objective:** Determine whether measured mechanical feedback improves LLM-guided microstructure inverse design when initial generator quality, conversation structure, stochastic variability, and numerical accuracy are more carefully controlled.
+
+---
+
+# 1. ROLE AND MISSION
+
+You are acting as a senior computational materials researcher, scientific experimental-design specialist, finite-element engineer, ANSYS Mechanical APDL expert, LLM evaluation researcher, and research software engineer.
+
+You are continuing the Young Dawgs microstructure-generation project.
+
+The project has completed five major stages:
+
+- v0.4–v0.6: Procedural porous metamaterial generation and historical compression simulations.
+- v0.7.0: Genuine LLM generation and quantitative reconstruction of real microscopy-derived microstructures.
+- v0.7.1: Native-solver-verified mechanical characterization of P3 reference and generated structures.
+- v0.7.2: First controlled LLM mechanical-feedback optimization experiment.
+- v0.7.3: Stronger morphology constraints and controlled geometry–mechanics development study.
+- v0.7.4: Same-conversation LLM inverse design, F1 three-phase mechanical benchmarking, and 3D-printable research presentation models.
+
+Your assignment is:
+
+**Pipeline v0.7.5 — Replicated Same-Conversation LLM Mechanical-Feedback Experiment and Cross-Family Research Consolidation.**
+
+The primary purpose is to investigate whether measured mechanical feedback actually provides an advantage in LLM microstructure inverse design.
+
+The secondary purpose is to consolidate the scientific findings into a clear, reproducible research narrative suitable for Dr. Wang and the Young Dawgs presentation.
+
+Do not simply recreate the previous infrastructure.
+
+Do not start a new material family.
+
+Do not resume the old large-strain porous compression campaign.
+
+Do not generate new arbitrary optimization objectives.
+
+**Prioritize actual independent LLM revisions, controlled mechanical evaluation, and scientifically interpretable results.**
+
+---
+
+# 2. PRIMARY SCIENTIFIC QUESTION
+
+The central research question is:
+
+**Does providing measured mechanical response data to an LLM improve its ability to revise a stochastic microstructure generator toward a specified apparent elastic modulus, compared with an otherwise matched revision that receives no measured mechanical feedback?**
+
+The experiment must distinguish:
+
+1. Improvement from a second opportunity to revise the generator.
+2. Improvement from the LLM's existing mechanical reasoning.
+3. Improvement specifically attributable to measured mechanical feedback.
+4. Differences in the initial quality of independently generated scripts.
+5. Stochastic variation among realizations from the same script.
+6. Numerical differences caused by finite-element discretization.
+7. Structural failures and morphology-family violations.
+
+The primary comparison must be based on independent LLM conversations.
+
+Multiple stochastic seeds from one script are nested observations.
+
+They are not independent LLM trials.
+
+---
+
+# 3. WHY v0.7.5 IS NECESSARY
+
+The completed v0.7.4 study restored the original same-conversation feedback workflow.
+
+Eight genuine independent ChatGPT conversations were conducted:
+
+- Four informative-feedback conversations.
+- Four no-mechanical-feedback conversations.
+
+Each conversation contained an actual initial generation response followed by a revision in that same thread.
+
+All eight scientific revisions preserved conversation identity.
+
+However, the outcome was not sufficiently conclusive.
+
+The informative-feedback arm achieved lower final target error, but started with stronger initial generators on average.
+
+The observed difference was also sensitive to individual conversations.
+
+v0.7.5 must address these design limitations directly.
+
+Do not repeat the study without improving the assignment and comparison methodology.
+
+---
+
+# 4. AUTHORITATIVE v0.7.4 RESULTS
+
+Read the actual completed v0.7.4 experiment.
+
+Expected locations:
+
+`experiments/pipeline_v0.7.4/run_001/`
+
+`docs/pipeline_v0.7.4/`
+
+The final reported results were:
+
+| Trial | Initial target error | Revised target error | Improvement, percentage points |
+|---|---:|---:|---:|
+| IF_01 | 0.5509% | 0.5047% | +0.0461 |
+| IF_02 | 0.5922% | 0.4768% | +0.1154 |
+| IF_03 | 1.2535% | 0.3464% | +0.9070 |
+| IF_04 | 0.3713% | 0.3905% | −0.0192 |
+| NF_01 | 0.8286% | 2.7960% | −1.9674 |
+| NF_02 | 1.1424% | 0.8241% | +0.3183 |
+| NF_03 | 2.3200% | 0.3598% | +1.9601 |
+| NF_04 | 1.2064% | 1.1215% | +0.0849 |
+
+These were script-level mean absolute errors relative to the 1640 MPa target.
+
+Arm-level results:
+
+| Metric | IF | NF |
+|---|---:|---:|
+| Independent conversations | 4 | 4 |
+| Initial mean script error | 0.6920% | 1.3743% |
+| Revised mean script error | 0.4296% | 1.2754% |
+| Mean within-conversation error reduction | 0.2623 pp | 0.0990 pp |
+
+The revised-error contrast favored IF by 0.8457 percentage points.
+
+The improvement contrast favored IF by 0.1634 percentage points.
+
+However, excluding NF_01 reverses which arm improved more.
+
+The v0.7.4 handoff explicitly states that a stable feedback-specific improvement advantage was not established.
+
+**Preserve that conclusion.**
+
+Do not relabel v0.7.4 as proof that mechanical feedback is beneficial.
+
+Verify the exact original values before using them in the consolidated research summary.
+
+---
+
+# 5. v0.7.4 EXPERIMENTAL LIMITATIONS
+
+The most important limitations were:
+
+## A. Initial-generator imbalance
+
+IF started with substantially lower mean target error than NF.
+
+This complicates comparisons of final performance.
+
+## B. Sensitivity to individual trials
+
+NF_01 worsened considerably after revision.
+
+NF_03 showed a large improvement but had two initial construction failures.
+
+These outcomes have considerable influence when there are only four independent scripts per arm.
+
+## C. Unequal conversation structure
+
+One NF conversation had a documented total-message-count deviation.
+
+Even though scientific revisions stayed in their original threads, the broader interaction structures were not perfectly matched.
+
+## D. Account context
+
+Memory, personalization, and project-context effects were not independently isolated.
+
+The exact backend routing was unavailable.
+
+## E. Numerical confirmation
+
+H2 refinement covered two predetermined held-out seeds per script.
+
+That is valuable preliminary evidence but does not establish full convergence for the entire stochastic ensemble.
+
+## F. Structural realism
+
+The stronger morphology envelope prevented the large historical reinforcement-lane strategy.
+
+However, passing finite shape and spatial descriptors does not prove that all generated structures are equivalent to natural material microstructures.
+
+v0.7.5 must explicitly address these limitations.
+
+---
+
+# 6. PERMANENT GIT POLICY
+
+After every coherent set of repository changes, create a descriptive Git commit.
+
+Before starting:
+
+1. Read `AGENTS.md`.
+2. Inspect `git status`.
+3. Confirm repository and branch.
+4. Record the complete starting HEAD.
+5. Identify unrelated working-tree modifications.
+6. Preserve all existing user work.
+
+After each coherent implementation stage:
+
+1. Review the diff.
+2. Run focused tests.
+3. Stage only intended files.
+4. Create a descriptive Git commit.
+5. Record the complete hash.
+6. Verify the resulting working-tree state.
+
+Suggested messages:
+
+- `docs(research): register v0.7.5 replicated feedback protocol`
+- `feat(experiment): add matched assignment and conversation-turn controls`
+- `test(experiment): verify initial-generator balancing and trial isolation`
+- `feat(llm): capture replicated same-conversation generator revisions`
+- `feat(mechanics): evaluate v0.7.5 independent held-out specimens`
+- `test(mechanics): confirm replicated target-property results on H2`
+- `feat(analysis): compare feedback effects with script-level inference`
+- `docs(research): consolidate Young Dawgs microstructure findings`
+- `docs(presentation): finalize verified STL and research figure index`
+- `docs(research): deliver v0.7.5 scientific handoff`
+
+Do not push automatically.
+
+Do not force-push.
+
+Do not rewrite history.
+
+Do not amend historical research evidence.
+
+Do not commit unnecessary large ANSYS result files.
+
+Record actual commit hashes and messages in the final handoff.
+
+---
+
+# 7. REPOSITORY AND HISTORICAL PROTECTION
+
+Expected repository:
+
+`C:/Users/sd22446/Projects/Young-Dawgs-VSCode`
+
+Verify actual paths and active HEAD.
+
+Preserve all previous research:
+
+- Historical porous microstructures and ANSYS evidence.
+- v0.7.0 microscopy references and captured generators.
+- v0.7.1 two-phase mechanical benchmarks.
+- v0.7.2 original stiffness-optimization experiments.
+- v0.7.3 exact-composition preparation and morphology envelope.
+- v0.7.4 conversation transcripts.
+- v0.7.4 generated structures.
+- v0.7.4 mechanical outcomes.
+- F1 reference and generated mechanical results.
+- Both sets of 3D-printable presentation models.
+
+Do not modify historical source scripts in place.
+
+Do not overwrite previous generated arrays.
+
+Do not reclassify historical results using newer constraints.
+
+All v0.7.5 work must be additive.
+
+Create:
+
+`experiments/pipeline_v0.7.5/run_001/`
+
+and:
+
+`docs/pipeline_v0.7.5/`
+
+Use a unique native artifact directory.
+
+---
+
+# 8. HISTORICAL ARTIFACT AVAILABILITY
+
+The v0.7.4 handoff reported that tracked historical research files remained authenticated.
+
+However, some earlier external native ANSYS artifact folders were unavailable during the audit.
+
+Do not equate unavailable files with confirmed deletion.
+
+Recheck actual configured locations.
+
+Classify each result as:
+
+- Available and authenticated.
+- Available but hash mismatch.
+- Unavailable.
+- Not applicable.
+
+Do not claim that an unavailable native artifact passed fresh revalidation.
+
+Do not rerun entire historical solver campaigns merely to recreate old files.
+
+If an old artifact is unavailable, preserve its historical manifest and classify the present verification status accurately.
+
+The new scientific experiment must not depend on silently reconstructing or replacing historical evidence.
+
+---
+
+# 9. PRIMARY MATERIAL FAMILY
+
+Use P3.
+
+P3 is a real microscopy-derived two-phase composite field.
+
+Native labels:
+
+- 1 = matrix-like solid.
+- 5 = reinforcement-like solid.
+
+Both phases are solid.
+
+The reference is 256 × 256.
+
+Exact reinforcement composition:
+
+`20731 / 65536`
+
+Equivalent to:
+
+- 20,731 reinforcement pixels.
+- 44,805 matrix pixels.
+
+The physical pixel scale is unknown.
+
+The phase-5 chemistry remains provisional.
+
+The selected P3 crop is not an independently qualified representative volume element.
+
+The mechanical experiment uses illustrative constituent properties and finite-domain apparent stiffness.
+
+Do not claim experimental physical calibration.
+
+---
+
+# 10. UNCHANGED MECHANICAL MODEL
+
+Reuse the verified P3 model from v0.7.1–v0.7.4.
+
+Computational square:
+
+- Width = 1 mm.
+- Height = 1 mm.
+- Thickness = 1 mm.
+
+Material properties:
+
+Matrix:
+
+- E = 1000 MPa.
+- ν = 0.30.
+
+Reinforcement:
+
+- E = 10000 MPa.
+- ν = 0.30.
+
+Element:
+
+- PLANE182.
+- KEYOPT(1)=0.
+- KEYOPT(3)=3.
+- KEYOPT(6)=0.
+
+Analysis:
+
+- Small-strain linear elasticity.
+- Plane stress.
+- NLGEOM OFF.
+- Perfectly bonded interfaces using shared nodes.
+
+Boundary conditions:
+
+- Bottom UY=0.
+- Prescribed negative top UY.
+- One minimal UX pin.
+- Free lateral displacement.
+- No contact elements between bonded material phases.
+
+Loading:
+
+- Through 0.5% compression.
+
+Use the same nominal stress and apparent modulus definitions as the previously qualified pipeline.
+
+Do not silently change mechanical assumptions.
+
+---
+
+# 11. EXACT COMPOSITION AND MORPHOLOGY
+
+Every accepted P3 structure must contain:
+
+- Exactly 20,731 pixels labeled 5.
+- Exactly 44,805 pixels labeled 1.
+
+Reuse the frozen v0.7.3 morphology envelope.
+
+This includes:
+
+- Phase semantics.
+- Matrix connectivity.
+- Reinforcement nonspanning requirements.
+- Region-count and boundary-censoring requirements.
+- Area-weighted shape descriptors.
+- Shape-tail constraints.
+- Orientation organization.
+- Directional correlations.
+- Multiscale occupancy organization.
+- Gap-tolerant near-spanning diagnostics.
+- Runtime bounds.
+- Stochastic diversity.
+
+Use the actual frozen numerical policy.
+
+Do not reconstruct thresholds from approximate descriptions in this prompt.
+
+Do not relax the envelope after seeing model responses.
+
+The historical v0.7.2 segmented-lane structures should continue to be classified as outside the newer intended reference-like family, without changing their original experiment's validity records.
+
+---
+
+# 12. PRIMARY MECHANICAL TARGET
+
+Keep the same numerical objective as v0.7.4.
+
+Target:
+
+**E_target = 1640 MPa**
+
+Normalized target:
+
+`J_target = 1.640`
+
+The primary realization-level error is:
+
+`L(E) = abs(E_app - 1640) / 1640`
+
+Lower is better.
+
+Use the same registered ±2% target-hit band:
+
+- Lower bound = 1607.2 MPa.
+- Upper bound = 1672.8 MPa.
+
+Do not maximize stiffness.
+
+Do not change the target after model execution.
+
+The purpose is to replicate and improve our understanding of the existing target-property inverse-design experiment.
+
+A new target would introduce another experimental variable and reduce comparability.
+
+---
+
+# 13. PRIMARY EXPERIMENTAL DESIGN
+
+Conduct a new, independent replication.
+
+Recommended design:
+
+**Twelve independent ordinary-ChatGPT conversations.**
+
+Assign:
+
+- Six to informative mechanical feedback.
+- Six to no measured mechanical feedback.
+
+Each independent conversation must contain:
+
+1. One registered initial generation prompt.
+2. One actual initial model response.
+3. One registered feedback/control follow-up.
+4. One actual revised model response.
+
+The revision must remain in the same conversation as the initial generator.
+
+Do not use a new chat with the previous script reattached.
+
+Do not copy old response text into a new chat and call it conversation continuity.
+
+Do not give one arm extra revision rounds.
+
+---
+
+# 14. SAME-CONVERSATION REQUIREMENT
+
+This is a strict experimental requirement.
+
+For each trial:
+
+- Create a new independent ChatGPT conversation.
+- Submit the common initial-generation prompt.
+- Preserve the actual initial Python module.
+- Evaluate that module on registered development seeds.
+- Return to the original conversation.
+- Submit the assigned feedback/control follow-up there.
+- Capture the resulting revised module.
+
+Both user messages and both assistant responses must belong to the same original conversation.
+
+Record the original chat URL or stable conversation identifier.
+
+Preserve chronological message evidence.
+
+No fresh-chat feedback substitutions are permitted.
+
+If the original conversation cannot be reopened, record a continuity failure.
+
+Do not silently replace the failed trial with a new one.
+
+---
+
+# 15. EQUAL TOTAL CONVERSATION TURNS
+
+This is a major methodological improvement over v0.7.4.
+
+Each experimental conversation must have the same registered number of scientific messages.
+
+The intended structure is:
+
+- User: initial prompt.
+- Assistant: initial generator.
+- User: revision request.
+- Assistant: revised generator.
+
+No additional troubleshooting messages.
+
+No extra clarification questions answered selectively.
+
+No additional code-repair turns.
+
+No separate follow-up asking a model to explain or improve its output.
+
+Do not allow one conversation to receive an extra optimization opportunity.
+
+If the interface produces an unexpected extra message or requires an additional user action, record the deviation.
+
+Preserve the original trial.
+
+Do not conceal the extra interaction.
+
+Do not create extra control messages merely to force an apparently equal transcript if those messages would change the scientific context.
+
+Distinguish:
+
+- Strictly protocol-compliant conversations.
+- Conversations with documented interaction deviations.
+
+Use all assigned trials in the primary intention-to-treat-style reporting, with an explicitly labeled compliant-trial sensitivity analysis.
+
+Do not selectively exclude a problematic conversation because its mechanical outcome is unfavorable.
+
+---
+
+# 16. MODEL CONTEXT AND PERSONALIZATION
+
+The previous study could not fully control:
+
+- Account memory.
+- Personalized context.
+- Project suggestions.
+- Model backend routing.
+- Hidden interface behavior.
+
+For v0.7.5, conduct a preflight before experimental model calls.
+
+Determine whether ordinary ChatGPT offers a suitable consistent context configuration that:
+
+1. Supports the necessary two-turn same-conversation workflow.
+2. Allows actual response capture.
+3. Can be used consistently across trials.
+4. Does not depend on changing unrelated user settings.
+5. Avoids introducing prior project details differently between arms.
+
+Temporary Chat may be considered only if the actual interface supports preserving the same thread through the revision and capturing the necessary evidence.
+
+Do not assume temporary chats can be reopened or exported.
+
+Do not change account-wide memory, personalization, or privacy settings without explicit authorization.
+
+If full isolation is unavailable, use the most consistent supported configuration and record the limitation.
+
+Do not falsely claim memory or backend independence.
+
+---
+
+# 17. TRIAL ORDER AND INITIAL RESPONSE CAPTURE
+
+Do not assign trials based on favorable response appearance.
+
+Create twelve trial IDs before generation.
+
+Suggested:
+
+`V075_T01` through `V075_T12`
+
+Use the identical initial-generation prompt and the same reference material in every trial.
+
+Capture the first complete model response.
+
+Do not regenerate a weak initial script to obtain a better one.
+
+Do not manually repair returned modules.
+
+Record:
+
+- Trial ID.
+- Conversation identity.
+- Model/interface label.
+- Reasoning setting.
+- Initial prompt hash.
+- Initial response hash.
+- Initial script hash.
+- Execution status.
+- Structural validity.
+- Development mechanical results.
+
+No treatment-specific mechanical information should enter any initial generation prompt.
+
+---
+
+# 18. IMPORTANT CHANGE — RANDOMIZE AFTER INITIAL EVALUATION
+
+The v0.7.4 informative-feedback arm began with better initial generators than the no-feedback arm.
+
+v0.7.5 should reduce that imbalance.
+
+Use the following prospective design:
+
+1. Generate all twelve initial scripts under the same initial prompt.
+2. Preserve every initial response and code hash.
+3. Evaluate the initial scripts on the same registered development seeds.
+4. Calculate their pretreatment structural feasibility and mean absolute target error.
+5. Freeze the initial results.
+6. Create six matched pairs based on pretreatment mechanical performance and structural feasibility.
+7. Randomly assign one conversation from each pair to IF and the other to NF.
+8. Record the randomization method and seed.
+9. Freeze assignment before sending any revision prompt.
+
+Use a deterministic, documented randomization algorithm.
+
+Do not assign based on desired final outcomes.
+
+Do not assign the six strongest generators to IF.
+
+Do not assign failed generators preferentially to NF.
+
+Do not discard weak or failed initial scripts.
+
+If exact pairing is impossible, use the closest defensible balance and report residual initial differences.
+
+---
+
+# 19. MATCHED-PAIR ASSIGNMENT DETAILS
+
+The matching process should be transparent and reproducible.
+
+Suggested pretreatment matching variables:
+
+Primary:
+
+- Initial mean absolute target error.
+
+Secondary:
+
+- Initial structural validity rate.
+- Initial number of mechanically accepted realizations.
+
+Additional variables may be used only if preregistered and justified.
+
+Avoid overfitting the assignment to dozens of morphology descriptors.
+
+A simple approach is:
+
+1. Sort conversations by initial target error, with a prospective rule for invalid or unavailable mechanical outcomes.
+2. Form adjacent pairs.
+3. Randomize assignment within each pair.
+
+Record all pair identities.
+
+Do not adjust the pairs after seeing any revised-generator result.
+
+Keep the pair identity in the final analysis.
+
+The pairs are matched by observed initial performance, not identical underlying scripts.
+
+Do not describe the two conversations in a pair as using identical initial generator code.
+
+---
+
+# 20. INVALID INITIAL SCRIPTS
+
+A registered initial script may fail:
+
+- Import.
+- Execution.
+- Exact composition.
+- Morphology.
+- Diversity.
+- Runtime.
+- Mechanical solve.
+
+Preserve the failure.
+
+Do not replace the trial.
+
+Do not manually repair it.
+
+If no valid development mechanics can be obtained, use a prospectively registered missing/invalid baseline classification for matching.
+
+The conversation should still receive its assigned revision request.
+
+Both arms must have the same policy for reporting generic structural and execution failures.
+
+IF must not receive fabricated mechanical measurements for an invalid baseline.
+
+If no real mechanical data exist for a particular IF trial, state that explicitly.
+
+Do not manufacture an ANSYS curve.
+
+Such trials remain part of the experiment and its feasibility analysis.
+
+---
+
+# 21. COMMON INITIAL-GENERATION PROMPT
+
+All twelve conversations must receive the same task.
+
+The initial prompt must provide:
+
+- Authenticated P3 microscopy reference.
+- Phase definitions.
+- Exact reinforcement count.
+- Complete registered morphology constraints.
+- Target apparent modulus of 1640 MPa.
+- Illustrative material properties.
+- Vertical loading assumptions.
+- Required Python generator interface.
+- Allowed dependencies.
+- Stochastic independence requirements.
+- Runtime/search restrictions.
+- Prohibited reference loading and external calls.
+
+The model must return one complete procedural Python module.
+
+Use the established interface:
+
+`generate_microstructure(seed, parameters)`
+
+Prefer:
+
+`parameters = {}`
+
+Output:
+
+- Shape `(256,256)`.
+- Dtype `uint8`.
+- Native labels `{1,5}`.
+- Exactly 20,731 label-5 pixels.
+
+Do not let the initial generator access ANSYS.
+
+Do not provide new per-trial mechanical measurements in the initial prompt.
+
+Freeze this prompt before the twelve conversations are opened.
+
+---
+
+# 22. INDEPENDENT STOCHASTIC GENERATION
+
+Every initial and revised generator must:
+
+- Use a local `numpy.random.default_rng(seed)`.
+- Reproduce the exact same array for identical inputs.
+- Produce genuinely different configurations for different seeds.
+- Preserve finite nonperiodic boundaries.
+- Preserve exact composition.
+- Preserve the registered morphology family.
+- Use bounded geometry generation.
+- Avoid reading external datasets.
+- Avoid loading target masks.
+- Avoid embedding reference pixels or traced coordinates.
+- Avoid file/network/API/subprocess access.
+- Avoid using a mechanical solver.
+- Avoid import-time generation.
+- Avoid tests, plotting, and printing at import time.
+
+Use the existing allowed dependency policy.
+
+Do not introduce a different generator interface for one experimental arm.
+
+---
+
+# 23. DEVELOPMENT SEED PARTITION
+
+Use fresh seeds that were not previously used for the registered experimental comparisons.
+
+Suggested:
+
+Development seeds:
+
+`6100, 6101, 6102`
+
+Held-out seeds:
+
+`7100, 7101, 7102, 7103, 7104, 7105`
+
+Verify the historical seed registry before freezing these values.
+
+If collisions exist, replace them prospectively.
+
+Do not reveal final held-out seeds or outcomes in model prompts.
+
+All conversations must use the same development seed set.
+
+All initial and revised generators must be evaluated on the same final held-out seed set.
+
+Equal seed IDs do not guarantee identical particle arrangements across different algorithms.
+
+---
+
+# 24. DEVELOPMENT MECHANICAL EVALUATION
+
+Evaluate every initial generator on the three registered development seeds.
+
+For each attempted output:
+
+1. Generate the original array.
+2. Record generation success or failure.
+3. Verify deterministic replay.
+4. Verify exact phase counts.
+5. Evaluate the frozen morphology envelope.
+6. Evaluate stochastic diversity across the available cohort.
+7. Build the qualified H1 mesh if structurally feasible.
+8. Run actual ANSYS.
+9. Extract the apparent modulus.
+10. Verify reaction equilibrium and strain energy.
+11. Preserve native result provenance.
+
+Reuse the validated five-checkpoint stress–strain procedure where feasible.
+
+Do not synthesize curves from a single solved point.
+
+Record:
+
+- Individual development moduli.
+- Mean modulus.
+- Target error.
+- Structural validity.
+- Mechanical validity.
+- Native checkpoint data.
+
+This becomes the pretreatment dataset for pairing and feedback.
+
+---
+
+# 25. PRIMARY FEEDBACK INTERVENTION
+
+After assignment, the IF conversations receive:
+
+- Their actual initial script's development mechanical results.
+- Actual per-seed stress–strain curves.
+- Actual apparent moduli.
+- Mean modulus and variability.
+- Current target-property errors.
+- Structural descriptors.
+- Structural validity results.
+- The fixed 1640 MPa target.
+- The unchanged morphology envelope.
+- The exact material model.
+- The same permitted v0.7.3 historical geometry–mechanics reference evidence used in v0.7.4.
+
+The feedback must identify which data are:
+
+- Measurements from the script's own outputs.
+- Historical controlled-variant measurements.
+- Fixed constitutive assumptions.
+- Structural descriptors.
+
+Do not blend them into one invented dataset.
+
+Do not invent causality from observed descriptor–modulus associations.
+
+Do not include held-out measurements.
+
+---
+
+# 26. NO-FEEDBACK CONTROL
+
+After assignment, the NF conversations receive:
+
+- Their original starting code, already present in the same thread.
+- The exact target.
+- The same material properties.
+- The same mechanical loading assumptions.
+- The same morphology constraints.
+- The same structural evaluation conventions.
+- The same permissible structural feedback and nonmechanical geometry descriptions.
+- The same requirement to revise the generator once.
+
+They must not receive:
+
+- Actual development stress–strain curves.
+- Actual modulus results.
+- Actual mechanical variability.
+- Mechanical target errors derived from solver results.
+- Measured geometry–mechanics associations.
+- Mechanical rankings from ANSYS.
+
+The control is not deprived of the objective or known physics.
+
+The intervention is access to measured mechanical responses.
+
+---
+
+# 27. PROMPT MATCHING
+
+The IF and NF revision prompts should be matched as closely as scientifically reasonable.
+
+Both must contain:
+
+- The same task.
+- The same target.
+- The same source and phase definitions.
+- The same runtime restrictions.
+- The same code interface.
+- The same morphology constraints.
+- The same number of revision opportunities.
+- The same output format.
+
+IF additionally receives authentic measured mechanical information.
+
+Do not compensate by giving NF fabricated numbers.
+
+Do not artificially insert irrelevant text merely to equalize token count.
+
+Record actual prompt length and content differences.
+
+The essential control is the scientific information intervention and identical conversational opportunity.
+
+Do not give IF more detailed manual optimization suggestions beyond what can be grounded in the measured data.
+
+---
+
+# 28. SAME-THREAD REVISION MESSAGE
+
+The follow-up in every conversation must refer to the earlier assistant-generated code.
+
+The IF follow-up should use this structure:
+
+"You generated the initial microstructure generator earlier in this conversation.
+
+We executed that exact captured module on the registered development seeds.
+
+The following measured ANSYS results and structural diagnostics are available.
+
+Your task is to revise your earlier generator toward the specified target modulus while preserving exact composition, the morphology envelope, stochastic independence and all procedural constraints.
+
+Return one complete revised Python module.
+
+Do not claim to have run ANSYS yourself."
+
+Include only the authentic registered IF measurements.
+
+The NF follow-up should use a corresponding structure, but without measured mechanical results:
+
+"You generated the initial microstructure generator earlier in this conversation.
+
+You now have one opportunity to revise it toward the specified target modulus using the known constitutive model, geometry constraints and structural information.
+
+Preserve exact composition, the morphology envelope, stochastic independence and all procedural constraints.
+
+Return one complete revised Python module.
+
+Do not claim to have run ANSYS yourself."
+
+Do not reattach the initial script to a new conversation.
+
+---
+
+# 29. AUTHENTIC RESPONSE CAPTURE
+
+For every conversation, preserve:
+
+- Canonical or observed conversation URL.
+- Available conversation ID.
+- Full initial prompt.
+- Initial assistant response.
+- Initial script bytes.
+- Assigned experimental arm.
+- Actual revision prompt.
+- Actual revised response.
+- Revised script bytes.
+- Message chronology.
+- Source capture receipts.
+- Prompt and response SHA-256 hashes.
+- Script SHA-256 hashes.
+- Exposed model/effort information.
+- Any interface deviations.
+
+Verify that the two scientific assistant responses belong to the same conversation.
+
+Do not claim continuity solely from filenames.
+
+Do not create synthetic transcript records.
+
+Do not fabricate missing response text.
+
+Do not count a prepared prompt packet as a genuine model call.
+
+---
+
+# 30. NO REPAIR OR EXTRA OPTIMIZATION
+
+Each registered trial receives:
+
+- One initial generation.
+- One revision.
+
+No repair calls.
+
+No third chance.
+
+No selective reprompting.
+
+No researcher edits to returned generator code.
+
+If the module fails, preserve the failure.
+
+If the model returns a nonconforming response, preserve the original response.
+
+If the browser fails to capture an existing response, it may be recovered from the same conversation without asking the model to regenerate.
+
+Document that recovery.
+
+If an additional model response is actually requested, record it as a protocol deviation.
+
+Do not conceal it or use it selectively as the official revision.
+
+---
+
+# 31. FREEZE BEFORE HELD-OUT EVALUATION
+
+Before opening the final seed partition, freeze:
+
+- All twelve initial scripts.
+- All twelve revised scripts.
+- Complete conversation records.
+- Arm assignments.
+- Matched-pair identities.
+- Prompt hashes.
+- Response hashes.
+- Script hashes.
+- Morphology policy hash.
+- Target modulus.
+- Mechanical protocol.
+- Held-out seed-list hash.
+- Final analysis definitions.
+- Failure-handling conventions.
+- H2 refinement plan.
+
+Create a versioned manifest such as:
+
+`ALL_V075_SCRIPTS_AND_CONVERSATIONS_FROZEN.json`
+
+Do not run final held-out evaluation before this freeze.
+
+Do not make new LLM calls after final outcomes are revealed.
+
+---
+
+# 32. FINAL HELD-OUT EVALUATION
+
+Use six registered held-out seeds per script.
+
+There are:
+
+- Twelve initial scripts.
+- Twelve revised scripts.
+
+Maximum attempted outputs:
+
+**144 held-out realizations.**
+
+For every attempted output:
+
+1. Preserve generation success or failure.
+2. Verify exact composition.
+3. Evaluate morphology feasibility.
+4. Evaluate determinism.
+5. Evaluate diversity.
+6. Build the qualified mechanical mesh if feasible.
+7. Run actual licensed ANSYS.
+8. Extract the apparent vertical modulus.
+9. Verify equilibrium and energy.
+10. Preserve native result identity.
+11. Calculate target error.
+
+Do not replace failed seeds.
+
+Do not exclude an entire unfavorable trial after observing its results.
+
+Do not permit evaluator-side geometry repair.
+
+---
+
+# 33. FEASIBILITY AS A SEPARATE OUTCOME
+
+Report:
+
+- Attempted outputs.
+- Successfully generated arrays.
+- Exact-composition passes.
+- Morphology passes.
+- Mechanically accepted outputs.
+- Complete six-output generator qualifications.
+- Stochastic diversity.
+
+A generator producing one near-perfect modulus and five failures should not be presented as consistently successful inverse design.
+
+Preserve all failures.
+
+Do not convert missing modulus values into zero.
+
+Do not omit failed outputs from denominators without disclosure.
+
+Distinguish conditional mechanical accuracy from end-to-end feasibility.
+
+---
+
+# 34. PRIMARY PERFORMANCE METRIC
+
+The previous v0.7.4 analysis primarily reported mean absolute target error among accepted outputs.
+
+For v0.7.5, retain that measure for direct comparison.
+
+However, the primary experiment must also account for failed outputs.
+
+Register a complete-attempt loss before final evaluation:
+
+For a structurally and mechanically accepted output:
+
+`loss = min(abs(E_app - 1640) / 1640, 0.10)`
+
+For an output with no accepted mechanical result:
+
+`loss = 0.10`
+
+This provides a finite, prospectively fixed penalty for failure.
+
+The 10% value is an experimental scoring convention, not a physical measurement.
+
+It is not a substitute for reporting feasibility separately.
+
+Report sensitivity to alternative registered failure penalties of 5% and 20%.
+
+The primary script-level loss is the mean across all six attempted held-out seeds.
+
+Also report the original accepted-output-only mean absolute target error, without capping, as a secondary metric.
+
+Do not replace this scoring convention after seeing outcomes.
+
+---
+
+# 35. WITHIN-CONVERSATION IMPROVEMENT
+
+For each conversation j, calculate:
+
+`L_initial,j`
+
+and:
+
+`L_revised,j`
+
+Then:
+
+`improvement_j = L_initial,j - L_revised,j`
+
+Positive improvement means the revision reduced target error.
+
+Negative improvement means the revision worsened target error.
+
+This comparison directly uses the initial and revised generator from the same conversation.
+
+Also report:
+
+- Raw accepted-output target-error change.
+- Feasibility change.
+- Target-hit-rate change.
+- Modulus mean change.
+- Modulus variability change.
+- Morphology descriptor change.
+
+Do not assume the revised generator preserves individual particle identities.
+
+---
+
+# 36. PRIMARY FEEDBACK EFFECT
+
+The primary treatment comparison is:
+
+`mean(improvement_IF) - mean(improvement_NF)`
+
+Use one script-level improvement value per independent conversation.
+
+Because assignment is randomized within six pretreatment matched pairs, also report a matched-pair analysis.
+
+For each pair:
+
+`pair_effect = improvement_IF_member - improvement_NF_member`
+
+Then calculate:
+
+- Mean paired effect.
+- Median paired effect.
+- Number of pairs favoring IF.
+- Number of pairs favoring NF.
+- Between-pair variation.
+
+Do not treat six stochastic seeds as six independent LLM trials.
+
+Do not claim a large effective sample size from native result checkpoints.
+
+The effective independent experimental sample consists of twelve conversations, organized into six randomized pairs.
+
+---
+
+# 37. SECONDARY FEEDBACK COMPARISONS
+
+Report:
+
+1. Mean final script-level target error, IF versus NF.
+2. Mean initial script-level target error, IF versus NF.
+3. Mean within-conversation improvement.
+4. Matched-pair improvement difference.
+5. Feasibility rates.
+6. Target-hit rates.
+7. Mechanical variance.
+8. Morphology preservation.
+9. Generation runtime and internal candidate effort.
+
+The final-error comparison is important for continuity with v0.7.4.
+
+However, the primary intervention question should emphasize improvement from pretreatment to postrevision because initial scripts can differ substantially.
+
+Do not interpret a lower final error as proof of feedback efficacy if pretreatment imbalance remains.
+
+---
+
+# 38. STATISTICAL ANALYSIS
+
+This is still a small experiment.
+
+Use appropriate script-level descriptive analysis.
+
+Because assignment is randomized within pairs, an exploratory exact randomization-based comparison may be calculated using the registered pair structure.
+
+Do not automatically use a conventional large-sample statistical test.
+
+If confidence intervals or p-values are reported:
+
+- Use the correct independent experimental unit.
+- Respect the matched randomization.
+- Explain assumptions.
+- Avoid pseudo-replication.
+- Do not overstate evidence from twelve conversations.
+
+Do not bootstrap individual stochastic seeds as though they were independent LLM trials.
+
+Report both effect magnitude and uncertainty.
+
+Do not convert an inconclusive comparison into a categorical claim that feedback does or does not work.
+
+---
+
+# 39. ROBUSTNESS CHECKS
+
+Pre-register the following sensitivity analyses.
+
+## A. Failure penalty
+
+Repeat the primary comparison using the registered 5%, 10%, and 20% failure-penalty conventions.
+
+## B. Accepted-output-only mechanical accuracy
+
+Compare conditional mean absolute target errors.
+
+Report missing-output counts.
+
+## C. Strict protocol compliance
+
+Repeat descriptive comparisons among conversations with exactly the intended two user and two assistant scientific messages.
+
+Do not use this as the sole result if deviations occur.
+
+## D. Leave-one-conversation-out
+
+Recalculate arm-level contrasts after removing each individual conversation in turn.
+
+Do not selectively report only the exclusion that favors the desired conclusion.
+
+## E. Matched pairs
+
+Report all six pair effects individually.
+
+## F. Mesh confirmation
+
+Compare the direction and magnitude of effects on H1 and H2 for the registered refinement subset.
+
+These checks should show whether the observed feedback effect is stable or driven by one exceptional trial.
+
+---
+
+# 40. H2 REFINEMENT PLAN
+
+v0.7.4 evaluated two predetermined held-out seeds per script on H2.
+
+For v0.7.5, strengthen numerical confirmation.
+
+Register:
+
+**First three held-out seeds per initial/revised script.**
+
+With twelve conversations and two script versions per conversation:
+
+Up to 72 H2 confirmation outputs.
+
+If this exceeds the prospectively registered computational budget, use the first two held-out seeds for every script and reserve the third seed as a separately registered budget-dependent extension.
+
+Do not choose refined specimens based on favorable H1 results.
+
+Do not refine only the IF arm.
+
+Do not replace invalid seeds with favorable alternatives.
+
+Compare identical categorical geometry at H1 and H2.
+
+---
+
+# 41. NUMERICAL INTERPRETATION
+
+For every refined specimen, calculate:
+
+- H1 apparent modulus.
+- H2 apparent modulus.
+- H1 target error.
+- H2 target error.
+- H1 target-hit status.
+- H2 target-hit status.
+- H1/H2 relative difference.
+
+For each initial/revised pair, compare target-error improvement under both meshes.
+
+Report whether:
+
+- Improvement retains its direction.
+- Its magnitude is stable.
+- Target-hit status changes.
+- The observed difference is comparable to numerical mesh sensitivity.
+
+A sum-of-observed-mesh-changes diagnostic may be used, consistent with earlier experiments.
+
+Do not call it a rigorous error bound.
+
+Two mesh levels do not establish asymptotic convergence.
+
+Do not claim that every H1-only result is numerically resolved merely because a subset passes refinement checks.
+
+---
+
+# 42. MECHANICAL EXECUTION EFFICIENCY
+
+Reuse the existing validated ANSYS workflow.
+
+For every feasible specimen, obtain actual native solver results.
+
+Use the qualified five-checkpoint route unless a previously validated scalar screening route is explicitly selected and registered for v0.7.5.
+
+Do not fabricate stress–strain curves.
+
+For the predetermined confirmation subset, preserve:
+
+- Five actual strain checkpoints.
+- Actual reaction forces.
+- Nominal stress.
+- Native displacement fields.
+- Native stress fields.
+- Elastic strain energy.
+- Independent RST readback.
+
+The primary modulus comparison must be based on actual numerical mechanics.
+
+Do not make a neural-network surrogate or heuristic calculator the authoritative evaluator.
+
+---
+
+# 43. RESOURCE AND STORAGE BUDGET
+
+The previous mechanical experiments demonstrated that the linear P3 model is computationally manageable.
+
+However, v0.7.5 has more independent conversations and more potential native simulations.
+
+Before execution:
+
+1. Inspect free disk space.
+2. Measure available memory.
+3. Review actual v0.7.4 solve times and artifact size per model.
+4. Estimate required H1 and H2 jobs.
+5. Register a finite solver-time budget.
+6. Register a native artifact storage budget.
+7. Preserve a substantial system-disk reserve.
+
+Suggested initial operational limits, subject to actual available resources:
+
+- Maximum 240 aggregate supervised native solver minutes.
+- Maximum 150 GiB new raw native artifacts.
+- Minimum 50 GiB free-disk reserve.
+
+Do not treat these proposed numbers as permission to exhaust the machine.
+
+If the available storage cannot support the full design, revise the execution budget prospectively before opening final outcomes.
+
+Do not alter the treatment assignment or selectively truncate one arm after seeing results.
+
+The primary required comparisons should have priority over optional field visualizations.
+
+---
+
+# 44. RESOURCE SUPERVISION
+
+Reuse the existing Windows resource-monitoring system.
+
+Monitor:
+
+- Available RAM.
+- Process-tree RSS.
+- System commit.
+- Disk space.
+- Native artifact growth.
+- Solver runtime.
+- Solver completion.
+- RST integrity.
+
+Use one major ANSYS solver process at a time unless the existing resource plan safely supports otherwise.
+
+Do not alter the Windows pagefile.
+
+Do not terminate unrelated applications.
+
+Do not impose arbitrary resource caps that are unrelated to actual system pressure.
+
+Preserve failed native jobs and their reasons.
+
+Do not conceal a resource failure as a material or generator failure.
+
+---
+
+# 45. CROSS-FAMILY RESEARCH SYNTHESIS
+
+The second required v0.7.5 deliverable is a consolidated scientific summary of the entire Young Dawgs microstructure project.
+
+This is not a request to launch another F1 simulation campaign.
+
+Use the existing verified evidence.
+
+Prepare a clear account of the progression:
+
+## Stage 1 — Porous metamaterial generation
+
+Explain the original binary solid/void generation problem.
+
+Document:
+
+- Procedural generation strategy.
+- Structural validity.
+- Connectivity and percolation.
+- Historical reference geometry.
+- Mechanical simulation attempts and limitations.
+
+Do not claim successful 30–40% porous compression.
+
+## Stage 2 — Real microscopy reconstruction
+
+Explain P3 and F1.
+
+Describe:
+
+- Authentic source provenance.
+- Different phase semantics.
+- LLM-generated procedural models.
+- Structural descriptors.
+- Image-only, descriptor-informed, and feedback conditions.
+- Nested stochastic seed realizations.
+
+## Stage 3 — Mechanical reconstruction
+
+Explain v0.7.1:
+
+- P3 two-phase elasticity.
+- Actual native stress–strain curves.
+- Reference versus generated apparent moduli.
+- Preliminary mesh sensitivity.
+
+## Stage 4 — Stiffness optimization
+
+Explain v0.7.2:
+
+- Approximately 100% numerical stiffness gains.
+- Segmented reinforcement lanes.
+- Failure of the original envelope to preserve reference-like morphology.
+- No measured-feedback advantage over the control.
+
+## Stage 5 — Stronger morphology constraints
+
+Explain v0.7.3:
+
+- New area-weighted shape and spatial organization descriptors.
+- Detection of historical lane structures.
+- Measured constrained geometry–mechanics variation.
+- Registered target-feasibility stop.
+- No v0.7.3 LLM revisions.
+
+## Stage 6 — Same-thread inverse design and cross-family mechanics
+
+Explain v0.7.4:
+
+- Eight genuine same-conversation trials.
+- Target modulus of 1640 MPa.
+- Mixed feedback evidence.
+- F1 three-phase mechanics.
+- Validated STL presentation models.
+
+## Stage 7 — Replicated feedback experiment
+
+Explain the actual v0.7.5 results once available.
+
+Do not describe planned work as completed work.
+
+---
+
+# 46. F1 RESULTS TO PRESERVE
+
+The previous milestone established actual F1 mechanics.
+
+The reported values were:
+
+| F1 specimen | H1 modulus | H2 modulus |
+|---|---:|---:|
+| Reference | 2230.4453 MPa | 2158.1510 MPa |
+| Genuine generated B02 | 2147.6014 MPa | 2093.0766 MPa |
+
+These were obtained under illustrative isotropic phase properties.
+
+The F1 source phases are:
+
+- 0 = matrix.
+- 1 = transverse carbon-fiber cross-section.
+- 2 = void.
+
+The mesh omits continuum elements in void regions.
+
+The v0.7.4 controls verified the explicit void treatment.
+
+The observed mesh shifts were approximately 2.54–3.24%.
+
+Do not describe the F1 results as experimentally calibrated transverse carbon-fiber material predictions.
+
+Do not claim the 2D model captures the complete anisotropic elastic response.
+
+No new F1 mechanical solve is required in v0.7.5 unless a specific verification issue is discovered and prospectively registered.
+
+---
+
+# 47. PRESENTATION PROP PRESERVATION
+
+The project already created real STL files.
+
+Preserve:
+
+`presentation_assets/v0.7.4/P3_REFERENCE_PRINT_READY.stl`
+
+`presentation_assets/v0.7.4/POROUS_METAMATERIAL_PRINT_READY.stl`
+
+Also preserve the available source-faithful versions, previews, printing instructions, and manifests.
+
+Do not regenerate these files merely to change presentation styling.
+
+Do not silently alter the print-ready meshes.
+
+The P3 model is a raised-relief representation of a two-solid-phase composite.
+
+The porous model is a through-hole extrusion of the historical porous geometry.
+
+They are physically and scientifically distinct.
+
+---
+
+# 48. STL QUALITY AND LIMITATIONS
+
+The previous handoff reported:
+
+## P3 print-ready relief
+
+- Approximately 168 × 168 × 3.6 mm.
+- Solid backing plate.
+- Raised reinforcement geometry.
+- Source-derived print-safe simplification.
+- 1,383 changed source pixels in the printable projected geometry.
+- Watertight/manifold final mesh.
+
+The exact unsimplified P3 relief remained nonmanifold and was not print-qualified.
+
+## Porous print-ready model
+
+- Approximately 165 × 165 × 5 mm.
+- Historical 256 × 256 central crop.
+- True through-holes.
+- External printable frame.
+- Internal crop pixels preserved.
+- 19 internal pores preserved.
+- 16 edge pockets enclosed by the frame.
+
+The original 1024 specimen has sub-nozzle features and is not the recommended default print.
+
+Both recommended models were checked with actual slicer tooling, but no physical test print was performed.
+
+Retain these distinctions.
+
+Do not call the models authentic physical 3D reconstructions of the materials.
+
+They are enlarged presentation geometries derived from 2D source arrays.
+
+---
+
+# 49. PRESENTATION-READY ASSET INDEX
+
+Create a compact research-presentation asset index.
+
+Suggested:
+
+`docs/pipeline_v0.7.5/YOUNG_DAWGS_PRESENTATION_ASSETS.md`
+
+Include links to:
+
+- P3 source microscopy and annotation.
+- F1 source microscopy and annotation.
+- Representative generated P3 structures.
+- Representative generated F1 structures.
+- Original porous microstructure.
+- P3 mechanical stress–strain curves.
+- F1 mechanical curves.
+- Previous optimization result figures.
+- Morphology-drift comparison.
+- New v0.7.5 feedback comparison.
+- P3 printable STL.
+- Porous printable STL.
+- Actual STL previews.
+- Printing instructions.
+
+Use exact existing file paths.
+
+Do not invent resources that do not exist.
+
+Keep the index useful for quickly preparing slides.
+
+---
+
+# 50. PRESENTATION NARRATIVE
+
+Prepare a concise research explanation suitable for a high-school research presentation.
+
+Suggested central narrative:
+
+"We investigated whether large language models could generate material microstructures and use quantitative information to improve their designs.
+
+We first evaluated structural resemblance using image-based and statistical measurements.
+
+We then connected generated structures to finite-element simulations and measured their mechanical response.
+
+When asked to increase stiffness, the models discovered highly aligned reinforcement arrangements, but those designs departed from the original morphology.
+
+We strengthened our constraints and investigated whether actual mechanical feedback helps the models achieve prescribed material properties.
+
+We also demonstrated mechanical evaluation across different composite microstructure families."
+
+Do not copy this verbatim into a final report without checking it against achieved results.
+
+Use plain, scientifically precise language.
+
+Explain uncertainty honestly.
+
+Avoid inflated claims about AI discovering new materials.
+
+Do not claim physical manufacturing or experimental material testing.
+
+The STL models are physical presentation props, not experimental validation.
+
+---
+
+# 51. RESEARCH FIGURES
+
+Create a focused set of final research figures from actual stored data.
+
+Required:
+
+1. Research workflow timeline.
+2. P3 original reference versus representative generated structures.
+3. F1 original reference versus generated structures.
+4. Historical porous geometry and its printable representation.
+5. P3 reference/generated stress–strain comparison.
+6. F1 reference/generated stress–strain comparison.
+7. v0.7.2 stiffness improvement and morphology drift.
+8. v0.7.4 initial-versus-revised target errors.
+9. v0.7.5 initial-versus-revised target errors.
+10. v0.7.5 IF/NF script-level improvement comparison.
+11. v0.7.5 H1/H2 numerical sensitivity comparison.
+12. STL side-by-side presentation preview.
+
+Use actual source images and data.
+
+Do not fabricate curves.
+
+Do not construct hypothetical results and label them observed.
+
+Identify schematic figures explicitly.
+
+Use consistent color conventions where appropriate.
+
+Do not visually imply statistical independence where it does not exist.
+
+---
+
+# 52. SCIENTIFIC INTERPRETATION REQUIREMENTS
+
+The final discussion must distinguish:
+
+**Morphology reconstruction:** How closely generated structures reproduce a reference's statistical geometry.
+
+**Mechanical reconstruction:** How closely generated structures reproduce the reference's apparent mechanical response.
+
+**Mechanical optimization:** Whether the LLM changes generated geometry to improve a specified objective.
+
+**Target-property inverse design:** Whether the generator produces stochastic structures near a prescribed mechanical property.
+
+**Mechanical-feedback efficacy:** Whether measured mechanical responses provide an advantage over matched revisions without those measurements.
+
+These are different scientific claims.
+
+Do not combine them into one generic "LLM accuracy" score.
+
+Do not treat better mechanical performance as proof of greater physical realism.
+
+Do not assume higher stiffness is always desirable.
+
+Do not claim the feedback mechanism is effective unless the comparison supports it.
+
+---
+
+# 53. SCIENTIFIC LIMITATIONS
+
+Explicitly preserve the following:
+
+- Illustrative constituent moduli.
+- Unknown true microscopy pixel calibration.
+- Provisional P3 reinforcement chemistry.
+- Morphology-selected reference crop.
+- Approximate F1 fiber annotations.
+- Idealized bonded interfaces.
+- Pixelated boundaries.
+- Finite-domain apparent stiffness rather than fully homogenized RVE properties.
+- Plane-stress assumptions.
+- Preliminary mesh refinement rather than complete asymptotic convergence.
+- No damage, yielding, or fracture model.
+- No experimental material calibration.
+- Limited independent LLM trial count.
+- Potential account context and backend routing effects.
+- Possible differences in internal candidate-search effort.
+- Finite morphology descriptors that cannot completely guarantee a natural material family.
+
+A meaningful numerical experiment can be completed despite these limitations.
+
+Do not overclaim the results.
+
+---
+
+# 54. SOFTWARE VERIFICATION
+
+Run appropriate active tests.
+
+Reuse applicable archived verification.
+
+Add tests for:
+
+- Matched-pair assignment.
+- Randomization reproducibility.
+- Pretreatment-only matching.
+- Correct conversation identity.
+- Same-thread revision.
+- Equal scientific message counts.
+- Protocol-deviation classification.
+- IF mechanical-data inclusion.
+- NF mechanical-data exclusion.
+- Exact composition.
+- Frozen morphology envelope.
+- Seed isolation.
+- Output failure handling.
+- Generator-level scoring.
+- Matched-pair effects.
+- Script-level aggregation.
+- H1/H2 comparisons.
+- Historical asset preservation.
+- Existing STL identity and availability.
+
+Do not inflate test totals by counting archived historical checks as new experiments.
+
+Do not modify old scientific tests solely to force a pass.
+
+---
+
+# 55. LICENSED ANSYS EVIDENCE
+
+All new mechanical measurements must come from actual licensed ANSYS execution.
+
+For accepted native results, preserve:
+
+- Solver input.
+- Source array hash.
+- Mesh identity.
+- Material inventory.
+- Boundary-condition inventory.
+- Actual solver output.
+- Result-file hash.
+- Native checkpoint data.
+- Reaction equilibrium.
+- Strain-energy verification.
+- Independent RST reopening.
+
+Do not accept an output merely because the solver exits successfully.
+
+Use the existing mechanical acceptance rules.
+
+Classify:
+
+- Software verification.
+- Historical native artifact verification.
+- New native solves.
+- New native readback checks.
+
+Report them separately.
+
+Do not manufacture native evidence from interpolation or from a surrogate.
+
+---
+
+# 56. REQUIRED EXPERIMENT DIRECTORIES
+
+Create an additive v0.7.5 package.
+
+Suggested:
+
+`experiments/pipeline_v0.7.5/run_001/`
+
+Subdirectories:
+
+- `audit/`
+- `protocol/`
+- `initial_prompts/`
+- `conversation_capture/`
+- `initial_scripts/`
+- `development_structures/`
+- `development_mechanics/`
+- `matched_assignment/`
+- `revision_prompts/`
+- `revision_scripts/`
+- `frozen_evidence/`
+- `heldout_structures/`
+- `heldout_mechanics_h1/`
+- `mesh_confirmation_h2/`
+- `script_level_analysis/`
+- `matched_pair_analysis/`
+- `sensitivity_analysis/`
+- `figures/`
+- `validation/`
+- `performance/`
+- `summary/`
+
+Use existing repository conventions if they differ.
+
+Store large solver artifacts outside Git.
+
+Keep compact data, hashes, manifests, analysis and figures in version control.
+
+---
+
+# 57. REQUIRED REPORTS
+
+Produce:
+
+## `V0_7_5_PROTOCOL.md`
+
+The complete prospective scientific protocol.
+
+## `V0_7_5_CONVERSATION_CONTROL.md`
+
+Conversation continuity, initial-generation conditions, assignment, turn-count matching, and context limitations.
+
+## `V0_7_5_DEVELOPMENT_RESULTS.md`
+
+Initial scripts, structural feasibility and native mechanical results.
+
+## `V0_7_5_MATCHED_ASSIGNMENT.md`
+
+Initial performance, matched pairs, randomization and assignment balance.
+
+## `V0_7_5_HELDOUT_RESULTS.md`
+
+All attempted outputs, feasibility, target errors and native outcomes.
+
+## `V0_7_5_FEEDBACK_EFFECT_ANALYSIS.md`
+
+Script-level and matched-pair IF/NF comparisons.
+
+## `V0_7_5_MESH_CONFIRMATION.md`
+
+H1/H2 results and numerical sensitivity.
+
+## `V0_7_5_SENSITIVITY_ANALYSIS.md`
+
+Failure penalties, compliance, leave-one-out analysis and methodological robustness.
+
+## `YOUNG_DAWGS_RESEARCH_SYNTHESIS.md`
+
+A concise scientifically grounded narrative across the complete project.
+
+## `YOUNG_DAWGS_PRESENTATION_ASSETS.md`
+
+An index of figures, curves and printable STL models.
+
+## `V0_7_5_VALIDATION.md`
+
+Software, licensed, provenance and historical-protection checks.
+
+## `V0_7_5_HANDOFF.md`
+
+Concise final outcomes and unresolved limitations.
+
+Do not create hundreds of pages of repetitive reporting.
+
+Prioritize actual research execution and clear figures.
+
+---
+
+# 58. REQUIRED MACHINE-READABLE TABLES
+
+Create at least:
+
+## Initial trial inventory
+
+- Trial ID.
+- Conversation ID.
+- Initial script hash.
+- Initial execution success.
+- Initial feasibility rate.
+- Initial mean target error.
+- Initial mechanical acceptance count.
+
+## Matched assignment
+
+- Pair ID.
+- Member trial IDs.
+- Pretreatment matching values.
+- Assigned IF member.
+- Assigned NF member.
+- Randomization record.
+
+## Revision inventory
+
+- Trial ID.
+- Experimental arm.
+- Feedback prompt hash.
+- Revised response hash.
+- Revised script hash.
+- Same-conversation verification.
+- Scientific message count.
+- Protocol-deviation status.
+
+## Held-out attempts
+
+- Trial.
+- Version.
+- Seed.
+- Generation success.
+- Exact composition.
+- Morphology feasibility.
+- Mechanical acceptance.
+- H1 modulus.
+- Target error.
+- Failure reason.
+
+## Script-level outcomes
+
+- Initial loss.
+- Revised loss.
+- Error reduction.
+- Feasibility.
+- Hit rate.
+- Modulus mean and variability.
+
+## Matched-pair outcomes
+
+- Pair ID.
+- IF improvement.
+- NF improvement.
+- Pair effect.
+
+## Mesh confirmation
+
+- Trial.
+- Version.
+- Seed.
+- H1 modulus.
+- H2 modulus.
+- H1 target error.
+- H2 target error.
+- Numerical sensitivity classification.
+
+## Overall research comparison
+
+- v0.7.2 findings.
+- v0.7.3 limitations.
+- v0.7.4 findings.
+- v0.7.5 findings.
+
+Use actual values only.
+
+---
+
+# 59. INDEPENDENT SCIENTIFIC ACCEPTANCE STATES
+
+Report each separately.
+
+## Protocol and context
+
+- `V075_PROTOCOL_FROZEN`
+- `COMMON_INITIAL_PROMPT_FROZEN`
+- `CONVERSATION_CONTEXT_PRECHECK_COMPLETE`
+- `INITIAL_CONVERSATION_COUNT_VERIFIED`
+- `SCIENTIFIC_MESSAGE_COUNTS_VERIFIED`
+- `PRETREATMENT_MATCHING_COMPLETE`
+- `RANDOMIZED_ASSIGNMENT_FROZEN`
+
+## Genuine model execution
+
+- `GENUINE_INITIAL_SCRIPTS_CAPTURED`
+- `GENUINE_IF_REVISIONS_CAPTURED`
+- `GENUINE_NF_REVISIONS_CAPTURED`
+- `SAME_CONVERSATION_CONTINUITY_VERIFIED`
+- `EQUAL_REVISION_OPPORTUNITY_VERIFIED`
+- `NO_MANUAL_GENERATOR_REPAIR`
+- `FINAL_SCRIPTS_FROZEN`
+
+## Structural evaluation
+
+- `EXACT_COMPOSITION`
+- `P3_MORPHOLOGY_ENVELOPE`
+- `STOCHASTIC_DIVERSITY`
+- `HELDOUT_SEED_ISOLATION`
+- `ALL_FAILURES_RETAINED`
+
+## Mechanical evaluation
+
+- `NATIVE_DEVELOPMENT_MECHANICS`
+- `NATIVE_HELDOUT_MECHANICS`
+- `REACTION_AND_ENERGY_VERIFICATION`
+- `INDEPENDENT_RST_READBACK`
+- `H2_CONFIRMATION`
+- `NUMERICAL_SENSITIVITY_ASSESSED`
+
+## Research conclusions
+
+- `WITHIN_CONVERSATION_TARGET_IMPROVEMENT`
+- `INFORMATIVE_FEEDBACK_ADVANTAGE`
+- `FEEDBACK_EFFECT_ROBUSTNESS`
+- `GENERALIZABLE_FEEDBACK_EFFECT`
+- `PHYSICAL_MATERIAL_CALIBRATION`
+- `REPRESENTATIVE_VOLUME_QUALIFICATION`
+
+## Research communication
+
+- `CROSS_FAMILY_SYNTHESIS_COMPLETE`
+- `SCIENTIFIC_FIGURES_AUTHENTICATED`
+- `PRINTABLE_STL_ASSETS_VERIFIED`
+- `PRESENTATION_ASSET_INDEX_COMPLETE`
+
+Use statuses such as PASS, FAIL, HOLD, NOT_RUN and NOT_ESTABLISHED.
+
+Do not collapse every outcome into one overall PASS.
+
+---
+
+# 60. HUMAN-SUBMISSION GATE
+
+If the Codex environment cannot create or continue genuine ordinary-ChatGPT conversations:
+
+1. Complete the prospective experimental registration.
+2. Freeze the common initial prompt.
+3. Prepare the twelve trial identities.
+4. Provide exact instructions for initiating each original conversation.
+5. Provide the mechanism for ingesting initial responses.
+6. Implement pretreatment matching and randomization.
+7. Prepare the same-chat IF/NF follow-up templates.
+8. Provide exact instructions for continuing each original conversation.
+9. Preserve the correct source and code-capture format.
+10. Stop at the authentic model-submission gate.
+
+Do not create fake conversations.
+
+Do not author substitute experimental scripts and label them ChatGPT trials.
+
+Do not paste old code into new conversations and call that feedback continuity.
+
+Continue any independent research-synthesis and presentation-asset work that does not depend on these model calls.
+
+Clearly identify the remaining user action needed.
+
+Do not claim the experimental feedback comparison is complete if the genuine revisions have not occurred.
+
+---
+
+# 61. EXECUTION SEQUENCE
+
+Follow this order.
+
+## PHASE A — Audit and protocol
+
+1. Read repository instructions.
+2. Verify Git status and HEAD.
+3. Authenticate v0.7.4 evidence.
+4. Verify the frozen P3 morphology policy.
+5. Register target, metrics and seed partitions.
+6. Register failure handling.
+7. Register matched assignment.
+8. Register LLM conversation protocol.
+9. Register mechanical and storage budgets.
+10. Commit protocol.
+
+## PHASE B — Model-interface preflight
+
+11. Verify the ordinary ChatGPT interface.
+12. Verify same-thread continuation.
+13. Verify available model/effort settings.
+14. Determine the most consistent supported context configuration.
+15. Verify response capture.
+16. Document limitations.
+17. Do not change user account settings without authorization.
+18. Commit preflight results.
+
+## PHASE C — Initial conversations
+
+19. Freeze the initial prompt.
+20. Create twelve trial identities.
+21. Execute twelve independent initial ChatGPT generations.
+22. Capture each exact initial response.
+23. Extract original Python modules.
+24. Record conversation URLs and IDs.
+25. Audit scripts.
+26. Preserve failures.
+27. Commit captures.
+
+## PHASE D — Development evaluation
+
+28. Generate the three registered development seeds per trial.
+29. Evaluate exact composition.
+30. Evaluate morphology.
+31. Verify deterministic replay.
+32. Run actual native mechanics for feasible outputs.
+33. Extract moduli and stress–strain data.
+34. Record missing and invalid outcomes.
+35. Freeze pretreatment metrics.
+36. Commit development results.
+
+## PHASE E — Matched assignment
+
+37. Form six pairs based only on pretreatment metrics.
+38. Randomize IF/NF assignment within each pair.
+39. Record the randomization seed.
+40. Verify assignment balance.
+41. Freeze the assignment.
+42. Commit assignment evidence.
+
+## PHASE F — Same-conversation revisions
+
+43. Prepare authentic IF mechanical-feedback packets.
+44. Prepare matched NF control prompts.
+45. Freeze the revision prompts.
+46. Reopen each original conversation.
+47. Verify the initial script remains in that thread.
+48. Submit the assigned follow-up.
+49. Capture the actual revised response.
+50. Verify conversation identity.
+51. Verify scientific message counts.
+52. Preserve deviations.
+53. Extract exact revised scripts.
+54. Freeze every captured source.
+55. Commit genuine revision evidence.
+
+## PHASE G — Final structural evaluation
+
+56. Freeze the full experiment manifest.
+57. Open the held-out seed partition.
+58. Generate every initial and revised held-out output.
+59. Verify composition.
+60. Verify morphology.
+61. Verify diversity.
+62. Preserve invalid outputs.
+63. Freeze generated array identities.
+64. Commit structural evidence.
+
+## PHASE H — Native mechanical evaluation
+
+65. Build qualified H1 meshes.
+66. Run actual ANSYS for feasible specimens.
+67. Independently extract native reactions.
+68. Verify strain energy and fields.
+69. Calculate apparent moduli.
+70. Calculate target error.
+71. Preserve failed jobs.
+72. Commit mechanical results.
+
+## PHASE I — Numerical confirmation
+
+73. Execute the balanced H2 subset.
+74. Verify geometry identity across mesh levels.
+75. Compare H1/H2 moduli.
+76. Compare H1/H2 target-error improvements.
+77. Report sensitivity.
+78. Commit confirmation.
+
+## PHASE J — Feedback-effect analysis
+
+79. Calculate script-level initial/revised losses.
+80. Calculate within-conversation improvement.
+81. Calculate matched-pair treatment effects.
+82. Compare IF/NF final performance.
+83. Evaluate structural feasibility.
+84. Run registered sensitivity analyses.
+85. Report any treatment imbalance or deviations.
+86. Determine supported and unsupported conclusions.
+87. Commit analysis.
+
+## PHASE K — Research consolidation
+
+88. Verify historical reported numerical findings.
+89. Consolidate P3 and F1 results.
+90. Explain previous morphology drift.
+91. Explain the v0.7.3 registered feasibility stop.
+92. Compare v0.7.4 and v0.7.5 feedback evidence.
+93. Generate final research figures.
+94. Verify existing STL assets.
+95. Create presentation asset index.
+96. Write concise Dr. Wang summary.
+97. Commit synthesis.
+
+## PHASE L — Final verification
+
+98. Run active software tests.
+99. Run applicable archived checks.
+100. Run new native evidence checks.
+101. Verify protected historical files.
+102. Audit conversation captures.
+103. Verify no final-seed leakage.
+104. Verify figure provenance.
+105. Review scientific limitations.
+106. Write handoff.
+107. Record actual commits.
+108. Verify working tree.
+109. Confirm nothing was pushed.
+
+## PHASE M — STOP
+
+Do not initiate another revision round.
+
+Do not change the experiment based on final outcomes.
+
+Do not begin another F1 mechanical campaign.
+
+Do not restart old porous compression simulations.
+
+Do not launch new 3D mechanical FEM.
+
+Do not begin an autonomous iterative optimization agent.
+
+Do not push automatically.
+
+---
+
+# 62. FINAL HANDOFF QUESTIONS
+
+Provide concise evidence-grounded answers.
+
+## Historical and protocol
+
+1. What repository and starting HEAD were used?
+2. Were historical files preserved?
+3. Which frozen morphology policy was used?
+4. What target and error metrics were registered?
+5. Which seeds were used?
+6. What failure-scoring convention was registered?
+
+## Conversation execution
+
+7. How many independent initial conversations were completed?
+8. Was the same initial prompt used?
+9. Were all initial scripts preserved?
+10. Were scientific message counts equal?
+11. Was any account context leakage observed?
+12. Were any model/backend details unavailable?
+13. Did every revision remain in its original chat?
+14. Were any fresh-chat feedback substitutions attempted?
+15. Were any code repairs performed?
+16. Were any trial responses regenerated?
+
+## Assignment
+
+17. How were initial generators evaluated?
+18. How were matched pairs constructed?
+19. What randomization algorithm and seed were used?
+20. Was pretreatment target error balanced across arms?
+21. Were any trials excluded?
+22. Were any pairing or assignment deviations recorded?
+
+## Structural evaluation
+
+23. How many outputs were attempted?
+24. How many generated successfully?
+25. How many had exact composition?
+26. How many passed morphology constraints?
+27. How many generators qualified across the full seed set?
+28. Was stochastic diversity preserved?
+29. Which failures occurred?
+
+## Mechanical results
+
+30. How many genuine native solves were completed?
+31. How many were accepted?
+32. Were reactions and energy verified?
+33. What were the initial and revised apparent moduli?
+34. What were the initial and revised target errors?
+35. Were actual stress–strain curves preserved?
+36. Which H2 refinement checks were completed?
+37. Were improvements stable under refinement?
+
+## Feedback effect
+
+38. What was each trial's within-conversation improvement?
+39. What was the mean IF improvement?
+40. What was the mean NF improvement?
+41. What was the matched-pair treatment contrast?
+42. How many pairs favored IF?
+43. How many favored NF?
+44. Did IF have a final-performance advantage?
+45. Did IF have a robust improvement advantage?
+46. Did failure-scoring conventions change the conclusion?
+47. Did leave-one-out analysis change the conclusion?
+48. Did protocol-compliance sensitivity change the conclusion?
+49. What causal claims are supported?
+50. What claims remain unresolved?
+
+## Cross-family and presentation
+
+51. Were P3/F1 mechanical results accurately consolidated?
+52. Were historical porous limitations preserved?
+53. Are the P3 and porous STL files still accessible and authenticated?
+54. Which models are recommended for physical printing?
+55. Was any physical test print completed?
+56. Are the presentation figures sourced from actual data?
+57. Is the research synthesis suitable for Dr. Wang?
+
+## Final verification
+
+58. Which software tests passed?
+59. Which new licensed evidence checks passed?
+60. What was total native solver time?
+61. What was peak memory usage?
+62. What was new artifact storage usage?
+63. Were historical artifacts preserved or classified accurately?
+64. Which commits were created?
+65. Is the working tree clean?
+66. Was anything pushed?
+67. What is the precise final scientific status?
+68. What is the most valuable next experiment?
+
+Do not invent answers for unexecuted work.
+
+---
+
+# 63. REQUIRED DR. WANG SUMMARY
+
+Prepare a concise scientific summary organized around the research question.
+
+The summary should explain:
+
+1. The project began with LLM-generated porous mechanical metamaterials.
+2. It expanded to genuine microscopy-derived particle and fiber composite microstructures.
+3. Structural descriptors were used to evaluate reconstruction accuracy.
+4. Actual ANSYS mechanical simulations connected morphology to apparent elastic response.
+5. Early mechanical optimization showed substantial numerical stiffness improvements but also revealed morphology-family drift.
+6. Stronger constraints were introduced to prevent artificial reinforcement lanes.
+7. A target-property inverse-design experiment produced numerically accurate structures, but the added value of mechanical feedback remained inconclusive.
+8. The new replicated experiment used more independent conversations, pretreatment matching, equal conversational opportunities, and refined-mesh verification.
+9. The observed v0.7.5 findings support or do not support a feedback-specific advantage.
+10. All results remain subject to numerical-model, material-calibration, morphology, and sample-size limitations.
+
+Use actual v0.7.5 results.
+
+Do not write a positive conclusion in advance.
+
+Do not treat presentation models as experimental physical validation.
+
+---
+
+# FINAL SCIENTIFIC INSTRUCTION
+
+The Young Dawgs project has demonstrated genuine LLM generation of stochastic microstructures, morphology reconstruction from real microscopy, native finite-element mechanical evaluation, and numerical inverse design.
+
+However, the scientific benefit of measured mechanical feedback remains unresolved.
+
+The completed v0.7.4 study showed lower final target error for informative feedback, but the initial generators were not balanced and the observed advantage was sensitive to individual conversations.
+
+**Pipeline v0.7.5 must investigate that uncertainty with a more rigorous replicated experiment.**
+
+Use twelve genuine independent ChatGPT conversations.
+
+Preserve the same-conversation iterative workflow.
+
+Do not open new chats for feedback.
+
+Use one initial generation and one revision per conversation.
+
+Keep the same scientific message count across trials.
+
+Evaluate every initial generator before assigning feedback conditions.
+
+Form six pretreatment matched pairs.
+
+Randomize IF/NF assignment within those pairs.
+
+Use the frozen P3 reference, exact reinforcement composition, stronger morphology envelope, illustrative mechanical model, and 1640 MPa target.
+
+Use actual ANSYS measurements for IF.
+
+Withhold measured mechanical responses from NF.
+
+Do not fabricate model calls.
+
+Do not repair returned LLM scripts.
+
+Do not replace failed seeds.
+
+Freeze every response before held-out evaluation.
+
+Evaluate all initial and revised generators on new registered stochastic seeds.
+
+Obtain actual native mechanical results.
+
+Perform balanced H2 confirmation.
+
+Analyze target-error improvement at the independent conversation level.
+
+Report matched-pair effects, structural validity, stochastic variability, numerical sensitivity, protocol deviations, and robustness to individual conversations.
+
+Do not manufacture statistical significance or claim a generalized causal result from a small sample.
+
+At the same time, consolidate the actual P3, F1, and porous metamaterial findings into a clear research narrative.
+
+Preserve the completed F1 mechanical benchmarks.
+
+Preserve and index the existing validated P3 and porous STL presentation models.
+
+Do not create new physical or mechanical claims from those presentation props.
+
+Preserve all historical scientific evidence.
+
+Create descriptive Git commits after coherent changes.
+
+Do not push automatically.
+
+**Complete the replicated same-conversation mechanical-feedback experiment, determine whether measured feedback provides a reproducible advantage over an equal-opportunity control, prepare a clear research synthesis for Dr. Wang and the Young Dawgs presentation, document the genuine scientific outcome, commit completed work, and STOP.**

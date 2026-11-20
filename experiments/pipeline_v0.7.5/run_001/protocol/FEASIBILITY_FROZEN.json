@@ -1,0 +1,181 @@
+{
+  "absolute_fraction_tolerance": 0,
+  "absolute_pixel_tolerance": 0,
+  "boundary_policy": "New shape/tail/alignment limits include all observed regions, never exclude boundary-clipped features. Complete/all statistics both retained. Pixel-region geometry is not a recovered physical particle.",
+  "calibration": "One reference +12 prospective baseline seeds, independent fixtures and already-observed historical controls; not blind natural-family validation",
+  "connectivity_policy": "4-connected matrix must span x/y; reinforcement prohibited from spanning under both 4 and 8 connectivity. Largest reinforcement fraction <=0.15 under both. Corner contacts retained as mesh artifact, never claimed physical bonds.",
+  "diagnostic_only": [
+    "complete-region new shape/orientation",
+    "largest-region shape",
+    "S2 individual lags",
+    "1px dilation",
+    "interface density",
+    "NNmean",
+    "old reference-relative reconstruction errors"
+  ],
+  "diversity": {
+    "all_arrays_unique": true,
+    "minimum_median_hamming": 0.1,
+    "minimum_unique_rigid_invariant_signatures": "ceil(number_outputs/2)"
+  },
+  "frozen_utc": "2026-11-15T13:11:31.025005+00:00",
+  "generator_acceptance": "10/10 held-out outputs feasible and diversity passes; partial validity reported with denominator",
+  "guardrails": {
+    "descriptor_ranges": {
+      "all_regions": [
+        50,
+        125
+      ],
+      "aspect_mean": [
+        1.2,
+        3.0
+      ],
+      "boundary_censored_regions": [
+        5,
+        50
+      ],
+      "complete_regions": [
+        40,
+        75
+      ],
+      "diameter_mean_px": [
+        12,
+        20
+      ]
+    },
+    "matrix_lcc_minimum": 0.95,
+    "reinforcement_largest_fraction_maximum": 0.15,
+    "single_pixel_reinforcement_fraction_maximum": 0.001
+  },
+  "must_be_false": [
+    "gap_dilation.2.spans_x",
+    "gap_dilation.2.spans_y"
+  ],
+  "new_descriptor_bounds": {
+    "all_observed.area_fraction_aspect_gt3": [
+      0,
+      0.27
+    ],
+    "all_observed.area_fraction_aspect_gt4": [
+      0,
+      0.16
+    ],
+    "all_observed.area_weighted_aspect": [
+      1,
+      2.59
+    ],
+    "all_observed.area_weighted_aspect_p95": [
+      1,
+      6.13
+    ],
+    "all_observed.axial_order": [
+      0,
+      0.59
+    ],
+    "all_observed.defined_aspect_area_fraction": [
+      0.995,
+      1
+    ],
+    "gap_dilation.2.largest_fraction": [
+      0,
+      0.59
+    ],
+    "limited_gap_run_x": [
+      0,
+      0.6
+    ],
+    "limited_gap_run_y": [
+      0,
+      0.56
+    ],
+    "long_range_abs_S2_difference": [
+      0,
+      0.04
+    ],
+    "nearest_neighbor_cv": [
+      0.1,
+      0.69
+    ],
+    "strips.1.column_max": [
+      0,
+      0.79
+    ],
+    "strips.1.column_std": [
+      0,
+      0.18
+    ],
+    "strips.1.row_max": [
+      0,
+      0.78
+    ],
+    "strips.1.row_std": [
+      0,
+      0.2
+    ],
+    "strips.16.column_max": [
+      0,
+      0.71
+    ],
+    "strips.16.column_std": [
+      0,
+      0.16
+    ],
+    "strips.16.row_max": [
+      0,
+      0.69
+    ],
+    "strips.16.row_std": [
+      0,
+      0.17
+    ],
+    "strips.32.column_max": [
+      0,
+      0.64
+    ],
+    "strips.32.column_std": [
+      0,
+      0.14
+    ],
+    "strips.32.row_max": [
+      0,
+      0.63
+    ],
+    "strips.32.row_std": [
+      0,
+      0.16
+    ],
+    "strips.8.column_max": [
+      0,
+      0.74
+    ],
+    "strips.8.column_std": [
+      0,
+      0.17
+    ],
+    "strips.8.row_max": [
+      0,
+      0.75
+    ],
+    "strips.8.row_std": [
+      0,
+      0.19
+    ]
+  },
+  "single_generation_timeout_seconds": 30,
+  "target_count": 20731,
+  "target_fraction": 0.3163299560546875,
+  "threshold_rationale": {
+    "area_weighted_aspect": "max(reference,baseline)*1.25",
+    "axial_order": "max+.30 to permit moderate orientation",
+    "gap_lcc": "max+.25; no 2px disk-dilation spanning",
+    "limited_gap_runs": "max+.20",
+    "long_range_S2": "max+.02",
+    "p95": "max*1.20",
+    "rounding": "upper thresholds round upward to hundredth; coverage>=.995 prevents undefined-region evasion",
+    "spacing_CV": "[.10,max+.20]",
+    "strip_max": "min(.8,max+.15)",
+    "strip_std": "max+.06",
+    "tail_gt3": "max+.15 area fraction",
+    "tail_gt4": "max+.08"
+  }
+}
