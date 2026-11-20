@@ -1,0 +1,434 @@
+group (region) Conversation
+												1568 text (heading) You said:
+												1599 button User attachment
+													1600 image (graphic) User attachment
+												1571 text Create one complete initial stochastic P3 microstructure generator for the attached raw SEM image and the common scientific specification below. This is the INITIAL generator turn in this conversation. A single later registered revision, if requested, will continue this same conversation. Do not use tools or browse; return code only in ONE complete Python code block, with no prose or demo. Prefer <=500 lines, but completeness and correctness are required. Use the supplied researcher-prepared template as common scientific background; you may retain its morphology functions and change legitimate geometric construction within the limits. Produce your own identifiable complete initial module in this response; do not tell us merely to load another file. The template is derived from a previous captured LLM generator plus explicitly researcher-authored count/feasibility logic. It is not a new model trial until your actual response is captured. No measured mechanical responses are supplied in this initial task. Required generate_microstructure(seed, parameters), parameters={}, returns numpy ndarray shape(256,256), uint8, labels exactly1/5, both nonempty. EXACTLY20,731 reinforcement pixels. Finite nonperiodic field with appropriately clipped edge features. Use local numpy.random.default_rng(seed); same seed exactly replays, different seeds change configuration beyond rigid translation/rotation. The evaluator will not repair arrays. If internal candidate construction exhausts its fixed bound, raise an explicit failure. No file/network/API/subprocess access, no external solver or cached mechanics, no reference loading or embedded raster/coordinate tracing, no global RNG seeding, plotting, printing, import-time generation or executable module-scope calls. Module scope only imports, functions and literal constants. Use no dependencies outside the allowed list. Preserve irregular dispersed-inclusion morphology, matrix connectivity and complete/boundary region populations. Avoid continuous or segmented artificial lanes. Hard shape/tail/alignment measurements include ALL observed regions, not just complete features. New orientation uses area×eigenvalue-anisotropy weights, ignoring anisotropy<.05, axial angles modulo180degrees with image+x right and y up. Finite S2/strip windows never wrap. Two-pixel diagnostic dilation is evaluator geometry only, not a change to the actual mechanical specimen. Diagnostic dilation must not span x or y. The template contains the precise inexpensive definitions for the common hard constraints. Runtime, exact replay and between-seed diversity are evaluated independently. You may reason about geometry and elasticity, but do not invent measured performance or claim to have run ANSYS. We will independently measure actual mechanics after capturing this exact source. Target accuracy and structural feasibility are separate outcomes. Exceeding1640MPa is not automatically an improvement. There is one initial response and one later continuation opportunity, no manual repairs or retries. COMMON SCIENTIFIC SPECIFICATION: { "J_target": 1.64, "allowed_dependencies": [ "numpy", "scipy", "skimage", "PIL", "math", "random", "collections", "itertools" ], "composition": { "dtype": "uint8", "matrix": 44805, "reinforcement": 20731, "shape": [ 256, 256 ] }, "descriptor_conventions": "New shape/tail/alignment limits include all observed regions, never exclude boundary-clipped features. Complete/all statistics both retained. Pixel-region geometry is not a recovered physical particle.", "diversity": { "all_arrays_unique": true, "minimum_median_hamming": 0.1, "minimum_unique_rigid_invariant_signatures": "ceil(number_outputs/2)" }, "feasibility_guardrails": { "descriptor_ranges": { "all_regions": [ 50, 125 ], "aspect_mean": [ 1.2, 3.0 ], "boundary_censored_regions": [ 5, 50 ], "complete_regions": [ 40, 75 ], "diameter_mean_px": [ 12, 20 ] }, "matrix_lcc_minimum": 0.95, "reinforcement_largest_fraction_maximum": 0.15, "single_pixel_reinforcement_fraction_maximum": 0.001 }, "generator_parameters": {}, "maximum_internal_geometry_candidates": 8, "mechanical_model": { "computational_sizes_not_microscopy_calibration": true, "computational_square_mm": 1, "computational_thickness_mm": 1, "loading": "bottom UY0, prescribed negative top UY through0.5%, one minimal bottom UX pin; free lateral motion, shared-node ideal bonds, linear elasticity, no contact", "materials_MPa": { "matrix": 1000, "reinforcement": 10000 }, "nu": 0.3, "plane_stress": true }, "must_be_false": [ "gap_dilation.2.spans_x", "gap_dilation.2.spans_y" ], "new_hard_descriptor_bounds": { "all_observed.area_fraction_aspect_gt3": [ 0, 0.27 ], "all_observed.area_fraction_aspect_gt4": [ 0, 0.16 ], "all_observed.area_weighted_aspect": [ 1, 2.59 ], "all_observed.area_weighted_aspect_p95": [ 1, 6.13 ], "all_observed.axial_order": [ 0, 0.59 ], "all_observed.defined_aspect_area_fraction": [ 0.995, 1 ], "gap_dilation.2.largest_fraction": [ 0, 0.59 ], "limited_gap_run_x": [ 0, 0.6 ], "limited_gap_run_y": [ 0, 0.56 ], "long_range_abs_S2_difference": [ 0, 0.04 ], "nearest_neighbor_cv": [ 0.1, 0.69 ], "strips.1.column_max": [ 0, 0.79 ], "strips.1.column_std": [ 0, 0.18 ], "strips.1.row_max": [ 0, 0.78 ], "strips.1.row_std": [ 0, 0.2 ], "strips.16.column_max": [ 0, 0.71 ], "strips.16.column_std": [ 0, 0.16 ], "strips.16.row_max": [ 0, 0.69 ], "strips.16.row_std": [ 0, 0.17 ], "strips.32.column_max": [ 0, 0.64 ], "strips.32.column_std": [ 0, 0.14 ], "strips.32.row_max": [ 0, 0.63 ], "strips.32.row_std": [ 0, 0.16 ], "strips.8.column_max": [ 0, 0.74 ], "strips.8.column_std": [ 0, 0.17 ], "strips.8.row_max": [ 0, 0.75 ], "strips.8.row_std": [ 0, 0.19 ] }, "objective": "Minimize generator-level mean absolute relative target error; do not maximize stiffness", "phase_definitions": { "1": "matrix-like solid", "5": "provisional reinforcement-like solid; provisionally reprecipitated carbides; not a verified chemistry" }, "physical_scale": "No microscopy calibration; do not infer micrometers from pixels or simulate experimentally calibrated properties", "single_output_seconds": 30, "source_provenance": "Supplied horizontally flipped SEM tile, genuine geometry-preserving microscopy augmentation, morphology-selected crop; not an unaugmented original or unbiased RVE", "target_MPa": 1640, "target_band_relative": 0.02, "topology": "4-connected matrix must span x/y; reinforcement prohibited from spanning under both 4 and 8 connectivity. Largest reinforcement fraction <=0.15 under both. Corner contacts retained as mesh artifact, never claimed physical bonds." } COMMON RESEARCHER-PREPARED TEMPLATE (copy/adapt into one self-contained module):
+												1572 text ```python import numpy as np from scipy import ndimage as ndi from scipy.special import ndtri from skimage.draw import polygon SIZE = 256 FRACTION = 0.3163299560546875 N_COMPLETE = 57 D_MEAN = 15.706688295952011 D_STD = 8.893419110493891 def _particle(rng, area): """Generate an irregular, angular, approximately equiaxed or elongated region.""" n = int(rng.integers(12, 23)) t = (np.arange(n) + rng.uniform(-0.28, 0.28, n)) * 2 * np.pi / n noise = rng.normal(0, 0.23, n) r = np.clip(1 + noise + 0.25 * np.roll(noise, 1), 0.48, 1.55) if area > 90 and rng.random() < 0.65: for _ in range(int(rng.integers(1, 4))): r[rng.integers(n)] *= rng.uniform(0.35, 0.72) aspect = np.clip(rng.lognormal(np.log(1.75), 0.34), 1.05, 3.8) x = r * np.cos(t) * np.sqrt(aspect) y = r * np.sin(t) / np.sqrt(aspect) a = rng.uniform(0, np.pi) x, y = x * np.cos(a) - y * np.sin(a), x * np.sin(a) + y * np.cos(a) base = abs(np.sum(x * np.roll(y, -1) - y * np.roll(x, -1))) / 2 scale = np.sqrt(area / max(base, 0.01)) for _ in range(3): xx, yy = x * scale, y * scale xx, yy = xx - xx.min() + 2, yy - yy.min() + 2 mask = np.zeros((int(np.ceil(yy.max())) + 3, int(np.ceil(xx.max())) + 3), dtype=bool) rr, cc = polygon(yy, xx, shape=mask.shape) mask[rr, cc] = True lab, count = ndi.label(mask) if count: sizes = np.bincount(lab.ravel())[1:] mask = lab == (1 + np.argmax(sizes)) scale *= np.sqrt(area / max(mask.sum(), 1)) rows, cols = np.where(mask) return mask[rows.min():rows.max()+1, cols.min():cols.max()+1] def _place(rng, canvas, shape, field, boundary=False, target=0): h, w = shape.shape blocked = ndi.binary_dilation(canvas) best, best_score = None, -np.inf for _ in range(220): if boundary: edge = int(rng.integers(4)) x = int(rng.integers(-w//3, SIZE - 2*w//3)) y = int(rng.integers(-h//3, SIZE - 2*h//3)) if edge < 2: cut = int(rng.uniform(0, 0.72) * h) y = -cut if edge == 0 else SIZE - h + cut else: cut = int(rng.uniform(0, 0.72) * w) x = -cut if edge == 2 else SIZE - w + cut else: x = int(rng.integers(1, SIZE - w)) y = int(rng.integers(1, SIZE - h)) x0, x1 = max(0, x), min(SIZE, x + w) y0, y1 = max(0, y), min(SIZE, y + h) p = shape[y0-y:y1-y, x0-x:x1-x] if not p.any() or np.any(blocked[y0:y1, x0:x1] & p): continue score = field[(y0+y1)//2,
+												1573 button Show more
+													1574 image (graphic)
+												1575 button Copy message
+												1611 button Share prompt
+												1618 button Edit message
+												1651 text (heading) ChatGPT said:
+												1661 text Python
+												1662 button (toggle button) Enable word wrap
+												2330 button Copy code
+												1664 button Run code
+												1665 group
+													2332 group
+													2333 group
+														2334 text field (edit) (settable, string) Edit code Value: sx = directional_s2(a, lag, 1) sy = directional_s2(a, lag, 0) output["correlation"][str(lag)] = { "x": sx, "y": sy, "y_minus_x": sy - sx, } differences = [ abs(value["y_minus_x"]) for lag, value in output["correlation"].items() if int(lag) >= 16 ] output["long_range_abs_S2_difference"] = ( float(np.mean(differences)) if differences else None ) for width in WIDTHS: if width > min(a.shape): continue kernel = np.ones(width) / width columns = np.convolve( a.mean(axis=0), kernel, mode="valid", ) rows = np.convolve( a.mean(axis=1), kernel, mode="valid", ) output["strips"][str(width)] = { "column_std": float(columns.std()), "row_std": float(rows.std()), "column_max": float(columns.max()), "row_max": float(rows.max()), "column_fraction_ge08": float( np.mean(columns >= 0.8) ), "row_fraction_ge08": float( np.mean(rows >= 0.8) ), } for radius in (1, 2): yy, xx = np.mgrid[ -radius:radius + 1, -radius:radius + 1, ] disk = xx * xx + yy * yy <= radius * radius dilated = ndi.binary_dilation( a, structure=disk, border_value=0, ) output["gap_dilation"][str(radius)] = { **topology(dilated, 2), "fraction": float(dilated.mean()), }
+															2335 text 
+															2336 text sx
+															2337 text 
+															2338 text =
+															2339 text 
+															2340 text directional_s2
+															2341 text (
+															2342 text a
+															2343 text ,
+															2344 text lag
+															2345 text ,
+															2346 text 1
+															2347 text )
+															2348 text 
+															2349 text sy
+															2350 text 
+															2351 text =
+															2352 text 
+															2353 text directional_s2
+															2354 text (
+															2355 text a
+															2356 text ,
+															2357 text lag
+															2358 text ,
+															2359 text 0
+															2360 text )
+															2361 text 
+															2362 text output
+															2363 text [
+															2364 text "correlation"
+															2365 text ][
+															2366 text str
+															2367 text (
+															2368 text lag
+															2369 text )]
+															2370 text =
+															2371 text {
+															2372 text 
+															2373 text "x"
+															2374 text :
+															2375 text sx
+															2376 text ,
+															2377 text 
+															2378 text "y"
+															2379 text :
+															2380 text sy
+															2381 text ,
+															2382 text 
+															2383 text "y_minus_x"
+															2384 text :
+															2385 text sy
+															2386 text 
+															2387 text -
+															2388 text 
+															2389 text sx
+															2390 text ,
+															2391 text }
+															2392 text 
+															2393 text differences
+															2394 text 
+															2395 text =
+															2396 text [
+															2397 text 
+															2398 text abs
+															2399 text (
+															2400 text value
+															2401 text [
+															2402 text "y_minus_x"
+															2403 text ])
+															2404 text 
+															2405 text for
+															2406 text 
+															2407 text lag
+															2408 text ,
+															2409 text value
+															2410 text 
+															2411 text in
+															2412 text 
+															2413 text output
+															2414 text [
+															2415 text "correlation"
+															2416 text ]
+															2417 text .
+															2418 text items()
+															2419 text 
+															2420 text if
+															2421 text 
+															2422 text int
+															2423 text (
+															2424 text lag
+															2425 text )
+															2426 text >=
+															2427 text 
+															2428 text 16
+															2429 text ]
+															2430 text 
+															2431 text output
+															2432 text [
+															2433 text "long_range_abs_S2_difference"
+															2434 text ]
+															2435 text =
+															2436 text (
+															2437 text 
+															2438 text float
+															2439 text (
+															2440 text np
+															2441 text .
+															2442 text mean(
+															2443 text differences
+															2444 text ))
+															2445 text 
+															2446 text if
+															2447 text 
+															2448 text differences
+															2449 text 
+															2450 text else
+															2451 text 
+															2452 text None
+															2453 text )
+															2454 text 
+															2455 text for
+															2456 text 
+															2457 text width
+															2458 text 
+															2459 text in
+															2460 text 
+															2461 text WIDTHS
+															2462 text :
+															2463 text 
+															2464 text if
+															2465 text 
+															2466 text width
+															2467 text 
+															2468 text >
+															2469 text 
+															2470 text min
+															2471 text (
+															2472 text a
+															2473 text .
+															2474 text shape):
+															2475 text 
+															2476 text continue
+															2477 text 
+															2478 text kernel
+															2479 text 
+															2480 text =
+															2481 text 
+															2482 text np
+															2483 text .
+															2484 text ones(
+															2485 text width
+															2486 text )
+															2487 text /
+															2488 text 
+															2489 text width
+															2490 text 
+															2491 text columns
+															2492 text 
+															2493 text =
+															2494 text 
+															2495 text np
+															2496 text .
+															2497 text convolve(
+															2498 text 
+															2499 text a
+															2500 text .
+															2501 text mean(
+															2502 text axis
+															2503 text =
+															2504 text 0
+															2505 text ),
+															2506 text 
+															2507 text kernel
+															2508 text ,
+															2509 text 
+															2510 text mode
+															2511 text =
+															2512 text "valid"
+															2513 text ,
+															2514 text )
+															2515 text 
+															2516 text rows
+															2517 text 
+															2518 text =
+															2519 text 
+															2520 text np
+															2521 text .
+															2522 text convolve(
+															2523 text 
+															2524 text a
+															2525 text .
+															2526 text mean(
+															2527 text axis
+															2528 text =
+															2529 text 1
+															2530 text ),
+															2531 text 
+															2532 text kernel
+															2533 text ,
+															2534 text 
+															2535 text mode
+															2536 text =
+															2537 text "valid"
+															2538 text ,
+															2539 text )
+															2540 text 
+															2541 text output
+															2542 text [
+															2543 text "strips"
+															2544 text ][
+															2545 text str
+															2546 text (
+															2547 text width
+															2548 text )]
+															2549 text =
+															2550 text {
+															2551 text 
+															2552 text "column_std"
+															2553 text :
+															2554 text float
+															2555 text (
+															2556 text columns
+															2557 text .
+															2558 text std()),
+															2559 text 
+															2560 text "row_std"
+															2561 text :
+															2562 text float
+															2563 text (
+															2564 text rows
+															2565 text .
+															2566 text std()),
+															2567 text 
+															2568 text "column_max"
+															2569 text :
+															2570 text float
+															2571 text (
+															2572 text columns
+															2573 text .
+															2574 text max()),
+															2575 text 
+															2576 text "row_max"
+															2577 text :
+															2578 text float
+															2579 text (
+															2580 text rows
+															2581 text .
+															2582 text max()),
+															2583 text 
+															2584 text "column_fraction_ge08"
+															2585 text :
+															2586 text float
+															2587 text (
+															2588 text 
+															2589 text np
+															2590 text .
+															2591 text mean(
+															2592 text columns
+															2593 text 
+															2594 text >=
+															2595 text 
+															2596 text 0.8
+															2597 text )
+															2598 text ),
+															2599 text 
+															2600 text "row_fraction_ge08"
+															2601 text :
+															2602 text float
+															2603 text (
+															2604 text 
+															2605 text np
+															2606 text .
+															2607 text mean(
+															2608 text rows
+															2609 text 
+															2610 text >=
+															2611 text 
+															2612 text 0.8
+															2613 text )
+															2614 text ),
+															2615 text }
+															2616 text 
+															2617 text for
+															2618 text 
+															2619 text radius
+															2620 text 
+															2621 text in
+															2622 text (
+															2623 text 1
+															2624 text ,
+															2625 text 2
+															2626 text ):
+															2627 text 
+															2628 text yy
+															2629 text ,
+															2630 text xx
+															2631 text 
+															2632 text =
+															2633 text 
+															2634 text np
+															2635 text .
+															2636 text mgrid[
+															2637 text 
+															2638 text -
+															2639 text radius
+															2640 text :
+															2641 text radius
+															2642 text 
+															2643 text +
+															2644 text 
+															2645 text 1
+															2646 text ,
+															2647 text 
+															2648 text -
+															2649 text radius
+															2650 text :
+															2651 text radius
+															2652 text 
+															2653 text +
+															2654 text 
+															2655 text 1
+															2656 text ,
+															2657 text ]
+															2658 text 
+															2659 text disk
+															2660 text 
+															2661 text =
+															2662 text 
+															2663 text xx
+															2664 text 
+															2665 text *
+															2666 text 
+															2667 text xx
+															2668 text 
+															2669 text +
+															2670 text 
+															2671 text yy
+															2672 text 
+															2673 text *
+															2674 text 
+															2675 text yy
+															2676 text 
+															2677 text <=
+															2678 text 
+															2679 text radius
+															2680 text 
+															2681 text *
+															2682 text 
+															2683 text radius
+															2684 text 
+															2685 text dilated
+															2686 text 
+															2687 text =
+															2688 text 
+															2689 text ndi
+															2690 text .
+															2691 text binary_dilation(
+															2692 text 
+															2693 text a
+															2694 text ,
+															2695 text 
+															2696 text structure
+															2697 text =
+															2698 text disk
+															2699 text ,
+															2700 text 
+															2701 text border_value
+															2702 text =
+															2703 text 0
+															2704 text ,
+															2705 text )
+															2706 text 
+															2707 text output
+															2708 text [
+															2709 text "gap_dilation"
+															2710 text ][
+															2711 text str
+															2712 text (
+															2713 text radius
+															2714 text )]
+															2715 text =
+															2716 text {
+															2717 text 
+															2718 text **
+															2719 text topology
+															2720 text (
+															2721 text dilated
+															2722 text ,
+															2723 text 2
+															2724 text ),
+															2725 text 
+															2726 text "fraction"
+															2727 text :
+															2728 text float
+															2729 text (
+															2730 text dilated
+															2731 text .
+															2732 text mean()),
+															2733 text }
+												2735 button Copy
+													2736 image (graphic)
+												2737 button Feedback ID: radix-_r_m9_
+												2738 button (toggle button) Read aloud
+												2739 button Share
+												2740 button More actions ID: radix-_r_mf_
+												2741 button Convert to PDF
+												1578 group
+												1579 text ChatGPT can make mistakes. Check important info.
+												1580 text (heading) Latest response
+												1581 status bar (status)
+												1582 group
+													1583 group
+														1584 group
+															1585 
