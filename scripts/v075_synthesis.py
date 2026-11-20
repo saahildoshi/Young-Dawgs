@@ -10,6 +10,41 @@ V071 = EXPERIMENTS / 'pipeline_v0.7.1/run_001'
 V072 = EXPERIMENTS / 'pipeline_v0.7.2/run_001'
 
 
+def timeline(path):
+    """A schematic of documented stages. It contains no simulated results."""
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+
+    stages = [
+        ('v0.4–0.6', 'Porous generation', 'Binary solid–void geometries\nand contact checks'),
+        ('v0.7.0', 'Microscopy', 'P3 particles and F1 fiber\ncross-sections'),
+        ('v0.7.1', 'Native mechanics', 'P3 apparent modulus\nand native curves'),
+        ('v0.7.2', 'Stiffness objective', 'Large numerical gains\nwith aligned lanes'),
+        ('v0.7.3', 'Morphology limits', 'Shape and spatial checks\nfor lane formation'),
+        ('v0.7.4', 'Target matching', 'Eight same-chat pairs\nand F1 mechanics'),
+        ('v0.7.5', 'Replication', 'Twelve planned chats with\npretreatment matching'),
+    ]
+    fig, ax = plt.subplots(figsize=(15, 3.8), facecolor='#f6f6f2')
+    ax.set_facecolor('#f6f6f2')
+    ax.plot(range(7), [0]*7, color='#9ca7a9', linewidth=2)
+    navy, teal = '#193849', '#1b706d'
+    for i, (version, label, detail) in enumerate(stages):
+        color = navy if i < 6 else teal
+        ax.scatter([i], [0], s=105, color=color, zorder=3)
+        ax.text(i, .17, version, ha='center', color=color, fontsize=11, weight='bold')
+        ax.text(i, -.19, label, ha='center', color=navy, fontsize=11, weight='bold')
+        ax.text(i, -.39, detail, ha='center', va='top', color='#3d535a', fontsize=9, linespacing=1.35)
+    ax.set(xlim=(-.58, 6.58), ylim=(-.76, .48))
+    ax.axis('off')
+    fig.text(.035, .92, 'Young Dawgs microstructure research', fontsize=19, weight='bold', color=navy)
+    fig.text(.035, .84, 'Schematic timeline of documented milestones and the registered replication', fontsize=10, color='#3d535a')
+    fig.subplots_adjust(left=.025, right=.975, top=.80, bottom=.05)
+    path.parent.mkdir(exist_ok=True, parents=True)
+    fig.savefig(path, dpi=160, facecolor=fig.get_facecolor())
+    plt.close(fig)
+
+
 def synthesis():
     package = read(V074 / 'summary/FINAL_PACKAGE_HASHES.json')['files']
     for name, digest in read(V074 / 'fabrication/DELIVERED_ASSETS.json')['files'].items():
@@ -40,7 +75,10 @@ def synthesis():
         '**v0.7.5 replication.** The registered design pairs twelve initial scripts after development measurement and randomizes feedback within each pair. Matched assignment and the feedback comparison remain pending in this historical synthesis. See the versioned trial evidence and analysis for any later measured outcomes.',
     ]
     (DOC / 'YOUNG_DAWGS_RESEARCH_SYNTHESIS.md').write_text('\n\n'.join(report) + '\n', encoding='utf-8', newline='\n')
+    timeline_path = RUN / 'figures/RESEARCH_TIMELINE.png'
+    timeline(timeline_path)
     assets = [
+        ('Schematic research workflow timeline', timeline_path),
         ('P3 raw SEM', MICRO / 'references/P3/microscopy_input.png'),
         ('P3 evaluator annotation', MICRO / 'references/P3/evaluation_only_labels.npy'),
         ('P3 microscopy and representative generated arrays', MICRO / 'analysis/P3_held_REFERENCE_GENERATED.png'),

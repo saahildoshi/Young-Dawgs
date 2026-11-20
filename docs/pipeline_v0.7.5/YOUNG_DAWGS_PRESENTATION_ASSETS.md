@@ -1,5 +1,6 @@
 # Young Dawgs presentation assets
 
+- [Schematic research workflow timeline](../../experiments/pipeline_v0.7.5/run_001/figures/RESEARCH_TIMELINE.png)
 - [P3 raw SEM](../../experiments/pipeline_v0.7.0/run_002_real_microscopy/references/P3/microscopy_input.png)
 - [P3 evaluator annotation](../../experiments/pipeline_v0.7.0/run_002_real_microscopy/references/P3/evaluation_only_labels.npy)
 - [P3 microscopy and representative generated arrays](../../experiments/pipeline_v0.7.0/run_002_real_microscopy/analysis/P3_held_REFERENCE_GENERATED.png)
