@@ -1,0 +1,267 @@
+group (region) Conversation
+												6986 text (heading) You said:
+												6987 button User attachment
+													6988 image (graphic) User attachment
+												6989 text Create one complete initial stochastic P3 microstructure generator for the attached raw SEM image and the common scientific specification below. This is the INITIAL generator turn in this conversation. A single later registered revision, if requested, will continue this same conversation. Do not use tools or browse; return code only in ONE complete Python code block, with no prose or demo. Prefer <=500 lines, but completeness and correctness are required. Use the supplied researcher-prepared template as common scientific background; you may retain its morphology functions and change legitimate geometric construction within the limits. Produce your own identifiable complete initial module in this response; do not tell us merely to load another file. The template is derived from a previous captured LLM generator plus explicitly researcher-authored count/feasibility logic. It is not a new model trial until your actual response is captured. No measured mechanical responses are supplied in this initial task. Required generate_microstructure(seed, parameters), parameters={}, returns numpy ndarray shape(256,256), uint8, labels exactly1/5, both nonempty. EXACTLY20,731 reinforcement pixels. Finite nonperiodic field with appropriately clipped edge features. Use local numpy.random.default_rng(seed); same seed exactly replays, different seeds change configuration beyond rigid translation/rotation. The evaluator will not repair arrays. If internal candidate construction exhausts its fixed bound, raise an explicit failure. No file/network/API/subprocess access, no external solver or cached mechanics, no reference loading or embedded raster/coordinate tracing, no global RNG seeding, plotting, printing, import-time generation or executable module-scope calls. Module scope only imports, functions and literal constants. Use no dependencies outside the allowed list. Preserve irregular dispersed-inclusion morphology, matrix connectivity and complete/boundary region populations. Avoid continuous or segmented artificial lanes. Hard shape/tail/alignment measurements include ALL observed regions, not just complete features. New orientation uses area×eigenvalue-anisotropy weights, ignoring anisotropy<.05, axial angles modulo180degrees with image+x right and y up. Finite S2/strip windows never wrap. Two-pixel diagnostic dilation is evaluator geometry only, not a change to the actual mechanical specimen. Diagnostic dilation must not span x or y. The template contains the precise inexpensive definitions for the common hard constraints. Runtime, exact replay and between-seed diversity are evaluated independently. You may reason about geometry and elasticity, but do not invent measured performance or claim to have run ANSYS. We will independently measure actual mechanics after capturing this exact source. Target accuracy and structural feasibility are separate outcomes. Exceeding1640MPa is not automatically an improvement. There is one initial response and one later continuation opportunity, no manual repairs or retries. COMMON SCIENTIFIC SPECIFICATION: { "J_target": 1.64, "allowed_dependencies": [ "numpy", "scipy", "skimage", "PIL", "math", "random", "collections", "itertools" ], "composition": { "dtype": "uint8", "matrix": 44805, "reinforcement": 20731, "shape": [ 256, 256 ] }, "descriptor_conventions": "New shape/tail/alignment limits include all observed regions, never exclude boundary-clipped features. Complete/all statistics both retained. Pixel-region geometry is not a recovered physical particle.", "diversity": { "all_arrays_unique": true, "minimum_median_hamming": 0.1, "minimum_unique_rigid_invariant_signatures": "ceil(number_outputs/2)" }, "feasibility_guardrails": { "descriptor_ranges": { "all_regions": [ 50, 125 ], "aspect_mean": [ 1.2, 3.0 ], "boundary_censored_regions": [ 5, 50 ], "complete_regions": [ 40, 75 ], "diameter_mean_px": [ 12, 20 ] }, "matrix_lcc_minimum": 0.95, "reinforcement_largest_fraction_maximum": 0.15, "single_pixel_reinforcement_fraction_maximum": 0.001 }, "generator_parameters": {}, "maximum_internal_geometry_candidates": 8, "mechanical_model": { "computational_sizes_not_microscopy_calibration": true, "computational_square_mm": 1, "computational_thickness_mm": 1, "loading": "bottom UY0, prescribed negative top UY through0.5%, one minimal bottom UX pin; free lateral motion, shared-node ideal bonds, linear elasticity, no contact", "materials_MPa": { "matrix": 1000, "reinforcement": 10000 }, "nu": 0.3, "plane_stress": true }, "must_be_false": [ "gap_dilation.2.spans_x", "gap_dilation.2.spans_y" ], "new_hard_descriptor_bounds": { "all_observed.area_fraction_aspect_gt3": [ 0, 0.27 ], "all_observed.area_fraction_aspect_gt4": [ 0, 0.16 ], "all_observed.area_weighted_aspect": [ 1, 2.59 ], "all_observed.area_weighted_aspect_p95": [ 1, 6.13 ], "all_observed.axial_order": [ 0, 0.59 ], "all_observed.defined_aspect_area_fraction": [ 0.995, 1 ], "gap_dilation.2.largest_fraction": [ 0, 0.59 ], "limited_gap_run_x": [ 0, 0.6 ], "limited_gap_run_y": [ 0, 0.56 ], "long_range_abs_S2_difference": [ 0, 0.04 ], "nearest_neighbor_cv": [ 0.1, 0.69 ], "strips.1.column_max": [ 0, 0.79 ], "strips.1.column_std": [ 0, 0.18 ], "strips.1.row_max": [ 0, 0.78 ], "strips.1.row_std": [ 0, 0.2 ], "strips.16.column_max": [ 0, 0.71 ], "strips.16.column_std": [ 0, 0.16 ], "strips.16.row_max": [ 0, 0.69 ], "strips.16.row_std": [ 0, 0.17 ], "strips.32.column_max": [ 0, 0.64 ], "strips.32.column_std": [ 0, 0.14 ], "strips.32.row_max": [ 0, 0.63 ], "strips.32.row_std": [ 0, 0.16 ], "strips.8.column_max": [ 0, 0.74 ], "strips.8.column_std": [ 0, 0.17 ], "strips.8.row_max": [ 0, 0.75 ], "strips.8.row_std": [ 0, 0.19 ] }, "objective": "Minimize generator-level mean absolute relative target error; do not maximize stiffness", "phase_definitions": { "1": "matrix-like solid", "5": "provisional reinforcement-like solid; provisionally reprecipitated carbides; not a verified chemistry" }, "physical_scale": "No microscopy calibration; do not infer micrometers from pixels or simulate experimentally calibrated properties", "single_output_seconds": 30, "source_provenance": "Supplied horizontally flipped SEM tile, genuine geometry-preserving microscopy augmentation, morphology-selected crop; not an unaugmented original or unbiased RVE", "target_MPa": 1640, "target_band_relative": 0.02, "topology": "4-connected matrix must span x/y; reinforcement prohibited from spanning under both 4 and 8 connectivity. Largest reinforcement fraction <=0.15 under both. Corner contacts retained as mesh artifact, never claimed physical bonds." } COMMON RESEARCHER-PREPARED TEMPLATE (copy/adapt into one self-contained module):
+												6990 text ```python import numpy as np from scipy import ndimage as ndi from scipy.special import ndtri from skimage.draw import polygon SIZE = 256 FRACTION = 0.3163299560546875 N_COMPLETE = 57 D_MEAN = 15.706688295952011 D_STD = 8.893419110493891 def _particle(rng, area): """Generate an irregular, angular, approximately equiaxed or elongated region.""" n = int(rng.integers(12, 23)) t = (np.arange(n) + rng.uniform(-0.28, 0.28, n)) * 2 * np.pi / n noise = rng.normal(0, 0.23, n) r = np.clip(1 + noise + 0.25 * np.roll(noise, 1), 0.48, 1.55) if area > 90 and rng.random() < 0.65: for _ in range(int(rng.integers(1, 4))): r[rng.integers(n)] *= rng.uniform(0.35, 0.72) aspect = np.clip(rng.lognormal(np.log(1.75), 0.34), 1.05, 3.8) x = r * np.cos(t) * np.sqrt(aspect) y = r * np.sin(t) / np.sqrt(aspect) a = rng.uniform(0, np.pi) x, y = x * np.cos(a) - y * np.sin(a), x * np.sin(a) + y * np.cos(a) base = abs(np.sum(x * np.roll(y, -1) - y * np.roll(x, -1))) / 2 scale = np.sqrt(area / max(base, 0.01)) for _ in range(3): xx, yy = x * scale, y * scale xx, yy = xx - xx.min() + 2, yy - yy.min() + 2 mask = np.zeros((int(np.ceil(yy.max())) + 3, int(np.ceil(xx.max())) + 3), dtype=bool) rr, cc = polygon(yy, xx, shape=mask.shape) mask[rr, cc] = True lab, count = ndi.label(mask) if count: sizes = np.bincount(lab.ravel())[1:] mask = lab == (1 + np.argmax(sizes)) scale *= np.sqrt(area / max(mask.sum(), 1)) rows, cols = np.where(mask) return mask[rows.min():rows.max()+1, cols.min():cols.max()+1] def _place(rng, canvas, shape, field, boundary=False, target=0): h, w = shape.shape blocked = ndi.binary_dilation(canvas) best, best_score = None, -np.inf for _ in range(220): if boundary: edge = int(rng.integers(4)) x = int(rng.integers(-w//3, SIZE - 2*w//3)) y = int(rng.integers(-h//3, SIZE - 2*h//3)) if edge < 2: cut = int(rng.uniform(0, 0.72) * h) y = -cut if edge == 0 else SIZE - h + cut else: cut = int(rng.uniform(0, 0.72) * w) x = -cut if edge == 2 else SIZE - w + cut else: x = int(rng.integers(1, SIZE - w)) y = int(rng.integers(1, SIZE - h)) x0, x1 = max(0, x), min(SIZE, x + w) y0, y1 = max(0, y), min(SIZE, y + h) p = shape[y0-y:y1-y, x0-x:x1-x] if not p.any() or np.any(blocked[y0:y1, x0:x1] & p): continue score = field[(y0+y1)//2,
+												6991 button Show more
+													6992 image (graphic)
+												6993 button Copy message
+												6994 button Share prompt
+												6995 button Edit message
+												7031 text (heading) ChatGPT said:
+												7032 text Python
+												7033 button (toggle button) Enable word wrap
+												7698 button Copy code
+												7035 button Run code
+												7036 group
+													7699 group
+													7700 group
+														7701 text field (edit) (settable, string) Edit code Value: import numpy as np from scipy import ndimage as ndi from scipy.spatial import cKDTree from skimage.measure import regionprops SIZE = 256 TARGET_REINFORCEMENT = 20731 N_INTERIOR = 60 N_EDGE_PER_SIDE = 5 MIN_CENTER_DISTANCE = 19.5 CELL_GAP = 6.5 MAX_CANDIDATES = 8 LAGS = (8, 16, 32, 64) WIDTHS = (1, 8, 16, 32) MORPHOLOGY_BOUNDS = { "all_observed.area_fraction_aspect_gt3": (0, 0.27), "all_observed.area_fraction_aspect_gt4": (0, 0.16), "all_observed.area_weighted_aspect": (1, 2.59), "all_observed.area_weighted_aspect_p95": (1, 6.13), "all_observed.axial_order": (0, 0.59), "all_observed.defined_aspect_area_fraction": (0.995, 1), "gap_dilation.2.largest_fraction": (0, 0.59), "limited_gap_run_x": (0, 0.60), "limited_gap_run_y": (0, 0.56), "long_range_abs_S2_difference": (0, 0.04), "nearest_neighbor_cv": (0.10, 0.69), "strips.1.column_max": (0, 0.79), "strips.1.column_std": (0, 0.18), "strips.1.row_max": (0, 0.78), "strips.1.row_std": (0, 0.20), "strips.8.column_max": (0, 0.74), "strips.8.column_std": (0, 0.17), "strips.8.row_max": (0, 0.75), "strips.8.row_std": (0, 0.19),
+															7702 text import
+															7703 text 
+															7704 text numpy
+															7705 text 
+															7706 text as
+															7707 text 
+															7708 text np
+															7709 text from
+															7710 text 
+															7711 text scipy
+															7712 text 
+															7713 text import
+															7714 text 
+															7715 text ndimage
+															7716 text 
+															7717 text as
+															7718 text 
+															7719 text ndi
+															7720 text from
+															7721 text 
+															7722 text scipy
+															7723 text .
+															7724 text spatial
+															7725 text 
+															7726 text import
+															7727 text 
+															7728 text cKDTree
+															7729 text from
+															7730 text 
+															7731 text skimage
+															7732 text .
+															7733 text measure
+															7734 text 
+															7735 text import
+															7736 text 
+															7737 text regionprops
+															7738 text SIZE
+															7739 text 
+															7740 text =
+															7741 text 
+															7742 text 256
+															7743 text TARGET_REINFORCEMENT
+															7744 text 
+															7745 text =
+															7746 text 
+															7747 text 20731
+															7748 text N_INTERIOR
+															7749 text 
+															7750 text =
+															7751 text 
+															7752 text 60
+															7753 text N_EDGE_PER_SIDE
+															7754 text 
+															7755 text =
+															7756 text 
+															7757 text 5
+															7758 text MIN_CENTER_DISTANCE
+															7759 text 
+															7760 text =
+															7761 text 
+															7762 text 19.5
+															7763 text CELL_GAP
+															7764 text 
+															7765 text =
+															7766 text 
+															7767 text 6.5
+															7768 text MAX_CANDIDATES
+															7769 text 
+															7770 text =
+															7771 text 
+															7772 text 8
+															7773 text LAGS
+															7774 text 
+															7775 text =
+															7776 text (
+															7777 text 8
+															7778 text ,
+															7779 text 16
+															7780 text ,
+															7781 text 32
+															7782 text ,
+															7783 text 64
+															7784 text )
+															7785 text WIDTHS
+															7786 text 
+															7787 text =
+															7788 text (
+															7789 text 1
+															7790 text ,
+															7791 text 8
+															7792 text ,
+															7793 text 16
+															7794 text ,
+															7795 text 32
+															7796 text )
+															7797 text MORPHOLOGY_BOUNDS
+															7798 text 
+															7799 text =
+															7800 text {
+															7801 text 
+															7802 text "all_observed.area_fraction_aspect_gt3"
+															7803 text : (
+															7804 text 0
+															7805 text ,
+															7806 text 0.27
+															7807 text ),
+															7808 text 
+															7809 text "all_observed.area_fraction_aspect_gt4"
+															7810 text : (
+															7811 text 0
+															7812 text ,
+															7813 text 0.16
+															7814 text ),
+															7815 text 
+															7816 text "all_observed.area_weighted_aspect"
+															7817 text : (
+															7818 text 1
+															7819 text ,
+															7820 text 2.59
+															7821 text ),
+															7822 text 
+															7823 text "all_observed.area_weighted_aspect_p95"
+															7824 text : (
+															7825 text 1
+															7826 text ,
+															7827 text 6.13
+															7828 text ),
+															7829 text 
+															7830 text "all_observed.axial_order"
+															7831 text : (
+															7832 text 0
+															7833 text ,
+															7834 text 0.59
+															7835 text ),
+															7836 text 
+															7837 text "all_observed.defined_aspect_area_fraction"
+															7838 text : (
+															7839 text 0.995
+															7840 text ,
+															7841 text 1
+															7842 text ),
+															7843 text 
+															7844 text "gap_dilation.2.largest_fraction"
+															7845 text : (
+															7846 text 0
+															7847 text ,
+															7848 text 0.59
+															7849 text ),
+															7850 text 
+															7851 text "limited_gap_run_x"
+															7852 text : (
+															7853 text 0
+															7854 text ,
+															7855 text 0.60
+															7856 text ),
+															7857 text 
+															7858 text "limited_gap_run_y"
+															7859 text : (
+															7860 text 0
+															7861 text ,
+															7862 text 0.56
+															7863 text ),
+															7864 text 
+															7865 text "long_range_abs_S2_difference"
+															7866 text : (
+															7867 text 0
+															7868 text ,
+															7869 text 0.04
+															7870 text ),
+															7871 text 
+															7872 text "nearest_neighbor_cv"
+															7873 text : (
+															7874 text 0.10
+															7875 text ,
+															7876 text 0.69
+															7877 text ),
+															7878 text 
+															7879 text "strips.1.column_max"
+															7880 text : (
+															7881 text 0
+															7882 text ,
+															7883 text 0.79
+															7884 text ),
+															7885 text 
+															7886 text "strips.1.column_std"
+															7887 text : (
+															7888 text 0
+															7889 text ,
+															7890 text 0.18
+															7891 text ),
+															7892 text 
+															7893 text "strips.1.row_max"
+															7894 text : (
+															7895 text 0
+															7896 text ,
+															7897 text 0.78
+															7898 text ),
+															7899 text 
+															7900 text "strips.1.row_std"
+															7901 text : (
+															7902 text 0
+															7903 text ,
+															7904 text 0.20
+															7905 text ),
+															7906 text 
+															7907 text "strips.8.column_max"
+															7908 text : (
+															7909 text 0
+															7910 text ,
+															7911 text 0.74
+															7912 text ),
+															7913 text 
+															7914 text "strips.8.column_std"
+															7915 text : (
+															7916 text 0
+															7917 text ,
+															7918 text 0.17
+															7919 text ),
+															7920 text 
+															7921 text "strips.8.row_max"
+															7922 text : (
+															7923 text 0
+															7924 text ,
+															7925 text 0.75
+															7926 text ),
+															7927 text 
+															7928 text "strips.8.row_std"
+															7929 text : (
+															7930 text 0
+															7931 text ,
+															7932 text 0.19
+															7933 text ),
+												7935 button Copy
+													7936 image (graphic)
+												7937 button Feedback ID: radix-_r_rb_
+												7938 button (toggle button) Read aloud
+												7939 button Share
+												7940 button More actions ID: radix-_r_rh_
+												7941 button Convert to PDF
+												6999 group
+												7000 text ChatGPT can make mistakes. Check important info.
+												7001 text (heading) Latest response
+												7002 status bar (status)
+												7003 group
+													7004 group
+														7005 group
+															7006 

@@ -1,16 +1,22 @@
 """Capture and evaluate authentic responses with versioned evidence paths."""
 import argparse
-import json
+import hashlib
+import importlib.util
+from pathlib import Path
+import shutil
 from statistics import mean
 import subprocess
 import sys
+import time
 
 import numpy as np
 
 from scripts.v070_protocol import REPO, read, sha, write
 from scripts.v070_experiment import audit
 from scripts.v073_envelope import feasibility
-from scripts.v072_experiment import diversity
+from scripts.v072_experiment import diversity, observe
+from scripts.v073_prepare import save_array
+from metamaterial_eval.composites.morphology_v073 import describe
 from scripts.v074_trials import conversation_id
 from scripts.v075_design import assign, target_error
 from scripts.v075_protocol import BASE, DOC, RUN, TRIALS, now
@@ -79,6 +85,48 @@ def verify_freeze():
     return frozen
 
 
+def worker(source, destination, seed):
+    destination.mkdir(parents=True, exist_ok=False)
+    row = {'seed': seed, 'status': 'EXECUTION_ERROR', 'generator_sha256': sha(source)}
+    try:
+        spec = importlib.util.spec_from_file_location('v075_generator', source)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        start = time.perf_counter()
+        array = module.generate_microstructure(seed, {})
+        elapsed = time.perf_counter() - start
+        row['generation_seconds'] = elapsed
+        if isinstance(array, np.ndarray):
+            row['returned_array'] = {'shape': list(array.shape), 'dtype': str(array.dtype), 'nbytes': array.nbytes}
+            if not array.dtype.hasobject and array.nbytes <= 2**20:
+                raw_array = destination / f'returned_seed_{seed}.npy'
+                np.save(raw_array, array, allow_pickle=False)
+                row['returned_array']['sha256'] = sha(raw_array)
+        if not (isinstance(array, np.ndarray) and array.shape == (256, 256)
+                and array.dtype == np.uint8 and set(np.unique(array)) == {1, 5}):
+            row['status'] = 'OUTPUT_CONTRACT_FAILED'
+            raise ValueError('Required 256 by 256 uint8 array with labels 1 and 5')
+        if elapsed > 30:
+            row['status'] = 'GENERATION_TIME_EXCEEDED'
+            raise TimeoutError('First generation exceeded the registered 30-second bound')
+        start = time.perf_counter()
+        replay = module.generate_microstructure(seed, {})
+        row['replay_seconds'] = time.perf_counter() - start
+        # Preserve the v074 eligibility rule used for trial one. Replay timing
+        # is retained for diagnosis under the same 75-second worker deadline.
+        deterministic = np.array_equal(array, replay)
+        path = destination / f'seed_{seed}.npy'
+        save_array(path, array)
+        row.update(status='GENERATED', deterministic=bool(deterministic),
+            array_file_sha256=sha(path), array_semantic_sha256=hashlib.sha256(array.tobytes()).hexdigest(),
+            **observe(array), morphology_v073=describe(array == 5))
+        if raw_array.exists():
+            row['returned_array']['validated_copy_sha256'] = sha(path)
+    except Exception as error:
+        row['error'] = repr(error)
+    write(destination / f'seed_{seed}.json', row)
+
+
 def evaluate(trial, revision, partition):
     directory = RUN / 'llm_trials' / trial
     receipt = read(directory / f'RECEIPT_r{revision}.json')
@@ -100,7 +148,7 @@ def evaluate(trial, revision, partition):
         if receipt['audit']['passed']:
             worker = destination / 'workers' / str(seed)
             try:
-                result = subprocess.run([sys.executable, '-m', 'scripts.v074_trials', 'worker',
+                result = subprocess.run([sys.executable, '-m', 'scripts.v075_trials', 'worker',
                     str(source), str(worker), str(seed)], cwd=REPO, capture_output=True,
                     text=True, timeout=75)
                 write(destination / f'WORKER_{seed}.json', {'returncode': result.returncode,
@@ -109,7 +157,6 @@ def evaluate(trial, revision, partition):
                 if result.returncode == 0 and path.exists():
                     record = read(path)
                     if record['status'] == 'GENERATED':
-                        import shutil
                         for ext in ('npy', 'png'):
                             shutil.copyfile(worker / f'seed_{seed}.{ext}', destination / f'seed_{seed}.{ext}')
                         arrays.append(np.load(destination / f'seed_{seed}.npy', allow_pickle=False))
@@ -184,7 +231,9 @@ def freeze():
     assert not FROZEN.exists() and not list((RUN / 'structures').glob('*/r*/heldout'))
     files = [ASSIGNMENT, RUN / 'assignment/PRETREATMENT_FROZEN.json',
         RUN / 'feedback_packets/INITIAL_PROMPT.txt', RUN / 'feedback_packets/INITIAL_FROZEN.json',
-        *sorted((RUN / 'protocol').glob('*.json'))]
+        *sorted((RUN / 'protocol').glob('*.json')),
+        *(REPO / 'scripts' / name for name in ('v075_trials.py', 'v075_design.py', 'v075_analysis.py',
+            'v075_packets.py', 'v074_mechanics.py', 'v071_mechanics.py'))]
     assignment = read(ASSIGNMENT)
     identities = set()
     receipts = []
@@ -208,6 +257,9 @@ def freeze():
 
 
 if __name__ == '__main__':
+    if len(sys.argv) == 5 and sys.argv[1] == 'worker':
+        worker(Path(sys.argv[2]), Path(sys.argv[3]), int(sys.argv[4]))
+        sys.exit(0)
     parser = argparse.ArgumentParser()
     parser.add_argument('action', choices=['ingest', 'evaluate', 'native', 'match', 'freeze'])
     parser.add_argument('--trial', choices=TRIALS)

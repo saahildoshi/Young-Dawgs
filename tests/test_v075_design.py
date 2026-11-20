@@ -54,3 +54,20 @@ def test_chronology_preserves_extra_turns_and_rejects_a_different_chat():
     assert not capture_identity(sub, turn * 3, 1, url)['strict_turn_count']
     with pytest.raises(ValueError, match='differs from the original'):
         capture_identity(sub, turn * 2, 1, url[:-1] + 'b')
+
+
+def test_invalid_categorical_array_is_preserved_as_failed_attempt(tmp_path):
+    import numpy as np
+    from scripts.v070_protocol import read, sha
+    from scripts.v075_trials import worker
+
+    source = tmp_path / 'invalid.py'
+    source.write_text('import numpy as np\ndef generate_microstructure(seed, parameters):\n    return np.array([1, 7])\n')
+    dest = tmp_path / 'attempt'
+    worker(source, dest, 6100)
+    result = read(dest / 'seed_6100.json')
+    assert result['status'] == 'OUTPUT_CONTRACT_FAILED'
+    raw = dest / 'returned_seed_6100.npy'
+    assert np.array_equal(np.load(raw, allow_pickle=False), [1, 7])
+    assert result['returned_array']['sha256'] == sha(raw)
+    assert not (dest / 'seed_6100.npy').exists()
